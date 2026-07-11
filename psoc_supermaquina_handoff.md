@@ -12,15 +12,16 @@ cargando parametros y copiando muestras cuando corresponde. La mejora es que
 `superMaquina` decide en hardware que DRQ deja pasar, cuando empieza/termina la
 captura, cuantos lotes van, y que interrupciones llegan al ARM.
 
-## Actualizacion ADC 1020 Hz (2026-07-06)
+## Actualizacion ADC 2604 Hz (vigente desde 2026-07-11)
 
-- El firmware de aplicacion expone solo dos configuraciones del DelSig:
-  `ADC_CF_2V5` (1, ±2.5 V, default) y `ADC_CF_0V512` (2, ±0.512 V). Ambas se
-  reportan como 1020 Hz efectivos. Las configs 3/4 de 976 Hz quedan fuera del
-  protocolo/UI para no mezclar frecuencias entre nodos.
-- Comando UART nuevo `PSOC_CMD_ADC_CONFIG = 0xBA`: parametro `1|2`, aceptado
+- La frecuencia nativa canonica es **2604 Hz para las cuatro configuraciones
+  ADC**: 1 (±2.5 V, default), 2 (±0.512 V), 3 (±1.024 V) y 4 (±0.625 V).
+  El factor de decimacion `N` produce una Fs efectiva `floor(2604/N)` y no
+  cambia al seleccionar el rango. Esta migracion no modifica coeficientes.
+- Comando UART `PSOC_CMD_ADC_CONFIG = 0xBA`: parametro `1|2|3|4`, aceptado
   solo en `PSOC_IDLE`. El PSoC responde `CFG_ACK(0xBA, config)` y luego
-  `FS_REPORT(1020)`. Rechazo: `CFG_ACK(0xBA, 0)`.
+  `FS_REPORT(2604)` para `N=1` (o la Fs efectiva si hay decimacion). Rechazo:
+  `CFG_ACK(0xBA, 0)`.
 - La calibracion siempre corre forzada en `ADC_CF_2V5`, porque sus targets de
   counts pertenecen al rango ±2.5 V. Al terminar se limpia el override y
   `psoc_prepare_capture_path()` restaura el rango seleccionado por el host.

@@ -1,5 +1,11 @@
 # Plan ADC 1020 Hz — 2 modos de rango (±2.5 V / ±0.512 V), botón "Máx paquetes", auditoría PGA
 
+> **SUPERSEDIDO (2026-07-11):** este archivo conserva el historial de la
+> migración anterior. La configuración operativa vigente usa **2604 Hz nativos
+> en los cuatro modos ADC** y `Fs efectiva = floor(2604/N)`. No usar los
+> valores 1020/2929 de este registro como defaults de firmware, interfaz o
+> scripts.
+
 > **Archivo de seguimiento para agentes (Claude/codex).** Al completar cada ítem: marcar el checkbox
 > y anotar una fila en el "Registro de progreso" del final ANTES de seguir. Si una sesión queda a
 > medias, la siguiente retoma desde aquí.
