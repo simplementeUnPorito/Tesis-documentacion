@@ -8,6 +8,68 @@
 
 Fecha de creación: 2026-07-10. Plan diseñado y aprobado en sesión Claude (rama `codex/capture-engine-verilog`).
 
+## ✅ SESIÓN 2026-07-11 (tarde) — ENCADENADO + DECIMACIÓN VALIDADOS EN BANCO (GEO+PSoC en COM12) — LEER PRIMERO
+
+Banco de esta sesión: **maestro COM8, esclavo GEO+PSoC en COM12**. Se trabajó solo por USB en COM12
+(no se tocó COM8 para no tirar el WiFi/AP del maestro). El geófono ya está conectado (hw=0/GEO).
+
+### Dos causas raíz encontradas y resueltas (invalidan la teoría vieja de "degradación de hardware / pérdida de frames UART")
+
+1. **Carrera en el comando de banco `cap` (esclavo)** — RESUELTO EN CÓDIGO Y VALIDADO.
+   `requestCaptureFromUsb()` hacía `requestPrestartFromUsb()` e **inmediatamente** `requestUsbStartFromHotWait()`,
+   pero el PSoC confirma `PSOC_EVT_ARMED` (→ `g_psoc_arm_ready`) de forma asíncrona ~100-300 ms
+   después del `preStart()`. El sync se disparaba antes de ARMED → `sync ignored ready=0` → la captura
+   quedaba colgada en HOT_WAIT con `fill=0/N`. Como la latencia del ACK ARMED variaba, el síntoma era
+   **no-monotónico** (cap chico ✓, cap grande ✗) — exactamente lo que la sesión previa había atribuido
+   por error a "pérdida de frames UART / degradación del banco". Fix: `requestCaptureFromUsb()` ahora
+   espera (busy-wait acotado 800 ms, sirviendo `psoc.poll()`/`servicePsocConfigAck()`/watchdog) a que
+   `storeReadyForHotWait()` sea true antes de disparar el sync. El path real maestro→esclavo NO sufría
+   esto (PRESTART y START llegan separados por radio); es solo la herramienta de banco `cap`.
+   Archivo: `slave/src/main.cpp` `requestCaptureFromUsb()`.
+
+2. **El PSoC se cuelga al reflashear el ESP esclavo** — OPERATIVO, workaround validado.
+   Reflashear el ESP por USB hace un `Hard reset via RTS`; ese reset glitchea las líneas compartidas
+   (SYNC/UART) hacia el PSoC y **cuelga al PSoC si venía con uptime largo** (el de esta sesión tenía
+   ~2 días sin reset). Síntoma tras reflashear el ESP: `uartBytes=0`, `edge=0`, `probe psoc=0`,
+   `PSoC cfg probe failed age=-1`, SETN nunca ackea. **Workaround: resetear el PSoC (NO reflashear)**
+   con `ToggleReset` vía KitProg — ver "Reset de target" en `src/psoc/BUILD_PROGRAM_PSOC.md`
+   (`KitProg (CMSIS-DAP/236111)`, `ToggleReset 0 100`). Tras el ToggleReset el PSoC re-corre su HEX +
+   auto-cal (~8-13 s) y la UART revive (`probe psoc=1`, `uartBytes` creciendo, `fs=2604`).
+   **Regla operativa: cada vez que se reflashea el ESP esclavo, resetear el PSoC después.**
+
+### Resultados validados en hardware (COM12, `bBad=0` en todos, drops ~14-24 por corrida, estables)
+
+Tasa nativa real del ADC = **2604 Hz** (no 2929; el customizer regenerado quedó en 2604 y el código lo
+asegura con `#if` de compilación: `PSOC_ADC_NATIVE_FS_HZ 2604u` en `psoc_adc.h` vs `ADC_CF_*_SRATE`, y
+`PSOC_NATIVE_SAMPLE_RATE_HZ 2604UL` en `psoc_uart.h`). Fs efectiva = 2604/decim.
+
+| decim | cap (lotes) | raw batches | encadenado | fs (Hz) | **adquisición** | wall (cap→dump) |
+|-------|-------------|-------------|------------|---------|-----------------|-----------------|
+| 1 | 10 / 60 / 360 | =lotes | no | 2604 | — / — / 4.15s | — |
+| 1 | 512 | 512 | no | 2604 | 5.90s | ~6.8s |
+| 3 | 360 | 1080 | **sí (×3)** | 868 | **12.44s** | ~12.5s |
+| 2 | 512 | 1024 | **sí (×2)** | 1302 | **11.80s** | ~13.5s |
+| 3 | 512 | 1536 | **sí (×3)** | 868 | **17.70s** | ~18.6s |
+
+**El objetivo "más segundos, debe funcionar" (superar los 10.59 s del build viejo de 1020 Hz) está
+cumplido y validado**: con decim≥2 y 512 lotes se pasa de 11.8 s, y con decim 3 se llega a 17.7 s,
+todo RAM-only (arena paginada `STORE_PAGE_BATCHES=32`, sin SD). El cap de hardware de 512 lotes RAW
+(=512×30/2604=5.9 s por corrida) se supera **encadenando** trozos crudos: el PSoC rearma superMaquina
+sin resetear `g_capture_wr` ni el acumulador de decimación y solo emite `DUMP_DONE` al final.
+
+### Estado del código al cierre de esta sesión
+
+- `slave/src/main.cpp`: fix de la carrera `cap` (arriba) + set previo de robustez de HOT_WAIT
+  (watchdog re-arm/abort, limpieza de flags viejos en ARM, bookkeeping de sync-edge en `loop()`,
+  STATUS visible si HOT_WAIT se estira). Compila (`pio run -e slave1` OK, RAM 13.6%, Flash 58.1%),
+  flasheado a COM12 y **validado**. **Commiteado** en esta sesión junto a este doc.
+- `master/src/main.cpp` y `master/data/js/app.js`: cambios de relay de decimación + web (Máx 512,
+  preservados reescalados por fs) quedan en working-tree, **sin flashear a COM8** (regla WiFi).
+  Pendiente subir cuando el usuario esté para reconectar a GeoNetwork.
+- PSoC: **NO se reflasheó** (sigue con su HEX conocido-bueno). El BLOCKER de abajo (TopDesign GEO no
+  fitea → no se puede construir el firmware con SD) **sigue vigente**, pero el encadenado RAM-only ya
+  da hasta 17.7 s sin necesitar SD.
+
 ## ⛔ BLOCKER PSoC (2026-07-11 ~01:30) — EL TOPDESIGN GEO NO FITEA — LEER ANTES DE TOCAR EL PSoC
 
 El TopDesign fue cambiado a la variante **GEO** (con SPI Master para SD y una conexión nueva
