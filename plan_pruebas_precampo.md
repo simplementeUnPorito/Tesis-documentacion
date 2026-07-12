@@ -41,6 +41,7 @@
 | E16 | Transiciones dirigidas rango ADC (0xBA) + decimación (0xBB) | `adc_decim_transitions_test.py` por USB: r1→r2→r4→r3→r1, d1→d2→d6→d3→d4→d1, combo r4+d3, rechazos | ✅ **PASS 49/49** — ACK y mini-captura 4 lotes en cada transición con fs exacta (2604/1302/868/651/434); combo r4 d3 OK; `range 0/5` y `decim 0/101` rechazados localmente sin ACK; restauración r1 d1. Dos transitorios clase F6 (un ACK 0xB7 y un `cap` ignorado tras cambio de config) absorbidos por el retry acotado de 2 intentos, siempre al 2°. Evidencia: `slave/artifacts/e16_adc_decim_transitions_pass.json`. |
 | E17 | Reset físico PSoC (ToggleReset KitProg) + auto-cal + recovery SD | `psoc_reset_recovery_test.py`: reset real con ESP vivo y GEOLAST de 60000 montado | ✅ **PASS 30/30** — pre-reset 0x37 (COMPLETE, capture off); ToggleReset OK; PSoC sano (psoc=1, IDLE, fs=2604) a los 18.2 s de auto-cal; post-reset GEOLAST COMPLETE recuperado con capture re-armado (0x77, default de boot deliberado: `g_sd_cap_en=1` si SD montada, field-safe tras power-cycle); ACKs BB/B7/BE al primer intento; captura RAM 4 lotes y captura SD 5 lotes + sdread 0/4 + OOR post-reset; cleanup limpio. Evidencia: `slave/artifacts/e17_reset_recovery_pass.json`. |
 | E18 | Mini-soak de cierre por radio | 5× `ws_capture_test --batches 4 --force` consecutivos | ✅ PASS 5/5 — 120/120 muestras cada uno, SHA-256 únicos (datos frescos), probe final `psoc=1` IDLE fs=2604 bBad=0 fill=0/0, `/health littlefs=ok`. |
+| E19 | **F9 — flujo START (0xA3) real, RAM y SD>512** | `start_flow_regression_test.py` vía ARM→A3 (no VER) | ✅ **PASS** (post-fix) — 261 lotes: 7830/7830 muestras, ciclo ARMED→RUNNING→DUMPING→ARMED limpio; 600 lotes (SD encadenado): 18000/18000, mismo ciclo limpio; 3 repeticiones extra 3/3 PASS; 0 SETN_TIMEOUT/HOT_WAIT_ABORT en las 4 corridas (COM12). Ver F9 en hallazgos y HANDOFF §3.1 para la causa raíz y el fix. |
 
 ## Fallos / hallazgos
 
@@ -124,10 +125,49 @@
   (E5c/E15); el camino START broadcast no tiene validación equivalente con N>512. Nota: E14
   ejercitó START desde la UI con exactamente 512 lotes (máx RAM) y completó bien, lo que
   acota el fallo al escenario reportado. **Actualización del usuario**: START parece romper
-  SIEMPRE, sin importar si la captura es solo-RAM o mayor — no es exclusivo del encadenado
-  (el START exitoso de E14 pudo depender del estado previo: primera captura tras reload,
-  sin STOP/re-ARM previos). EN INVESTIGACIÓN — reproducción con logger COM12 en curso;
-  veredicto y fix abajo cuando cierre.
+  SIEMPRE, sin importar si la captura es solo-RAM o mayor — no es exclusivo del encadenado.
+
+  **CAUSA RAÍZ ENCONTRADA (reproducida con driver WS dirigido + logger COM12).** El maestro,
+  al esperar el HOTWAIT_ACK de un esclavo tras `beginPrestart()`, usa
+  `HOTWAIT_QUERY_TIMEOUT_MS=120 ms` para decidir si reintenta. La confirmación real de "PSoC
+  ARMADO" (evento `PSOC_EVT_ARMED` por UART) tarda típicamente ~130 ms — por encima del
+  timeout — así que el primer query del maestro casi siempre le gana de mano al PSoC y recibe
+  `ok=0`. En la rama de reintento del flujo START normal (no-VER), el maestro entonces
+  **vuelve a mandar `broadcastPrestart()` completo** (además de re-consultar), lo que en el
+  esclavo dispara `enterHotWait()` de nuevo — reenviando 0xA3 SETN por UART al PSoC.
+  El problema: el PSoC, una vez que llega a `PSOC_ARMED`, entra deliberadamente en silencio
+  UART total (`service_runtime()`: `if (g_state == PSOC_ARMED) return;` — comentario
+  "HOT_WAIT silencioso: sin UART RX/TX, LED ni pings"). El segundo SETN nunca es ackeado,
+  `sendAndConfirmPsocSetN()` vence a los 500 ms, y `enterHotWait()` interpreta el timeout como
+  fallo: llama `allocStore(0)` (libera el store) y pone `g_state = STOPPED` en el ESP —
+  mientras el PSoC físico sigue de verdad armado, sordo, esperando un flanco SYNC que nunca
+  llegará (CMD_START exige `g_state == HOT_WAIT`, que ya no es cierto). El nodo queda
+  permanentemente desincronizado hasta un reset físico. El ciclo se repite cada ~522 ms
+  (≈`PSOC_SETN_ACK_TIMEOUT_MS`) mientras el maestro sigue reintentando.
+  **Por qué VER nunca lo mostró**: la rama de retry de VER (`PRESTART_ACTION_VER`) solo
+  reenvía la consulta (`sendHotWaitQuery`), nunca un `broadcastPrestart` — por diseño no
+  re-arma un nodo ya armado. La rama START normal sí lo hacía, de forma no intencional.
+  **Por qué "siempre" y no dependiente de N**: la carrera de 120 ms vs ~130 ms es casi
+  determinística en este banco, independiente del tamaño de la captura.
+  **Fix aplicado (dos capas, ver commit)**: (1) maestro — la rama de retry del flujo START
+  normal deja de re-emitir `broadcastPrestart()`, solo re-consulta (igual que VER ya hacía);
+  (2) esclavo — `CMD_PRESTART` se vuelve idempotente: si el nodo ya está en `HOT_WAIT` con el
+  store listo (`storeReadyForHotWait()`) para el mismo N solicitado, responde el ACK
+  inmediatamente sin re-enviar SETN, en vez de repetir `enterHotWait()` a ciegas. Esta segunda
+  capa cubre cualquier duplicado de PRESTART (ESP-NOW, multi-esclavo) más allá del caso puntual
+  del retry.
+
+  **✅ FIX VALIDADO E2E EN HARDWARE (2026-07-12).** Reflash esclavo (COM12) + ToggleReset +
+  auto-cal + reflash maestro (COM8) + reconexión WiFi. Runner persistente
+  `master/start_flow_regression_test.py` (self-test 4/4) corrido contra el banco real:
+  START pequeño (261 lotes/3 s, RAM): **PASS**, 7830/7830 muestras, ARMED→ARMING→RUNNING→
+  DUMPING→ARMED limpio. START encadenado SD (600 lotes, el caso que rompía peor):
+  **PASS**, 18000/18000 muestras, mismo ciclo de estados limpio. Repetido 3× consecutivas
+  adicionales sin reset entre medio: 3/3 PASS. Log COM12 de las 4 corridas: **0 SETN_TIMEOUT,
+  0 HOT_WAIT_ABORT** (antes del fix, aparecían en el primer intento siempre, cada ~522 ms).
+  Probe final: `psoc=1`, IDLE, `fs=2604`, `bBad=0`; `/health littlefs=ok`. VER (regresión, vía
+  `ws_capture_test`) sigue PASS sin cambios. Evidencia: `master/artifacts/f9_start_flow_pass.json`.
+  F9 CERRADO — START ya no rompe el nodo.
 - **OK-4 (E17)**: el PSoC re-arma deliberadamente `g_sd_cap_en=1` al boot si la SD está
   presente y el FAT montado (`main.c`, tras `sd_session_recover()`): default field-safe para
   que tras un power-cycle en campo las capturas sigan yendo a SD sin necesitar 0xBE. No es un

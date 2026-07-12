@@ -71,6 +71,41 @@ Además quedó verificado en banco:
 | W3 | STOP durante dump: sin re-dump desde UI (datos quedan en SD) | 📝 documentado |
 | W5 | Preview N usa input, no ACK | 📝 documentado |
 | H4 | Prefetch de bloque en PSoC = dump ~2× más rápido | 📝 mejora post-campo |
+| F8 | Contador `drop`/`_syncDrops` del esclavo (bytes UART descartados por el framer) bloqueaba criterios de tests aunque fuera benigno | ✅ CORREGIDO en `sd_max_regression_test.py`: solo bBad/badLen bloquean |
+| F9 | **CRÍTICO — START rompía el nodo (roto hasta reset físico), SIEMPRE, cualquier N** | ✅ CORREGIDO y validado E2E en hardware — ver §3.1 |
+
+### 3.1 F9 en detalle — START rompía el nodo
+
+**Síntoma reportado por el usuario**: VER funcionaba siempre (N=1, Máx RAM, +20% encadenado),
+pero START no funcionaba nunca y dejaba el sistema roto — requería reiniciar el nodo.
+
+**Causa raíz** (confirmada con driver WS dirigido + logger COM12): el maestro espera el
+HOTWAIT_ACK de un esclavo con `HOTWAIT_QUERY_TIMEOUT_MS=120 ms`, pero la confirmación real de
+"PSoC ARMADO" (`PSOC_EVT_ARMED` por UART) tarda ~130 ms — más que el timeout. El primer query
+del maestro casi siempre llega antes y recibe `ok=0`. La rama de retry del flujo START normal
+(no-VER) entonces **volvía a mandar `broadcastPrestart()` completo**, forzando al esclavo a
+reenviar SETN (0xA3 UART) por segunda vez. Pero el PSoC, una vez en `PSOC_ARMED`, entra en
+silencio UART total por diseño (`service_runtime()`: ventana de muestreo sin RX/TX/LED/pings).
+El segundo SETN nunca se ackea, vence a los 500 ms, y el esclavo interpreta el timeout como
+fallo: libera el store (`allocStore(0)`) y pasa a `STOPPED` — mientras el PSoC físico sigue
+armado de verdad, sordo, esperando un flanco SYNC que nadie volverá a mandar. Nodo roto hasta
+`ToggleReset`. El ciclo se repetía cada ~522 ms mientras el maestro seguía reintentando.
+VER nunca mostró el bug porque su rama de retry (`PRESTART_ACTION_VER`) solo re-consulta, sin
+re-emitir PRESTART — la carrera 120 ms vs 130 ms es casi determinística, por eso rompía siempre
+y sin depender de N.
+
+**Fix (dos capas)**:
+1. `master/src/main.cpp`: el retry de HOT_WAIT del flujo START ya no re-emite
+   `broadcastPrestart()`, solo re-consulta (alineado con VER).
+2. `slave/src/main.cpp`: `CMD_PRESTART` es idempotente — si el nodo ya está `HOT_WAIT` con el
+   store listo para el mismo N, responde el ACK directo sin repetir `enterHotWait()`/SETN.
+
+**Validación E2E en hardware**: reflash esclavo+maestro, ToggleReset+auto-cal, reconexión
+WiFi. Runner persistente `master/start_flow_regression_test.py` (self-test 4/4): START
+pequeño (261 lotes/3 s) **PASS** 7830/7830; START encadenado SD (600 lotes) **PASS**
+18000/18000; 3 repeticiones consecutivas adicionales **3/3 PASS**; log COM12 de las 4
+corridas con **0 SETN_TIMEOUT, 0 HOT_WAIT_ABORT**. VER (regresión) sigue PASS. Probe final
+limpio. Evidencia: `master/artifacts/f9_start_flow_pass.json`.
 
 ## 4. Trampas operativas (¡leer antes de tocar el banco!)
 
