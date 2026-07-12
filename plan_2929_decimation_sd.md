@@ -8,7 +8,40 @@
 
 Fecha de creación: 2026-07-10. Plan diseñado y aprobado en sesión Claude (rama `codex/capture-engine-verilog`).
 
-## ✅ SESIÓN 2026-07-11 (tarde) — ENCADENADO + DECIMACIÓN VALIDADOS EN BANCO (GEO+PSoC en COM12) — LEER PRIMERO
+## ✅✅ SESIÓN 2026-07-11 (noche) — SD EN PSoC VALIDADA EN HARDWARE — EL BLOCKER ESTÁ RESUELTO
+
+**El usuario arregló el TopDesign GEO en PSoC Creator y puso una tarjeta SD.** El BLOCKER de abajo
+("EL TOPDESIGN GEO NO FITEA") quedó **RESUELTO** — el proyecto ahora fitea y compila
+(`cyprjmgr -build` → Build Succeeded; Flash 64700 B con FatFs, SRAM 51952/65536 = 79.3%,
+lastRow=252). PSoC flasheado vía ppcli (KitProg CMSIS-DAP/236111, filas 0..252, todas `0 OK`,
+log `%TEMP%\psoc_program_sd_20260711_210135.log`).
+
+### Validado en hardware (COM12, GEO real + SD insertada)
+
+- **Detección SD**: `sdinfo` → `SD status=0x77 present=1 type=3` con FAT montada (bit4).
+- **Self-test FatFs**: `sdtest` → ack `0xBD val=1` (GEOTEST.BIN write/read/delete OK).
+- **Captura a SD > 512 lotes** (imposible en RAM): `sdcap 1` +
+  - `cap 700` decim 1 (**8.1 s**): `SD_SESSION 0x01` (GEOLAST.BIN COMPLETE), `fill=700/700 err=0`.
+  - `cap 1200` decim 2 (**27.6 s de adquisición**): `SD_SESSION 0x01`, `fill=1200/1200 err=0`.
+- **Lectura de vuelta desde la SD (0xBF)**: nuevo comando de banco `sdread N` (bajo
+  `SLAVE_LAB_TOOLS_ENABLE`) que ejercita el mismo camino que `handleReqBatch()` usa para el
+  maestro pero imprime por USB. `sdread 0/50/99` (y 0/1/350/699 en la corrida de 700) devuelven
+  datos consistentes: `raw == dig` exacto en stream 0 (RAW), señal real del geófono (~-1600..-5100
+  cuentas variando entre lotes), `flags=0x00`; `sdread 700` fuera de rango → rechazado.
+- **Regresión RAM**: `cap 60` decim 1 sin SD → `fill=60/60`, `bOK=60`, `bBad=0` (el fix de la
+  carrera ARMED de la tarde se ve en el log: sync recién después de `ARMED`).
+
+**La jerarquía de memoria completa pedida por el usuario está funcionando: ESP32 RAM paginada
+(≤512 lotes) → encadenado en PSoC (>512 crudos) → SD del PSoC (hasta `PSOC_SD_MAX_BATCHES=60000`
+lotes ≈ 11.5 min a 2604 Hz sin decimar).** Falta solo el E2E por radio (maestro → REQ_BATCH →
+0xBF), que usa exactamente el camino ya ejercitado por `sdread`; se prueba cuando se pueda
+flashear COM8 (regla WiFi).
+
+Nota de banco: tras completar una captura SD sin maestro presente se ven varios
+`[PSoC] boot hw=0/GEO` repetidos — es el retry del ACK de completado por ESP-NOW
+(`sendCompletionAckWithRetry`, 24 reintentos) sin maestro que lo escuche; benigno.
+
+## ✅ SESIÓN 2026-07-11 (tarde) — ENCADENADO + DECIMACIÓN VALIDADOS EN BANCO (GEO+PSoC en COM12)
 
 Banco de esta sesión: **maestro COM8, esclavo GEO+PSoC en COM12**. Se trabajó solo por USB en COM12
 (no se tocó COM8 para no tirar el WiFi/AP del maestro). El geófono ya está conectado (hw=0/GEO).
@@ -70,7 +103,7 @@ sin resetear `g_capture_wr` ni el acumulador de decimación y solo emite `DUMP_D
   fitea → no se puede construir el firmware con SD) **sigue vigente**, pero el encadenado RAM-only ya
   da hasta 17.7 s sin necesitar SD.
 
-## ⛔ BLOCKER PSoC (2026-07-11 ~01:30) — EL TOPDESIGN GEO NO FITEA — LEER ANTES DE TOCAR EL PSoC
+## ~~⛔ BLOCKER PSoC (2026-07-11 ~01:30) — EL TOPDESIGN GEO NO FITEA~~ — RESUELTO 2026-07-11 noche (ver arriba)
 
 El TopDesign fue cambiado a la variante **GEO** (con SPI Master para SD y una conexión nueva
 `vRef Vdda/2 → LPF_2.Vin`, `Net_7100`) a las **2026-07-10 23:38** (después del último build
