@@ -34,6 +34,13 @@
 | E9 | Regresión USB banco post-fixes | probe/sdinfo/cap RAM d1·d3/SD cap+sdread 0·99·fuera-de-rango/FIR d2 | ✅ **9/9 PASS** |
 | E10 | UI real + publicación final | 192.168.4.1 (LittleFS real vía uploadfs) | ✅ PASS — W6: Máx RAM fija input 5.89 s, calcula 512 lotes y muestra preview real 5.90 s; sin errores de consola. Segundo uploadfs publicó W7; ping 4/4, `/health littlefs=ok` y GET real confirmó `step=0.01` + floor W6. |
 | E11 | Regresión de cierre post-upload | self-test F5, builds maestro/esclavo, `ws_capture_test --batches 4` y probe final | ✅ PASS — pre-DATA watchdog 19.999/20.000 s; ambos builds limpios; smoke 120/120; probe final `psoc=1`, `fs=2604`, `bBad=0`, IDLE/fill=0; cleanup limpio. |
+| E12 | Reconexión WS real durante dump | `ws_fault_test.py` (corte inyectado tras 3000 muestras) | ✅ PASS — status=ok, 2 conexiones/1 desconexión, 18000/18000 muestras, 54000 B, extra=0, SHA coincidente, cleanup limpio. |
+| E13 | STOP en vivo (RUNNING y DUMPING) | `ws_fault_test.py` en el mismo socket | ✅ PASS ambos — RUNNING: ACK=0, 0 parciales, espera nominal+5 s (11.912 s) y smoke 120/120; DUMPING: 30 parciales, vuelta a ARMED, smoke 120/120. Ejercitó F6 real (BE 0→1 al retry). |
+| E14 | Recorrido de operador UI real (2026-07-12) | Chrome sobre 192.168.4.1: panel esclavo, Máx RAM, captura, export, beforeunload | ✅ PASS — panel Geo1 con MAC/RSSI real (-16 dBm)/PGA/rango/SD detectada (cierra pendiente RSSI); Máx RAM→5.89 s→512 lotes; captura UI E2E 512 lotes/15360 muestras exactas graficadas; ZIP íntegro (raw_f32le 61440 B = 15360×4 exactos, 30720 filas CSV); guard `beforeunload` activo con datos sin exportar y limpio tras export (verificado por dispatch sintético, sin modal); rango ADC round-trip navegador→PSoC ±2.5→±0.512→±2.5 con `Current:` + ACK verde; 0 errores de consola. Nota entorno: Chrome retiene el rename del ZIP (Safe Browsing sin internet en el AP) — el `.tmp` es el ZIP completo e íntegro. |
+| E15 | **Captura SD máxima 60000 lotes** (≈11.5 min, tope jerarquía) | `sd_max_regression_test.py --batches 60000` por USB, sin radio | ✅ **PASS** — sesión SD 60000/60000 completa en 695.2 s, 0 SYNC_STALL/SD_ERROR/eventos prohibidos; `sdread` extremos 0/59999 limpios; seq=60000 rechazado OOR con fill=60000; GEOLAST COMPLETE preservado con capture=off; cleanup limpio. 1.8 M muestras ≈ 5.4 MB canónicos. Evidencia: `slave/artifacts/e15_sd_max_60000_pass.json`. 1ª corrida reveló F8 (criterio del runner, no firmware). |
+| E16 | Transiciones dirigidas rango ADC (0xBA) + decimación (0xBB) | `adc_decim_transitions_test.py` por USB: r1→r2→r4→r3→r1, d1→d2→d6→d3→d4→d1, combo r4+d3, rechazos | ✅ **PASS 49/49** — ACK y mini-captura 4 lotes en cada transición con fs exacta (2604/1302/868/651/434); combo r4 d3 OK; `range 0/5` y `decim 0/101` rechazados localmente sin ACK; restauración r1 d1. Dos transitorios clase F6 (un ACK 0xB7 y un `cap` ignorado tras cambio de config) absorbidos por el retry acotado de 2 intentos, siempre al 2°. Evidencia: `slave/artifacts/e16_adc_decim_transitions_pass.json`. |
+| E17 | Reset físico PSoC (ToggleReset KitProg) + auto-cal + recovery SD | `psoc_reset_recovery_test.py`: reset real con ESP vivo y GEOLAST de 60000 montado | ✅ **PASS 30/30** — pre-reset 0x37 (COMPLETE, capture off); ToggleReset OK; PSoC sano (psoc=1, IDLE, fs=2604) a los 18.2 s de auto-cal; post-reset GEOLAST COMPLETE recuperado con capture re-armado (0x77, default de boot deliberado: `g_sd_cap_en=1` si SD montada, field-safe tras power-cycle); ACKs BB/B7/BE al primer intento; captura RAM 4 lotes y captura SD 5 lotes + sdread 0/4 + OOR post-reset; cleanup limpio. Evidencia: `slave/artifacts/e17_reset_recovery_pass.json`. |
+| E18 | Mini-soak de cierre por radio | 5× `ws_capture_test --batches 4 --force` consecutivos | ✅ PASS 5/5 — 120/120 muestras cada uno, SHA-256 únicos (datos frescos), probe final `psoc=1` IDLE fs=2604 bBad=0 fill=0/0, `/health littlefs=ok`. |
 
 ## Fallos / hallazgos
 
@@ -92,7 +99,24 @@
 - **F6 (menor, transitorio)**: un segundo 0xBB (decim) inmediatamente después de otro puede
   dar `PSoC cfg ack timeout 750 ms` una vez; el reintento inmediato funciona. La web ya
   serializa configs y reintenta. También pasa si se manda 0xBB con la auto-cal del PSoC
-  corriendo (tras ToggleReset esperar ~60 s o reintentar).
+  corriendo (tras ToggleReset esperar ~60 s o reintentar). E16 amplió la caracterización:
+  la misma clase transitoria afecta a 0xB7 (stream) y al `cap` USB inmediatamente después de
+  un cambio de config (el `cap` queda ignorado en silencio: fill=0/0, state=0, sin mensaje de
+  error). El retry acotado de 2 intentos con evidencia por intento lo resuelve SIEMPRE al 2°;
+  todos los runners del banco lo implementan.
+- **F8 (tooling, corregido)**: el criterio de cleanup de `sd_max_regression_test.py` (E15)
+  bloqueaba el veredicto si el contador `drop` del esclavo crecía durante la corrida. Ese
+  contador es `_syncDrops` (`psoc_uart.cpp`): cuenta bytes de TEXTO UART del PSoC descartados
+  por el framer mientras busca el marcador 0xAB — crece de forma benigna con cada línea de log
+  del PSoC, incluso en idle (observado: +58 en reposo, +18/+14 en corridas de 12 min). Solo
+  `bBad`/`badLen` indican frames corruptos. Fix: `uart_integrity_errors()` bloquea únicamente
+  por bBad/badLen y el delta de drops queda informativo en el JSON (`sync_drops_delta`);
+  self-test cubre ambos casos. La 1ª corrida E15 (capture 60000/60000 PERFECTA) solo falló
+  por este criterio; la 2ª cerró PASS integral.
+- **OK-4 (E17)**: el PSoC re-arma deliberadamente `g_sd_cap_en=1` al boot si la SD está
+  presente y el FAT montado (`main.c`, tras `sd_session_recover()`): default field-safe para
+  que tras un power-cycle en campo las capturas sigan yendo a SD sin necesitar 0xBE. No es un
+  bug; los criterios post-reset deben esperar bit 0x40 ENCENDIDO (status 0x71/0x77).
 - **W5 (menor, UI)**: el preview "N (decimación) → Hz" usa el valor del INPUT (localStorage),
   no el confirmado por ACK — puede diferir de la Fs real de la barra superior hasta apretar
   "Aplicar N". Confuso pero coherente con el patrón input+Apply.
@@ -143,6 +167,13 @@ Para emitir PASS deben cumplirse **todos** los invariantes del JSON:
 **Gate cerrado:** E5c, W7, reconexión, ping, `/health` y smoke post-upload pasaron. El sistema
 disponible en este banco queda **LISTO PARA CAMPO**.
 
+**Ampliación de cobertura cerrada (2026-07-12, segunda tanda):** E12/E13 (fallas WS y STOP),
+E14 (operador UI completo con export y beforeunload), E15 (tope SD 60000), E16 (transiciones
+rango/decimación), E17 (power-cycle PSoC + recovery SD) y E18 (mini-soak 5/5) — **todo PASS**.
+Con esto el veredicto LISTO PARA CAMPO queda ratificado con el tope de la jerarquía de memoria,
+el recorrido de operador real y el ciclo de reset físico validados. Los únicos pendientes
+siguen siendo los de hardware ausente (HAMMER E2E y multi-esclavo) y H4 opcional.
+
 ## Pendientes fuera del banco y mejora post-campo
 
 - **Requieren hardware no presente:** duración HAMMER E2E con nodo HAMMER físico y prueba
@@ -155,5 +186,10 @@ disponible en este banco queda **LISTO PARA CAMPO**.
 - La auditoría multiagente (6 subagentes) murió por límite de sesión — auditoría hecha inline.
 - Reflash del esclavo ⇒ el PSoC se cuelga ⇒ `ToggleReset` KitProg SIEMPRE después.
 - Commits relevantes, sin placeholders: `a6600941`, `3d9dbdf9`, `738f9454`, `a85565c1`,
-  `42fd0b71`, `dea23474`, `7e4e332b`, `c7414403`, `89816ca5`, `8c80a15e`. Esta
-  actualización documental final se commitea inmediatamente después de `8c80a15e`.
+  `42fd0b71`, `dea23474`, `7e4e332b`, `c7414403`, `89816ca5`, `8c80a15e`, `ae2d0315`,
+  `f4461dd9` (runners E15/E16/E17 + gate USB + ws_fault + evidencia E15). Esta actualización
+  documental de la segunda tanda se commitea inmediatamente después de `f4461dd9`.
+- Runners persistentes del banco (todos con `--self-test` offline): `slave/usb_regression_test.py`
+  (gate 33/33), `slave/sd_max_regression_test.py` (E15), `slave/adc_decim_transitions_test.py`
+  (E16), `slave/psoc_reset_recovery_test.py` (E17, ejecuta ToggleReset por ppcli él solo),
+  `master/ws_fault_test.py` (E12/E13), `master/ws_capture_test.py` (aceptación/smoke).

@@ -26,7 +26,9 @@
 
 E1 RAM 4 lotes ✅ · E2 SD 600 ✅ · E3 SD 3000 ✅ · E6 decim-2 radio 3000/3000 ✅ ·
 E6b FIR radio 3000/3000 ✅ · E7 0xBE ✅ · E8 0xAD ✅ · E9 USB estricto 33/33 ✅ ·
-E10 UI Chrome ✅ ·
+E10 UI Chrome ✅ · E12 reconexión WS ✅ · E13 STOP vivo ✅ · E14 operador UI ✅ ·
+E15 SD 60000 ✅ · E16 transiciones rango/decim 49/49 ✅ · E17 power-cycle+recovery 30/30 ✅ ·
+E18 mini-soak 5/5 ✅ ·
 **E5b: captura de 10 min PERFECTA (52080 lotes a SD, F1 fix validado) + dump 93.2 % impecable**
 (el corte fue del cliente Python, F5). Un E5c heredado tampoco sirve como aceptación: la SD
 capturó 52080/52080, pero el archivo del cliente terminó truncado en 147451/1562400 muestras.
@@ -179,18 +181,31 @@ el tamaño aparente del archivo:
   contaba el delta de `drop` (`_syncDrops`) como corrupción UART; ese contador crece de forma
   benigna con cada byte de texto UART del PSoC descartado por el framer (incluso en idle).
   Corregido: solo `bBad`/`badLen` bloquean; el delta de drops queda informativo en el JSON.
-- **Pendientes de la ampliación de cobertura (no declarar PASS todavía):** E14, recorrido de
-  operador UI completo (captura, exportación y `beforeunload`); E16, transiciones dirigidas
-  de rangos ADC y decimación (runner `adc_decim_transitions_test.py` listo, self-test 13/13);
-  E17, reset físico PSoC + auto-cal + recovery SD (runner `psoc_reset_recovery_test.py`
-  listo, self-test 9/9).
+- **Ampliación de cobertura CERRADA (2026-07-12, todo PASS; detalle en la matriz):**
+  - **E14 UI real**: panel esclavo con RSSI real (-16 dBm, cierra el pendiente RSSI de
+    `WEB_FIELD_TESTS.md`), Máx RAM 5.89 s/512, captura UI E2E 512 lotes/15360 muestras
+    exactas, ZIP de export íntegro (15360×4 B raw), `beforeunload` activo/limpio verificado
+    por dispatch sintético (sin disparar el modal), rango ADC round-trip navegador→PSoC con
+    ACK verde, 0 errores de consola. Nota entorno: Chrome deja el ZIP como `.tmp` (Safe
+    Browsing sin internet en el AP); el `.tmp` es el ZIP completo.
+  - **E16 transiciones** (`adc_decim_transitions_test.py`): 49/49 — r1→r2→r4→r3→r1 y
+    d1→d2→d6→d3→d4→d1 con fs exacta en cada paso, combo r4+d3, rechazos locales de valores
+    inválidos, restauración. Confirmó que la clase transitoria F6 también afecta a 0xB7 y al
+    `cap` post-config (ignorado en silencio); el retry acotado de 2 intentos lo salva SIEMPRE.
+  - **E17 power-cycle** (`psoc_reset_recovery_test.py`, ejecuta ToggleReset por ppcli él
+    solo): 30/30 — auto-cal 18.2 s, GEOLAST de 60000 recuperado COMPLETE tras el reset,
+    **capture re-armado por diseño al boot** (`g_sd_cap_en=1` con SD montada — esperar 0x40
+    ENCENDIDO post-reset, no apagado), ACKs y capturas RAM+SD+sdread post-reset limpias.
+  - **E18 mini-soak**: 5×120/120 con SHA únicos + probe final limpio + `/health` ok.
 - **Pendientes que requieren hardware ausente del banco:** duración HAMMER E2E con nodo
   HAMMER físico y escenario multi-esclavo (2 GEO + HAMMER).
 - **Mejora opcional post-campo, no bloqueante:** H4, prefetch de bloque SD en el PSoC para
   llevar el dump a aproximadamente 2× de velocidad.
 - **Gate de salida CERRADO:** E5c y la publicación final pasaron. El sistema disponible en
   este banco queda **LISTO PARA CAMPO**; HAMMER E2E y multi-esclavo siguen explícitamente fuera
-  de alcance por falta de hardware, no como fallos.
+  de alcance por falta de hardware, no como fallos. La segunda tanda (E12-E18, 2026-07-12)
+  ratificó el veredicto con el tope de jerarquía SD (60000), el recorrido de operador real y
+  el ciclo de power-cycle validados en hardware.
 
 ## 6. Commits de la sesión (más viejo→nuevo)
 
@@ -205,10 +220,12 @@ el tamaño aparente del archivo:
 - `89816ca5` docs: handoff de la auditoría pre-campo 2026-07-11/12
 - `8c80a15e` tool: F5 pre-DATA+self-test + W7 + receta WlanConnect corregida + JSON E5c PASS
 - `ae2d0315` docs: cierre E5c y veredicto pre-campo del banco disponible
+- `f4461dd9` testbench: E15 SD max 60000 PASS + runners E16/E17 + gate USB/E12/E13 + evidencia
 
-La ampliación E9/E12/E13, los nuevos runners y estas notas están todavía en el working tree y
-deben commitearse juntas después de revisar E15; usar el HEAD de la rama y este documento como
-punto de continuidad.
+Después de `f4461dd9` se ejecutaron y cerraron PASS: E17 (con fix de criterio post-boot),
+E16 (con retry acotado en capturas post-config), E14 y E18; sus evidencias están en
+`slave/artifacts/` y el cierre documental es el commit siguiente. El banco quedó sano al
+cierre (probe limpio, fs=2604, bBad=0, `/health` ok).
 
 ## 7. Herramientas de la sesión (scratchpad, recrear si hace falta)
 
@@ -219,8 +236,12 @@ Patrón común: pyserial dtr/rts=False timeout=0.2; WS handshake manual + takeov
 un scratch: usar el script persistente versionado
 `src/esp/Nodo comunicación/master/reconnect_geonetwork.py`.
 
-Herramientas persistentes nuevas en el working tree: `slave/usb_regression_test.py` (gate USB
-33/33), `master/ws_fault_test.py` (E12/E13) y `slave/sd_max_regression_test.py` (E15, pendiente
-de ejecución/veredicto). Evidencia cruda de esta tanda en el scratchpad: `repeat_e2e.json`,
-`e12_reconnect.json`, `e13_stop_running_settled.json` y `e13_stop_dump.json` junto a sus
-`.i24le`/smokes.
+Herramientas persistentes ya versionadas (todas con `--self-test` offline):
+`slave/usb_regression_test.py` (gate USB 33/33), `slave/sd_max_regression_test.py` (E15 PASS),
+`slave/adc_decim_transitions_test.py` (E16 PASS), `slave/psoc_reset_recovery_test.py` (E17
+PASS; descubre el KitProg con GetPorts y ejecuta ToggleReset por ppcli él solo) y
+`master/ws_fault_test.py` (E12/E13). Evidencia versionada en `slave/artifacts/`
+(`e15_sd_max_60000_pass.json`, `e16_adc_decim_transitions_pass.json`,
+`e17_reset_recovery_pass.json`) y `master/artifacts/` (E5c). Evidencia cruda adicional en el
+scratchpad de las sesiones: `repeat_e2e.json`, `e12_reconnect.json`,
+`e13_stop_running_settled.json`, `e13_stop_dump.json` y sus `.i24le`/smokes.
