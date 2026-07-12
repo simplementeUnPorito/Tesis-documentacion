@@ -25,12 +25,13 @@
 | E3 | Captura SD mediana por radio | `-n 3000` (34.6 s) | ✅ PASS 90000/90000, dump 102 s |
 | E4 | Log COM12 durante E3 | logger pyserial paralelo | ⚠️ ~108 `SD_READ timeout seq=N` (3.6 %, periódico ~26 lotes) absorbidos por retry maestro — funciona pero con tráfico NACK extra (ver H3) |
 | E5 | **Aceptación 10 min** (1er intento, firmware previo al fix F1) | `--seconds 600 --fs 2604` = 52080 lotes | ❌ FAIL — reprodujo F1 y reveló la causa raíz real (ver F1) |
-| E5b | **Aceptación 10 min** con fix F1 en esclavo | ídem tras flash F1+H3 | 🔄 EN CURSO |
-| E6 | Decimación por radio (0xBB global) + captura decimada | WS: SET_CONFIG 0xBB=3, VER chico, fs=868 | ⏳ tras E5 |
-| E7 | SD toggle web (0xC0) vs 0xBE del tool | WS + revisar slave handleSetConfig | ⏳ tras E5 |
-| E8 | Duración HAMMER (0xAD) — set/ACK/preview | WS: AD=300 → ACK; sin nodo HAMMER real solo se valida el set | ⏳ tras E5 |
-| E9 | Regresión USB banco (cap/decim/sdcap/sdread) post-todo | COM12 | ⏳ al final |
-| E10 | UI real en Chrome (botones nuevos, captura, export) | claude-in-chrome → 192.168.4.1 | ⏳ si la extensión está disponible |
+| E5b | **Aceptación 10 min** con fix F1 en esclavo | ídem tras flash F1+H3 | ◐ PARCIAL — captura 600 s PERFECTA (SD_SESSION 0x01, fill=52080/52080, **sin SYNC_STALL → F1 fix validado**); dump impecable hasta 93.2 % (48562 lotes, 4.37 MB por radio, 0 errores) y ahí el CLIENTE Python se colgó (socket half-open sin FIN, sin watchdog de silencio → F5). El maestro pausó el dump correctamente (datos preservados). No es fallo de firmware. |
+| E5c | **Aceptación 10 min** con tool endurecido (F5 fix) | ídem, watchdog de silencio 20 s en el tool | 🔄 EN CURSO |
+| E6 | Decimación por radio + captura decimada | 0xBB=2 dirigido + VER 100 lotes a fs 1302 | ✅ PASS 3000/3000 muestras; restore a decim 1 OK. Nota: `ws_capture_test` NO sirve para esto (fuerza decim=1 hardcodeado) — se hizo con driver WS propio |
+| E7 | SD toggle web (0xBE) | code-review + runtime (E2/E3/E5 usan 0xBE) | ✅ PASS — web usa 0xBE; 0xC0 obsoleto rechazado siempre; flag ESP dual-alimentado (ACK 0xBE + bit6 SD_STATUS) |
+| E8 | Duración HAMMER (0xAD) set/ACK | WS: AD=300 → ACK val=44 (=300&0xFF, F2 cosmético); AD=0 → val=0 | ✅ PASS (E2E completo requiere nodo HAMMER físico) |
+| E9 | Regresión USB banco post-fixes | probe/sdinfo/cap RAM d1·d3/SD cap+sdread 0·99·fuera-de-rango/FIR d2 | ✅ **9/9 PASS** |
+| E10 | UI real en Chrome | claude-in-chrome → 192.168.4.1 (web nueva vía uploadfs) | ✅ PASS — botones Máx RAM(512)+Máx SD(60000) presentes y funcionan; Duración GEOs/HAMMER con preview correcto; panel S1: decimación global (indicador), SD detectada (ON), RSSI −19 dBm. Hallado W6 (off-by-one 513, corregido con floor) |
 
 ## Fallos / hallazgos
 
@@ -58,14 +59,38 @@
   `PSOC_SD_READ_TIMEOUT_MS 250` del esclavo vence, NACK, retry del maestro. Funciona, pero
   el margen es fino: subir a ~400-500 ms y/o `DUMP_BATCH_TIMEOUT_MS 300→400` absorbería casi
   todos. Candidato a fix tras E5.
-- **W1 (UI)**: el usuario cree haber agregado botón "Máx RAM" — NO existe (solo "Máx SD
-  (60000)"). Agregar "Máx RAM (512)" que fije Duración GEOs a 512×30/fs.
+- **H4 (rendimiento, NO bloquea campo)**: durante el dump SD de E5b (52080 lotes) se midió
+  que ~1 de cada 26 lecturas 0xBF tarda **~1.2-1.5 s** (2 timeouts de 450 ms + retry hasta
+  éxito; máx 2 timeouts por seq, después siempre entrega). Esas ~2000 lecturas lentas suman
+  ~22 min del dump de ~40 min. El retry maestro↔esclavo lo absorbe SIEMPRE (0 lotes perdidos),
+  pero el dump sería ~2× más rápido con prefetch del bloque siguiente en el PSoC
+  (leer block+1 apenas se envía el frame) o fast-seek CLMT de FatFs. Candidato post-campo.
+- **W1 (UI)**: el usuario cree haber agregado botón "Máx RAM" — NO existía (solo "Máx SD
+  (60000)"). CORREGIDO: agregado "Máx RAM (512)" (index.html + app.js, commit 42fd0b71);
+  falta `uploadfs` a COM8.
 - **W2 (menor)**: "Máx SD" no avisa si el esclavo no tiene SD (el clamp del esclavo salva,
   y `dumpBatchesForNode` evita la tormenta, pero la UI debería avisar).
 - **OK-1**: `sync_protocol.h` maestro/esclavo: idénticos semánticamente (solo comentarios).
 - **OK-2**: constantes web/ESP coherentes: 60000 SD / 512 RAM / 30 muestras-lote / 2604 Hz.
 - **OK-3**: buffers web se redimensionan a la captura (`resizePresentCaptureBuffers`); 60000
   lotes = 1.8 M muestras ≈ 29 MB por nodo activo en el navegador — OK en PC, vigilar en celular.
+
+- **F5 (tooling, corregido)**: `ws_capture_test.py` no detectaba un socket WS medio-muerto
+  (drop de WiFi sin FIN): `poll_once` devolvía timeout limpio para siempre y el tool esperaba
+  todo el `dump_timeout` (46 min) sin reconectar → E5b congelado al 93.2 %. Fix: watchdog de
+  silencio (sin DATA >20 s en fase dump → drop + re-takeover; el maestro reanuda donde quedó).
+- **F6 (menor, transitorio)**: un segundo 0xBB (decim) inmediatamente después de otro puede
+  dar `PSoC cfg ack timeout 750 ms` una vez; el reintento inmediato funciona. La web ya
+  serializa configs y reintenta. También pasa si se manda 0xBB con la auto-cal del PSoC
+  corriendo (tras ToggleReset esperar ~60 s o reintentar).
+- **W5 (menor, UI)**: el preview "N (decimación) → Hz" usa el valor del INPUT (localStorage),
+  no el confirmado por ACK — puede diferir de la Fs real de la barra superior hasta apretar
+  "Aplicar N". Confuso pero coherente con el patrón input+Apply.
+- **W6 (corregido)**: "Máx RAM" fijaba 5.90 s → recomputaba 513 lotes (ceil) y el esclavo
+  clampaba a 512. Corregido con floor (5.89 s → 512 exactos). Falta re-uploadfs.
+- **Operativo WiFi**: `netsh wlan connect` está bloqueado sin permiso de ubicación/elevación
+  en esta máquina; la reconexión a GeoNetwork sin usuario se logra con **WlanConnect por
+  ctypes** (perfil guardado, sin escaneo) — ver memoria del proyecto.
 
 ## Operativa
 
