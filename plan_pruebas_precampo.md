@@ -113,6 +113,21 @@
   por bBad/badLen y el delta de drops queda informativo en el JSON (`sync_drops_delta`);
   self-test cubre ambos casos. La 1ª corrida E15 (capture 60000/60000 PERFECTA) solo falló
   por este criterio; la 2ª cerró PASS integral.
+- **F9 (REPORTADO POR EL USUARIO 2026-07-12, en investigación)**: pruebas manuales del
+  usuario sobre el banco: (a) captura de 3 s con N=1 **por VER: OK**; (b) captura Máx RAM
+  **por VER: OK**; (c) captura ~20 % por encima de Máx RAM (encadenado) **por VER: OK**;
+  (d) **START no funciona y además deja el sistema roto** — hay que reiniciar el nodo para
+  que vuelva a responder. Contexto de código: el botón START de la web usa WS `0xA3` →
+  `beginPrestart(PRESTART_ACTION_START)` → `CMD_START` broadcast (flujo sincronizado
+  multi-nodo estilo MATLAB), mientras VER usa WS `0xB2` → `CMD_VIEW 0x24` unicast +
+  HOTWAIT_QUERY + START dirigido. El encadenado/SD >512 se validó E2E sobre el camino VIEW
+  (E5c/E15); el camino START broadcast no tiene validación equivalente con N>512. Nota: E14
+  ejercitó START desde la UI con exactamente 512 lotes (máx RAM) y completó bien, lo que
+  acota el fallo al escenario reportado. **Actualización del usuario**: START parece romper
+  SIEMPRE, sin importar si la captura es solo-RAM o mayor — no es exclusivo del encadenado
+  (el START exitoso de E14 pudo depender del estado previo: primera captura tras reload,
+  sin STOP/re-ARM previos). EN INVESTIGACIÓN — reproducción con logger COM12 en curso;
+  veredicto y fix abajo cuando cierre.
 - **OK-4 (E17)**: el PSoC re-arma deliberadamente `g_sd_cap_en=1` al boot si la SD está
   presente y el FAT montado (`main.c`, tras `sd_session_recover()`): default field-safe para
   que tras un power-cycle en campo las capturas sigan yendo a SD sin necesitar 0xBE. No es un
