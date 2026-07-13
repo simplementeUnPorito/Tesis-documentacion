@@ -1,0 +1,66 @@
+\section{Experimental Validation}
+
+\subsection{Prototype and Comparison Conditions}
+
+The validation uses the final SM-24 GEO prototype containing all four independently controlled VDAC references. Three configurations must be compared on the same hardware:
+
+\begin{enumerate}
+\item \emph{Nominal}: fixed nominal VDAC references without calibration;
+\item \emph{ADDER-only}: the earlier workaround, in which only a fixed DC value is introduced at the ADDER stage; and
+\item \emph{Proposed}: sequential four-stage calibration followed by frozen-reference acquisition.
+\end{enumerate}
+
+This within-device comparison isolates the effect of the calibration strategy from component tolerances among different board revisions.
+
+\todoexp{Definir una condición eléctrica reproducible para el ensayo: preferentemente cortocircuitar las entradas diferenciales después de verificar que no se altera el bias; como alternativa, usar el SM-24 inmóvil sobre una base pesada y registrar la condición ambiental. Usar exactamente la misma condición en los tres modos.}
+
+\subsection{Required Measurements}
+
+For every configuration, the ADC multiplexer must record the mean and standard deviation at PGA, BP, ADDER, and LP. In addition to final offset, intermediate-node headroom must be reported because it is the main advantage over an ADDER-only correction.
+
+\todoexp{Experimento principal: registrar 5--10 s de cada etapa en los modos Nominal, ADDER-only y Proposed. Informar media DC, ruido RMS, distancia al riel más cercano y presencia de clipping. Este experimento debe producir la figura comparativa central del paper.}
+
+Calibration repeatability must be assessed by executing at least 20 independent runs on the final board. Each run should begin from the same nominal DAC seed or from a controlled random seed. The recorded variables are convergence status, time, final DAC code, and residual offset for each stage.
+
+\todoexp{Ejecutar $N\geq20$ calibraciones y exportar un CSV con: run, PGA gain code, initial DAC[4], final DAC[4], initial offset[4], final offset[4], convergence time[4], total time y success/failure.}
+
+Finally, the experiment must demonstrate why the method permits more aggressive programmable gain. A low-distortion sinusoid can be injected while the gain is increased until clipping occurs. The same input amplitude and frequency must be used for all three correction strategies.
+
+\todoexp{Barrido de ganancia: seleccionar una frecuencia cómoda y estable, por ejemplo 10 Hz, e incrementar el código PGA. Para cada modo medir amplitud útil máxima, margen al riel y THD o, como mínimo, porcentaje de muestras recortadas.}
+
+\suggestion{Si todavía puede activarse el servo-DC implementado, medir dos configuraciones: una lenta que preserve la banda baja y otra rápida. Comparar tiempo de centrado, respuesta a un cambio de ganancia PGA y atenuación de señales lentas. Esta figura respaldaría cuantitativamente por qué se abandonó el servo continuo.}
+
+\suggestion{Si hay tiempo, inyectar senoidales de 1, 2, 5, 10, 20 y 50 Hz antes y después de calibrar. No se utilizará para afirmar una extensión de respuesta hasta 1 Hz; servirá únicamente para comprobar que, con los DAC congelados, la calibración no modifica apreciablemente la ganancia AC.}
+
+\suggestion{Una prueba de calentamiento de 30--45 min puede reforzar el argumento de deriva: registrar el offset con referencias fijas y luego ejecutar una nueva calibración. Debe presentarse como prueba de banco, no como caracterización térmica formal, salvo que se controle la temperatura.}
+
+\begin{table}[t]
+\caption{Quantitative comparison to be completed on the final GEO prototype.}
+\label{tab:results}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.31\columnwidth}ccc}
+\toprule
+Metric & Nominal & ADDER-only & Proposed\\
+\midrule
+Final LP offset (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
+Worst intermediate offset (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
+Minimum rail headroom (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
+Maximum unclipped input (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
+Calibration success rate & N/A & N/A & \textcolor{draftred}{TBD}\\
+Median calibration time (s) & N/A & N/A & \textcolor{draftred}{TBD}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\draftfigure{32mm}{Experimental comparison of the three DC-correction strategies.}{Figura multipanel sugerida: (a) cuatro offsets antes/después; (b) distribución de DAC final en 20 corridas; (c) señal recortada sin calibración frente a señal centrada; (d) tiempo de convergencia por etapa. Reemplazar esta caja por resultados reales.}
+
+\subsection{Preliminary Observation}
+
+During bench development, uncompensated stage drift reached the order of volts and became impractical by the ADDER output. Injecting a fixed DC value at that summing node was functional and recentered the selected point, but previous and subsequent stages remained uncompensated. With the four-VDAC procedure enabled, all observed stages remained approximately within $\pm100$~mV of their target during informal bench tests. The final GEO topology has also completed the full sequential calibration after correction of an assembly fault. These observations establish functional feasibility, but they were not collected under a controlled protocol; the quantitative data in Table~\ref{tab:results} are required before claims of accuracy, repeatability, or dynamic-range improvement can be made.
+
+\todoexp{Confirmar con registros exportables la observación preliminar de deriva del orden de voltios y residual de aproximadamente $\pm100$ mV. No presentar esos límites como especificación garantizada hasta repetir el ensayo.}
+
+\suggestion{Agregar una tabla pequeña de recursos del build GEO final: opamps, VDAC, bloques SC/CT, DFB, ADC, flash y SRAM. El reporte actual del repositorio parece corresponder al build HAMMER de dos VDAC y no debe usarse por error.}
+

@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net" modified="2026-07-12T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="system-autocalibration" name="System architecture">
+    <mxGraphModel dx="1900" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1900" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="IoT Geophone Node with Foreground Analog Autocalibration" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#222222;" vertex="1" parent="1">
+          <mxGeometry x="500" y="35" width="900" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="geophone" value="&lt;b&gt;SM-24&lt;/b&gt;&lt;br&gt;Geophone" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=2;fontSize=17;arcSize=12;" vertex="1" parent="1">
+          <mxGeometry x="45" y="315" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="psoc" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d79b00;strokeWidth=3;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="265" y="145" width="1140" height="750" as="geometry"/>
+        </mxCell>
+        <mxCell id="psoc-title" value="&lt;b&gt;PSoC 5LP&lt;/b&gt; — scope of this work" style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontColor=#8a4b08;" vertex="1" parent="1">
+          <mxGeometry x="300" y="165" width="430" height="45" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="acq-label" value="ACQUISITION PATH" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="305" y="245" width="220" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="afe" value="&lt;b&gt;Analog Front End&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;PGA → BP → ADDER → LP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=15;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="310" y="300" width="235" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="adc" value="&lt;b&gt;18-bit ΔΣ ADC&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Shared converter&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="600" y="300" width="155" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="dfb" value="&lt;b&gt;DFB / FIR&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Acquisition or DC estimator&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="810" y="300" width="175" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="dma" value="&lt;b&gt;DMA / SRAM&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Sample buffers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="300" width="155" height="125" as="geometry"/>
+        </mxCell>
+        <mxCell id="cpu" value="&lt;b&gt;ARM Cortex-M3&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Firmware and control&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="300" width="125" height="125" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="cal-label" value="FOREGROUND AUTOCALIBRATION PATH" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#a05200;" vertex="1" parent="1">
+          <mxGeometry x="305" y="505" width="310" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="vdacs" value="&lt;b&gt;4 × VDAC&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Per-stage analog correction&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="335" y="620" width="200" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="amux" value="&lt;b&gt;Analog Multiplexer&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Observe PGA, BP,&lt;br&gt;ADDER or LP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="590" y="620" width="200" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="controller" value="&lt;b&gt;Autocalibration Controller&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;PI implementation&lt;br&gt;deadband · anti-windup · limits&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;strokeWidth=2;fontSize=14;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="910" y="605" width="245" height="135" as="geometry"/>
+        </mxCell>
+        <mxCell id="foreground-note" value="Calibration only: ADC and DFB are reused; after convergence, DAC codes are frozen and the feedback path is disabled." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e6;strokeColor=#d79b00;dashed=1;fontSize=12;fontColor=#7f3f00;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="450" y="790" width="700" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uart" value="&lt;b&gt;UART&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=2;fontSize=15;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1455" y="325" width="90" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="esp32" value="&lt;b&gt;ESP32 Slave&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Wireless node&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=2;fontSize=15;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1595" y="310" width="165" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="master" value="&lt;b&gt;Master / UI&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#555555&quot;&gt;Coordination and storage&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=2;fontSize=15;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1595" y="570" width="165" height="105" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-sm24" value="Differential signal" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="geophone" target="afe"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-afe-adc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="afe" target="adc"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-adc-dfb" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="adc" target="dfb"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-dfb-dma" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="dfb" target="dma"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-dma-cpu" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="dma" target="cpu"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-cpu-uart" value="Serial data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cpu" target="uart"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-uart-esp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="uart" target="esp32"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-esp-master" value="ESP-NOW" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;dashPattern=8 4;strokeColor=#6c8ebf;fontColor=#4a6d9c;fontStyle=1;fontSize=12;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="esp32" target="master"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e-taps-amux" value="Stage taps" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=#d79b00;fontColor=#a05200;fontSize=11;labelBackgroundColor=#fff2cc;" edge="1" parent="1" source="afe" target="amux"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="475" y="545"/><mxPoint x="690" y="545"/></Array></mxGeometry></mxCell>
+        <mxCell id="e-amux-adc" value="Selected stage" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=#d79b00;fontColor=#a05200;fontSize=11;labelBackgroundColor=#fff2cc;" edge="1" parent="1" source="amux" target="adc"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-dfb-controller" value="DC estimate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=#d79b00;fontColor=#a05200;fontSize=11;labelBackgroundColor=#fff2cc;" edge="1" parent="1" source="dfb" target="controller"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-cpu-controller" value="Runs on Cortex-M3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;strokeWidth=1.5;dashed=1;dashPattern=3 3;strokeColor=#999999;fontColor=#666666;fontSize=11;labelBackgroundColor=#fff2cc;" edge="1" parent="1" source="cpu" target="controller"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-controller-vdac" value="DAC commands" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=#d79b00;fontColor=#a05200;fontSize=11;labelBackgroundColor=#fff2cc;" edge="1" parent="1" source="controller" target="vdacs"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-vdac-afe" value="Analog references" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=#d79b00;fontColor=#a05200;fontSize=11;labelBackgroundColor=#fff2cc;" edge="1" parent="1" source="vdacs" target="afe"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="legend" value="Continuous black arrows: acquisition &amp; communication   |   Dashed orange arrows: foreground calibration   |   Dashed blue arrow: wireless link" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;fontSize=11;fontColor=#555555;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="425" y="945" width="1050" height="55" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

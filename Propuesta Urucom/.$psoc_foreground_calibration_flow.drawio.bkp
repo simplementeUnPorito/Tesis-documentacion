@@ -1,0 +1,121 @@
+<mxfile host="app.diagrams.net" modified="2026-07-12T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="psoc-calibration-flow" name="Foreground calibration flow">
+    <mxGraphModel dx="1400" dy="1900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="2000" math="1" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="PSoC Foreground Per-Stage Calibration" style="text;html=1;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="20" width="620" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Controller-independent architecture; PI implementation shown" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="440" y="60" width="520" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="start" value="Boot, PGA-gain change,&#xa;or calibration command" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="600" y="110" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="load" value="Load EEPROM record for&#xa;selected PGA gain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="570" y="230" width="260" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="validrecord" value="Valid record&#xa;and CRC?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="610" y="340" width="180" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="applystored" value="Apply stored four-DAC code set" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="850" y="355" width="250" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="seed" value="Apply safe nominal DAC seeds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="355" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="verifycfg" value="Configure AMux + ADC + DFB&#xa;for rapid offset verification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="555" y="485" width="290" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="verify" value="All four stages&#xa;within tolerance?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="610" y="605" width="180" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="init" value="Select first stage&#xa;(PGA → BP → ADDER → LP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="220" y="750" width="260" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="observe" value="Route stage through AMux; reset DFB history;&#xa;settle for a configurable number of samples" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="185" y="865" width="330" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="estimate" value="Low-pass estimate DC level;&#xa;rescale ADC error to DAC domain" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="210" y="990" width="280" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="deadband" value="Error inside&#xa;deadband?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="260" y="1105" width="180" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="control" value="Controller update&#xa;(implemented as PI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="1117" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="limits" value="Apply sign and stage gain;&#xa;saturation + anti-windup + slew limit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="850" y="1110" width="285" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="writedac" value="Write selected stage DAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="870" y="980" width="245" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="limit" value="Watchdog or stage&#xa;sample limit reached?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="900" y="835" width="185" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="failed" value="Report calibration failure;&#xa;do not overwrite valid EEPROM record" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="855" width="260" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="stable" value="Inside same bucket for&#xa;configurable sample count?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="255" y="1255" width="190" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="refine" value="Try adjacent DAC code;&#xa;retain only if residual improves" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="210" y="1410" width="280" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="more" value="More stages?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="270" y="1525" width="160" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="next" value="Select next stage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="35" y="1538" width="180" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="save" value="Save verified gain-dependent&#xa;DAC codes and CRC to EEPROM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="550" y="1535" width="280" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="restore" value="Restore acquisition routing and DFB coefficients;&#xa;freeze all DAC codes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="1660" width="320" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="acquire" value="Acquire geophone signal&#xa;(calibration feedback inactive)" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="600" y="1785" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend" value="Orange: PSoC analog/digital hardware   Blue: firmware/control   Red: DAC actuation or failure   Yellow: decision" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="875" y="1580" width="430" height="65" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="start" target="load"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="load" target="validrecord"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="validrecord" target="applystored"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="validrecord" target="seed"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="applystored" target="verifycfg"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="seed" target="verifycfg"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="verifycfg" target="verify"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="verify" target="restore"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="700" y="740"/><mxPoint x="700" y="1640"/></Array></mxGeometry></mxCell>
+        <mxCell id="e9" value="No: recalibrate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="verify" target="init"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="init" target="observe"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="observe" target="estimate"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="estimate" target="deadband"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e13" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="deadband" target="control"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="control" target="limits"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="limits" target="writedac"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="writedac" target="limit"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e17" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="limit" target="observe"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e18" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="limit" target="failed"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e19" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="deadband" target="stable"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e20" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="stable" target="observe"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="120" y="1310"/><mxPoint x="120" y="905"/></Array></mxGeometry></mxCell>
+        <mxCell id="e21" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="stable" target="refine"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="refine" target="more"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e23" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="more" target="next"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="next" target="observe"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="70" y="905"/></Array></mxGeometry></mxCell>
+        <mxCell id="e25" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="more" target="save"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="save" target="restore"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="restore" target="acquire"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

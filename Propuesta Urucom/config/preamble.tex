@@ -1,0 +1,47 @@
+\documentclass[conference,a4paper]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage{microtype}
+\setlength{\emergencystretch}{1em}
+
+% -----------------------------------------------------------------------------
+% Internal-draft annotations. Remove every \todoexp, \suggestion and
+% \draftfigure before submission.
+% -----------------------------------------------------------------------------
+\definecolor{draftred}{RGB}{170,0,0}
+\definecolor{draftyellow}{RGB}{255,245,170}
+
+\newcommand{\todoexp}[1]{%
+  \par\smallskip\noindent
+  \fcolorbox{draftred}{red!4}{%
+    \parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
+      \scriptsize\textbf{\textcolor{draftred}{EXPERIMENTO/RESULTADO PENDIENTE: }}%
+      \textcolor{draftred}{#1}}}%
+  \par\smallskip}
+
+\newcommand{\suggestion}[1]{%
+  \par\smallskip\noindent
+  \fcolorbox{yellow!60!black}{draftyellow}{%
+    \parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
+      \scriptsize\textbf{SUGERENCIA: }#1}}%
+  \par\smallskip}
+\newcommand{\draftfigure}[3]{%
+	\begin{figure}[t]
+		\centering
+		\fcolorbox{draftred}{red!3}{%
+			\begin{minipage}[c][#1][c]{0.94\columnwidth}
+				\centering\scriptsize
+				\textbf{\textcolor{draftred}{FIGURA PENDIENTE}}\\[1mm]
+				\textcolor{draftred}{#3}
+		\end{minipage}}
+		\caption{#2}
+	\end{figure}%
+}
