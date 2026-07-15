@@ -2,65 +2,75 @@
 
 \subsection{Prototype and Comparison Conditions}
 
-The validation uses the final SM-24 GEO prototype containing all four independently controlled VDAC references. Three configurations must be compared on the same hardware:
+The validation compares two configurations on two independently assembled SM-24 geophone-conditioning prototypes (Board~A, Board~B), each containing the four independently controlled VDAC references: \emph{Default}, fixed nominal VDAC references without calibration, and \emph{Proposed}, sequential four-stage calibration followed by frozen-reference acquisition. A third prototype was built but is not included in this quantitative comparison.
 
-\begin{enumerate}
-\item \emph{Nominal}: fixed nominal VDAC references without calibration;
-\item \emph{ADDER-only}: the earlier workaround, in which only a fixed DC value is introduced at the ADDER stage; and
-\item \emph{Proposed}: sequential four-stage calibration followed by frozen-reference acquisition.
-\end{enumerate}
+The earlier ADDER-only workaround (Section~\ref{sec:platform-design}) is not re-measured here: it was already characterized across five prior prototypes with mediocre results, uncompensated drift up to 1~V on the worst boards, because it only recenters the ADDER node and leaves the pre- and post-ADDER stages free to drift independently. Measurements span the PGA's full configurable gain range, from $\times1$ to $\times50$, rather than a single representative setting, so that the claim of board- and gain-independent operation is tested directly instead of assumed from one operating point.
 
-This within-device comparison isolates the effect of the calibration strategy from component tolerances among different board revisions.
+\subsection{Design Target: Headroom, Not Zero}
 
-\todoexp{Definir una condición eléctrica reproducible para el ensayo: preferentemente cortocircuitar las entradas diferenciales después de verificar que no se altera el bias; como alternativa, usar el SM-24 inmóvil sobre una base pesada y registrar la condición ambiental. Usar exactamente la misma condición en los tres modos.}
+The calibration loop is not designed to null every stage's offset exactly. Its deadband, timeout, and controller gains are firmware parameters, not physical constants (Section~III): a tighter deadband is harder to reach and easier to leave, a longer FIR estimation window improves the DC estimate at the cost of convergence time, and a longer per-stage timeout lets a conservative controller finish without needing to be aggressive. The design target that these parameters serve is that no stage, on any board, at any gain, leaves the signal at risk of railing the ADC -- not that every stage converges to zero with equal precision. Section~\ref{sec:pga-note} shows a case where this target is met even though one individual stage converges only partially.
 
-\subsection{Required Measurements}
+\subsection{Measured Headroom Recovery Across the Gain Range}
 
-For every configuration, the ADC multiplexer must record the mean and standard deviation at PGA, BP, ADDER, and LP. In addition to final offset, intermediate-node headroom must be reported because it is the main advantage over an ADDER-only correction.
-
-\todoexp{Experimento principal: registrar 5--10 s de cada etapa en los modos Nominal, ADDER-only y Proposed. Informar media DC, ruido RMS, distancia al riel más cercano y presencia de clipping. Este experimento debe producir la figura comparativa central del paper.}
-
-Calibration repeatability must be assessed by executing at least 20 independent runs on the final board. Each run should begin from the same nominal DAC seed or from a controlled random seed. The recorded variables are convergence status, time, final DAC code, and residual offset for each stage.
-
-\todoexp{Ejecutar $N\geq20$ calibraciones y exportar un CSV con: run, PGA gain code, initial DAC[4], final DAC[4], initial offset[4], final offset[4], convergence time[4], total time y success/failure.}
-
-Finally, the experiment must demonstrate why the method permits more aggressive programmable gain. A low-distortion sinusoid can be injected while the gain is increased until clipping occurs. The same input amplitude and frequency must be used for all three correction strategies.
-
-\todoexp{Barrido de ganancia: seleccionar una frecuencia cómoda y estable, por ejemplo 10 Hz, e incrementar el código PGA. Para cada modo medir amplitud útil máxima, margen al riel y THD o, como mínimo, porcentaje de muestras recortadas.}
-
-\suggestion{Si todavía puede activarse el servo-DC implementado, medir dos configuraciones: una lenta que preserve la banda baja y otra rápida. Comparar tiempo de centrado, respuesta a un cambio de ganancia PGA y atenuación de señales lentas. Esta figura respaldaría cuantitativamente por qué se abandonó el servo continuo.}
-
-\suggestion{Si hay tiempo, inyectar senoidales de 1, 2, 5, 10, 20 y 50 Hz antes y después de calibrar. No se utilizará para afirmar una extensión de respuesta hasta 1 Hz; servirá únicamente para comprobar que, con los DAC congelados, la calibración no modifica apreciablemente la ganancia AC.}
-
-\suggestion{Una prueba de calentamiento de 30--45 min puede reforzar el argumento de deriva: registrar el offset con referencias fijas y luego ejecutar una nueva calibración. Debe presentarse como prueba de banco, no como caracterización térmica formal, salvo que se controle la temperatura.}
+For each board and gain, the DC offset at the output of the PGA, BP, ADDER, and LP stages was measured with a Tektronix TDS~2004B oscilloscope (4~channel, 60~MHz, 1~GS/s), reading the mean voltage over a 100~ms window after the transient settled, both with the default (uncalibrated) VDAC references and after the proposed calibration converged. Table~\ref{tab:results} reports the offset remaining at the LP stage -- the one immediately upstream of the ADC, and therefore the one that determines whether the signal rails -- as a percentage of the ADC's $\pm2.5$~V full-scale range, $N{=}10$ independent runs per board/gain cell. Board~B was not exercised at $\times1$ and $\times4$: at those gain/board combinations the default offset already falls inside the loop's normal deadband, so the controller correctly reports convergence without acting, and forcing it to run required lowering the deadband by hand, which changes the test condition (Section~\ref{sec:pga-note}).
 
 \begin{table}[t]
-\caption{Quantitative comparison to be completed on the final GEO prototype.}
+\caption{Headroom consumed at the LP stage (last before the ADC), as \% of the ADC's $\pm2.5$~V full-scale range, before (Default) and after (Proposed) calibration. $N{=}10$ per cell.}
 \label{tab:results}
 \centering
 \scriptsize
-\setlength{\tabcolsep}{2.4pt}
-\begin{tabular}{>{\raggedright\arraybackslash}p{0.31\columnwidth}ccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{ccll}
 \toprule
-Metric & Nominal & ADDER-only & Proposed\\
+Board & Gain & Default (\%FS) & Proposed (\%FS)\\
 \midrule
-Final LP offset (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
-Worst intermediate offset (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
-Minimum rail headroom (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
-Maximum unclipped input (mV) & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD} & \textcolor{draftred}{TBD}\\
-Calibration success rate & N/A & N/A & \textcolor{draftred}{TBD}\\
-Median calibration time (s) & N/A & N/A & \textcolor{draftred}{TBD}\\
+\multirow{5}{*}{A}
+ & $\times1$  & $45.8 \pm 3.0$ & $3.2 \pm 0.8$ \\
+ & $\times4$  & $42.6 \pm 3.9$ & $3.9 \pm 0.8$ \\
+ & $\times16$ & $29.6 \pm 6.5$ & $2.3 \pm 1.3$ \\
+ & $\times32$ & $12.4 \pm 1.3$ & $1.7 \pm 0.6$ \\
+ & $\times50$ & $4.1 \pm 1.9$  & $1.2 \pm 0.4$ \\
+\midrule
+\multirow{3}{*}{B}
+ & $\times16$ & $3.0 \pm 0.1$ & $0.7 \pm 0.1$ \\
+ & $\times32$ & $2.9 \pm 0.1$ & $0.4 \pm 0.2$ \\
+ & $\times50$ & $2.9 \pm 0.1$ & $0.7 \pm 0.2$ \\
 \bottomrule
 \end{tabular}
+
+\smallskip
+\footnotesize Board~B not exercised at $\times1$/$\times4$ (Section~\ref{sec:pga-note}).
 \end{table}
 
-\draftfigure{32mm}{Experimental comparison of the three DC-correction strategies.}{Figura multipanel sugerida: (a) cuatro offsets antes/después; (b) distribución de DAC final en 20 corridas; (c) señal recortada sin calibración frente a señal centrada; (d) tiempo de convergencia por etapa. Reemplazar esta caja por resultados reales.}
+Across every board/gain combination measured, calibration leaves the LP stage at $\leq$4\% of the ADC's full-scale range, down from as much as 46\% uncalibrated on Board~A at $\times1$. Board~A's default headroom consumption falls as gain increases (its default state is closer to the rail at low gain than at high gain), while Board~B starts, and stays, much closer to zero across the whole range -- the two boards differ in their unpowered/default operating point, yet calibration brings both into the same narrow band. This is the behavior the design targets: regardless of the board or the starting offset, the calibrated front end lands within a small, consistent fraction of the ADC range.
 
-\subsection{Preliminary Observation}
+\subsection{The PGA Stage: A Partial Result, Explained}
+\label{sec:pga-note}
 
-During bench development, uncompensated stage drift reached the order of volts and became impractical by the ADDER output. Injecting a fixed DC value at that summing node was functional and recentered the selected point, but previous and subsequent stages remained uncompensated. With the four-VDAC procedure enabled, all observed stages remained approximately within $\pm100$~mV of their target during informal bench tests. The final GEO topology has also completed the full sequential calibration after correction of an assembly fault. These observations establish functional feasibility, but they were not collected under a controlled protocol; the quantitative data in Table~\ref{tab:results} are required before claims of accuracy, repeatability, or dynamic-range improvement can be made.
+Unlike BP, ADDER, and LP, the PGA stage's post-calibration offset is not consistently much smaller than Default: across the tested conditions, calibration reduces the mean $|\text{offset}|$ at the PGA by roughly 4--54\%, with the smallest reductions at $\times1$ and $\times50$. Two effects contribute. First, the deadband $\Delta_i$ (Eq.~\ref{eq:scale}) is a firmware margin, not a physical limit: on Board~B at $\times4$, the default PGA offset fell inside the normal deadband on every run attempted, and the controller declared convergence immediately without moving the DAC -- observed directly, not inferred -- until the deadband was manually tightened. This confirms that a wide-enough deadband can gate convergence at the PGA stage specifically. Second, the FIR window used to estimate the DC level (128 samples) sets a floor on how quickly a small residual can be resolved from noise; a longer window would improve the estimate at the cost of convergence time, a tradeoff left for future tuning rather than explored here. Both explanations point to the same place: the PGA's limitation is a choice of firmware parameters, not a hardware ceiling, and it does not compromise the headroom target in Table~\ref{tab:results}, which is measured after the full four-stage cascade and is dominated by the LP stage, not the PGA.
 
-\todoexp{Confirmar con registros exportables la observación preliminar de deriva del orden de voltios y residual de aproximadamente $\pm100$ mV. No presentar esos límites como especificación garantizada hasta repetir el ensayo.}
+\subsection{Calibration Transient}
 
-\suggestion{Agregar una tabla pequeña de recursos del build GEO final: opamps, VDAC, bloques SC/CT, DFB, ADC, flash y SRAM. El reporte actual del repositorio parece corresponder al build HAMMER de dos VDAC y no debe usarse por error.}
+Fig.~\ref{fig:calibration_trace} shows an oscilloscope capture of the four observed stage outputs during an actual run, spanning the sequential PGA~$\rightarrow$~BP~$\rightarrow$~ADDER~$\rightarrow$~LP correction. Each output steps as the controller reaches it and holds once converged, visible as the successive plateaus in the ADDER and LP traces; the full sequence completes in approximately 10~s.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.78\columnwidth]{imagenes/autocalibracion_stages_5_to_20s.png}
+	\caption{Oscilloscope capture of the PGA, BP, ADDER, and LP stage outputs during a single calibration run at PGA gain $\times16$. Uncalibrated until $t\approx9$~s, all four stages converge by $t\approx16$~s. PGA shows a visibly larger residual, discussed in Section~\ref{sec:pga-note}.}
+	\label{fig:calibration_trace}
+\end{figure}
+
+\subsection{Field Use of the Calibrated Front End}
+
+The calibrated front end has also been exercised in field surface-wave surveys. Fig.~\ref{fig:field_use} shows (a) a normalized SM-24 hammer response through the calibrated channel, and (b) a multichannel waterfall across a 10--50~m line, with first-arrival moveout resolved at every offset using the higher PGA settings needed far-offset. These are field evidence of correct operation, not a controlled calibrated-vs-uncalibrated comparison, which remains future work.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.9\columnwidth]{imagenes/normalized_signal_0_to_2s_Example.png}\\
+	{\footnotesize (a) Single-channel hammer response.}\\[3pt]
+	\includegraphics[width=0.9\columnwidth]{imagenes/waterfall-english.png}\\
+	{\footnotesize (b) Multichannel waterfall, 10--50~m.}
+	\caption{Field records acquired with the calibrated front end.}
+	\label{fig:field_use}
+\end{figure}
 

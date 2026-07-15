@@ -2,24 +2,30 @@
 
 \subsection{Signal Conditioning and Observation Circuit}
 
-The final GEO prototype contains four calibrated points, denoted PGA, BP, ADDER, and LP. Each point has an independent 8-bit VDAC. An analog multiplexer connects one point at a time to the same 18-bit delta-sigma ADC used to digitize the geophone signal. Its readings are rescaled into VDAC-code-equivalent units, allowing the acquisition converter to serve as the error sensor without adding a second ADC. Software-enforced mutual exclusion prevents two analog outputs from being connected simultaneously.
+The final geophone-conditioning prototype, shown in Fig.~\ref{fig:system_architecture}, contains four calibrated points: the output of the programmable-gain amplifier (PGA), the band-pass filter (BP), the summing stage (ADDER), and the low-pass filter (LP), each with an independent 8-bit VDAC. An analog multiplexer connects one point at a time to the same 18-bit delta-sigma ADC used to digitize the geophone signal; its readings are rescaled into VDAC-code-equivalent units, letting the acquisition converter serve as the error sensor without a second ADC; software-enforced mutual exclusion prevents two analog outputs from being connected at once.
 
-The ADC observation path includes a switched capacitor behind the selected analog-multiplexer MOSFET. The switch on-resistance acts as the resistive element of a limited RC anti-alias and smoothing network. This placement also isolates the operational-amplifier output from a direct capacitive load that could compromise stability. The PSoC digital filter block is also reused. During normal operation it implements the geophone acquisition filter; during calibration, when that processing path would otherwise be idle, its coefficients are replaced by an aggressive low-pass response that provides a stable estimate of the DC level. The estimator could be implemented in firmware, but hardware reuse reduces CPU intervention and preserves the existing acquisition architecture. At the end of calibration, the acquisition coefficients and signal path are restored.
+The ADC observation path includes a switched capacitor behind the selected analog-multiplexer MOSFET, whose on-resistance forms a limited RC anti-alias network while isolating the amplifier output from a direct capacitive load. The PSoC digital filter block is also reused: during acquisition it implements the geophone filter, and during calibration its coefficients switch to an aggressive low-pass response that provides a stable DC-level estimate. Hardware reuse here reduces CPU intervention and preserves the existing acquisition architecture; acquisition coefficients and signal path are restored at the end of calibration.
 
 
 \begin{figure*}[t]
 	\centering
-	\includegraphics[width=\textwidth]{imagenes/system_architecture_autocalibration.drawio.png}
-	\caption{Proposed analog front end and digitally assisted calibration path.}
+	\begin{minipage}[b]{0.36\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imagenes/system_architecture_autocalibration.drawio.png}
+		\subcaption{System block diagram.}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.40\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imagenes/Schematic.pdf}
+		\subcaption{Analog front-end schematic.}
+	\end{minipage}
+	\caption{Proposed analog front end and digitally assisted calibration path: (a) system-level view of the acquisition and foreground calibration paths; (b) the corresponding analog front-end schematic, including the PGA, BP, ADDER, and LP stages, the four trim VDACs, and the shared ADC/multiplexer observation-and-correction path.}
 	\label{fig:system_architecture}
 \end{figure*}
 \subsection{Digitally Assisted Control Calibration}
 
-For each stage, the filtered observation $\hat{y}_i[n]$ produces the ADC-domain error
-\begin{equation}
- e_i[n] = r_i-\hat{y}_i[n],
-\end{equation}
-where $r_i=0$ for the current differential GEO configuration. The error is first mapped to the 8-bit DAC domain:
+For each stage, the filtered observation $\hat{y}_i[n]$ produces the ADC-domain error $e_i[n] = r_i-\hat{y}_i[n]$, where $r_i=0$ for the current differential geophone configuration. The error is first mapped to the 8-bit DAC domain:
 \begin{equation}
  \varepsilon_i[n] = \operatorname{round}\!\left(
  \frac{e_i[n]V_{\mathrm{ADC}}N_{\mathrm{DAC}}}
@@ -28,37 +34,53 @@ where $r_i=0$ for the current differential GEO configuration. The error is first
 \end{equation}
 with $V_{\mathrm{ADC}}=5000$~mV, $N_{\mathrm{ADC}}=262144$, $V_{\mathrm{DAC}}=4080$~mV, and $N_{\mathrm{DAC}}=255$ in the implemented configuration.
 
-The calibration architecture requires only that the selected stage be observable and that the trim DAC provide sufficient control range. The controller can therefore be selected according to the plant and application requirements. In this prototype, a positional PI law was used because it is computationally simple:
+The calibration architecture only requires the selected stage be observable and the trim DAC provide sufficient control range, so the controller can be chosen per application. In this prototype, a positional PI law was used for its simplicity:
 \begin{equation}
  u_i^*[n]=u_{i,0}+s_i\left[
- \frac{k_{p,i}}{K_i}\varepsilon_i[n]+\frac{k_{i,i}}{K_i}
+ \frac{k_{p,i}}{|K_i|}\varepsilon_i[n]+\frac{k_{i,i}}{|K_i|}
  \sum_{q=0}^{n}\varepsilon_i[q]\right],
  \label{eq:pi}
 \end{equation}
-where $u_{i,0}$ is the nominal feedforward code, $s_i$ accounts for the injection polarity, and $K_i$ is the signed physical gain from a VDAC variation to the selected ADC node. For the PGA stage, $K_i$ is calculated from the currently programmed gain; the remaining stage gains are stored in the calibration table.
+where $u_{i,0}$ is the feedforward code, an initial DAC value near stage $i$'s expected operating point; $s_i\in\{-1,+1\}$ is the injection polarity; and $K_i>0$ is the magnitude of the DC gain from the DAC's injection point to the shared observation node -- i.e., how much a static VDAC code change at stage $i$ moves the observed node, expressed in ADC-equivalent counts per VDAC code (Eq.~\ref{eq:scale}). $K_i$ is a nominal design value, fixed for BP, ADDER, and LP ($2$, $7.89$, and $6$, reflecting downstream gain, not individually measured per board); for PGA, $K_i$ and $s_i$ are recomputed from the active gain code.
 
-The command is saturated to the valid VDAC interval and limited to one code per processed sample. Conditional integration provides clamping anti-windup. The deadband is
-\begin{equation}
- \Delta_i=\max\!\left(1,\left\lceil1.2|K_i|\right\rceil\right)
-\end{equation}
-in equivalent DAC codes. Convergence requires the error to remain within the same quantized bucket for a configurable number of samples. A final trial at the adjacent VDAC code is retained only if it reduces the absolute filtered error. More elaborate control laws could be substituted without changing the observation and correction hardware.
+The command $u_i^*[n]$ of Eq.~\ref{eq:pi} is saturated to the valid VDAC interval and limited to one code per sample, with conditional integration for clamping anti-windup. The deadband is $\Delta_i=\max(1,\lceil1.2|K_i|\rceil)$ DAC codes; convergence requires the error to stay in the same quantized bucket for a configurable number of samples, and a final adjacent-code trial is kept only if it reduces the filtered error. If a stage misses its deadband before a per-stage timeout, the DAC stays at the best code found, the stage is flagged not converged, and the sequence moves on, bounding worst-case time without leaving any stage arbitrary or saturated.
 
-The 8-bit VDAC resolution is sufficient for the offset range and residual-error target of the present prototype. If a different application requires a smaller correction step, a PSoC IDAC and a resistor can generate a tailored voltage range; buffered and bidirectional topologies can also provide finer effective VDAC resolution \cite{InfineonAN60305}. This is an implementation option rather than a limitation of the calibration principle: the controller, correction range, and step size can be adapted to the expected drift while retaining the same observe--estimate--correct sequence.
+Table~\ref{tab:cal_params} lists the parameters used, to support reproduction. Settle is 512 samples (0.20~s) for PGA/BP/ADDER and 1024 (0.39~s) for LP; lock requires 512 or 1024 consecutive in-deadband samples, and refinement settles a further 1024--2048 samples. Timeouts are worst-case ceilings, not the typical duration shown in Fig.~\ref{fig:calibration_trace}.
+
+\begin{table}[t]
+\caption{Implemented per-stage calibration parameters. The DC estimator runs at the ADC native sample rate of 2604~Hz.}
+\label{tab:cal_params}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\toprule
+Stage & $K_i$ & $k_{p,i}$ & $k_{i,i}$ & Timeout (s)\\
+\midrule
+PGA   & gain-dependent & $10^{-3}$ & $3\times10^{-4}$ & 11.5\\
+BP    & 2 & $10^{-4}$ & $5\times10^{-4}$ & 17.3\\
+ADDER & 7.89 & $10^{-4}$ & $5\times10^{-4}$ & 11.5\\
+LP    & 6 & $10^{-4}$ & $5\times10^{-4}$ & 17.3\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 8-bit VDAC resolution suffices here; a finer step could use a PSoC IDAC/resistor or a buffered topology \cite{InfineonAN60305} -- an implementation choice, not a limitation, since controller, range, and step size can all adapt while keeping the same observe--estimate--correct sequence.
 
 \subsection{Embedded Sequence and Persistence}
 
-At boot, after a gain change, or upon command, the firmware loads the stored DAC values for the selected PGA setting and verifies the resulting stage offsets. If every stage is already within tolerance, the measurement path is restored without executing a complete calibration. Otherwise, the controller processes PGA, BP, ADDER, and LP sequentially. Each stage is allowed to settle for a configurable number of samples after multiplexer switching and FIR-history reset. A watchdog and a per-stage sample limit prevent an indefinite calibration.
+At boot, after a gain change, or upon command, the firmware loads the stored DAC values, verifies the resulting offsets, and restores the measurement path without a full run if every stage is within tolerance. Otherwise it processes PGA, BP, ADDER, and LP sequentially, settling after each multiplexer switch and FIR-history reset; a watchdog and per-stage sample limit bound the run.
 
-Successful codes can be stored in EEPROM. Nine records correspond to the nine programmable PGA settings. Each record contains the hardware class, gain code, stage count, valid-stage mask, four DAC codes, format version, and CRC. Under unchanged operating conditions, changing gain therefore usually requires only loading and verifying a previously calibrated code set. If verification fails because the operating conditions or drift have changed, the complete sequence runs automatically. A failed or incomplete run is not allowed to overwrite a previously valid record.
+Successful codes are stored in EEPROM, one record per PGA setting (hardware class, gain code, stage/valid-stage mask, four DAC codes, version, CRC); an unchanged setup only needs to load and verify a prior record, and a failed run never overwrites a valid one.
 
-During acquisition the PI is inactive, the observation multiplexer is returned to the LP output, and all VDAC codes remain constant. Thus, the method changes the DC operating point but does not introduce a time-varying feedback loop into the acquired signal.
+During acquisition the PI is inactive, the observation multiplexer is returned to the LP output, and all VDAC codes remain constant. Thus, the method changes the DC operating point but does not introduce a time-varying feedback loop into the acquired signal. Fig.~\ref{fig:calibration_flow} summarizes the complete boot-to-acquisition sequence described in this section.
 
 % Editable diagram source: imagenes/psoc_foreground_calibration_flow.drawio
 % After tuning it in diagrams.net, export it as
 % imagenes/psoc_foreground_calibration_flow.pdf and replace this draft box
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio.png}
+	\includegraphics[width=0.74\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio.png}
 	\caption{Flowchart of the proposed foreground autocalibration algorithm, including stored-code verification, sequential per-stage correction, and transition to acquisition.}
 	\label{fig:calibration_flow}
 \end{figure}
