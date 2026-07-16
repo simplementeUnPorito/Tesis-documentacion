@@ -9,7 +9,6 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{multirow}
-\usepackage{subcaption}
 \usepackage{url}
 \usepackage{microtype}
 \setlength{\emergencystretch}{1em}
@@ -17,37 +16,3 @@
 \setlength{\intextsep}{5pt plus 2pt minus 2pt}
 \setlength{\abovecaptionskip}{3pt}
 \setlength{\belowcaptionskip}{0pt}
-
-% -----------------------------------------------------------------------------
-% Internal-draft annotations. Remove every \todoexp, \suggestion and
-% \draftfigure before submission.
-% -----------------------------------------------------------------------------
-\definecolor{draftred}{RGB}{170,0,0}
-\definecolor{draftyellow}{RGB}{255,245,170}
-
-\newcommand{\todoexp}[1]{%
-  \par\smallskip\noindent
-  \fcolorbox{draftred}{red!4}{%
-    \parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
-      \scriptsize\textbf{\textcolor{draftred}{EXPERIMENTO/RESULTADO PENDIENTE: }}%
-      \textcolor{draftred}{#1}}}%
-  \par\smallskip}
-
-\newcommand{\suggestion}[1]{%
-  \par\smallskip\noindent
-  \fcolorbox{yellow!60!black}{draftyellow}{%
-    \parbox{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
-      \scriptsize\textbf{SUGERENCIA: }#1}}%
-  \par\smallskip}
-\newcommand{\draftfigure}[3]{%
-	\begin{figure}[t]
-		\centering
-		\fcolorbox{draftred}{red!3}{%
-			\begin{minipage}[c][#1][c]{0.94\columnwidth}
-				\centering\scriptsize
-				\textbf{\textcolor{draftred}{FIGURA PENDIENTE}}\\[1mm]
-				\textcolor{draftred}{#3}
-		\end{minipage}}
-		\caption{#2}
-	\end{figure}%
-}
