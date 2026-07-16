@@ -1,26 +1,26 @@
-\section{Platform Design}
-\label{sec:platform-design}
-
-The platform was selected for low cost, reconfigurable analog routing, hardware-assisted signal processing, and reuse of acquisition resources across operating modes. In acquisition mode the PSoC conditions and digitizes the geophone output; in calibration mode the measurement path, digital-filter coefficients, and DAC-control firmware reconfigure to close a temporary mixed-signal loop, while the input chain stays unchanged.
-
-\begin{figure*}[t]
+\begin{figure*}[!t]
 	\centering
 	\includegraphics[width=0.95\textwidth]{imagenes/AnalogPathGordito.png}
 	\caption{Analog signal chain: four independent VDAC references feed the programmable-gain amplifier (PGA), band-pass filter (BP), summing stage (SUM), and low-pass filter (LP) cascade, with the shared ADC/multiplexer measurement path at the output.}
 	\label{fig:analog_path}
 \end{figure*}
 
-The front end (Fig.~\ref{fig:analog_path}) is a measurement chain in cascade: the geophone signal is conditioned by PGA, BP, SUM, and LP in series, so an offset introduced at any stage propagates, scaled by every downstream gain, to the ADC input. Correcting this chain is therefore not a single adjustment but a sequential, per-stage process: each stage is measured and trimmed in signal-flow order before the next is addressed, so that a correction made upstream is never undone by a later stage (Section~\ref{sec:self-calibration}).
+\section{Platform Design}
+\label{sec:platform-design}
 
-An analog multiplexer connects one stage output at a time to the same 18-bit delta-sigma ADC used to digitize the geophone signal, so the acquisition converter itself serves as the error sensor without a second ADC; software-enforced mutual exclusion prevents two analog outputs from being connected at once. A switched capacitor behind the selected multiplexer MOSFET, whose on-resistance forms a limited RC anti-alias network, isolates the amplifier output from a direct capacitive load.
+The PSoC conditions and digitizes the geophone output in acquisition mode. In calibration mode, its measurement path, digital-filter coefficients, and DAC-control firmware form a temporary mixed-signal loop without changing the sensor input chain.
+
+In the cascade of Fig.~\ref{fig:analog_path}, an offset introduced at any stage propagates through every downstream gain toward the ADC input. The calibration therefore exposes and trims each stage separately rather than correcting only the final ADC value.
+
+An analog multiplexer connects one stage output at a time to the shared 18-bit delta-sigma ADC, which serves as the error sensor; software mutual exclusion prevents simultaneous connections. A switched capacitor behind the selected multiplexer MOSFET combines with its on-resistance for limited RC anti-aliasing and isolates the amplifier from a direct capacitive load.
 
 For the $i$th stage, its slowly varying output can be represented as
 \begin{equation}
  y_i^{\mathrm{DC}} = A_i y_{i-1}^{\mathrm{DC}} + b_i + K_i u_i,
  \label{eq:stage}
 \end{equation}
-where $A_i$ is the stage gain, $b_i$ the amplifier and reference errors, $K_i$ the signed transfer from the trim DAC to the measured node, and $u_i$ the DAC code. Adjusting only the SUM reference -- the first fix attempted, before this per-stage architecture -- forces one output toward its target but leaves the remaining $y_i^{\mathrm{DC}}$ values uncontrolled: an earlier rail cannot be recovered, offsets appearing after SUM stay uncompensated, and the fix does not extrapolate to front ends without an explicit summing node.
+where $A_i$ is the stage gain, $b_i$ the amplifier and reference errors, $K_i$ the signed transfer from the trim DAC to the measured node, and $u_i$ the DAC code. Before per-stage calibration, the existing SUM reference was adjusted to recenter that node. This single-point correction left the remaining $y_i^{\mathrm{DC}}$ values uncontrolled: an earlier rail could not be recovered, offsets after SUM remained uncompensated, and the approach did not extrapolate to front ends without an explicit summing node.
 
 The proposed architecture instead chooses each $u_i$ in Eq.~\ref{eq:stage} independently so that every measured $y_i^{\mathrm{DC}}$ approaches its stage reference. In the differential geophone front end considered here, all four calibration targets correspond to zero ADC counts.
 
-Eq.~\ref{eq:stage} is lower-triangular in stage index: $y_i^{\mathrm{DC}}$ depends on $y_{i-1}^{\mathrm{DC}}$ but not on any downstream stage. Correcting in signal-flow order (PGA, BP, SUM, LP, as in Section~\ref{sec:self-calibration}) therefore guarantees $y_{i-1}^{\mathrm{DC}}$ is already at its target when stage $i$ is trimmed: a single forward pass suffices, so the processing order is not arbitrary but the one that makes one-pass calibration correct.
+Eq.~\ref{eq:stage} is lower-triangular in stage index: $y_i^{\mathrm{DC}}$ depends on $y_{i-1}^{\mathrm{DC}}$ but not on downstream stages. Processing PGA, BP, SUM, and LP in signal-flow order therefore places $y_{i-1}^{\mathrm{DC}}$ at its target before stage $i$ is trimmed, making a single forward pass sufficient (Section~\ref{sec:self-calibration}).
