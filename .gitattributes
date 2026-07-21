@@ -1,3 +1,5 @@
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.drawio filter=lfs diff=lfs merge=lfs -text
 /Propuesta[[:space:]]Urucom.zip filter=lfs diff=lfs merge=lfs -text
 /Propuesta[[:space:]]Urucom/Imagenes/.$Diagrama[[:space:]]blocks_topDesign.drawio.dtmp filter=lfs diff=lfs merge=lfs -text
 /Propuesta[[:space:]]Urucom/Imagenes/Diagrama[[:space:]]blocks_topDesign.drawio filter=lfs diff=lfs merge=lfs -text

@@ -10,3 +10,11 @@ Entregables, diagramas, propuestas y documentos técnicos transversales del sist
 - planes y handoffs que cruzan PSoC, ESP32, Python y MATLAB.
 
 Las rutas actuales dentro del superproyecto son `firmware/psoc`, `firmware/esp32`, `software/python`, `modelado/matlab`, `investigacion` y `data`.
+
+Los paquetes ZIP y diagramas Draw.io se indexan con Git LFS. Sus contenidos viven en `Github-LFS/repositories/Tesis-documentacion`; GitHub conserva los punteros. Para restaurarlos tras un clon sin smudge:
+
+```powershell
+$env:GITHUB_LFS_ROOT = 'C:\Users\elias\OneDrive\Github-LFS'
+.\scripts\configure-lfs-folderstore.ps1
+.\scripts\hydrate-lfs.ps1
+```
