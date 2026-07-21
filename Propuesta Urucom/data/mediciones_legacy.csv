@@ -1,0 +1,17 @@
+# Mediciones legacy (firmware/deadband ORIGINAL, sin forzar Delta_i=1).
+# Instrumento: Tektronix TDS 2004B, 4 canales, 60 MHz. Vmedio en ventana de 100 ms tras esperar el transitorio.
+# Todas las columnas en mV. Etapas en orden de cadena de senal: PGA, BP, ADDER, LP.
+# Fuente cruda: docs/Propuesta Urucom/mediciones osciloscopio.txt (secciones "Pre cambio software" y fila unica de PSoC 3).
+# PSoC 3 (Board C) queda SOLO en este archivo legacy: no entra en las tablas del paper (decision: dos placas, N=1 insuficiente para tabla principal).
+board,gain,run,default_PGA_mV,default_BP_mV,default_ADDER_mV,default_LP_mV,cal_PGA_mV,cal_BP_mV,cal_ADDER_mV,cal_LP_mV,notes
+PSoC1,16,1,-126,286,594,-1600,158,92.7,52.8,98.9,
+PSoC1,16,2,171,353,-86.6,-1660,43.3,50.2,-35.8,99.2,
+PSoC1,16,3,114,411,-159,-1990,35,74,-84.5,117,
+PSoC1,16,4,203,221,441,-947,133,260,9.12,225,
+PSoC1,16,5,192,241,371,-606,165,58.8,26.4,129,
+PSoC2,16,1,-1.7,499,247,715,-1.82,78,22,325,
+PSoC2,16,2,204,508,300,623,285,81,-85,160,
+PSoC2,16,3,169,512,239,778,127,77.7,-119,283,
+PSoC2,16,4,194,480,338,689,121,117,-123,350,
+PSoC2,16,5,191,509,228,884,133,84.2,-130,327,
+PSoC3,16,1,202,374,897,342,206,213,48.8,31.9,legacy unico registro N=1; excluido de tablas del paper
