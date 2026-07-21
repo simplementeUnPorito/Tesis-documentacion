@@ -2,7 +2,7 @@
 
 Fecha: 2026-07-02
 Branch: `codex/capture-engine-verilog`
-Proyecto: `src/psoc/AcondicionamientoAnalogico.cydsn`
+Proyecto: `firmware/psoc/AcondicionamientoAnalogico.cydsn`
 
 ## Objetivo
 
@@ -187,7 +187,7 @@ DMA:
 ## Firmware tocado
 
 Archivo principal:
-`src/psoc/AcondicionamientoAnalogico.cydsn/main.c`
+`firmware/psoc/AcondicionamientoAnalogico.cydsn/main.c`
 
 Puntos clave:
 
@@ -237,12 +237,12 @@ Puntos clave:
 
 ## Archivos importantes
 
-- `src/psoc/AcondicionamientoAnalogico.cydsn/superMaquina/superMaquina.v`
-- `src/psoc/AcondicionamientoAnalogico.cydsn/superMaquina/superMaquina.cysym`
-- `src/psoc/AcondicionamientoAnalogico.cydsn/TopDesign/TopDesign.cysch`
-- `src/psoc/AcondicionamientoAnalogico.cydsn/AcondicionamientoAnalogico.cyprj`
-- `src/psoc/AcondicionamientoAnalogico.cydsn/main.c`
-- `src/psoc/AcondicionamientoAnalogico.cydsn/psoc_hw.h`
+- `firmware/psoc/AcondicionamientoAnalogico.cydsn/superMaquina/superMaquina.v`
+- `firmware/psoc/AcondicionamientoAnalogico.cydsn/superMaquina/superMaquina.cysym`
+- `firmware/psoc/AcondicionamientoAnalogico.cydsn/TopDesign/TopDesign.cysch`
+- `firmware/psoc/AcondicionamientoAnalogico.cydsn/AcondicionamientoAnalogico.cyprj`
+- `firmware/psoc/AcondicionamientoAnalogico.cydsn/main.c`
+- `firmware/psoc/AcondicionamientoAnalogico.cydsn/psoc_hw.h`
 
 ## Build
 
@@ -250,7 +250,7 @@ Comando usado:
 
 ```powershell
 & "C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\bin\cyprjmgr.exe" `
-  -wrk "C:\Github\Tesis\src\psoc\AcondicionamientoAnalogico.cydsn\AcondicionamientoAnalogico.cywrk" `
+  -wrk "C:\Github\Tesis\firmware\psoc\AcondicionamientoAnalogico.cydsn\AcondicionamientoAnalogico.cywrk" `
   -prj AcondicionamientoAnalogico `
   -c Debug `
   -build
@@ -302,7 +302,7 @@ SetAcquireMode Reset
 SetProtocol 8
 SetProtocolClock 152
 SetProtocolConnector 1
-HEX_ReadFile C:/Github/Tesis/src/psoc/AcondicionamientoAnalogico.cydsn/CortexM3/ARM_GCC_541/Debug/AcondicionamientoAnalogico.hex
+HEX_ReadFile C:/Github/Tesis/firmware/psoc/AcondicionamientoAnalogico.cydsn/CortexM3/ARM_GCC_541/Debug/AcondicionamientoAnalogico.hex
 DAP_Acquire
 PSoC3_EraseAll
 PSoC3_ProgramRowFromHex 0x00 <row 0..lastRow> 0x01
@@ -335,7 +335,7 @@ Para diagnostico UART se uso temporalmente `PSOC_EARLY_UART_TEST=1` en
 
 ## Comandos USB de laboratorio en ESP
 
-Firmware ESP `src/esp/Nodo comunicacion/slave`, entorno `slave2`, puerto usado:
+Firmware ESP `firmware/esp32/Nodo comunicacion/slave`, entorno `slave2`, puerto usado:
 `COM12`.
 
 El firmware final queda silencioso:

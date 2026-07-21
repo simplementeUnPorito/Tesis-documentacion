@@ -184,7 +184,7 @@
   un valor inválido por step mismatch. Cambiado a `step="0.01"`. El segundo `uploadfs` a
   COM8 y su verificación pasaron; el HTML servido ya contiene `step="0.01"`.
 - **Operativo WiFi**: `netsh wlan connect` está bloqueado sin permiso de ubicación/elevación
-  en esta máquina. Desde `src/esp/Nodo comunicación/master`, ejecutar
+  en esta máquina. Desde `firmware/esp32/Nodo comunicación/master`, ejecutar
   `python reconnect_geonetwork.py --timeout 120`: usa **WlanConnect por ctypes** con el perfil
   guardado `GeoNetwork`, sin escanear SSIDs, y sólo retorna éxito cuando
   `http://192.168.4.1/health` responde con `littlefs=ok`. Esta ruta ya fue validada después

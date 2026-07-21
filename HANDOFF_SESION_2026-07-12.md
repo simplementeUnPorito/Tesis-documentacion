@@ -6,7 +6,7 @@
 
 ## 1. Qué es el sistema hoy (foto completa)
 
-- **PSoC5LP** (GEO, `src/psoc/AcondicionamientoAnalogico.cydsn`): ADC 2604 Hz nativo (4 configs
+- **PSoC5LP** (GEO, `firmware/psoc/AcondicionamientoAnalogico.cydsn`): ADC 2604 Hz nativo (4 configs
   de rango, assert de compilación), decimación con promedio en ISR (0xBB, 1..100, Fs=2604/N),
   captura RAM 512 lotes con **encadenado** (>512 crudos re-arma superMaquina sin resetear, un solo
   DUMP_DONE al final), **SD FatFs** (SPI Master del TopDesign, GEOLAST.BIN, hasta 60000 lotes ≈
@@ -110,13 +110,13 @@ limpio. Evidencia: `master/artifacts/f9_start_flow_pass.json`.
 ## 4. Trampas operativas (¡leer antes de tocar el banco!)
 
 1. **Reflashear el ESP esclavo cuelga el PSoC** → SIEMPRE `ToggleReset` por KitProg después
-   (`GetPorts` → runfile con `ToggleReset 0 100`, ver `src/psoc/BUILD_PROGRAM_PSOC.md`).
+   (`GetPorts` → runfile con `ToggleReset 0 100`, ver `firmware/psoc/BUILD_PROGRAM_PSOC.md`).
 2. **Tras ToggleReset esperar la auto-cal (~10-60 s)** antes de mandar configs (0xBB/…): si no,
    el PSoC no ackea en 750 ms y el esclavo NACKea (parece bug y no lo es).
 3. **Prefijos de log del esclavo = `micros()`, dan la vuelta a los 4294.97 s** — un salto de
    timestamp NO es un reboot.
 4. **Reflashear/uploadfs el maestro tira el AP** y en esta máquina `netsh wlan connect` está
-   bloqueado; ejecutar desde `src/esp/Nodo comunicación/master`:
+   bloqueado; ejecutar desde `firmware/esp32/Nodo comunicación/master`:
    `python reconnect_geonetwork.py --timeout 120`. El script usa **WlanConnect por ctypes**
    (perfil `GeoNetwork`, sin escaneo) y no termina OK hasta que
    `http://192.168.4.1/health` responde con `littlefs=ok`. Si el AP no vuelve: pulso RTS por
@@ -148,7 +148,7 @@ los 20 s y tiene un self-test específico que pasa.
 
 La repetición final se ejecutó como `e5c.i24le`; al cerrar se movieron el binario y JSON crudos
 al scratchpad como `e5c_final_geo10min.i24le/.json`. El JSON persistente y versionado es
-`src/esp/Nodo comunicación/master/artifacts/e5c_geo10min_2604_pass.json`; el log paralelo es
+`firmware/esp32/Nodo comunicación/master/artifacts/e5c_geo10min_2604_pass.json`; el log paralelo es
 `e5c_rerun_com12.txt` en `%TEMP%/claude/C--Github-Tesis/8e89e144-*/scratchpad/`.
 
 <!-- E5C_FINAL_BEGIN: CERRADO 2026-07-12 -->
@@ -269,7 +269,7 @@ cierre (probe limpio, fs=2604, bBad=0, `/health` ok).
 Patrón común: pyserial dtr/rts=False timeout=0.2; WS handshake manual + takeover=1 + frames 6-byte
 0x56 (ptype 0=DATA, 1=HB, 3=READY, 7=ACK). Para la reconexión WiFi ya no hace falta recrear
 un scratch: usar el script persistente versionado
-`src/esp/Nodo comunicación/master/reconnect_geonetwork.py`.
+`firmware/esp32/Nodo comunicación/master/reconnect_geonetwork.py`.
 
 Herramientas persistentes ya versionadas (todas con `--self-test` offline):
 `slave/usb_regression_test.py` (gate USB 33/33), `slave/sd_max_regression_test.py` (E15 PASS),

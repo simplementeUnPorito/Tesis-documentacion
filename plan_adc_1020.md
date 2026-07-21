@@ -107,7 +107,7 @@ Observaciones (documentar, NO cambiar hardware):
 ### H0 — Este archivo
 - [x] Crear `docs/plan_adc_1020.md` con checklist y registro.
 
-### H1 — PSoC (`src/psoc/AcondicionamientoAnalogico.cydsn`) — solo .c/.h, PROHIBIDO .cyprj/.cydwr/.cysch/.cyfit
+### H1 — PSoC (`firmware/psoc/AcondicionamientoAnalogico.cydsn`) — solo .c/.h, PROHIBIDO .cyprj/.cydwr/.cysch/.cyfit
 - [x] `psoc_adc.h`: API nueva `psoc_adc_get_config()`, `psoc_adc_set_config(uint8)` (solo acepta
       `ADC_CF_2V5`|`ADC_CF_0V512`), `psoc_adc_effective_fs_hz()` (1020 para ambas; switch preparado para 3/4),
       `psoc_adc_select_calibration_config()`.
@@ -131,7 +131,7 @@ Observaciones (documentar, NO cambiar hardware):
 **Prueba de aceptación H1**: consola del slave (COM12, 115200): `probe` → FS_REPORT=1020;
 `cap 1` → amplitudes plausibles (÷32 respecto al firmware con bug).
 
-### H2 — ESP slave (`src/esp/Nodo comunicación/slave/src`)
+### H2 — ESP slave (`firmware/esp32/Nodo comunicación/slave/src`)
 - [x] `psoc_uart.h`: `#define PSOC_CMD_ADC_CONFIG 0xBA` + `void setAdcConfig(uint8_t cfg);`.
 - [x] `psoc_uart.cpp`: `setAdcConfig` → `_sendCmd1(PSOC_CMD_ADC_CONFIG, c);`.
 - [x] `main.cpp` `handleSetConfig()`: validar param ∈ {1,2}, despachar `psoc.setAdcConfig(param)`, waitAck.
@@ -180,7 +180,7 @@ calibrar con config 2 activa → corre en 2V5 y restaura; export ZIP con campos 
 - [ ] `README.md:91`, `master/WEB_FIELD_TESTS.md:70,134` → 1020.
 - [ ] `docs/psoc_supermaquina_handoff.md`: sección nueva (cmd 0xBA, 2 modos, Fs 1020, cal en 2V5,
       bug DEC_DIV corregido, observaciones PGA/INA).
-- [ ] `src/psoc/BUILD_PROGRAM_PSOC.md`: flash/lastRow nuevos; corregir COM del slave (es COM12; master COM8).
+- [ ] `firmware/psoc/BUILD_PROGRAM_PSOC.md`: flash/lastRow nuevos; corregir COM del slave (es COM12; master COM8).
 - [ ] Cerrar registro de progreso.
 
 ## Riesgos

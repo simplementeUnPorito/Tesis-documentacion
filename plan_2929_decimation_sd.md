@@ -65,7 +65,7 @@ Banco de esta sesión: **maestro COM8, esclavo GEO+PSoC en COM12**. Se trabajó 
    (SYNC/UART) hacia el PSoC y **cuelga al PSoC si venía con uptime largo** (el de esta sesión tenía
    ~2 días sin reset). Síntoma tras reflashear el ESP: `uartBytes=0`, `edge=0`, `probe psoc=0`,
    `PSoC cfg probe failed age=-1`, SETN nunca ackea. **Workaround: resetear el PSoC (NO reflashear)**
-   con `ToggleReset` vía KitProg — ver "Reset de target" en `src/psoc/BUILD_PROGRAM_PSOC.md`
+   con `ToggleReset` vía KitProg — ver "Reset de target" en `firmware/psoc/BUILD_PROGRAM_PSOC.md`
    (`KitProg (CMSIS-DAP/236111)`, `ToggleReset 0 100`). Tras el ToggleReset el PSoC re-corre su HEX +
    auto-cal (~8-13 s) y la UART revive (`probe psoc=1`, `uartBytes` creciendo, `fs=2604`).
    **Regla operativa: cada vez que se reflashea el ESP esclavo, resetear el PSoC después.**
@@ -244,7 +244,7 @@ Control Cells 5/24 casi libres). Conclusión (con el advisor): **no conviene, se
 ### H0 — Este archivo
 - [x] Crear `docs/plan_2929_decimation_sd.md` con checklist y registro.
 
-### H1 — PSoC (`src/psoc/AcondicionamientoAnalogico.cydsn`) — solo .c/.h, PROHIBIDO .cyprj/.cydwr/.cysch/.cyfit (el regen de ADC ya lo hizo el usuario en PSoC Creator)
+### H1 — PSoC (`firmware/psoc/AcondicionamientoAnalogico.cydsn`) — solo .c/.h, PROHIBIDO .cyprj/.cydwr/.cysch/.cyfit (el regen de ADC ya lo hizo el usuario en PSoC Creator)
 - [x] `psoc_adc.h`/`psoc_adc.c`: `psoc_adc_effective_fs_hz()` → `2929u / g_psoc_decimation_factor`. Nueva `psoc_adc_set_decimation(uint8)`/`psoc_adc_get_decimation()`, default 1, rango 1..100, rechaza fuera de `PSOC_IDLE`.
 - [x] `main.c`: acumulador de decimación (`g_decim_acc`,`g_decim_n`) en `sm_sample_capture_raw()`/`sm_sample_capture_filt()`, DESPUÉS de `g_fir_discard`. Cuando `n==factor`: promedio → `g_capture_wr`, reset.
 - [x] `main.c`: `psoc_arm()`/`psoc_enter_sampling()` — target de hardware por trozo <=512 lotes crudos (contador de 9 bits); si el pedido total necesita más, H7 lo encadena sin truncar ni resetear el buffer.
@@ -255,7 +255,7 @@ Control Cells 5/24 casi libres). Conclusión (con el advisor): **no conviene, se
 
 **Prueba de aceptación H1**: ✅ ver H2 (prueba conjunta) — `decim 1/2/3` en RAW y FIR, `FS_REPORT` verificado exacto (2929/1464/976), `fill=N/N`, `bBad=0`.
 
-### H2 — ESP slave (`src/esp/Nodo comunicación/slave/src`)
+### H2 — ESP slave (`firmware/esp32/Nodo comunicación/slave/src`)
 - [x] `psoc_uart.h`: `#define PSOC_CMD_SET_DECIMATION 0xBB` + `void setDecimation(uint8_t factor);`.
 - [x] `psoc_uart.cpp`: `setDecimation` → `_sendCmd1(PSOC_CMD_SET_DECIMATION, factor)`.
 - [x] Comando USB de banco `decim N` (bajo `SLAVE_LAB_TOOLS_ENABLE`, junto a `range N`) para probar sin pasar por el maestro. De paso se agregó `fs=%u` a `logPsocUartDiag()` (antes no había forma de ver la Fs efectiva por USB).
