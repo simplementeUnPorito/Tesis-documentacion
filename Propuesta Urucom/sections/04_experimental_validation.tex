@@ -1,60 +1,72 @@
-\section{Experimental Validation}
-\label{sec:experimental-validation}
-
-\subsection{Prototype and Comparison Conditions}
-
-Two independently assembled SM-24 conditioning prototypes (Board~A and Board~B), each with four VDAC references, were tested under two conditions: \emph{Default}, references hand-tuned once on Board~B at gain $\times50$ and reused unchanged; and \emph{Proposed}, sequential four-stage calibration followed by frozen-reference acquisition. Default is therefore a fixed baseline calibrated for one board and operating point, not an uncalibrated circuit. The reported settings span the PGA's $\times1$--$\times50$ range and test whether per-board and per-gain retuning is necessary; Table~\ref{tab:results} reports the resulting per-stage offsets.
-
 \begin{table*}[!t]
-\caption{Residual DC offset at each stage as \% of the ADC's 0--5~V span ($\pm2.5$~V about the 2.5~V reference), reported as Default~/~Proposed ($N{=}10$ per cell; lower is better).}
+\caption{Residual DC offset (\%FS of the nominal 5-V ADC span), mean $\pm$ sample standard deviation over $N{=}10$ paired baseline-seeded restarts per reported board/gain cell.}
 \label{tab:results}
 \centering
-\tiny
+\scriptsize
 \setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{0.94}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{c cccc cccc}
+\begin{tabular}{c l cccc @{}@{\hspace{4pt}} cccc}
 \toprule
-& \multicolumn{4}{c}{Board A} & \multicolumn{4}{c}{Board B} \\
-\cmidrule(lr){2-5}\cmidrule(lr){6-9}
-Gain & PGA & BP & SUM & LP & PGA & BP & SUM & LP \\
+& & \multicolumn{4}{c}{Board A} & \multicolumn{4}{c}{Board B} \\
+\cmidrule(lr){3-6}\cmidrule(lr){7-10}
+PGA setting & Condition & PGA & BP & SUM & LP & PGA & BP & SUM & LP \\
 \midrule
-$\times1$  & $3.5\pm0.2/3.4\pm0.3$ & $0.8\pm0.2/\mathbf{\color{orange!80!black}1.2\pm0.2}$ & $\mathbf{\color{red}21.8\pm1.1}/0.8\pm0.2$ & $\mathbf{\color{red}45.8\pm3.0}/3.2\pm0.8$ & -- & -- & -- & -- \\
-$\times4$  & $2.4\pm0.1/2.1\pm0.3$ & $4.9\pm0.3/1.0\pm0.2$ & $6.7\pm1.0/1.0\pm0.3$  & $\mathbf{\color{red}42.6\pm3.9}/3.9\pm0.8$ & -- & -- & -- & -- \\
-$\times16$ & $2.4\pm0.1/1.9\pm0.2$ & $3.8\pm0.9/1.5\pm1.5$ & $4.9\pm1.5/1.4\pm1.5$  & $\mathbf{\color{red}29.6\pm6.5}/2.3\pm1.3$ & $2.1\pm0.1/1.7\pm0.1$ & $0.66\pm0.02/0.66\pm0.02$ & $4.5\pm0.8/0.6\pm0.5$ & $3.0\pm0.1/0.7\pm0.1$ \\
-$\times32$ & $1.0\pm0.2/0.5\pm0.2$ & $7.0\pm0.4/1.0\pm0.5$ & $7.4\pm0.3/0.6\pm0.2$  & $\mathbf{\color{red}12.4\pm1.3}/1.7\pm0.6$ & $1.0\pm0.2/0.5\pm0.2$ & $0.66\pm0.01/0.66\pm0.01$ & $8.0\pm0.8/1.2\pm0.3$ & $2.9\pm0.1/0.4\pm0.2$ \\
-$\times50$ & $1.2\pm0.3/1.0\pm0.5$ & $1.0\pm0.7/0.9\pm0.5$ & $0.4\pm0.2/\mathbf{\color{orange!80!black}0.8\pm0.6}$  & $4.1\pm1.9/1.2\pm0.4$  & $2.5\pm0.1/1.8\pm0.3$ & $0.65\pm0.01/0.65\pm0.02$ & $0.9\pm0.6/0.9\pm0.6$ & $2.9\pm0.1/0.7\pm0.2$ \\
+\multirow{2}{*}{$\times1$} & Fixed reference & $3.5\pm0.2$ & $1.5\pm2.2$ & $\mathbf{21.8\pm1.1}^{\dagger}$ & $\mathbf{45.8\pm3.1}^{\dagger}$ & -- & -- & -- & -- \\
+ & Calibrated & $3.4\pm0.3$ & $1.2\pm0.2$ & $0.8\pm0.2$ & $3.2\pm0.9$ & -- & -- & -- & -- \\
+\arrayrulecolor{gray!35}\specialrule{0.25pt}{1pt}{1pt}\arrayrulecolor{black}
+\multirow{2}{*}{$\times4$} & Fixed reference & $2.4\pm0.1$ & $4.9\pm0.3$ & $6.7\pm1.0$ & $\mathbf{42.6\pm4.2}^{\dagger}$ & -- & -- & -- & -- \\
+ & Calibrated & $2.1\pm0.3$ & $1.0\pm0.2$ & $1.0\pm0.3$ & $3.9\pm0.8$ & -- & -- & -- & -- \\
+\arrayrulecolor{gray!35}\specialrule{0.25pt}{1pt}{1pt}\arrayrulecolor{black}
+\multirow{2}{*}{$\times16$} & Fixed reference & $2.4\pm0.1$ & $3.8\pm0.9$ & $4.9\pm1.5$ & $\mathbf{29.6\pm6.8}^{\dagger}$ & $2.1\pm0.1$ & $0.66\pm0.02$ & $4.5\pm0.8$ & $3.0\pm0.1$ \\
+ & Calibrated & $1.9\pm0.2$ & $1.5\pm1.5$ & $1.4\pm1.5$ & $2.3\pm1.4$ & $1.7\pm0.1$ & $0.66\pm0.02$ & $0.6\pm0.5$ & $0.7\pm0.1$ \\
+\arrayrulecolor{gray!35}\specialrule{0.25pt}{1pt}{1pt}\arrayrulecolor{black}
+\multirow{2}{*}{$\times32$} & Fixed reference & $1.0\pm0.2$ & $7.0\pm0.4$ & $7.4\pm0.3$ & $\mathbf{12.4\pm1.3}^{\dagger}$ & $1.0\pm0.2$ & $0.66\pm0.01$ & $8.0\pm0.8$ & $2.9\pm0.1$ \\
+ & Calibrated & $0.5\pm0.2$ & $1.0\pm0.5$ & $0.6\pm0.2$ & $1.7\pm0.7$ & $0.5\pm0.2$ & $0.66\pm0.01$ & $1.2\pm0.3$ & $0.4\pm0.2$ \\
+\arrayrulecolor{gray!35}\specialrule{0.25pt}{1pt}{1pt}\arrayrulecolor{black}
+\multirow{2}{*}{$\times50$} & Fixed reference & $1.2\pm0.3$ & $1.0\pm0.7$ & $0.4\pm0.2$ & $4.1\pm2.1$ & $2.5\pm0.1$ & $0.65\pm0.01$ & $0.9\pm0.6$ & $2.9\pm0.1$ \\
+ & Calibrated & $1.0\pm0.5$ & $0.9\pm0.5$ & $\mathbf{0.8\pm0.6}^{\ddagger}$ & $1.2\pm0.4$ & $1.8\pm0.3$ & $0.65\pm0.02$ & $0.9\pm0.6$ & $0.7\pm0.2$ \\
 \bottomrule
 \end{tabular}%
 }
 
 \smallskip
-\footnotesize \textbf{\color{red}Red}: Default $\geq$10\%FS. \textbf{\color{orange!80!black}Orange}: Proposed $\geq$ Default (Section~\ref{sec:pga-note}). Board~B $\times1$/$\times4$ excluded: loop converged immediately without changing a DAC.
+\footnotesize Lower is better. $^{\dagger}$Fixed reference $\geq10\%$FS. $^{\ddagger}$The marked calibrated mean is larger than its baseline; equality after rounding is not marked (Section~\ref{sec:pga-note}). Dashes denote cells in which normal verification made no corrective update, so no $N{=}10$ comparison was collected. $N$ denotes restarts of the same configuration, not independent boards; the separate Board~B $\times4$ three-pair diagnostic is excluded.
 \end{table*}
 
-\subsection{Design Target: Headroom, Not Zero}
+\section{Proof-of-Concept Evaluation}
+\label{sec:experimental-validation}
 
-The loop targets headroom rather than exact zero. Its deadband, timeout, estimator, and gains balance residual error against convergence time within the available DAC, ADC, and FIR capabilities (Section~\ref{sec:self-calibration}). The ADC-facing signal is centered on a 2.5~V reference, so its 0--5~V input span corresponds to a $\pm2.5$~V excursion about that operating point. Every measured node must remain in its linear, unsaturated range; Section~\ref{sec:pga-note} examines a case in which this criterion is met despite partial PGA convergence.
+\subsection{Prototype and Comparison Conditions}
 
-\subsection{Measured Headroom Recovery Across the Gain Range}
+Two independently assembled SM-24 prototypes (Boards~A and B) were compared under a \emph{shared fixed-reference baseline}, $\boldsymbol{c}_{\mathrm{base}}=(156,156,156,156)$ for (PGA, BP, SUM, LP), selected on Board~B at $\times50$ and reused at every gain, and \emph{Calibrated}, four-stage calibration followed by frozen-code acquisition. The measurement firmware disabled post-calibration EEPROM writes, so every stationary-geophone restart reloaded that vector. Thus, $N{=}10$ denotes paired restarts of one board/gain configuration, not independent devices. Normal verification made no corrective update on Board~B $\times1$ or $\times4$, producing the dashes in Table~\ref{tab:results}. A separate $\times4$ diagnostic forced three paired updates with all $\Delta_i=1$ and is excluded because its bands and sample count differ.
 
-At each reported board/gain setting, a Tektronix TDS~2004B oscilloscope (4 channels, 60~MHz, 1~GS/s) measured the mean PGA, BP, SUM, and LP output over a 100~ms post-settling window under both conditions. Table~\ref{tab:results} gives absolute DC offset as a percentage of this 5~V span, with $N{=}10$ independent runs per board/gain/stage cell. LP is the ADC-facing node; PGA, BP, and SUM expose upstream saturation or nonlinearity hidden by a final-output measurement alone. Board~B $\times1$ and $\times4$ were omitted because the Default PGA offset was already inside the normal deadband, so the loop correctly converged without changing a DAC. Forcing action required manually narrowing the deadband and hence changing the test condition (Section~\ref{sec:pga-note}).
+\subsection{Residual DC-Offset Measurement and Results}
+
+Offsets are nominal 5-V full-scale fractions, not values normalized to instantaneous supply voltage. LP is the primary system outcome because it faces the acquisition ADC; PGA, BP, and SUM document sequential correction and expose near-rail intermediate operating points.
+
+At each setting, a four-channel Tektronix TDS~2004B 8-bit, 60~MHz oscilloscope recorded $V_{\mathrm{mean}}$ at PGA, BP, SUM, and LP over a 100~ms post-settling window. All four probe commons were tied to $V_{\mathrm{ref}}=V_{\mathrm{DDA}}/2$, so channels measured $V_{\mathrm{stage}}-V_{\mathrm{ref}}$. PC-USB-supplied $V_{\mathrm{DDA}}$ was typically below 5~V. The unearthed PC and protective-earth-referenced oscilloscope shared a mains branch, so the scope intentionally earth-referenced $V_{\mathrm{ref}}$ \cite{TektronixTDS2000B}; other leakage paths were not characterized. Recording baseline before calibration preserved within-restart pairing, but the fixed order leaves slow drift as a possible confound.
+
+Table~\ref{tab:results} reports the mean and sample standard deviation of $100|V_{\mathrm{mean}}|/5\,\mathrm{V}$ over ten paired restarts. The largest fixed-reference deviations approached a supply rail; because per-run supply and output-headroom margins were not logged, these are observed output deviations and may be lower bounds on the underlying linear offset. These descriptive statistics characterize within-configuration repeatability; no population-level inferential test or independent oscilloscope uncertainty budget was performed, and displayed digits do not imply sub-millivolt accuracy.
+
+Controller acceptance uses a filtered internal ADC estimate; Table~\ref{tab:results} uses a later, asynchronous scope record without logged final ADC errors or flags. The scope residuals therefore do not directly verify $\Delta_i$, and bandwidth, elapsed-time, and residual BP-capacitor-state effects after upstream updates were not separated. Fig.~\ref{fig:calibration_trace}'s colored traces were produced offline by passing the scope records through an equivalent FIR; they are not logged controller states.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=0.92\columnwidth]{imagenes/autocalibration_scope_sum.png}
-	\caption{Oscilloscope-derived PGA, BP, SUM, and LP outputs during a calibration run at PGA gain $\times16$. Fixed references are active for $t\lesssim9$~s; all stages converge by $t\approx16$~s. The larger PGA residual is discussed in Section~\ref{sec:pga-note}.}
+	\caption{Stage deviations relative to $V_{\mathrm{ref}}$ during calibration at setting $\times16$ (total differential gain $\times32$). Thin gray traces are oscilloscope records; colored traces are their offline outputs from an equivalent FIR. See Section~\ref{sec:pga-note}.}
 	\label{fig:calibration_trace}
 \end{figure}
 
-Across the eight reported board$\times$gain cells, the LP mean offset spans 0.4--3.9\%FS after calibration versus 2.9--45.8\%FS under Default (Table~\ref{tab:results}). Board~A's Default offset decreases with gain, whereas Board~B remains closer to zero at its reported settings; Proposed brings both boards below 4\%FS. Thus, within the tested boards and settings, calibration converts a board- and gain-dependent operating point into a bounded ADC-facing offset without manual retuning.
+Across the eight reported board$\times$gain cells, the calibrated LP sample mean is 0.4--3.9\%FS versus 2.9--45.8\%FS under the shared fixed-reference baseline; individual calibrated observations span 0.1--5.2\%FS (Table~\ref{tab:results}). The LP mean was lower after calibration in every reported cell, without board- or gain-specific controller retuning.
 
-\subsection{Field Use of the Calibrated Front End}
+\subsection{Field Operation Demonstration}
 
-Separate from the bench offset test, Fig.~\ref{fig:waterfall} shows a field-surface-wave waterfall over a 10--50~m line. First-arrival moveout is resolved at every offset using higher PGA settings at far offsets; this demonstrates field operation but is not a controlled Proposed-vs-fixed-reference comparison.
+This field trial was an operational demonstration, not a controlled offset or surface-wave comparison. Fig.~\ref{fig:waterfall} shows a 10--50~m record; each geophone was planted and kept stationary during the preceding calibration. During informal field operation, a timeout was observed when a board was powered while its geophone was moving: the AC transient saturated the chain and violated the quasi-static assumption. The resolved first-arrival moveout demonstrates operation.
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=0.95\columnwidth]{imagenes/waterfall_field_records.png}
-	\caption{Multichannel waterfall field record acquired with the calibrated front end.}
+	\includegraphics[width=0.98\columnwidth]{imagenes/waterfall_wiggle_horizontal.png}
+	\caption{Wiggle-trace field record acquired after foreground calibration. The trigger and first-arrival moveout demonstrate multichannel operation over the 10--50~m line; this is not a controlled fixed-reference comparison.}
 	\label{fig:waterfall}
 \end{figure}

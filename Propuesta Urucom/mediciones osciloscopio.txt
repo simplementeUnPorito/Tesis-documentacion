@@ -1,5 +1,5 @@
 Lo pre cambio pone en un csv legacy y lo que usamos pone en otro csv
-Tambien si el valor es de la forma x.xx es en Voltios si es de la forma xx.x o xxx es en mili voltios
+Unidades de ``Post cambio'': todo valor sin sufijo esta en mV, salvo los valores 1.xx/2.xx de LP baseline en PSoC1 x1/x4/x16 y los valores 1.xx de SUM baseline en PSoC1 x1, que estan en V. Los sufijos V/mV mandan; PSoC1 x16 linea 47 (798), todos los valores de PSoC1 x50 (incluidos 1.34, -3.35, 6.53 y -7.74) y todos los de PSoC2 estan en mV.
 Todo es medido con un Tektronix TDS 2004B de 4 canales 60MHz 1GS/s midiendo Vmedio en una ventana de 100ms esperando que pase el transitorio un tiempo suficientemente largo.
 PSoC 1: 
 Pre cambio software:

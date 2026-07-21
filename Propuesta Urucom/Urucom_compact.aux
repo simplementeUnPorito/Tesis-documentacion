@@ -1,0 +1,72 @@
+\relax 
+\citation{Park1999,Foti2014}
+\citation{Kafadar2020}
+\citation{Wijayaraja2024}
+\citation{Guevara2015}
+\citation{SM24}
+\citation{InfineonPSoC}
+\citation{Murmann2006}
+\citation{Lopin2018}
+\citation{Ma2023}
+\citation{Lopin2018}
+\citation{InfineonAN68403}
+\citation{Mohan2020}
+\citation{EnzTemes1996}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Platform Design}{1}{}\protected@file@percent }
+\newlabel{sec:platform-design}{{II}{1}{}{section.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Analog signal chain: four independent VDAC references trim the programmable-gain amplifier (PGA), band-pass filter (BP), summing stage (SUM), and low-pass filter (LP), with a shared ADC/multiplexer measurement path.}}{2}{}\protected@file@percent }
+\newlabel{fig:analog_path}{{1}{2}{}{figure.1}{}}
+\newlabel{eq:stage}{{1}{2}{}{equation.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {III}Self-Calibrating Geophone Platform}{2}{}\protected@file@percent }
+\newlabel{sec:self-calibration}{{III}{2}{}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Digital Hardware and Calibration Sequence}{2}{}\protected@file@percent }
+\citation{InfineonAN60305}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Flowchart of the proposed foreground autocalibration algorithm, including stored-code verification, sequential per-stage correction, and transition to acquisition.}}{3}{}\protected@file@percent }
+\newlabel{fig:calibration_flow}{{2}{3}{}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Control Law and Calibration Parameters}{3}{}\protected@file@percent }
+\newlabel{eq:scale}{{2}{3}{}{equation.2}{}}
+\newlabel{eq:deadband}{{3}{3}{}{equation.3}{}}
+\newlabel{eq:deadband-error}{{4}{3}{}{equation.4}{}}
+\newlabel{eq:pi}{{5}{3}{}{equation.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Implemented per-stage calibration parameters. Deadband $\Delta _i$ is in equivalent DAC codes; settling, lock, and refinement are in samples at 2604~Hz.}}{3}{}\protected@file@percent }
+\newlabel{tab:cal_params}{{I}{3}{}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experimental Validation}{3}{}\protected@file@percent }
+\newlabel{sec:experimental-validation}{{IV}{3}{}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Prototype and Comparison Conditions}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Design Target: Residual DC Offset}{3}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Digital calibration hardware. The controller routes DMA transfers among the ADC, shared digital filter, and EEPROM and reconfigures the analog multiplexer. Black and blue arrows indicate acquisition and calibration paths, respectively.}}{4}{}\protected@file@percent }
+\newlabel{fig:digital_path}{{3}{4}{}{figure.3}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Residual DC offset at each stage as \% of the ADC's 0--5~V span ($\pm 2.5$~V about the 2.5~V reference), reported as Default~/~Proposed mean $\pm $ sample SD ($N{=}10$ repeated runs per reported cell; lower is better).}}{4}{}\protected@file@percent }
+\newlabel{tab:results}{{II}{4}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Measured DC-Offset Reduction Across the Gain Range}{4}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Oscilloscope-derived PGA, BP, SUM, and LP outputs during a calibration run at PGA gain $\times 16$. Fixed references are active for $t\lesssim 9$~s; all stages converge by $t\approx 16$~s. The larger PGA residual is discussed in Section~\ref {sec:pga-note}.}}{4}{}\protected@file@percent }
+\newlabel{fig:calibration_trace}{{4}{4}{}{figure.4}{}}
+\citation{Kirchhoff2017}
+\citation{Liu2020}
+\bibcite{Park1999}{1}
+\bibcite{Foti2014}{2}
+\bibcite{Kafadar2020}{3}
+\bibcite{Wijayaraja2024}{4}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Wiggle-trace field record acquired with the calibrated front end. The hammer trigger and first-arrival moveout are visible across the 10--50~m line.}}{5}{}\protected@file@percent }
+\newlabel{fig:waterfall}{{5}{5}{}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Field Use of the Calibrated Front End}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Discussion}{5}{}\protected@file@percent }
+\newlabel{sec:discussion}{{V}{5}{}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}The PGA Stage: A Partial Result, Explained}{5}{}\protected@file@percent }
+\newlabel{sec:pga-note}{{\mbox  {V-A}}{5}{}{subsection.5.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{5}{}\protected@file@percent }
+\bibcite{Guevara2015}{5}
+\bibcite{SM24}{6}
+\bibcite{InfineonPSoC}{7}
+\bibcite{Murmann2006}{8}
+\bibcite{Lopin2018}{9}
+\bibcite{Ma2023}{10}
+\bibcite{InfineonAN68403}{11}
+\bibcite{Mohan2020}{12}
+\bibcite{EnzTemes1996}{13}
+\bibcite{InfineonAN60305}{14}
+\bibcite{Kirchhoff2017}{15}
+\bibcite{Liu2020}{16}
+\gdef \@abspage@last{6}

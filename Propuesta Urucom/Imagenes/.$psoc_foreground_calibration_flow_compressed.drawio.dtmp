@@ -1,0 +1,204 @@
+<mxfile host="Electron" agent="Codex" pages="2">
+  <diagram id="psoc-calibration-flow" name="Foreground calibration flow">
+    <mxGraphModel dx="1010" dy="601" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="1250" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="start" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" value="Boot or&#xa;PGA-gain change" vertex="1">
+          <mxGeometry height="80" width="200" x="100" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="load" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="Load EEPROM record for&#xa;selected PGA gain" vertex="1">
+          <mxGeometry height="70" width="260" x="370" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="0vFOy6FI1LJlk_BVGu9a-1" edge="1" parent="1" source="validrecord" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="applystored">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LThXjlLlXeQun-MEq5DV-2" connectable="0" parent="0vFOy6FI1LJlk_BVGu9a-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.1169" y="-2" as="geometry">
+            <mxPoint y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0vFOy6FI1LJlk_BVGu9a-2" edge="1" parent="1" source="validrecord" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="seed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="LThXjlLlXeQun-MEq5DV-1" connectable="0" parent="0vFOy6FI1LJlk_BVGu9a-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
+          <mxGeometry relative="1" x="-0.039" y="3" as="geometry">
+            <mxPoint y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="validrecord" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="Valid record&#xa;and CRC?" vertex="1">
+          <mxGeometry height="90" width="180" x="410" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="0vFOy6FI1LJlk_BVGu9a-4" edge="1" parent="1" source="applystored" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="verifycfg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="applystored" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="Apply stored four-DAC code set" vertex="1">
+          <mxGeometry height="65" width="140" x="645" y="337.5" as="geometry" />
+        </mxCell>
+        <mxCell id="0vFOy6FI1LJlk_BVGu9a-5" edge="1" parent="1" source="seed" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="verifycfg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="seed" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="Invalid record: apply safe&#xa;nominal DAC seeds" vertex="1">
+          <mxGeometry height="65" width="140" x="215" y="337.5" as="geometry" />
+        </mxCell>
+        <mxCell id="verifycfg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" value="Configure AMux + ADC + DFB for&#xa;rapid offset verification" vertex="1">
+          <mxGeometry height="70" width="290" x="355" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="verify" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="All four stages&#xa;within tolerance?" vertex="1">
+          <mxGeometry height="100" width="180" x="410" y="555" as="geometry" />
+        </mxCell>
+        <mxCell id="calloop" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;align=center;" value="Sequentially calibrate PGA → BP → SUM → LP:&#xa;measure stage → estimate DC level → control update → write DAC,&#xa;per stage until in-deadband and stable, or timeout&#xa;(Section III-B)" vertex="1">
+          <mxGeometry height="120" width="420" x="290" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="save" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="If all stages are valid: save codes and CRC.&#xa;Otherwise retain the prior EEPROM record" vertex="1">
+          <mxGeometry height="70" width="280" x="360" y="865" as="geometry" />
+        </mxCell>
+        <mxCell id="restore" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" value="Restore acquisition routing and DFB coefficients;&#xa;freeze all DAC codes" vertex="1">
+          <mxGeometry height="70" width="320" x="340" y="975" as="geometry" />
+        </mxCell>
+        <mxCell id="acquire" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" value="Acquire geophone signal&#xa;(calibration feedback inactive)" vertex="1">
+          <mxGeometry height="80" width="200" x="100" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;fontColor=#555555;align=left;spacingLeft=8;rotation=0;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Orange: PSoC hardware   Blue: firmware/control&lt;br&gt;Red: DAC actuation/failure   Yellow: decision&lt;/font&gt;" vertex="1">
+          <mxGeometry height="85" width="190" x="165" y="562.5" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="load">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="load" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="validrecord">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="verifycfg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="verify">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="verify" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="restore" value="Yes">
+          <mxGeometry relative="1" x="-0.94" y="10" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="730" y="605" />
+              <mxPoint x="730" y="1010" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="verify" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="calloop" value="No: recalibrate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="calloop" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="save">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="save" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="restore">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="restore" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="acquire">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="cvpb5g19FakxQKHNIJey" name="Page-2">
+    <mxGraphModel dx="-154" dy="1569" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" value="Boot or&#xa;PGA-gain change" vertex="1">
+          <mxGeometry height="64" width="160" x="1545" y="-320" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="Load EEPROM record for&#xa;selected PGA gain" vertex="1">
+          <mxGeometry height="70" width="130" x="1385" y="-323" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-27" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-5" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="73cJvmG9Y3DG1glWdBMk-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wByom0Gyc8LYUdCKaJrU-2" connectable="0" parent="73cJvmG9Y3DG1glWdBMk-27" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
+          <mxGeometry relative="1" x="-0.6232" y="3" as="geometry">
+            <mxPoint x="7" y="-4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-28" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-5" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wByom0Gyc8LYUdCKaJrU-1" connectable="0" parent="73cJvmG9Y3DG1glWdBMk-28" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.1208" y="-1" as="geometry">
+            <mxPoint x="9" y="5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-5" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="Valid record&#xa;and CRC?" vertex="1">
+          <mxGeometry height="90" width="180" x="1175" y="-333" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-29" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-7" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="73cJvmG9Y3DG1glWdBMk-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="Apply stored four-DAC code set" vertex="1">
+          <mxGeometry height="65" width="130" x="1015" y="-320" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-30" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-9" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="Invalid record: apply safe&#xa;nominal DAC seeds" vertex="1">
+          <mxGeometry height="70" width="180" x="1490" y="-218" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-31" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-10" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;" value="Configure AMux + ADC + DFB for&#xa;rapid offset verification" vertex="1">
+          <mxGeometry height="70" width="235" x="1015" y="-215" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-32" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-11" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wByom0Gyc8LYUdCKaJrU-4" connectable="0" parent="73cJvmG9Y3DG1glWdBMk-32" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="No" vertex="1">
+          <mxGeometry relative="1" x="-0.4576" y="1" as="geometry">
+            <mxPoint x="-5" y="11" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-34" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-11" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="wByom0Gyc8LYUdCKaJrU-3" connectable="0" parent="73cJvmG9Y3DG1glWdBMk-34" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.9046" y="1" as="geometry">
+            <mxPoint x="11" y="20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-11" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="All four stages&#xa;within tolerance?" vertex="1">
+          <mxGeometry height="100" width="180" x="1015" y="-75" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-33" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-12" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;align=center;" value="Sequentially calibrate PGA → BP → SUM → LP:&#xa;measure stage → estimate DC level → control update → write DAC,&#xa;per stage until in-deadband and stable, or timeout&#xa;(Section III-B)" vertex="1">
+          <mxGeometry height="120" width="320" x="1210" y="-85" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-35" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-13" style="edgeStyle=orthogonalEdgeStyle;curved=0;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="73cJvmG9Y3DG1glWdBMk-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" value="If all stages are valid: save codes and CRC.&#xa;Otherwise retain the prior EEPROM record" vertex="1">
+          <mxGeometry height="90" width="185" x="1545" y="-70" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-36" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-14" style="edgeStyle=orthogonalEdgeStyle;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="73cJvmG9Y3DG1glWdBMk-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;" value="Restore acquisition routing and DFB coefficients;&#xa;freeze all DAC codes" vertex="1">
+          <mxGeometry height="70" width="360" x="1370" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-15" parent="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;" value="Acquire geophone signal&#xa;(calibration feedback inactive)" vertex="1">
+          <mxGeometry height="80" width="220" x="1015" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;fontColor=#555555;align=center;spacingLeft=8;rotation=0;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Orange: PSoC hardware   Blue: firmware/control Red: DAC actuation/failure   Yellow: decision&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="550" x="1530" y="-110" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-17" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="73cJvmG9Y3DG1glWdBMk-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="73cJvmG9Y3DG1glWdBMk-18" edge="1" parent="1" source="73cJvmG9Y3DG1glWdBMk-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;" target="73cJvmG9Y3DG1glWdBMk-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="force-command" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;" value="Calibration command: apply selected&#xa;seed codes and force a full run" vertex="1">
+          <mxGeometry height="70" width="205" x="1265" y="-215" as="geometry" />
+        </mxCell>
+        <mxCell id="force-command-run" edge="1" parent="1" source="force-command" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="73cJvmG9Y3DG1glWdBMk-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

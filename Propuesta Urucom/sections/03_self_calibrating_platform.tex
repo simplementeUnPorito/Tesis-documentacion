@@ -3,44 +3,46 @@
 
 \subsection{Digital Hardware and Calibration Sequence}
 
-% Editable diagram source: imagenes/psoc_foreground_calibration_flow.drawio
-% After tuning it in diagrams.net, export it as
-% imagenes/psoc_foreground_calibration_flow.pdf and replace this draft box
+% Editable paper diagram source: imagenes/psoc_foreground_calibration_flow_compressed.drawio (page 2)
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=0.68\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio.png}
-	\caption{Flowchart of the proposed foreground autocalibration algorithm, including stored-code verification, sequential per-stage correction, and transition to acquisition.}
+	\includegraphics[width=0.98\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio_horizontal_comprimido.png}
+	\caption{Foreground calibration flow: stored-code verification, sequential trimming, and acquisition.}
 	\label{fig:calibration_flow}
 \end{figure}
 
-At boot, after a gain change, or on command, the firmware loads stored DAC codes and verifies the resulting offsets (Fig.~\ref{fig:calibration_flow}). If all stages are within tolerance, it restores acquisition without a full run; otherwise it processes PGA, BP, SUM, and LP sequentially, resetting the FIR history and settling after each multiplexer switch. A watchdog and per-stage sample limit bound the sequence. During acquisition the controller is inactive, the multiplexer selects LP, and the VDAC codes remain constant, so no time-varying feedback enters the acquired signal.
-
 \begin{figure*}[!t]
 	\centering
-	\includegraphics[width=0.80\textwidth]{imagenes/DigitalPathGordito.png}
-	\caption{Digital calibration hardware. The controller routes DMA transfers among the ADC, shared digital filter, and EEPROM and reconfigures the analog multiplexer. Black and blue arrows indicate acquisition and calibration paths, respectively.}
+	\includegraphics[width=0.88\textwidth]{imagenes/DigitalPathGordito.png}
+	\caption{Digital calibration hardware. Direct memory access (DMA) moves ADC/filter data through RAM; the controller reconfigures the analog multiplexer, while firmware accesses EEPROM. Black and blue arrows indicate acquisition and calibration paths, respectively.}
 	\label{fig:digital_path}
 \end{figure*}
 
-The shared digital filter implements the geophone response during acquisition and switches to an aggressive low-pass estimator during calibration (Fig.~\ref{fig:digital_path}); its acquisition coefficients and path are then restored. Successful DAC codes are stored in EEPROM as one record per PGA gain setting containing the gain code, valid-stage mask, four DAC codes, version, and CRC. A failed run never overwrites a valid record.
+At boot, after a gain change, or on command, the firmware loads stored DAC codes and verifies the offsets (Fig.~\ref{fig:calibration_flow}). Since DC estimation assumes a stationary geophone and sufficiently slow internal-state change over the lock window, an accepted operating point returns directly to acquisition; otherwise PGA, BP, SUM, and LP are processed sequentially, with finite-impulse-response (FIR) filter reset and settling after each switch. A watchdog and sample limits bound the sequence. During acquisition the controller is inactive, LP is selected, and the VDAC codes remain constant.
+
+The shared digital filter implements the geophone response during acquisition and a 128-tap low-pass FIR DC estimator during calibration (Fig.~\ref{fig:digital_path}); its state and acquisition path are restored afterward. A gain-indexed electrically erasable programmable read-only memory (EEPROM) record stores the valid-stage mask, four DAC codes, version, and cyclic-redundancy check (CRC). A failed run may hold its bounded best codes for the current sequence but never overwrites a valid record.
 
 \subsection{Control Law and Calibration Parameters}
 
-For each stage, the filtered measurement $\hat{y}_i[n]$ produces the ADC-domain error $e_i[n] = r_i-\hat{y}_i[n]$, where $r_i=0$ for the current differential geophone configuration. The error is first mapped to the 8-bit DAC domain:
+For each stage, the ADC reports the node voltage relative to $V_{\mathrm{ref}}$. Thus, $\hat{y}_i[n]=0$ denotes a physical node at $V_{\mathrm{ref}}$, not at 0~V. The variables $\hat{y}_i[n]$, $r_i$, and $e_i[n]$ are signed ADC counts; the filtered differential measurement gives $e_i[n] = r_i-\hat{y}_i[n]$, with $r_i=0$. The error is first mapped to the 8-bit DAC domain:
 \begin{equation}
- \varepsilon_i[n] = \operatorname{round}\!\left(
- \frac{e_i[n]V_{\mathrm{ADC}}N_{\mathrm{DAC}}}
- {N_{\mathrm{ADC}}V_{\mathrm{DAC}}}\right),
+ \begin{aligned}
+ \varepsilon_i[n]
+ &= \operatorname{round}\!\left(e_i[n]\frac{q_{\mathrm{ADC}}}{q_{\mathrm{DAC}}}\right)\\
+ &= \operatorname{round}\!\left(
+ \frac{e_i[n]V_{\mathrm{ADC,span}}N_{\mathrm{DAC}}}
+ {N_{\mathrm{ADC}}V_{\mathrm{DAC,span}}}\right),
+ \end{aligned}
  \label{eq:scale}
 \end{equation}
-with $V_{\mathrm{ADC}}=5000$~mV, $N_{\mathrm{ADC}}=262144$, $V_{\mathrm{DAC}}=4080$~mV, and $N_{\mathrm{DAC}}=255$ in the implemented configuration.
+where $q_x=V_{x,\mathrm{span}}/N_x$ is the step size and $N_x$ is the number of quantization levels, not the maximum code. Here $N_{\mathrm{ADC}}=2^{18}$ and $N_{\mathrm{DAC}}=2^8$. At nominal $V_{\mathrm{DDA}}=5$~V, $V_{\mathrm{ADC,span}}=5000$~mV and $q_{\mathrm{ADC}}=5000/2^{18}$~mV/count; physically, the differential span follows $V_{\mathrm{DDA}}$. The VDAC's ideal 256-bin span is 4096~mV, so $q_{\mathrm{DAC}}=16$~mV/code, while code 255 reaches 4080~mV \cite{InfineonPSoC,InfineonAN60305}.
 
-The rounding in Eq.~\ref{eq:scale} makes $\varepsilon_i[n]$ an integer error in equivalent DAC codes. If the ideal operating point lies between two realizable codes, an acceptance band narrower than one output step can make the controller alternate indefinitely between them. The implemented deadband therefore scales with the DAC-to-node gain,
+The rounding in Eq.~\ref{eq:scale} gives an integer error in equivalent DAC codes. An overly narrow band can alternate indefinitely between adjacent codes when the ideal point is not realizable; the implementation therefore adopts the conservative one-step floor
 \par\noindent
 \begin{minipage}[c]{0.45\columnwidth}
 \footnotesize
 \begin{equation}
- \Delta_i=\max(1,\lceil1.2|K_i|\rceil),
+ \Delta_{i,\min}^{\mathrm{impl}}=\max(1,\lceil|K_i|\rceil),
  \label{eq:deadband}
 \end{equation}
 \end{minipage}%
@@ -57,41 +59,37 @@ The rounding in Eq.~\ref{eq:scale} makes $\varepsilon_i[n]$ an integer error in 
 \end{equation}
 \end{minipage}
 \par
-where $\bar{\varepsilon}_i[n]$ is the error presented to the controller. The 1.2 factor provides a small margin over one realizable stage-output step, while the one-code floor preserves a finite acceptance region when $|K_i|<1$.
+Inside the band, Eq.~\ref{eq:deadband-error} suppresses integration; lock and refinement still govern convergence. Table~\ref{tab:cal_params} lists adopted values satisfying $\Delta_i\geq\Delta_{i,\min}^{\mathrm{impl}}$.
 
-The architecture requires only a measurable stage output and sufficient trim range; this prototype uses a positional PI law:
+Under the assumptions of Section~\ref{sec:platform-design}, the architecture requires a measurable stage output and sufficient trim authority and range. The controller is written in positional proportional-integral (PI) form,
 \begin{equation}
- u_i^*[n]=u_{i,0}+s_i\left[
- \frac{k_{p,i}}{|K_i|}\bar{\varepsilon}_i[n]+\frac{k_{i,i}}{|K_i|}
+ c_i^*[n]=c_{i,0}+s_i\left[
+ \frac{k_{\mathrm{P},i}}{|K_i|}\bar{\varepsilon}_i[n]+\frac{k_{\mathrm{I},i}}{|K_i|}
  \sum_{q=0}^{n}\bar{\varepsilon}_i[q]\right],
  \label{eq:pi}
 \end{equation}
-Here $u_{i,0}$ is a feedforward code near the expected operating point, $s_i\in\{-1,+1\}$ is the injection polarity, and $|K_i|$ is the nominal stage movement per VDAC code in the scaled domain of Eq.~\ref{eq:scale}. The fixed BP, SUM, and LP values are $2$, $7.89$, and $6$, respectively; PGA $K_i$ and $s_i$ follow the active gain code. The feedforward codes were hand-set once on Board~B at the power-up gain $\times50$ and then used unchanged for Board~A and all tested gains. With $k_{p,i}=0$ for all stages, Eq.~\ref{eq:pi} reduces to the pure integrator parameterized by $k_{i,i}$ in Table~\ref{tab:cal_params}.
+Here $c_{i,0}$ is a feedforward code near the expected operating point and, under the adopted error convention, $s_i=\operatorname{sgn}(K_i)$. The four physical $K_i$ values in Table~\ref{tab:cal_params} are positive, so $s_i=+1$. The gain magnitudes follow from the topology and resistor ratios; the gain-2 two-op-amp input of \cite{CypressAN60319}, followed by the programmable-gain block (Fig.~\ref{fig:analog_path}), gives nominal differential signal gain $2\,\mathrm{Gain}_{\mathrm{PGA}}$, whereas its DC VDAC-to-node gain is $K_{\mathrm{PGA}}=1$. The reported runs used $\boldsymbol{c}_0=(156,156,156,156)$ for (PGA, BP, SUM, LP) and the $k_{\mathrm{P},i}$ and $k_{\mathrm{I},i}$ values in Table~\ref{tab:cal_params}.
 
-The command is clamped to the VDAC range and slew-limited to one code per sample, with conditional integration for anti-windup. Convergence requires a fixed number of samples in the same quantized bucket; a final adjacent-code trial is retained only when it lowers the filtered error. At timeout, the best code found is held, the stage is flagged not converged, and the sequence advances.
-
-Table~\ref{tab:cal_params} lists the implemented parameters. Settling uses 512 samples (0.20~s) for PGA/BP/SUM and 1024 (0.39~s) for LP; lock requires 512 or 1024 consecutive in-deadband samples, and refinement adds 1024--2048 samples. The listed timeouts are worst-case ceilings.
+The command is clamped and slew-limited to one code per sample, with conditional integration for anti-windup. Convergence requires a fixed sample count in one quantized bucket; an adjacent-code trial is retained only if it lowers the filtered error. At timeout, the best code is held, the stage is flagged, and the sequence advances. Codes are stored only if all controllable stages succeed; otherwise the prior EEPROM record remains.
 
 \begin{table}[t]
-	\caption{Implemented per-stage calibration parameters. Deadband $\Delta_i$ is given in equivalent DAC codes; the DC estimator runs at the ADC native sample rate of 2604~Hz.}
+\caption{Parameters used for the reported measurements. Deadbands are in equivalent DAC codes; S/L/R are settle/lock/refine samples at 2604~Hz, whereas Timeout is in seconds.}
 	\label{tab:cal_params}
 	\centering
 	\scriptsize
-	\setlength{\tabcolsep}{2.5pt}
+	\setlength{\tabcolsep}{2.0pt}
 	\resizebox{0.98\columnwidth}{!}{%
-		\begin{tabular}{lcccc@{\hspace{4pt}\vrule\hspace{4pt}}lcccc}
+		\begin{tabular}{lccccccc}
 			\toprule
-			Stage & $K_i$ & $\Delta_i$ & $k_{i,i}$ & Timeout (s)
-			& Stage & $K_i$ & $\Delta_i$ & $k_{i,i}$ & Timeout (s)\\
+			Stage & $|K_i|$ & $\Delta_{i,\min}^{\mathrm{impl}}$ & $\Delta_i$ & $k_{\mathrm{P},i}$ & $k_{\mathrm{I},i}$ & S/L/R & Timeout (s)\\
 			\midrule
-			PGA   & gain-dependent & gain-dependent & $3\times10^{-4}$ & 11.5
-			& SUM & 7.89 & 10 & $5\times10^{-4}$ & 11.5\\
-
-			BP    & 2 & 3 & $5\times10^{-4}$ & 17.3
-			& LP    & 6 & 8 & $5\times10^{-4}$ & 17.3\\
+			PGA & 1 & 1 & 18 & $10^{-3}$ & $3\times10^{-4}$ & 512/512/1024 & 11.5\\
+			BP  & 1 & 1 & 3 & $10^{-4}$ & $5\times10^{-4}$ & 512/1024/1024 & 17.3\\
+			SUM & 7.89 & 8 & 10 & $10^{-4}$ & $5\times10^{-4}$ & 512/512/1024 & 11.5\\
+			LP  & 6 & 6 & 8 & $10^{-4}$ & $5\times10^{-4}$ & 1024/1024/2048 & 17.3\\
 			\bottomrule
 		\end{tabular}%
 	}
 \end{table}
 
-The 8-bit VDAC resolution meets this prototype's acceptance range. Applications requiring a smaller residual can trade added hardware for a finer step through a PSoC IDAC/resistor or a buffered topology \cite{InfineonAN60305}, while retaining the same measure--estimate--correct sequence.
+The proof-of-concept parameter set in Table~\ref{tab:cal_params} was fixed across all reported conditions and was not systematically optimized; Section~\ref{sec:pga-note} discusses $\Delta_{\mathrm{PGA}}=18$. Finer trim can use a current-output DAC/resistor or buffered topology \cite{InfineonAN60305} without changing the sequence.
