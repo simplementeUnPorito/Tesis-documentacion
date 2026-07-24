@@ -1,0 +1,3 @@
+[submodule "investigacion"]
+	path = investigacion
+	url = https://github.com/simplementeUnPorito/Tesis-investigacion.git
