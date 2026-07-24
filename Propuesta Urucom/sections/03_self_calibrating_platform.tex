@@ -4,27 +4,21 @@
 \subsection{Digital Hardware and Calibration Sequence}
 
 % Editable paper diagram source: imagenes/psoc_foreground_calibration_flow_compressed.drawio (page 2)
-\begin{figure}[!ht]
+\begin{figure}[!t]
 	\centering
-	\includegraphics[width=0.98\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio_horizontal_comprimido.png}
+	\includegraphics[width=\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio_horizontal_comprimido.png}
 	\caption{Foreground calibration flow: stored-code verification, sequential trimming, and acquisition.}
 	\label{fig:calibration_flow}
 \end{figure}
 
-\begin{figure*}[!t]
-	\centering
-	\includegraphics[width=0.88\textwidth]{imagenes/DigitalPathGordito.png}
-	\caption{Digital calibration hardware. Direct memory access (DMA) moves ADC/filter data through RAM; the controller reconfigures the analog multiplexer, while firmware accesses EEPROM. Black and blue arrows indicate acquisition and calibration paths, respectively.}
-	\label{fig:digital_path}
-\end{figure*}
+At boot, after a gain change, or on command, the firmware loads stored DAC codes and verifies the offsets (Fig.~\ref{fig:calibration_flow}). Because DC estimation assumes a stationary geophone and slow internal-state change over the lock window, an accepted operating point returns directly to acquisition; otherwise PGA, BP, SUM, and LP are processed sequentially, with filter reset and settling after each switch. A watchdog and sample limits bound the sequence; during acquisition the controller is inactive, LP is selected, and the VDAC codes are constant.
 
-At boot, after a gain change, or on command, the firmware loads stored DAC codes and verifies the offsets (Fig.~\ref{fig:calibration_flow}). Since DC estimation assumes a stationary geophone and sufficiently slow internal-state change over the lock window, an accepted operating point returns directly to acquisition; otherwise PGA, BP, SUM, and LP are processed sequentially, with finite-impulse-response (FIR) filter reset and settling after each switch. A watchdog and sample limits bound the sequence. During acquisition the controller is inactive, LP is selected, and the VDAC codes remain constant.
-
-The shared digital filter implements the geophone response during acquisition and a 128-tap low-pass FIR DC estimator during calibration (Fig.~\ref{fig:digital_path}); its state and acquisition path are restored afterward. A gain-indexed electrically erasable programmable read-only memory (EEPROM) record stores the valid-stage mask, four DAC codes, version, and cyclic-redundancy check (CRC). A failed run may hold its bounded best codes for the current sequence but never overwrites a valid record.
+The shared digital filter is reconfigured between modes: acquisition loads coefficients tailored to the geophone's operational bandwidth, whereas calibration uses a 128-tap low-pass finite-impulse-response (FIR) to estimate the DC offset, with direct memory access moving data through RAM. After calibration the acquisition coefficients, filter state, and routing are restored. A gain-indexed electrically erasable programmable read-only memory (EEPROM) record stores the valid-stage mask, four DAC codes, version, and cyclic-redundancy check; a failed run may hold its bounded best codes but never overwrites a valid record.
 
 \subsection{Control Law and Calibration Parameters}
 
-For each stage, the ADC reports the node voltage relative to $V_{\mathrm{ref}}$. Thus, $\hat{y}_i[n]=0$ denotes a physical node at $V_{\mathrm{ref}}$, not at 0~V. The variables $\hat{y}_i[n]$, $r_i$, and $e_i[n]$ are signed ADC counts; the filtered differential measurement gives $e_i[n] = r_i-\hat{y}_i[n]$, with $r_i=0$. The error is first mapped to the 8-bit DAC domain:
+For each stage, $\hat{y}_i[n]$ is the filtered signed ADC count proportional to $V_{\mathrm{stage}}-V_{\mathrm{ref}}$, $r_i$ is the desired count, and $e_i[n]$ is the measured residual. Because the target is the reference level, $r_i=0$ and
+$e_i[n]=\hat{y}_i[n]-r_i=\hat{y}_i[n]$. The residual is first mapped to the 8-bit DAC domain:
 \begin{equation}
  \begin{aligned}
  \varepsilon_i[n]
@@ -35,7 +29,7 @@ For each stage, the ADC reports the node voltage relative to $V_{\mathrm{ref}}$.
  \end{aligned}
  \label{eq:scale}
 \end{equation}
-where $q_x=V_{x,\mathrm{span}}/N_x$ is the step size and $N_x$ is the number of quantization levels, not the maximum code. Here $N_{\mathrm{ADC}}=2^{18}$ and $N_{\mathrm{DAC}}=2^8$. At nominal $V_{\mathrm{DDA}}=5$~V, $V_{\mathrm{ADC,span}}=5000$~mV and $q_{\mathrm{ADC}}=5000/2^{18}$~mV/count; physically, the differential span follows $V_{\mathrm{DDA}}$. The VDAC's ideal 256-bin span is 4096~mV, so $q_{\mathrm{DAC}}=16$~mV/code, while code 255 reaches 4080~mV \cite{InfineonPSoC,InfineonAN60305}.
+where $q_x=V_{x,\mathrm{span}}/N_x$ is the step size and $N_x$ is the number of quantization levels. All quantities used here are nominal datasheet values: $N_{\mathrm{ADC}}=2^{18}$, $N_{\mathrm{DAC}}=2^8$, $V_{\mathrm{ADC,span}}=5000$~mV, and $V_{\mathrm{DAC,span}}=4096$~mV as the ideal 256-bin quantization span, giving $q_{\mathrm{ADC}}=5000/2^{18}$~mV/count and $q_{\mathrm{DAC}}=16$~mV/code \cite{InfineonPSoC,InfineonAN60305}.
 
 The rounding in Eq.~\ref{eq:scale} gives an integer error in equivalent DAC codes. An overly narrow band can alternate indefinitely between adjacent codes when the ideal point is not realizable; the implementation therefore adopts the conservative one-step floor
 \par\noindent
@@ -63,14 +57,17 @@ Inside the band, Eq.~\ref{eq:deadband-error} suppresses integration; lock and re
 
 Under the assumptions of Section~\ref{sec:platform-design}, the architecture requires a measurable stage output and sufficient trim authority and range. The controller is written in positional proportional-integral (PI) form,
 \begin{equation}
- c_i^*[n]=c_{i,0}+s_i\left[
+c_i^*[n]=c_{i,\mathrm{base}}-s_i\left[
  \frac{k_{\mathrm{P},i}}{|K_i|}\bar{\varepsilon}_i[n]+\frac{k_{\mathrm{I},i}}{|K_i|}
- \sum_{q=0}^{n}\bar{\varepsilon}_i[q]\right],
+ \sum_{q=0}^{n-1}\bar{\varepsilon}_i[q]\right],
  \label{eq:pi}
 \end{equation}
-Here $c_{i,0}$ is a feedforward code near the expected operating point and, under the adopted error convention, $s_i=\operatorname{sgn}(K_i)$. The four physical $K_i$ values in Table~\ref{tab:cal_params} are positive, so $s_i=+1$. The gain magnitudes follow from the topology and resistor ratios; the gain-2 two-op-amp input of \cite{CypressAN60319}, followed by the programmable-gain block (Fig.~\ref{fig:analog_path}), gives nominal differential signal gain $2\,\mathrm{Gain}_{\mathrm{PGA}}$, whereas its DC VDAC-to-node gain is $K_{\mathrm{PGA}}=1$. The reported runs used $\boldsymbol{c}_0=(156,156,156,156)$ for (PGA, BP, SUM, LP) and the $k_{\mathrm{P},i}$ and $k_{\mathrm{I},i}$ values in Table~\ref{tab:cal_params}.
 
-The command is clamped and slew-limited to one code per sample, with conditional integration for anti-windup. Convergence requires a fixed sample count in one quantized bucket; an adjacent-code trial is retained only if it lowers the filtered error. At timeout, the best code is held, the stage is flagged, and the sequence advances. Codes are stored only if all controllable stages succeed; otherwise the prior EEPROM record remains.
+
+where $c_{i,\mathrm{base}}$ is the baseline feedforward code and $s_i=\operatorname{sgn}(K_i)$. The integral sum holds samples accepted before the current update and resets when the residual enters the deadband. The VDAC-to-node gain magnitudes $|K_i|$ used in Table~\ref{tab:cal_params} follow from each stage's topology and resistor ratios; at the two-op-amp instrumentation-amplifier PGA input \cite{CypressAN60319}, the reference reaches its measured node at unity DC gain ($K_{\mathrm{PGA}}=1$).
+
+
+The command is clipped to that stage's configured limits within 0--255; at a limit, integration is suspended when the residual would push the command farther out, preventing windup. Convergence requires a fixed count of consecutive in-deadband samples, and an adjacent-code trial is kept only if it lowers the filtered residual. At timeout the best code is held and the stage flagged.
 
 \begin{table}[t]
 \caption{Parameters used for the reported measurements. Deadbands are in equivalent DAC codes; S/L/R are settle/lock/refine samples at 2604~Hz, whereas Timeout is in seconds.}
@@ -92,4 +89,4 @@ The command is clamped and slew-limited to one code per sample, with conditional
 	}
 \end{table}
 
-The proof-of-concept parameter set in Table~\ref{tab:cal_params} was fixed across all reported conditions and was not systematically optimized; Section~\ref{sec:pga-note} discusses $\Delta_{\mathrm{PGA}}=18$. Finer trim can use a current-output DAC/resistor or buffered topology \cite{InfineonAN60305} without changing the sequence.
+The proof-of-concept parameter set in Table~\ref{tab:cal_params} was selected empirically in preliminary bench tests, fixed across all reported conditions, and not systematically optimized; Section~\ref{sec:pga-note} discusses $\Delta_{\mathrm{PGA}}=18$. Finer trim can use a current-output DAC/resistor or buffered topology \cite{InfineonAN60305} without changing the sequence.

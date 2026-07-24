@@ -1,0 +1,666 @@
+% Relabel and rebuild the circuit-response figure into a single dual-axis plot.
+%
+% Left axis:
+%   - Normalized sensitivity
+%   - Circuit-tuning envelope copied from the original FIG
+%
+% Right axis:
+%   - Magnitude-squared coherence
+%
+% The phase subplot is intentionally omitted.
+
+clear;
+close all;
+clc;
+
+scriptDir = fileparts(mfilename('fullpath'));
+paperDir  = fileparts(scriptDir);
+
+inputFile = fullfile( ...
+    paperDir, ...
+    'normalized_geophone_geo_adc_response.fig');
+
+outputFile = fullfile( ...
+    paperDir, ...
+    'Imagenes', ...
+    'analog_path_check.png');
+
+%% Open original figure without modifying it
+
+fig = openfig(inputFile, 'invisible');
+
+%% Transfer legend entries to the associated graphical objects
+% Some names in the source FIG are stored only in Legend.String and not
+% in each object's DisplayName property.
+
+sourceLegends = findall(fig, 'Type', 'Legend');
+
+for legendIndex = 1:numel(sourceLegends)
+
+    currentLegend = sourceLegends(legendIndex);
+    legendEntries = string(currentLegend.String);
+    legendEntries = legendEntries(:);
+
+    try
+        legendObjects = currentLegend.PlotChildren;
+        legendObjects = legendObjects(:);
+    catch
+        legendObjects = gobjects(0);
+    end
+
+    numberOfEntries = min( ...
+        numel(legendEntries), ...
+        numel(legendObjects));
+
+    for entryIndex = 1:numberOfEntries
+
+        currentObject = legendObjects(entryIndex);
+
+        if isprop(currentObject, 'DisplayName')
+            currentObject.DisplayName = ...
+                char(legendEntries(entryIndex));
+        end
+
+    end
+end
+
+%% Create the new single-panel figure
+
+newFig = figure( ...
+    'Visible', 'on', ...
+    'Name', 'Analog Path Check', ...
+    'Color', 'white', ...
+    'Position', [100 100 900 600]);
+
+newAx = axes( ...
+    newFig, ...
+    'Box', 'on', ...
+    'FontSize', 20, ...
+    'LineWidth', 0.9);
+
+hold(newAx, 'on');
+grid(newAx, 'on');
+
+set(newAx, ...
+    'XScale', 'log', ...
+    'XMinorGrid', 'on', ...
+    'GridAlpha', 0.18, ...
+    'MinorGridAlpha', 0.08, ...
+    'Layer', 'top');
+
+%% Search the original axes and classify their contents
+
+axesObjects = findall(fig, 'Type', 'Axes');
+
+sensitivityObjects = gobjects(0);
+coherenceObjects   = gobjects(0);
+
+for axisIndex = 1:numel(axesObjects)
+
+    sourceAx = axesObjects(axisIndex);
+
+    yLabelText = lower(strjoin( ...
+        string(sourceAx.YLabel.String), ...
+        " "));
+
+    titleText = lower(strjoin( ...
+        string(sourceAx.Title.String), ...
+        " "));
+
+    axisDescription = yLabelText + " " + titleText;
+
+    % Ignore the phase subplot completely.
+    if contains(axisDescription, "phase") || ...
+       contains(axisDescription, "fase")  || ...
+       contains(axisDescription, "degree") || ...
+       contains(axisDescription, "deg")
+
+        continue;
+    end
+
+    sourceLines = findall(sourceAx, 'Type', 'Line');
+    sourcePatches = findall(sourceAx, 'Type', 'Patch');
+
+    sourceObjects = [
+        sourceLines(:);
+        sourcePatches(:)
+    ];
+
+    if contains(axisDescription, "coherenc")
+
+        coherenceObjects = [
+            coherenceObjects;
+            sourceObjects
+        ];
+
+    else
+
+        sensitivityObjects = [
+            sensitivityObjects;
+            sourceObjects
+        ];
+
+    end
+end
+
+%% Categorize sensitivity objects
+
+envelopeObjects = gobjects(0);
+measuredObjects = gobjects(0);
+otherObjects    = gobjects(0);
+
+for objectIndex = 1:numel(sensitivityObjects)
+
+    currentObject = sensitivityObjects(objectIndex);
+
+    displayName = "";
+
+    if isprop(currentObject, 'DisplayName')
+        displayName = string(currentObject.DisplayName);
+    end
+
+    lowerName = lower(displayName);
+
+    isEnvelope = ...
+        contains(lowerName, "achievable calibration range") || ...
+        contains(lowerName, "potentiometer") || ...
+        contains(lowerName, "tuning") || ...
+        contains(lowerName, "envelope");
+
+    isMeasured = ...
+        contains(lowerName, "measured response") || ...
+        contains(lowerName, "employed in this work") || ...
+        contains(lowerName, "measured pga") || ...
+        contains(lowerName, "cascaded");
+
+    if isEnvelope
+
+        envelopeObjects(end + 1, 1) = currentObject; %#ok<SAGROW>
+
+    elseif isMeasured
+
+        measuredObjects(end + 1, 1) = currentObject; %#ok<SAGROW>
+
+    else
+
+        otherObjects(end + 1, 1) = currentObject; %#ok<SAGROW>
+
+    end
+end
+
+%% LEFT AXIS: normalized sensitivity
+
+yyaxis(newAx, 'left');
+hold(newAx, 'on');
+
+envelopePatch = gobjects(0);
+
+%% Draw the circuit-tuning envelope
+
+if ~isempty(envelopeObjects)
+
+    objectTypes = strings(numel(envelopeObjects), 1);
+
+    for objectIndex = 1:numel(envelopeObjects)
+        objectTypes(objectIndex) = ...
+            string(envelopeObjects(objectIndex).Type);
+    end
+
+    sourcePatchIndex = find( ...
+        strcmpi(objectTypes, "patch"), ...
+        1, ...
+        'first');
+
+    if ~isempty(sourcePatchIndex)
+
+        %% Preferred method: copy the original filled Patch
+
+        sourcePatch = envelopeObjects(sourcePatchIndex);
+
+        envelopePatch = copyobj(sourcePatch, newAx);
+
+        envelopePatch.FaceColor = [1.00 0.91 0.80];
+        envelopePatch.FaceAlpha = 0.50;
+        envelopePatch.EdgeColor = 'none';
+
+        envelopePatch.DisplayName = ...
+            ['Circuit-tuning envelope ' ...
+             '(0--2 k$\Omega$ potentiometer sweep)'];
+
+        envelopePatch.HandleVisibility = 'on';
+
+        patchX = sourcePatch.XData(:);
+        patchY = sourcePatch.YData(:);
+
+        validSamples = ...
+            isfinite(patchX) & ...
+            isfinite(patchY) & ...
+            patchX > 0;
+
+        patchX = patchX(validSamples);
+        patchY = patchY(validSamples);
+
+        if ~isempty(patchX)
+
+            [boundaryX, ~, groupIndex] = unique(patchX);
+
+            lowerBoundary = accumarray( ...
+                groupIndex, ...
+                patchY, ...
+                [], ...
+                @min);
+
+            upperBoundary = accumarray( ...
+                groupIndex, ...
+                patchY, ...
+                [], ...
+                @max);
+
+            [boundaryX, sortIndex] = sort(boundaryX);
+
+            lowerBoundary = lowerBoundary(sortIndex);
+            upperBoundary = upperBoundary(sortIndex);
+
+            validBoundary = ...
+                isfinite(boundaryX) & ...
+                isfinite(lowerBoundary) & ...
+                isfinite(upperBoundary) & ...
+                boundaryX > 0;
+
+            boundaryX = boundaryX(validBoundary);
+            lowerBoundary = lowerBoundary(validBoundary);
+            upperBoundary = upperBoundary(validBoundary);
+
+            % Upper boundary: dashed.
+            plot( ...
+                newAx, ...
+                boundaryX, ...
+                upperBoundary, ...
+                '--', ...
+                'Color', [0.85 0.50 0.15], ...
+                'LineWidth', 1.0, ...
+                'HandleVisibility', 'off');
+
+            % Lower boundary: dotted.
+            plot( ...
+                newAx, ...
+                boundaryX, ...
+                lowerBoundary, ...
+                ':', ...
+                'Color', [0.85 0.50 0.15], ...
+                'LineWidth', 1.2, ...
+                'HandleVisibility', 'off');
+        end
+
+    else
+
+        %% Fallback: construct the area from envelope lines
+
+        envelopeLines = envelopeObjects( ...
+            strcmpi(objectTypes, "line"));
+
+        if numel(envelopeLines) >= 2
+
+            validMinimumFrequencies = [];
+            validMaximumFrequencies = [];
+
+            for lineIndex = 1:numel(envelopeLines)
+
+                xData = envelopeLines(lineIndex).XData(:);
+                yData = envelopeLines(lineIndex).YData(:);
+
+                validData = ...
+                    isfinite(xData) & ...
+                    isfinite(yData) & ...
+                    xData > 0;
+
+                xData = xData(validData);
+
+                if ~isempty(xData)
+
+                    validMinimumFrequencies(end + 1) = ...
+                        min(xData); %#ok<SAGROW>
+
+                    validMaximumFrequencies(end + 1) = ...
+                        max(xData); %#ok<SAGROW>
+                end
+            end
+
+            minimumFrequency = max(validMinimumFrequencies);
+            maximumFrequency = min(validMaximumFrequencies);
+
+            commonX = logspace( ...
+                log10(minimumFrequency), ...
+                log10(maximumFrequency), ...
+                1200).';
+
+            interpolatedY = nan( ...
+                numel(commonX), ...
+                numel(envelopeLines));
+
+            for lineIndex = 1:numel(envelopeLines)
+
+                xData = envelopeLines(lineIndex).XData(:);
+                yData = envelopeLines(lineIndex).YData(:);
+
+                validData = ...
+                    isfinite(xData) & ...
+                    isfinite(yData) & ...
+                    xData > 0;
+
+                xData = xData(validData);
+                yData = yData(validData);
+
+                [xData, uniqueIndices] = unique(xData);
+                yData = yData(uniqueIndices);
+
+                [xData, sortIndices] = sort(xData);
+                yData = yData(sortIndices);
+
+                if numel(xData) >= 2
+
+                    interpolatedY(:, lineIndex) = interp1( ...
+                        log10(xData), ...
+                        yData, ...
+                        log10(commonX), ...
+                        'linear', ...
+                        NaN);
+                end
+            end
+
+            lowerBoundary = min( ...
+                interpolatedY, ...
+                [], ...
+                2, ...
+                'omitnan');
+
+            upperBoundary = max( ...
+                interpolatedY, ...
+                [], ...
+                2, ...
+                'omitnan');
+
+            validEnvelope = ...
+                isfinite(commonX) & ...
+                isfinite(lowerBoundary) & ...
+                isfinite(upperBoundary);
+
+            commonX = commonX(validEnvelope);
+            lowerBoundary = lowerBoundary(validEnvelope);
+            upperBoundary = upperBoundary(validEnvelope);
+
+            fillX = [
+                commonX;
+                flipud(commonX)
+            ];
+
+            fillY = [
+                upperBoundary;
+                flipud(lowerBoundary)
+            ];
+
+            envelopePatch = fill( ...
+                newAx, ...
+                fillX, ...
+                fillY, ...
+                [1.00 0.91 0.80], ...
+                'FaceAlpha', 0.50, ...
+                'EdgeColor', 'none', ...
+                'DisplayName', ...
+                ['Circuit-tuning envelope ' ...
+                 '(0--2 k$\Omega$ potentiometer sweep)']);
+
+            % Upper boundary: dashed.
+            plot( ...
+                newAx, ...
+                commonX, ...
+                upperBoundary, ...
+                '--', ...
+                'Color', [0.85 0.50 0.15], ...
+                'LineWidth', 1.0, ...
+                'HandleVisibility', 'off');
+
+            % Lower boundary: dotted.
+            plot( ...
+                newAx, ...
+                commonX, ...
+                lowerBoundary, ...
+                ':', ...
+                'Color', [0.85 0.50 0.15], ...
+                'LineWidth', 1.2, ...
+                'HandleVisibility', 'off');
+
+        else
+            warning( ...
+                ['The tuning envelope was identified, but no Patch ' ...
+                 'or pair of boundary lines was available.']);
+        end
+    end
+
+else
+    warning( ...
+        ['No graphical object associated with the legend entry ' ...
+         '"Achievable calibration range" was identified.']);
+end
+
+%% Plot the measured path
+
+addedMeasuredLegend = false;
+
+for objectIndex = 1:numel(measuredObjects)
+
+    sourceObject = measuredObjects(objectIndex);
+
+    if ~strcmpi(sourceObject.Type, 'line')
+        continue;
+    end
+
+    if ~addedMeasuredLegend
+        handleVisibility = 'on';
+        addedMeasuredLegend = true;
+    else
+        handleVisibility = 'off';
+    end
+
+    plot( ...
+    newAx, ...
+    sourceObject.XData, ...
+    sourceObject.YData, ...
+    'LineStyle', '-', ...
+    'Color', [0.15 0.15 0.15], ...
+    'LineWidth', 1.5, ...
+    'Marker', '.', ...
+    'MarkerSize', 11, ...
+    'DisplayName', ...
+    ['Measured PGA-output-to-ADC-input path cascaded ' ...
+     'with nominal SM-24'], ...
+    'HandleVisibility', handleVisibility);
+end
+
+%% Plot the remaining reference and theoretical curves
+
+for objectIndex = 1:numel(otherObjects)
+
+    sourceObject = otherObjects(objectIndex);
+
+    if ~strcmpi(sourceObject.Type, 'line')
+        continue;
+    end
+
+    displayName = "";
+
+    if isprop(sourceObject, 'DisplayName')
+        displayName = string(sourceObject.DisplayName);
+    end
+
+    % Do not duplicate curves with no useful legend entry.
+    if strlength(strtrim(displayName)) == 0
+        continue;
+    end
+
+    % Remove old units in parentheses from legend entries.
+    displayName = regexprep( ...
+        char(displayName), ...
+        '\s*\([^)]*\)', ...
+        '');
+
+    lineStyle = sourceObject.LineStyle;
+
+    if contains(lower(displayName), 'acceleration')
+        lineStyle = '--';
+    end
+
+    sourceColor = sourceObject.Color;
+
+    if isnumeric(sourceColor) && numel(sourceColor) >= 3
+        sourceColor = sourceColor(1:3);
+    else
+        sourceColor = [0 0 0];
+    end
+
+    sourceLineWidth = sourceObject.LineWidth;
+
+    if isempty(sourceLineWidth) || sourceLineWidth <= 0
+        sourceLineWidth = 1.0;
+    end
+
+    plot( ...
+        newAx, ...
+        sourceObject.XData, ...
+        sourceObject.YData, ...
+        'LineStyle', lineStyle, ...
+        'Color', sourceColor, ...
+        'LineWidth', sourceLineWidth, ...
+        'Marker', 'none', ...
+        'DisplayName', displayName, ...
+        'HandleVisibility', 'on');
+end
+
+ylabel( ...
+    newAx, ...
+    ['Normalized sensitivity ' ...
+     '[$\mathrm{V/(m/s)}$ or $\mathrm{V/(m/s^2)}$]'], ...
+    'Interpreter', 'latex', ...
+    'FontSize', 20);
+
+newAx.YAxis(1).Color = [0 0 0];
+
+%% Keep the envelope behind the response curves
+
+if ~isempty(envelopePatch) && isgraphics(envelopePatch)
+    uistack(envelopePatch, 'bottom');
+end
+
+%% RIGHT AXIS: coherence
+
+yyaxis(newAx, 'right');
+hold(newAx, 'on');
+
+addedCoherenceLegend = false;
+
+for objectIndex = 1:numel(coherenceObjects)
+
+    sourceObject = coherenceObjects(objectIndex);
+
+    if ~strcmpi(sourceObject.Type, 'line')
+        continue;
+    end
+
+    baseColor = sourceObject.Color;
+
+    if ~isnumeric(baseColor) || numel(baseColor) < 3
+        baseColor = [0.15 0.45 0.75];
+    else
+        baseColor = baseColor(1:3);
+    end
+
+    % Simulate transparency by blending the source color with white.
+    coherenceColor = ...
+        0.55 .* baseColor + ...
+        0.45 .* [1 1 1];
+
+    if ~addedCoherenceLegend
+        handleVisibility = 'on';
+        addedCoherenceLegend = true;
+    else
+        handleVisibility = 'off';
+    end
+
+    plot( ...
+        newAx, ...
+        sourceObject.XData, ...
+        sourceObject.YData, ...
+        'LineStyle', ':', ...
+        'Marker', '.', ...
+        'MarkerSize', 5, ...
+        'Color', coherenceColor, ...
+        'LineWidth', 1.2, ...
+        'DisplayName', 'Coherence $\gamma^2(f)$', ...
+        'HandleVisibility', handleVisibility);
+end
+
+ylabel( ...
+    newAx, ...
+    'Coherence $\gamma^2(f)$', ...
+    'Interpreter', 'latex', ...
+    'FontSize', 20);
+
+ylim(newAx, [0 1.05]);
+
+newAx.YAxis(2).Color = [0.25 0.25 0.25];
+
+%% X-axis formatting
+
+xlabel( ...
+    newAx, ...
+    'Frequency [Hz]', ...
+    'Interpreter', 'latex', ...
+    'FontSize', 12);
+
+%% Approximate reliability limit
+
+reliabilityHz = 1e3;
+
+reliabilityMarker = xline( ...
+    newAx, ...
+    reliabilityHz, ...
+    '-.', ...
+    'Color', [0.35 0.35 0.35], ...
+    'LineWidth', 1.2, ...
+    'HandleVisibility', 'off');
+
+
+
+reliabilityMarker.LabelHorizontalAlignment = 'right';
+reliabilityMarker.LabelVerticalAlignment   = 'bottom';
+reliabilityMarker.FontSize                 = 10;
+reliabilityMarker.Interpreter              = 'latex';
+
+%% Legend
+
+legendObject = legend( ...
+    newAx, ...
+    'Location', 'southwest');
+
+set( ...
+    legendObject, ...
+    'Interpreter', 'latex', ...
+    'FontSize', 20, ...
+    'Box', 'on', ...
+    'AutoUpdate', 'off');
+
+%% Export
+
+exportgraphics( ...
+    newFig, ...
+    outputFile, ...
+    'Resolution', 300, ...
+    'BackgroundColor', 'white');
+
+%% Close only the original figure
+
+if isgraphics(fig)
+    close(fig);
+end
+
+fprintf('Updated analog-path figure: %s\n', outputFile);

@@ -1,24 +1,23 @@
-\begin{figure*}[!t]
-	\centering
-	\includegraphics[width=0.95\textwidth]{imagenes/AnalogPathGordito.png}
-	\caption{Analog signal chain: four independent VDAC references trim the programmable-gain amplifier (PGA), band-pass filter (BP), summing stage (SUM), and low-pass filter (LP), with a shared ADC/multiplexer measurement path.}
-	\label{fig:analog_path}
-\end{figure*}
-
 \section{Platform Design}
 \label{sec:platform-design}
 
-The PSoC conditions and digitizes the geophone output in acquisition mode. In calibration mode, its measurement path, digital-filter coefficients, and DAC-control firmware form a temporary mixed-signal loop without changing the sensor input chain.
+The PSoC conditions and digitizes the geophone output in acquisition mode. In calibration mode, the multiplexer, ADC, digital filter, and DAC-control resources are temporarily repurposed as a mixed-signal feedback loop, while the sensor signal chain remains unchanged.
 
-In the feed-forward signal chain of Fig.~\ref{fig:analog_path}, an offset introduced at any stage can propagate through downstream gains toward the ADC input. The path is not a strict one-input cascade: the band-pass filter (BP) follows the programmable-gain amplifier (PGA), whereas the summing stage (SUM) combines a direct PGA branch with the BP branch before the low-pass filter (LP). The calibration therefore exposes and trims each stage separately rather than correcting only the final ADC value.
+In the Ma \emph{et al.}-derived feed-forward signal chain of Fig.~\ref{fig:analog_path} \cite{Ma2023}, an offset introduced at any stage can propagate through downstream gains toward the ADC input. The path is not a strict one-input cascade: the band-pass filter (BP) follows the programmable-gain amplifier (PGA), whereas the summing stage (SUM) combines a direct PGA branch with the BP branch before the low-pass filter (LP). The calibration therefore exposes and trims each stage separately rather than correcting only the final ADC value.
+\begin{figure}[!t]
+	\includegraphics[width=\linewidth]{imagenes/analog_path_check_cortado.png}
+	\caption{Initial analog-path check: sinusoidal sweeps measured the PGA-output-to-ADC-input path, cascaded with the nominal SM-24 model (markers). Left: normalized magnitude, with the theoretical models and 0--2~k$\Omega$ tuning envelope as shape references. Right: local coherence. The dash-dotted line marks the rounded 1-kHz coherence onset. No calibrated seismic source available.}
+	\label{fig:analog_response}
+\end{figure}
 
-An analog multiplexer connects one stage output at a time to the shared 18-bit delta-sigma ADC, which serves as the error sensor; software mutual exclusion prevents simultaneous connections. A switched capacitor behind the selected multiplexer MOSFET combines with its on-resistance for limited RC anti-aliasing and isolates the amplifier from a direct capacitive load.
+
+An analog multiplexer connects one stage output at a time to the shared 18-bit delta-sigma ADC \cite{InfineonPSoC}, the error sensor, with software mutual exclusion preventing simultaneous connections. A switched capacitor behind the selected MOSFET adds limited RC anti-aliasing with its on-resistance and isolates the amplifier from a direct capacitive load.
 
 For the $i$th measured node, let $y_i^{\mathrm{DC}}$ denote its slowly varying voltage deviation from the intended stage reference, with polarity matching the differential ADC coordinates. It can be represented as
 \begin{equation}
  y_i^{\mathrm{DC}} = \sum_{j<i} A_{ij}y_j^{\mathrm{DC}} + b_i + K_i u_i,
  \label{eq:stage}
 \end{equation}
-where $A_{ij}$ is the DC coupling from an upstream node $j$ (zero when no such path exists), $b_i$ collects amplifier and reference errors in voltage coordinates, $u_i$ is the VDAC voltage, and $K_i$ is the signed DC gain from that VDAC to the measured node. The firmware represents $u_i$ by an 8-bit command code $c_i$, such that $u_i=q_{\mathrm{DAC}}c_i$. The multiple-input form covers both ordinary cascaded stages and nodes such as SUM; the calibration target is $y_i^{\mathrm{DC}}=0$.
+where $A_{ij}$ describes each actual DC feed from an upstream node $j$, $b_i$ collects local amplifier, reference, resistor-mismatch, and component-tolerance contributions in voltage coordinates, $u_i$ is the VDAC voltage, and $K_i$ is the signed DC gain from that VDAC to the measured node. For the first stage (PGA), the upstream sum is empty. The firmware represents $u_i$ by an 8-bit command code $c_i$, such that $u_i=q_{\mathrm{DAC}}c_i$. The multiple-input form covers both ordinary cascaded stages and nodes such as SUM; the calibration target is $y_i^{\mathrm{DC}}=0$.
 
-The architecture assigns one $u_i$ to each trim-accessible node. With negligible reverse coupling, sensor and filter-state changes small relative to the selected deadband during DC estimation, and adequate VDAC authority and range, Eq.~\ref{eq:stage} motivates a forward pass that brings each measured $y_i^{\mathrm{DC}}$ toward zero in PGA, BP, SUM, and LP order (Section~\ref{sec:self-calibration}). Equation~\ref{eq:stage} is an equilibrium model; it does not by itself guarantee finite-time settling of capacitor transients between stages.
+The architecture assigns one $u_i$ to each trim-accessible node. With negligible reverse coupling, sensor and filter-state changes small relative to the selected deadband during DC estimation, and adequate VDAC authority and range, Eq.~\ref{eq:stage} motivates a forward pass that brings each measured $y_i^{\mathrm{DC}}$ toward zero in PGA, BP, SUM, and LP order (Section~\ref{sec:self-calibration}). Equation~\ref{eq:stage} is an equilibrium model; it does not describe the finite settling of amplifier and analog/digital filter states after a stage or coefficient switch.

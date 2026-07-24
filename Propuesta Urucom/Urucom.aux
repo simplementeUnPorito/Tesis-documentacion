@@ -1,7 +1,6 @@
 \relax 
 \citation{Park1999,Foti2014}
-\citation{Kafadar2020}
-\citation{Wijayaraja2024}
+\citation{Kafadar2020,Wijayaraja2024}
 \citation{Guevara2015}
 \citation{SM24}
 \citation{InfineonPSoC}
@@ -11,42 +10,44 @@
 \citation{Lopin2018,InfineonAN68403}
 \citation{Mohan2020}
 \citation{EnzTemes1996}
+\citation{Ma2023}
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {II}Platform Design}{1}{}\protected@file@percent }
 \newlabel{sec:platform-design}{{II}{1}{}{section.2}{}}
+\citation{InfineonPSoC}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Analog signal chain: four independent VDAC references trim the programmable-gain amplifier (PGA), band-pass filter (BP), summing stage (SUM), and low-pass filter (LP), with a shared ADC/multiplexer measurement path.}}{2}{}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{fig:analog_path}{{1}{2}{}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Initial analog-path check: sinusoidal sweeps measured the PGA-output-to-ADC-input path, cascaded with the nominal SM-24 model (markers). Left: normalized magnitude, with the theoretical models and 0--2~k$\Omega $ tuning envelope as shape references. Right: local coherence. The dash-dotted line marks the rounded 1-kHz coherence onset. No calibrated seismic source available.}}{2}{}\protected@file@percent }
+\newlabel{fig:analog_response}{{2}{2}{}{figure.2}{}}
 \newlabel{eq:stage}{{1}{2}{}{equation.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Self-Calibrating Geophone Platform}{2}{}\protected@file@percent }
 \newlabel{sec:self-calibration}{{III}{2}{}{section.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Digital Hardware and Calibration Sequence}{2}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Foreground calibration flow: stored-code verification, sequential trimming, and acquisition.}}{2}{}\protected@file@percent }
-\newlabel{fig:calibration_flow}{{2}{2}{}{figure.2}{}}
 \citation{InfineonPSoC,InfineonAN60305}
 \citation{CypressAN60319}
 \citation{InfineonAN60305}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Digital calibration hardware. Direct memory access (DMA) moves ADC/filter data through RAM; the controller reconfigures the analog multiplexer, while firmware accesses EEPROM. Black and blue arrows indicate acquisition and calibration paths, respectively.}}{3}{}\protected@file@percent }
-\newlabel{fig:digital_path}{{3}{3}{}{figure.3}{}}
+\citation{SM24}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Foreground calibration flow: stored-code verification, sequential trimming, and acquisition.}}{3}{}\protected@file@percent }
+\newlabel{fig:calibration_flow}{{3}{3}{}{figure.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Control Law and Calibration Parameters}{3}{}\protected@file@percent }
 \newlabel{eq:scale}{{2}{3}{}{equation.2}{}}
-\newlabel{eq:deadband}{{3}{3}{}{equation.3}{}}
-\newlabel{eq:deadband-error}{{4}{3}{}{equation.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Parameters used for the reported measurements. Deadbands are in equivalent DAC codes; S/L/R are settle/lock/refine samples at 2604~Hz, whereas Timeout is in seconds.}}{3}{}\protected@file@percent }
 \newlabel{tab:cal_params}{{I}{3}{}{table.1}{}}
+\newlabel{eq:deadband}{{3}{3}{}{equation.3}{}}
+\newlabel{eq:deadband-error}{{4}{3}{}{equation.4}{}}
 \newlabel{eq:pi}{{5}{3}{}{equation.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Proof-of-Concept Evaluation}{3}{}\protected@file@percent }
+\newlabel{sec:experimental-validation}{{IV}{3}{}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Initial Analog-Path Check}{3}{}\protected@file@percent }
 \citation{TektronixTDS2000B}
-\citation{Kirchhoff2017}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}Proof-of-Concept Evaluation}{4}{}\protected@file@percent }
-\newlabel{sec:experimental-validation}{{IV}{4}{}{section.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Prototype and Comparison Conditions}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Residual DC-Offset Measurement and Results}{4}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Stage deviations relative to $V_{\mathrm  {ref}}$ during calibration at setting $\times 16$ (total differential gain $\times 32$). Thin gray traces are oscilloscope records; colored traces are their offline outputs from an equivalent FIR. See Section~\ref {sec:pga-note}.}}{4}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Residual DC offset (\%FS of the nominal 5-V ADC span), mean $\pm $ sample standard deviation over $N{=}10$ paired baseline-seeded restarts per reported board/gain cell. Within each cell, the upper and lower values correspond to the shared fixed-reference and calibrated conditions, respectively.}}{4}{}\protected@file@percent }
+\newlabel{tab:results}{{II}{4}{}{table.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Prototype and Comparison Conditions}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Residual DC-Offset Measurement and Results}{4}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Stage deviations relative to $V_{\mathrm  {ref}}$ during calibration at $\times 16$ (total differential gain $\times 32$). Dashed light-gray traces are oscilloscope measurements; colored curves are resampled 128-tap-FIR reconstructions, not internal logs (Section~\ref {sec:pga-note}).}}{4}{}\protected@file@percent }
 \newlabel{fig:calibration_trace}{{4}{4}{}{figure.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Wiggle-trace field record acquired after foreground calibration. The trigger and first-arrival moveout demonstrate multichannel operation over the 10--50~m line; this is not a controlled fixed-reference comparison.}}{4}{}\protected@file@percent }
-\newlabel{fig:waterfall}{{5}{4}{}{figure.5}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Field Operation Demonstration}{4}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {V}Discussion}{4}{}\protected@file@percent }
-\newlabel{sec:discussion}{{V}{4}{}{section.5}{}}
+\citation{Kirchhoff2017}
 \citation{Liu2020}
 \bibcite{Park1999}{1}
 \bibcite{Foti2014}{2}
@@ -56,21 +57,25 @@
 \bibcite{SM24}{6}
 \bibcite{InfineonPSoC}{7}
 \bibcite{Murmann2006}{8}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Residual DC offset (\%FS of the nominal 5-V ADC span), mean $\pm $ sample standard deviation over $N{=}10$ paired baseline-seeded restarts per reported board/gain cell.}}{5}{}\protected@file@percent }
-\newlabel{tab:results}{{II}{5}{}{table.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Non-Optimized PGA Acceptance}{5}{}\protected@file@percent }
-\newlabel{sec:pga-note}{{\mbox  {V-A}}{5}{}{subsection.5.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Timing and Scope}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{5}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{References}{5}{}\protected@file@percent }
 \bibcite{Lopin2018}{9}
 \bibcite{Ma2023}{10}
 \bibcite{InfineonAN68403}{11}
 \bibcite{Mohan2020}{12}
 \bibcite{EnzTemes1996}{13}
-\bibcite{CypressAN60319}{14}
-\bibcite{InfineonAN60305}{15}
-\bibcite{Kirchhoff2017}{16}
-\bibcite{Liu2020}{17}
-\bibcite{TektronixTDS2000B}{18}
+\bibcite{InfineonAN60305}{14}
+\bibcite{CypressAN60319}{15}
+\bibcite{TektronixTDS2000B}{16}
+\bibcite{Kirchhoff2017}{17}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Wiggle-trace field record acquired after foreground calibration; the trigger and first-arrival moveout demonstrate multichannel operation over the 10--50~m line.}}{5}{}\protected@file@percent }
+\newlabel{fig:waterfall}{{5}{5}{}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Field Operation Demonstration}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {V}Discussion}{5}{}\protected@file@percent }
+\newlabel{sec:discussion}{{V}{5}{}{section.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Non-Optimized PGA Acceptance}{5}{}\protected@file@percent }
+\newlabel{sec:pga-note}{{\mbox  {V-A}}{5}{}{subsection.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Timing and Scope}{5}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{5}{}\protected@file@percent }
+\newlabel{sec:conclusion}{{VI}{5}{}{section.6}{}}
+\@writefile{toc}{\contentsline {section}{References}{5}{}\protected@file@percent }
+\bibcite{Liu2020}{18}
 \gdef \@abspage@last{6}
