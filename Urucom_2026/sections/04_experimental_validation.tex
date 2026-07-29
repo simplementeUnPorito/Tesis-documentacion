@@ -1,0 +1,156 @@
+\section{Experimental Validation}
+\label{sec:experimental-validation}
+
+The proposed Digitally Assisted Analog Front-End architecture was experimentally evaluated to verify that embedded digital assistance improves the effective operating conditions of the analog signal chain while preserving a conventional acquisition path during normal operation. The evaluation comprised analog front-end characterization, foreground calibration on two independently assembled geophone acquisition boards under multiple gain configurations, quantitative residual DC-offset measurements, and a field demonstration.
+
+\subsection{Analog Front-End Characterization}
+
+Prior to evaluating the proposed architecture, the frequency response of the analog signal chain was characterized independently of the geophone. An Agilent 33220A waveform generator excited the front end using overlapping logarithmic sweeps from 0.01 Hz to 200 kHz, while a Tektronix TDS 2004B\rev{~\cite{TektronixTDS2000B}} recorded the stage inputs and outputs. The measured PGA-output-to-ADC-input response was defined by the LP-output/PGA-output ratio (CH4/CH1).
+
+For the approximate sensor-to-ADC response shown in Fig.~\ref{fig:analog_response}, the measured electronics response was cascaded with the nominal SM-24 acceleration model \cite{SM24}. All magnitude curves were normalized to facilitate comparison. Local coherence first falls below 0.9 near 0.84 kHz, indicating that the increasing disagreement above 1 kHz is measurement-limited rather than a verified change in circuit behavior. This experiment therefore provides a consistency check of the analog front end rather than an end-to-end validation of the sensing chain.
+
+% \rev: figure restored — referenced via \ref{fig:analog_response} but missing from this section, producing "??" in the compiled PDF.
+\rev{%
+\begin{figure}[!t]
+	\includegraphics[width=\linewidth]{imagenes/analog_path_check_cortado.png}
+	\caption{Initial analog-path check: sinusoidal sweeps measured the PGA-output-to-ADC-input path, cascaded with the nominal SM-24 model (markers). Left: normalized magnitude, with the theoretical models and 0--2~k$\Omega$ tuning envelope as shape references. Right: local coherence. The dash-dotted line marks the rounded 1-kHz coherence onset. No calibrated seismic source available.}
+	\label{fig:analog_response}
+\end{figure}
+}
+
+\subsection{Prototype and Comparison Conditions}
+
+The experimental validation comprised eight board--gain configurations: all five PGA settings on Board A together with the $\times16$, $\times32$, and $\times50$ settings on Board B. Each configuration was evaluated through ten paired restarts ($N=10$), representing repeated measurements of the same board and gain rather than independent devices.
+
+A single fixed-reference baseline, $\mathbf{c}_{\mathrm{base}}$, selected empirically on Board B at $\times50$, was applied unchanged to all reported configurations. For each calibrated condition, the four analog stages were processed sequentially and the resulting DAC codes remained fixed during acquisition. Post-calibration EEPROM writes were disabled so that every restart began from the same baseline.
+
+Board B at $\times1$ and $\times4$ were excluded because their baseline residuals already lay within the calibration deadbands, preventing corrective updates. A separate narrower-deadband diagnostic confirmed the expected behavior (Section~\ref{sec:pga-note}).
+
+\subsection{Residual DC-Offset Measurement and Results}
+
+The LP output was selected as the primary performance metric because it directly feeds the acquisition ADC. Measurements at the PGA, BP, and SUM outputs document the sequential propagation of the foreground calibration through the analog signal chain.
+
+A four-channel Tektronix TDS~2004B recorded the mean output voltage of the PGA, BP, SUM, and LP stages over a 1-s window after settling. Probe grounds were connected to $V_{\mathrm{ref}}=V_{\mathrm{DDA}}/2$, so each channel measured $V_{\mathrm{stage}}-V_{\mathrm{ref}}$. Within each restart, the fixed-reference condition was always recorded before the calibrated condition, preserving paired measurements.
+
+Table~\ref{tab:results} reports the mean and sample standard deviation of the normalized residual offset over ten paired restarts. Figure~\ref{fig:calibration_trace} shows representative calibration trajectories reconstructed by applying the 128-tap FIR used by the controller to oscilloscope records resampled at the controller rate.
+
+% \rev: figure restored — referenced via \ref{fig:calibration_trace} (also cited from Section V) but missing from this section, producing "??" in the compiled PDF.
+\rev{%
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{imagenes/autocalibration_scope_sum.png}
+	\caption{Stage deviations relative to $V_{\mathrm{ref}}$ during calibration at $\times16$ (total differential gain $\times32$). Dashed light-gray traces are oscilloscope measurements; colored curves are resampled 128-tap-FIR reconstructions, not internal logs (Section~\ref{sec:pga-note}).}
+	\label{fig:calibration_trace}
+\end{figure}
+}
+
+Across the eight reported board--gain configurations, the proposed Digitally Assisted Analog Front-End consistently reduced the LP residual DC offset without requiring board-specific or gain-specific controller retuning. Relative to the shared fixed-reference baseline, the residual offset decreased from 2.9--45.8\%FS to 0.4--3.9\%FS. Individual calibrated observations ranged from 0.1--5.2\%FS (Table~\ref{tab:results}). A one-sided sign test on the paired LP measurements rejected the null hypothesis of no reduction in all eight configurations (10 of 10 paired restarts, exact $p\approx10^{-3}$).
+
+\subsection{Field Demonstration}
+
+A field experiment verified that foreground calibration integrates seamlessly with normal multichannel acquisition under representative operating conditions. Figure~\ref{fig:waterfall} shows a 10--50 m seismic record acquired after foreground calibration, with the geophones remaining stationary during the calibration stage. The resolved first-arrival moveout confirms successful multichannel operation. The only timeout observed during laboratory and field measurements occurred when a board was powered while its geophone was moving, violating the quasi-static assumption required during foreground calibration.
+
+% \rev: figure restored — referenced via \ref{fig:waterfall} but missing from this section, producing "??" in the compiled PDF.
+\rev{%
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\linewidth]{imagenes/waterfall_wiggle_horizontal.png}
+	\caption{Wiggle-trace field record acquired after foreground calibration; the trigger and first-arrival moveout demonstrate multichannel operation over the 10--50~m line.}
+	\label{fig:waterfall}
+\end{figure}
+}
+
+\begin{table*}[!t]
+	\caption{Residual DC offset (\%FS of the nominal 5-V ADC span), mean $\pm$ sample standard deviation over $N{=}10$ paired baseline-seeded restarts per reported board/gain cell. Within each cell, the upper and lower values correspond to the shared fixed-reference and calibrated conditions, respectively.}
+	\label{tab:results}
+	\centering
+	\scriptsize
+	\setlength{\tabcolsep}{3.2pt}
+	\renewcommand{\arraystretch}{0.82}
+	
+	\resizebox{\textwidth}{!}{%
+		\arrayrulecolor{gray!45}
+		\begin{tabular}{l cc ;{2pt/2pt} cc ;{2pt/2pt} cccc}
+			\arrayrulecolor{black}
+			\toprule
+			Stage
+			& A, $\times1$
+			& A, $\times4$
+			& A, $\times16$
+			& B, $\times16$
+			& A, $\times32$
+			& B, $\times32$
+			& A, $\times50$
+			& B, $\times50$ \\
+			\midrule
+			
+			PGA
+			& \shortstack{$3.5\pm0.2$\\[-1.5pt]$3.4\pm0.3$}
+			& \shortstack{$2.4\pm0.1$\\[-1.5pt]$2.1\pm0.3$}
+			& \shortstack{$2.4\pm0.1$\\[-1.5pt]$1.9\pm0.2$}
+			& \shortstack{$2.1\pm0.1$\\[-1.5pt]$1.7\pm0.1$}
+			& \shortstack{$1.0\pm0.2$\\[-1.5pt]$0.5\pm0.2$}
+			& \shortstack{$1.0\pm0.2$\\[-1.5pt]$0.5\pm0.2$}
+			& \shortstack{$1.2\pm0.3$\\[-1.5pt]$1.0\pm0.5$}
+			& \shortstack{$2.5\pm0.1$\\[-1.5pt]$1.8\pm0.3$}
+			\\
+			
+			\arrayrulecolor{gray!45}
+			\hdashline[0.4pt/1.4pt]
+			\arrayrulecolor{black}
+			
+			BP
+			& \shortstack{$1.5\pm2.2$\\[-1.5pt]$1.2\pm0.2$}
+			& \shortstack{$4.9\pm0.3$\\[-1.5pt]$1.0\pm0.2$}
+			& \shortstack{$3.8\pm0.9$\\[-1.5pt]$1.5\pm1.5$}
+			& \shortstack{$0.66\pm0.02$\\[-1.5pt]$0.66\pm0.02$}
+			& \shortstack{$7.0\pm0.4$\\[-1.5pt]$1.0\pm0.5$}
+			& \shortstack{$0.66\pm0.01$\\[-1.5pt]$0.66\pm0.01$}
+			& \shortstack{$1.0\pm0.7$\\[-1.5pt]$0.9\pm0.5$}
+			& \shortstack{$0.65\pm0.01$\\[-1.5pt]$0.65\pm0.02$}
+			\\
+			
+			\arrayrulecolor{gray!45}
+			\hdashline[0.4pt/1.4pt]
+			\arrayrulecolor{black}
+			
+			SUM
+			& \shortstack{$\mathbf{21.8\pm1.1}^{\dagger}$\\[-1.5pt]$0.8\pm0.2$}
+			& \shortstack{$6.7\pm1.0$\\[-1.5pt]$1.0\pm0.3$}
+			& \shortstack{$4.9\pm1.5$\\[-1.5pt]$1.4\pm1.5$}
+			& \shortstack{$4.5\pm0.8$\\[-1.5pt]$0.6\pm0.5$}
+			& \shortstack{$7.4\pm0.3$\\[-1.5pt]$0.6\pm0.2$}
+			& \shortstack{$8.0\pm0.8$\\[-1.5pt]$1.2\pm0.3$}
+			& \shortstack{$0.4\pm0.2$\\[-1.5pt]$\mathbf{0.8\pm0.6}^{\ddagger}$}
+			& \shortstack{$0.9\pm0.6$\\[-1.5pt]$0.9\pm0.6$}
+			\\
+			
+			\arrayrulecolor{gray!45}
+			\hdashline[0.4pt/1.4pt]
+			\arrayrulecolor{black}
+			
+			LP
+			& \shortstack{$\mathbf{45.8\pm3.1}^{\dagger}$\\[-1.5pt]$3.2\pm0.9$}
+			& \shortstack{$\mathbf{42.6\pm4.2}^{\dagger}$\\[-1.5pt]$3.9\pm0.8$}
+			& \shortstack{$\mathbf{29.6\pm6.8}^{\dagger}$\\[-1.5pt]$2.3\pm1.4$}
+			& \shortstack{$3.0\pm0.1$\\[-1.5pt]$0.7\pm0.1$}
+			& \shortstack{$\mathbf{12.4\pm1.3}^{\dagger}$\\[-1.5pt]$1.7\pm0.7$}
+			& \shortstack{$2.9\pm0.1$\\[-1.5pt]$0.4\pm0.2$}
+			& \shortstack{$4.1\pm2.1$\\[-1.5pt]$1.2\pm0.4$}
+			& \shortstack{$2.9\pm0.1$\\[-1.5pt]$0.7\pm0.2$}
+			\\
+			
+			\bottomrule
+		\end{tabular}%
+		\arrayrulecolor{black}
+	}
+	
+	\vspace{1pt}
+	\footnotesize
+	Lower is better.
+	$^{\dagger}$Fixed reference $\geq10\%$FS.
+	$^{\ddagger}$The marked calibrated mean is larger than its baseline;
+	equality after rounding is not marked
+	(Section~\ref{sec:pga-note}).
+\end{table*}
+
