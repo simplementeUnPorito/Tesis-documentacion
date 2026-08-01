@@ -1,6 +1,23 @@
 \documentclass[conference,a4paper]{IEEEtran}
 \IEEEoverridecommandlockouts % needed so \IEEEmembership renders in conference mode
 
+% Produce an archival PDF/A-2b file with embedded XMP metadata and sRGB profile.
+\PassOptionsToPackage{table}{xcolor}
+% EDAS forbids PDF bookmarks and link annotations in review manuscripts.
+\PassOptionsToPackage{draft,bookmarks=false}{hyperref}
+\usepackage[a-2b]{pdfx}
+\hypersetup{bookmarks=false}
+
+% URUCON/EDAS 2021 A4 review-paper layout.
+\usepackage[
+  a4paper,
+  top=1.9cm,
+  bottom=2.54cm,
+  left=1.57cm,
+  right=1.57cm
+]{geometry}
+\setlength{\columnsep}{0.63cm}
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{cite}
@@ -17,11 +34,18 @@
 \setlength{\emergencystretch}{1em}
 % Layout-only compression pass (5-page URUCON budget) — see
 % CONTINUIDAD_REVISION_compact.md. Margins and body font size untouched.
-\linespread{0.97}
+\linespread{0.93}
 \setlength{\textfloatsep}{4pt plus 2pt minus 2pt}
 \setlength{\intextsep}{3pt plus 2pt minus 2pt}
-\setlength{\abovecaptionskip}{2pt}
+\setlength{\abovecaptionskip}{1pt}
 \setlength{\belowcaptionskip}{0pt}
+\setlength{\dbltextfloatsep}{6pt plus 2pt minus 2pt}
+\AtBeginDocument{%
+  \setlength{\abovedisplayskip}{3pt plus 1pt minus 1pt}%
+  \setlength{\belowdisplayskip}{3pt plus 1pt minus 1pt}%
+  \setlength{\abovedisplayshortskip}{1pt plus 1pt}%
+  \setlength{\belowdisplayshortskip}{2pt plus 1pt}%
+}
 % Relax float-placement limits: this paper has several short, full-width
 % figures that would otherwise be deferred to a float-only page.
 \renewcommand{\topfraction}{0.95}

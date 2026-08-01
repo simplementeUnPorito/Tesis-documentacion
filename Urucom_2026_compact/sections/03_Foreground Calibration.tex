@@ -1,14 +1,14 @@
 \section{Foreground Calibration Method}
 \label{sec:foreground-calibration}
 
-As introduced in Section II, the proposed Digitally Assisted Analog Front-End architecture performs foreground calibration before data acquisition. During this stage, embedded digital resources temporarily assist each analog stage to establish its operating point. Once calibration is completed, the digital assistance is disabled and the analog signal chain resumes conventional feed-forward operation.
+This section details the foreground calibration introduced in Section II: the workflow, the control law, and the parameter set used for every reported measurement.
 
 \subsection{Calibration Workflow}
 
 % Editable paper diagram source: imagenes/psoc_foreground_calibration_flow_compressed.drawio (page 2)
 \begin{figure}[!t]
     \centering
-    \includegraphics[width=\columnwidth]{imagenes/foreground_calibration.png}
+    \includegraphics[width=0.90\columnwidth]{imagenes/psoc_foreground_calibration_flow.drawio.png}
     \caption{Foreground calibration flow: stored-code verification, sequential trimming, and acquisition.}
     \label{fig:calibration_flow}
 \end{figure}
@@ -17,12 +17,12 @@ The calibration workflow is illustrated in Fig.~\ref{fig:calibration_flow}. At b
 
 During calibration, the programmable digital filter operates as a 128-tap FIR DC estimator, whereas during acquisition it is reconfigured with coefficients matched to the geophone bandwidth. After calibration, the acquisition coefficients, filter state, and routing are restored. A gain-indexed EEPROM record stores the valid-stage mask, four DAC codes, version, and cyclic-redundancy check (CRC); failed calibrations retain their bounded best codes without overwriting a valid record. Fig.~\ref{fig:digital_hardware} shows the digital hardware implementing this workflow.
 
-\begin{figure}[t]
+\begin{figure*}[t]
 	\centering
-	\includegraphics[width=\columnwidth]{imagenes/DigitalPath-cheto_print.png}
-	\caption{Digital hardware implementing the calibration workflow (top); AUX/IoT blocks (bottom) belong to the broader platform \cite{Guevara2015}, outside this paper's scope.}
+	\includegraphics[width=0.90\textwidth]{imagenes/DigitalPathFinal_trim.png}
+	\caption{Core PSoC digital hardware implementing the calibration workflow: signal controller, programmable digital filter, DMA channels, status registers, and EEPROM record.}
 	\label{fig:digital_hardware}
-\end{figure}
+\end{figure*}
 
 \subsection{Control Law and Calibration Parameters}
 
@@ -67,7 +67,7 @@ Equation~\ref{eq:scale} produces an integer error in equivalent DAC codes. To av
 
 Inside the deadband, Eq.~\ref{eq:deadband-error} suppresses integration, while lock and refinement determine convergence. Table~\ref{tab:cal_params} lists the adopted values satisfying $\Delta_i\geq\Delta_{i,\min}^{\mathrm{impl}}$.
 
-Under the assumptions of Section~\ref{sec:platform-design}, the architecture requires a measurable stage output together with sufficient trim authority and range. The controller is implemented in positional proportional-integral (PI) form,
+Under the assumptions of Section~\ref{sec:platform-design}, the DA-AFE requires a measurable stage output together with sufficient trim authority and range. The controller is implemented in positional proportional-integral (PI) form,
 
 \begin{equation}
 c_i^*[n]=c_{i,\mathrm{base}}-s_i\left[
@@ -76,7 +76,7 @@ c_i^*[n]=c_{i,\mathrm{base}}-s_i\left[
  \label{eq:pi}
 \end{equation}
 
-where $c_{i,\mathrm{base}}$ is the baseline feedforward code and $s_i=\operatorname{sgn}(K_i)$. The integral term accumulates accepted residuals and resets inside the deadband. The VDAC-to-node gains $|K_i|$ follow from the stage topology; for the two-op-amp instrumentation amplifier PGA \cite{CypressAN60319}, $K_{\mathrm{PGA}}=1$.
+where $c_{i,\mathrm{base}}$ is the baseline feedforward code and $s_i=\operatorname{sgn}(K_i)$. The integral term accumulates accepted residuals and resets inside the deadband. The VDAC-to-node gains $|K_i|$ were obtained by symbolic DC analysis of each stage in MATLAB, from the nominal component values of Fig.~\ref{fig:analog_path}. For the two-op-amp instrumentation amplifier PGA \cite{CypressAN60319} the resulting ratio is unity, so $K_{\mathrm{PGA}}=1$.
 
 The command is clipped to the configured 0--255 DAC range. At either limit, integration is suspended whenever the residual would drive the command farther into saturation, preventing windup. Convergence requires a fixed number of consecutive in-deadband samples, while an adjacent-code trial is retained only if it reduces the filtered residual. At timeout, the best code is preserved and the stage is flagged.
 
@@ -86,7 +86,7 @@ The command is clipped to the configured 0--255 DAC range. At either limit, inte
 	\centering
 	\scriptsize
 	\setlength{\tabcolsep}{2.0pt}
-	\resizebox{0.98\columnwidth}{!}{%
+	\resizebox{1.00\columnwidth}{!}{%
 		\begin{tabular}{lccccccc}
 			\toprule
 			Stage & $|K_i|$ & $\Delta_{i,\min}^{\mathrm{impl}}$ & $\Delta_i$ & $k_{\mathrm{P},i}$ & $k_{\mathrm{I},i}$ & S/L/R & Timeout (s)\\
@@ -102,5 +102,3 @@ The command is clipped to the configured 0--255 DAC range. At either limit, inte
 
 
 The parameter set in Table~\ref{tab:cal_params} was selected empirically during preliminary bench tests and subsequently kept fixed for all reported measurements. No systematic optimization was performed, demonstrating robust operation with a single controller configuration across all evaluated boards and gain settings. Section~\ref{sec:pga-note} discusses the selected value of $\Delta_{\mathrm{PGA}}=18$. Finer trim resolution could be achieved through current-output DACs or buffered injection topologies \cite{InfineonAN60305} without modifying the foreground calibration method.
-
-

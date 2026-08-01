@@ -5,8 +5,8 @@
 % to 84 Hz and filtered using a 128-tap equiripple FIR low-pass filter.
 %
 % The FIR passband extends to 4 Hz, the stopband begins at 6 Hz, and the
-% nominal cutoff is approximately 5 Hz. Zero-phase filtering is used for
-% visualization so the estimated DC curves do not contain group delay.
+% nominal cutoff is approximately 5 Hz. Causal filtering is used so the
+% estimated DC curves retain the group delay of the implemented FIR.
 
 clear;
 close all;
@@ -139,9 +139,8 @@ firCoefficients = ...
 
 %% Apply the optimized FIR
 
-% filtfilt() removes phase delay and squares the magnitude response.
-% This is appropriate for offline visualization and figure generation.
-dcEstimate = filtfilt( ...
+% Use the causal FIR response used by the controller.
+dcEstimate = filter( ...
     firCoefficients, ...
     1, ...
     dcSignals);
