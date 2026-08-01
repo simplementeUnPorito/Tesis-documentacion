@@ -5,8 +5,8 @@
 % to 84 Hz and filtered using a 128-tap equiripple FIR low-pass filter.
 %
 % The FIR passband extends to 4 Hz, the stopband begins at 6 Hz, and the
-% nominal cutoff is approximately 5 Hz. Causal filtering is used so the
-% estimated DC curves retain the group delay of the implemented FIR.
+% nominal cutoff is approximately 5 Hz. Zero-phase filtering is used for
+% reconstruction and the controller FIR group delay is then restored.
 
 clear;
 close all;
@@ -139,11 +139,22 @@ firCoefficients = ...
 
 %% Apply the optimized FIR
 
-% Use the causal FIR response used by the controller.
-dcEstimate = filter( ...
+% Reconstruct without phase distortion, then restore the group delay of a
+% 128-tap FIR operating at the 2604-Hz controller sample rate.
+zeroPhaseEstimate = filtfilt( ...
     firCoefficients, ...
     1, ...
     dcSignals);
+
+causalGroupDelay = ...
+    (numberOfTaps - 1) / (2 * controllerFs);
+
+dcEstimate = interp1( ...
+    dcTime, ...
+    zeroPhaseEstimate, ...
+    dcTime - causalGroupDelay, ...
+    'pchip', ...
+    'extrap');
 
 %% Interpolate the estimated DC back to the original time base
 
@@ -268,9 +279,6 @@ exportgraphics( ...
     'Resolution', 300);
 
 %% Print filter and output information
-
-causalGroupDelay = ...
-    (numberOfTaps - 1) / (2 * dcFs);
 
 fprintf('\nOptimized DC estimator:\n');
 fprintf('  Design:             Equiripple minimax FIR\n');
