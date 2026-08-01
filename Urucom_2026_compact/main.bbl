@@ -36,9 +36,9 @@ C.~B. Park, R.~D. Miller, and J.~Xia, ``Multichannel analysis of surface
   10.1190/1.1444590.
 
 \bibitem{Foti2014}
-{S. Foti et al.}, \emph{Surface Wave Methods for Near-Surface Site
-  Characterization}.\hskip 1em plus 0.5em minus 0.4em\relax Boca Raton, FL,
-  USA: CRC Press, 2014, doi: 10.1201/b17268.
+S.~Foti, C.~G. Lai, G.~J. Rix, and C.~Strobbia, \emph{Surface Wave Methods for
+  Near-Surface Site Characterization}.\hskip 1em plus 0.5em minus 0.4em\relax
+  Boca Raton, FL, USA: CRC Press, 2014, doi: 10.1201/b17268.
 
 \bibitem{Kafadar2020}
 O.~Kafadar, ``A geophone-based and low-cost data acquisition and analysis
@@ -47,27 +47,29 @@ O.~Kafadar, ``A geophone-based and low-cost data acquisition and analysis
   10.5194/gi-9-365-2020.
 
 \bibitem{Wijayaraja2024}
-{J. L. Wijayaraja et al.}, ``Toward long range detection of elephants using
-  seismic signals: A geophone-sensor interface for embedded systems,''
-  \emph{IEEE Access}, vol.~12, pp. 72\,210--72\,223, 2024, doi:
-  10.1109/ACCESS.2024.3401855.
+J.~L. Wijayaraja, J.~L. Wijekoon, M.~Wijesundara, and {L. J. Mendis
+  Wickramasinghe}, ``Toward long range detection of elephants using seismic
+  signals: A geophone-sensor interface for embedded systems,'' \emph{IEEE
+  Access}, vol.~12, pp. 72\,210--72\,223, 2024, doi:
+  {\mbox{10.1109/ACCESS.2024.3401855}}.
 
 \bibitem{Deng2025}
 {Z. Deng et al.}, ``Design of low-frequency extended signal conditioning
-  circuit for coal mine geophone,'' \emph{Sensors}, vol.~25, no.~19, p. 5946,
-  2025, doi: 10.3390/s25195946.
+  circuit for coal mine geophone,'' \emph{Sensors}, vol.~25, no.~19, 2025, art.
+  no. 5946, doi: 10.3390/s25195946.
 
 \bibitem{Guevara2015}
-{J. A. Guevara et al.}, ``Dynamically reconfigurable {WSN} node based on
-  {ISO/IEC/IEEE} 21451 {TEDS},'' \emph{IEEE Sensors J.}, vol.~15, no.~5, pp.
-  2567--2576, 2015, doi: 10.1109/JSEN.2014.2370456.
+J.~A. Guevara, E.~A. Vargas, A.~F. Fatecha, and F.~Barrero, ``Dynamically
+  reconfigurable {WSN} node based on {ISO/IEC/IEEE} 21451 {TEDS},'' \emph{IEEE
+  Sensors J.}, vol.~15, no.~5, pp. 2567--2576, 2015, doi:
+  10.1109/JSEN.2014.2370456.
 
 \bibitem{SM24}
 {Sensor Nederland B.V.}, ``{SM-24} geophone element,'' product brochure, 2006.
 
 \bibitem{InfineonPSoC}
 {Infineon Technologies AG}, ``{PSoC} {5LP}: {CY8C58LP} family datasheet,''
-  no.~001-84932, 2024.
+  Document No.~001-84932, Rev.~*N, Nov. 27, 2019.
 
 \bibitem{InfineonAN68403}
 {G. Das G} and P.~Sekar, ``{PSoC} 3 and {PSoC} {5LP} analog signal chain
@@ -76,13 +78,13 @@ O.~Kafadar, ``A geophone-based and low-cost data acquisition and analysis
 \bibitem{Lopin2018}
 P.~Lopin and K.~V. Lopin, ``{PSoC-Stat}: A single chip open source potentiostat
   based on a {Programmable System on a Chip},'' \emph{PLOS ONE}, vol.~13,
-  no.~7, p. e0201353, 2018, doi: 10.1371/journal.pone.0201353.
+  no.~7, 2018, art. e0201353, doi: 10.1371/journal.pone.0201353.
 
 \bibitem{Mohan2020}
 {C. Mohan et al.}, ``Experimental body-input three-stage {DC} offset
   calibration scheme for memristive crossbar,'' in \emph{Proc. IEEE Int. Symp.
   Circuits Syst. (ISCAS)}, 2020, pp. 1--5, doi:
-  10.1109/ISCAS45731.2020.9180811.
+  {\mbox{10.1109/ISCAS45731.2020.9180811}}.
 
 \bibitem{EnzTemes1996}
 C.~C. Enz and G.~C. Temes, ``Circuit techniques for reducing the effects of
@@ -92,12 +94,12 @@ C.~C. Enz and G.~C. Temes, ``Circuit techniques for reducing the effects of
 
 \bibitem{Liu2020}
 {Y. Liu et al.}, ``A low-noise chopper amplifier with offset and low-frequency
-  noise compensation {DC} servo loop,'' \emph{Electronics}, vol.~9, no.~11, p.
-  1797, 2020, doi: 10.3390/electronics9111797.
+  noise compensation {DC} servo loop,'' \emph{Electronics}, vol.~9, no.~11,
+  2020, art. no. 1797, doi: 10.3390/electronics9111797.
 
 \bibitem{Ma2023}
 {K. Ma et al.}, ``An effective method for improving low-frequency response of
-  geophone,'' \emph{Sensors}, vol.~23, no.~6, p. 3082, 2023, doi:
+  geophone,'' \emph{Sensors}, vol.~23, no.~6, 2023, art. no. 3082, doi:
   10.3390/s23063082.
 
 \bibitem{InfineonAN60305}
@@ -106,7 +108,7 @@ C.~Keeser, ``Using {PSoC} 3 and {PSoC} {5LP} {IDAC}s to build a better
 
 \bibitem{CypressAN60319}
 P.~Sekar, ``Instrumentation amplifier using {PSoC} 3,'' Cypress Semiconductor,
-  Appl. Note AN60319, 2010.
+  Application Note AN60319, Document No.~001-60319, Rev.~*A, Apr. 2010.
 
 \bibitem{Conover1999}
 W.~J. Conover, \emph{Practical Nonparametric Statistics}, 3rd~ed.\hskip 1em
@@ -114,13 +116,13 @@ W.~J. Conover, \emph{Practical Nonparametric Statistics}, 3rd~ed.\hskip 1em
 
 \bibitem{Kirchhoff2017}
 {R. Kirchhoff et al.}, ``Huddle test measurement of a near {Johnson} noise
-  limited geophone,'' \emph{Rev. Sci. Instrum.}, vol.~88, no.~11, p. 115008,
-  2017, doi: 10.1063/1.5000592.
+  limited geophone,'' \emph{Rev. Sci. Instrum.}, vol.~88, no.~11, 2017, art.
+  no. 115008, doi: 10.1063/1.5000592.
 
 \bibitem{Antoniadis2025}
 D.~Antoniadis and T.~G. Constandinou, ``A mixed-signal analogue front-end for
   brain-implantable neural interfaces using a digital fixed-point {IIR} filter
-  and bulk offset cancellation,'' arXiv:2511.12540, 2025, doi:
+  and bulk offset cancellation,'' arXiv preprint arXiv:2511.12540, 2025, doi:
   10.48550/arXiv.2511.12540.
 
 \end{thebibliography}
