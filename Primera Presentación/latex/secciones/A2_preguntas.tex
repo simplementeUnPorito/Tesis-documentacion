@@ -1,0 +1,146 @@
+\section{Ap\'endice: preguntas abiertas y datos por completar}
+\label{sec:preguntas}
+
+Este ap\'endice re\'une lo que a\'un requiere confirmaci\'on o medici\'on. Las cuestiones ya
+resueltas se incorporaron al cuerpo del documento y se listan al final como registro.
+
+\subsection{Datos experimentales por completar}
+
+\begin{enumerate}[itemsep=0.35em]
+
+\item \textbf{Geometr\'ia de las campa\~nas de campo}: n\'umero de canales efectivamente
+desplegados, espaciamiento entre ge\'ofonos, longitud total del arreglo, distancia
+fuente--primer ge\'ofono (\emph{offset} m\'inimo) y n\'umero de puntos de fuente.
+\emph{Impacto: alto.} Sin estos datos no puede evaluarse el rango de frecuencias ni la
+profundidad de investigaci\'on alcanzable, ni contrastarse la geometr\'ia usada con los
+criterios cuantitativos de~\cite{Yoon2009,Xu2006,Xia2006,Park2002}. Es probablemente el
+dato faltante m\'as importante del documento.
+
+\item \textbf{Par\'ametros medidos del SM-24}: resistencia e inductancia de bobina, masa
+m\'ovil, sensibilidad real medida. Existen en el trabajo de MATLAB pero no est\'an volcados
+al documento. \emph{Impacto: alto.} Permitir\'ian completar la tabla comparativa con el
+ge\'ofono JF-20DX de Ma \emph{et al.} (Secci\'on~\ref{sec:ma2023}), que hoy tiene celdas
+vac\'ias. El $\zeta_0=0{,}25$ ya est\'a incorporado.
+
+\item \textbf{Banda plana efectivamente lograda tras la compensaci\'on}: frecuencia de
+corte inferior medida y ancho de banda plano resultante. \emph{Impacto: alto.} Es el
+resultado que cierra la l\'inea de trabajo del \emph{front-end} anal\'ogico y el que permite
+compararse con los \SIrange{1}{100}{\hertz} que reporta Ma \emph{et al.}~\cite{Ma2023}.
+Con $\zeta_1=83{,}661$ el polo inferior deber\'ia caer cerca de \SI{0.06}{\hertz}; conviene
+verificarlo con medici\'on.
+
+\item \textbf{Ruido del sistema referido a la entrada}, y comparaci\'on con el l\'imite de
+ruido t\'ermico del ge\'ofono. No se midi\'o. \emph{Impacto: medio-alto.} Junto con el
+resultado de \emph{offset} ya obtenido, completar\'ia la caracterizaci\'on del
+\emph{front-end}. Es especialmente pertinente dado el $\zeta_1$ elevado: la compensaci\'on
+requiere ganancia proporcional a $(\zeta_1-\zeta_0)$, de modo que amplifica tambi\'en el
+ruido.
+
+\item \textbf{Apareamiento entre canales y \emph{jitter} real del arreglo completo.}
+Hasta ahora acotado por presupuesto te\'orico y medici\'on sobre pocos nodos.
+\emph{Impacto: alto}, porque el desfasaje entre canales se traduce directamente en error
+de velocidad de fase.
+
+\item \textbf{Ganancia total efectiva de la cadena} hasta el ADC, y cu\'al se usa en campo.
+En el art\'iculo figura ``$\times16$ de PGA (ganancia diferencial total $\times32$)''.
+
+\item \textbf{Verificaci\'on de $|K_{\mathrm{SUM}}|=7{,}89$} contra medici\'on. Los dem\'as
+valores ($1$, $1$, $6$) son redondos y este no; proviene de an\'alisis simb\'olico.
+
+\item \textbf{Autonom\'ia del nodo} y consumo medido. No registrado.
+
+\item \textbf{Detalle del ajuste de \SI{50}{\hertz}}: si se realiza sobre la traza
+completa o por ventanas, y si estima tambi\'en los arm\'onicos o s\'olo la fundamental.
+
+\end{enumerate}
+
+\subsection{Decisiones editoriales del documento}
+
+\begin{enumerate}[itemsep=0.35em]
+
+\item \textbf{Perfil $V_S$ sin contraste SPT}: ¿se presenta con la aclaraci\'on expl\'icita
+de que la validaci\'on externa est\'a pendiente, o se reserva para la Defensa Final?
+Recomendaci\'on: presentarlo con la aclaraci\'on, porque demuestra que la cadena completa
+cierra de extremo a extremo.
+
+\item \textbf{Unificaci\'on de la frecuencia de muestreo en el texto}: la configuraci\'on
+vigente es $\SI{2929}{\hertz}/N$, pero los par\'ametros y tiempos de calibraci\'on
+reportados en el art\'iculo URUCON est\'an referidos a \SI{2604}{\hertz}. Recomendaci\'on: no
+modificar n\'umeros ya sometidos a revisi\'on externa y declarar la tasa junto a ellos, que
+es como qued\'o redactado.
+
+\item \textbf{Uso de asistencia de IA}: el proyecto la us\'o de forma intensiva y
+documentada. ¿Se explicita y con qu\'e encuadre metodol\'ogico? Conviene decidirlo antes de
+que lo pregunte la mesa.
+
+\item \textbf{Nombres de los sitios de medici\'on}: figuran los nombres internos
+(Canchiga, Canchita, Estacionamiento). ¿Se mantienen o se formalizan?
+
+\item \textbf{Figuras}: falta elegir cu\'ales entran. Disponibles en
+\texttt{docs/Urucom\_2026\_compact/imagenes/}: cadena anal\'ogica, diagrama de hardware
+digital, trayectorias de calibraci\'on, \emph{waterfall} de campo, imagen de dispersi\'on,
+respuesta del SM-24.
+
+\item \textbf{Cronograma de los trabajos futuros}: no existe. La mesa probablemente lo
+pida en una Primera Presentaci\'on.
+
+\end{enumerate}
+
+\subsection{Oportunidad identificada}
+
+\textbf{Adquisici\'on pasiva sin modificar el hardware.} El sistema puede, en principio,
+operar en modo pasivo (ReMi~\cite{Louie2001}, SPAC~\cite{Aki1957}) simplemente
+capturando sin disparar la fuente: la capacidad de captura continua de 10 minutos ya
+est\'a validada. Park \emph{et al.}~\cite{Park2007} muestran que combinar activo y pasivo
+extiende la curva de dispersi\'on hacia frecuencias bajas ---es decir, hacia mayores
+profundidades--- sin costo adicional de hardware. Dado que el objetivo del proyecto es
+\SI{50}{\meter} con un ge\'ofono de \SI{10}{\hertz}, es una extensi\'on de alcance
+particularmente pertinente. \emph{¿Se consider\'o?}
+
+\subsection{Registro: cuestiones resueltas e incorporadas al documento}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Cuesti\'on} & \textbf{Resoluci\'on} & \textbf{Secci\'on} \\
+\midrule
+Elecci\'on del SM-24 de \SI{10}{\hertz}
+& Disponibilidad: es el ge\'ofono con que cuenta la Facultad. Restricci\'on de partida, no elecci\'on de dise\~no
+& \S\ref{sec:geofono} \\
+\addlinespace[2pt]
+Criterio del pivote Sallen-Key $\to$ MFB
+& Menor sensibilidad de $Q$ y $\omega_0$ a tolerancias; mejor atenuaci\'on en alta frecuencia; la baja impedancia de entrada no penaliza por el orden de la cadena; la inversi\'on de fase se revierte en digital; el GBW no es limitante en banda s\'ismica
+& \S\ref{sec:mfb} \\
+\addlinespace[2pt]
+$\zeta=83{,}661$ frente a $0{,}25$
+& \textbf{No es una discrepancia}: $0{,}25$ es el amortiguamiento inicial del ge\'ofono y $83{,}661$ el objetivo de dise\~no. Sigue la estrategia de~\cite{Ma2023}, un orden de magnitud m\'as agresiva
+& \S\ref{sec:ma2023} \\
+\addlinespace[2pt]
+Estado del \emph{notch} de \SI{50}{\hertz}
+& Retirado. La interferencia de red se cancela en post-proceso por ajuste no lineal de m\'inimos cuadrados, sin retardo de grupo y de forma reversible
+& \S\ref{sec:topologias} \\
+\addlinespace[2pt]
+Frecuencia de muestreo vigente
+& $\SI{2929}{\hertz}/N$; la tasa nativa resulta del reloj del PSoC con el ADC a 18~bits
+& \S\ref{sec:arquitectura} \\
+\addlinespace[2pt]
+Controlador de calibraci\'on
+& El t\'ermino derivativo se descarta (amplifica ruido del ADC sin aportar en planta cuasi-est\'atica); el controlador final es PI, tal como se reporta en el art\'iculo URUCON
+& \S\ref{sec:arq-daafe} \\
+\addlinespace[2pt]
+Trabajo de Delis \emph{et al.}~\cite{Delis2025}
+& Se cita como respaldo independiente de las decisiones de la cadena, sin atribuirle influencia en la decisi\'on original
+& \S\ref{sec:mfb} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\nota{Qued\'o una pregunta menor sin responder, que reformulo m\'as claramente: sobre el
+\textbf{descarte del filtro pasivo RC de entrada} (18/04), lo que quer\'ia saber es
+simplemente \emph{qu\'e te hizo sacarlo}. Escrib\'i en \S\ref{sec:mfb} que fue porque la
+impedancia de la fuente (bobina del ge\'ofono m\'as resistencia de amortiguamiento) es
+variable y por lo tanto la frecuencia de corte del RC no queda bajo control, adem\'as de
+que atenuar antes de amplificar empeora la relaci\'on se\~nal--ruido. Si en realidad lo
+sacaste simplemente porque el FIR digital resultaba m\'as c\'omodo y flexible, decime y lo
+corrijo ---no es grave, pero es el primer pivote del proyecto y prefiero que el motivo
+escrito sea el real.}

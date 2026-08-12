@@ -1,0 +1,110 @@
+\section{Introducci\'on}
+
+\subsection{Contexto y motivaci\'on}
+
+La caracterizaci\'on geot\'ecnica del suelo es una etapa fundamental en el dise\~no de
+cimentaciones, obras civiles, estructuras sometidas a cargas din\'amicas y, en general,
+en cualquier proyecto que requiera conocer el comportamiento mec\'anico del
+terreno~\cite{Kramer1996,Mitchell2005}. El par\'ametro de referencia para el an\'alisis de
+respuesta s\'ismica de sitio es el perfil de velocidad de onda de corte $V_S(z)$, que se
+vincula directamente con el m\'odulo de corte a peque\~nas deformaciones $G_{\max}$
+mediante $V_S=\sqrt{G_{\max}/\rho}$.
+
+En la pr\'actica profesional local, la caracterizaci\'on se apoya casi exclusivamente en
+ensayos invasivos como el \emph{Standard Penetration Test} (SPT) y el \emph{Cone
+Penetration Test} (CPT)~\cite{ASTM}. Estos ensayos entregan informaci\'on valiosa y
+ampliamente aceptada, pero comparten un conjunto de limitaciones: requieren
+intervenci\'on directa del terreno, implican tiempos de ejecuci\'on considerables, tienen
+costos operativos elevados, presentan dificultades log\'isticas en zonas de acceso
+complejo, y ---por su naturaleza puntual--- entregan informaci\'on de un volumen de
+suelo muy reducido en torno al punto de sondeo.
+
+Estas limitaciones motivan el estudio de m\'etodos complementarios de menor impacto.
+Entre las t\'ecnicas geof\'isicas aplicables se destacan la Tomograf\'ia de Refracci\'on
+S\'ismica (SRT) y el An\'alisis Multicanal de Ondas Superficiales
+(MASW)~\cite{Park1999,Xia1999,Foti2014}. El MASW explota la \emph{dispersi\'on
+geom\'etrica} de las ondas Rayleigh: componentes de distinta longitud de onda muestrean
+distintas profundidades del semiespacio, de modo que la dependencia de la velocidad de
+fase con la frecuencia codifica la estratificaci\'on del subsuelo. Es un m\'etodo no
+invasivo, r\'apido, de costo relativamente bajo, y que integra un volumen de suelo
+lateralmente mucho m\'as representativo que un sondeo puntual.
+
+\subsection{El problema instrumental}
+
+La adopci\'on del MASW en el medio local est\'a limitada menos por la teor\'ia ---que est\'a
+madura y bien documentada--- que por el acceso al instrumental. Un sismógrafo
+multicanal comercial con sus ge\'ofonos representa una inversi\'on que dif\'icilmente se
+justifica fuera de una empresa especializada, y el cableado multicanal tradicional
+impone una log\'istica de despliegue pesada en campo.
+
+Desde el punto de vista electr\'onico, construir un sistema propio no es trivial. El
+ge\'ofono de bobina m\'ovil entrega se\~nales del orden de las decenas o centenas de
+microvoltios, con un ancho de banda \'util que arranca por debajo de su frecuencia
+natural. Esto exige ganancias altas, y en cadenas de acondicionamiento multietapa las
+tensiones de \emph{offset} de los amplificadores y de las referencias se acumulan
+etapa a etapa, consumiendo rango din\'amico y, con ganancia elevada, llegando a saturar
+etapas intermedias antes de que la se\~nal s\'ismica alcance el conversor. A esto se suma
+el requisito de sincronizaci\'on: en un arreglo multicanal, los desfasajes temporales
+entre canales se traducen directamente en errores de velocidad de fase, es decir, en
+errores del perfil $V_S$ estimado.
+
+\subsection{Objetivo del proyecto}
+
+El objetivo general es \textbf{dise\~nar, implementar y evaluar experimentalmente un
+sistema electr\'onico multicanal para la generaci\'on y captaci\'on de ondas s\'ismicas},
+orientado a la caracterizaci\'on geot\'ecnica del suelo en profundidades de hasta
+aproximadamente \SI{50}{\meter}. El sistema comprende la selecci\'on e implementaci\'on
+del generador de ondas s\'ismicas, el dise\~no de nodos ge\'ofono aut\'onomos del tipo IoT,
+su organizaci\'on en configuraciones matriciales de medici\'on, y el procesamiento digital
+de las se\~nales adquiridas para estimar perfiles de velocidad y par\'ametros el\'asticos
+de las subcapas del suelo.
+
+Los objetivos espec\'ificos, derivados de las etapas de ejecuci\'on aprobadas en la
+propuesta, son:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item Estudiar los principios de propagaci\'on de ondas s\'ismicas en suelos y revisar
+    el estado del arte sobre SRT, MASW, ge\'ofonos, adquisici\'on multicanal y sistemas
+    IoT aplicados a instrumentaci\'on de campo.
+    \item Seleccionar el generador de ondas s\'ismicas, los ge\'ofonos y los componentes
+    electr\'onicos principales para la captaci\'on, acondicionamiento, digitalizaci\'on y
+    transmisi\'on de las se\~nales.
+    \item Dise\~nar los circuitos de acondicionamiento, alimentaci\'on, sincronizaci\'on y
+    registro de datos de los nodos ge\'ofono aut\'onomos.
+    \item Implementar el prototipo electr\'onico multicanal y definir las topolog\'ias de
+    arreglo a emplear en las pruebas de campo.
+    \item Desarrollar los algoritmos de procesamiento digital, incluyendo filtrado,
+    detecci\'on de llegadas, an\'alisis de dispersi\'on e inversi\'on para estimaci\'on de
+    perfiles de velocidad.
+    \item Integrar el sistema, realizar ensayos experimentales, comparar los resultados
+    con el ensayo SPT, analizar el desempe\~no y redactar la memoria final.
+\end{enumerate}
+
+\subsection{Estado de avance y alcance de este documento}
+
+Al momento de esta Primera Presentaci\'on se encuentran completadas las etapas 1 a 5 en
+su mayor parte, con la etapa 6 iniciada: existe un prototipo funcional de varios nodos
+que captura, transmite y almacena datos s\'ismicos reales, se realizaron campa\~nas de
+medici\'on en campo, y el \emph{pipeline} de procesamiento MASW produce curvas de
+dispersi\'on e inversiones de perfil $V_S$. Lo que resta es principalmente la
+consolidaci\'on del hardware en una PCB propia, la construcci\'on de una fuente s\'ismica
+repetible, y la validaci\'on cuantitativa contra un ensayo de referencia.
+
+Un resultado parcial del trabajo ---el \emph{front-end} anal\'ogico asistido digitalmente
+con auto-calibraci\'on de \emph{offset}--- fue redactado como comunicaci\'on cient\'ifica y
+sometido al congreso URUCON~2026, lo que aport\'o al proyecto un ciclo de revisi\'on
+externa sobre una parte central de la instrumentaci\'on.
+
+El resto del documento se organiza como sigue. La Secci\'on~\ref{sec:fundamentos}
+desarrolla los fundamentos te\'oricos de propagaci\'on de ondas superficiales. La
+Secci\'on~\ref{sec:estado-arte} presenta el estado del arte en m\'etodos, instrumentaci\'on
+y herramientas de procesamiento. La Secci\'on~\ref{sec:arquitectura} describe la
+arquitectura del sistema desarrollado. La Secci\'on~\ref{sec:metodologia} detalla la
+metodolog\'ia experimental y los procedimientos de validaci\'on. La
+Secci\'on~\ref{sec:resultados} presenta los resultados obtenidos. La
+Secci\'on~\ref{sec:futuros} enumera los trabajos futuros y la
+Secci\'on~\ref{sec:conclusiones} cierra con las conclusiones parciales.
+
+\nota{Para la versi\'on de 15 p\'aginas, esta introducci\'on deber\'ia comprimirse a
+aproximadamente una p\'agina: conservar \S1.1 y \S1.3 (motivaci\'on y objetivos),
+resumir \S1.2 en un p\'arrafo y eliminar el mapa de secciones.}

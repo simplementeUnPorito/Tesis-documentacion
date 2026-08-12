@@ -1,0 +1,122 @@
+\section{Etapa 10 --- Ruptura arquitect\'onica y portaci\'on a la web}
+\label{sec:et10}
+\periodo{21 de julio --- 1\textsuperscript{o} de agosto de 2026 \quad$\cdot$\quad 7 d\'ias, \textasciitilde{}40 \emph{commits}}
+
+Etapa de infraestructura. No agrega capacidad de medici\'on, pero cambia c\'omo
+se sostiene todo lo dem\'as ---y contiene un pivote de herramienta importante.
+
+\subsection{Del monolito al superproyecto (21 de julio)}
+
+El repositorio \'unico se parti\'o. El historial monol\'itico se preserv\'o en
+\texttt{Tesis-legacy} y el repositorio \texttt{Tesis} se reinici\'o con un
+\textbf{\emph{commit} ra\'iz sin padres} que fija los subm\'odulos como
+repositorios independientes.
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Motivo} & \textbf{Consecuencia} \\
+\midrule
+El firmware, el modelado y los datos ten\'ian ciclos de vida distintos & Cada uno versiona a su ritmo \\
+\addlinespace[2pt]
+Los datos crudos (\textasciitilde{}29~GiB) envenenaban el historial & LFS con almacenamiento por carpeta y deduplicaci\'on SHA-256, con manifiesto de ruta/tama\~no/\emph{hash} por archivo \\
+\addlinespace[2pt]
+Un clon completo era impracticable & Se puede clonar solo lo que se necesita \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Reorganizaci\'on por prop\'osito (24 de julio)}
+
+Tres d\'ias despu\'es, segunda pasada: \texttt{src/} deja de agrupar por lenguaje
+y pasa a agrupar \textbf{por prop\'osito}
+---\texttt{firmware/}, \texttt{interfaces/}, \texttt{calculos\_modelados/}---
+mediante \texttt{subtree split}, con dos repositorios nuevos y dos renombrados.
+\texttt{investigacion/} baj\'o de la ra\'iz a \texttt{docs/investigacion}.
+
+\seleccionado{Agrupar por prop\'osito y no por lenguaje es lo correcto ac\'a
+porque \emph{el mismo prop\'osito se implementa en varios lenguajes}: hay
+interfaces en Python y en MATLAB, y modelado en Python y en MATLAB. Agrupar
+por lenguaje separaba cosas que se usan juntas.}
+
+\pendiente{Dos trampas conocidas de esta arquitectura, que ya costaron trabajo:
+\textbf{(1)} un subm\'odulo en \emph{detached HEAD} acepta un
+\texttt{push origin main} \emph{sin subir nada}, informando \'exito ---hay que
+auditar el \emph{gitlink} contra \texttt{ls-remote}; \textbf{(2)}
+\texttt{git submodule deinit -f} vac\'ia el \emph{worktree} y destruye lo no
+confirmado. Para mover un subm\'odulo hay que editar solo el \texttt{path} en
+\texttt{.gitmodules}.}
+
+\subsection{El pivote de interfaz: de PyQt a web}
+
+Hasta julio la revisi\'on de campo viv\'ia en \texttt{field\_review\_app}, una
+aplicaci\'on de escritorio PyQt. Entre el 25 de julio y el 29 se port\'o
+entera a la web.
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+25 jul & Arranca el \texttt{PORT\_PLAN}: el servidor Python migra de un \texttt{http.server} artesanal a \textbf{FastAPI} con est\'aticos; pesta\~nas de navegaci\'on y alternancia de tema; visor de se\~nal con \textbf{decimado min/max}. En el camino se corrige un bug del propio \emph{gate} automatizado, que daba falsos vencimientos porque un \emph{pipe} de subproceso no ten\'ia lector \\
+\addlinespace[2pt]
+26 jul & \textbf{Se congela un \emph{snapshot} de referencia de la app PyQt completa} en \texttt{docs/legacy/pyqt\_field\_review/}, con mapa de l\'ineas de la ventana ``Capturas'', \emph{antes} de empezar a portarla \\
+\addlinespace[2pt]
+29 jul & Portaci\'on masiva hasta alcanzar paridad funcional \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{Congelar el original antes de portar} es la decisi\'on que
+hizo viable el porte: da un objetivo de paridad verificable en vez de una
+reescritura ``a ojo''. El decimado min/max, por su parte, es la t\'ecnica
+correcta para dibujar millones de muestras en un \emph{canvas} sin perder los
+picos ---que en una traza s\'ismica son exactamente lo que importa.}
+
+\subsubsection{Lo que trajo la portaci\'on (29 de julio)}
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{Cuarentena reversible} (\texttt{deletion.py}) en vez de borrado
+f\'isico: un registro rechazado se puede recuperar. Dado que un descarte
+err\'oneo de datos de campo es irreparable, es la elecci\'on correcta.
+\item \textbf{Cola \texttt{AnalysisJobs}} persistente para los an\'alisis
+pesados, que ya no bloquean la interfaz.
+\item Exportaciones reproducibles.
+\item \textbf{\texttt{smoke\_test.py} con 58 verificaciones} como condici\'on de
+avance: el porte no avanzaba si el \emph{gate} no pasaba.
+\end{itemize}
+
+\subsection{Otras l\'ineas del per\'iodo}
+
+\textbf{Conectividad de campo.} Arranca el plan del modo ENLACE del maestro y
+un \emph{sketch} descartable (\texttt{MasterFoo}) que valida el uso del
+\emph{hotspot} del celular como red de campo.
+
+\descartado{\texttt{MasterFoo} era deliberadamente descartable: se escribi\'o
+para responder una pregunta (¿funciona el \emph{hotspot}?), se la respondi\'o y
+no se lo integr\'o. Registrarlo evita que alguien lo confunda con c\'odigo de
+producci\'on.}
+
+\textbf{Martillo de leva} (1\textsuperscript{o} de agosto). Arranca el dise\~no
+de una fuente de impacto repetible ---clave para el arreglo sintetizado de la
+Etapa~7, donde la repetibilidad entre disparos \emph{es} la
+calidad del dato. Se model\'o en dos herramientas independientes: Simscape
+Multibody (MATLAB) y un modelo 2D en Python.
+
+\dato{\textbf{Los dos modelos detectaron errores propios distintos}, lo cual es
+justamente el argumento para hacerlos por duplicado: el de Simscape encontr\'o
+una \emph{interferencia axial entre la leva y el brazo}, y el de Python una
+\emph{violaci\'on de conservaci\'on de energ\'ia} en el criterio de suelta.}
+
+\textbf{PCBs.} Entra el proyecto de placa (KiCad, y luego JitX) como
+repositorio propio.
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Superproyecto con subm\'odulos por prop\'osito; LFS con dedup SHA-256 y manifiesto; servidor FastAPI; interfaz de revisi\'on en web; decimado min/max; cuarentena reversible; cola \texttt{AnalysisJobs}; \emph{gate} de 58 verificaciones; martillo de leva modelado por duplicado \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & Repositorio monol\'itico; organizaci\'on de \texttt{src/} por lenguaje; \texttt{http.server} artesanal; app de escritorio PyQt (congelada como referencia, no borrada); \emph{sketch} \texttt{MasterFoo}; borrado f\'isico de registros \\
+\bottomrule
+\end{tabularx}
+\end{center}

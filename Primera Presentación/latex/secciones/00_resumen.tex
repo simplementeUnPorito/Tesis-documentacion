@@ -1,0 +1,47 @@
+\vspace{0.4cm}
+\begin{center}\textbf{\large Resumen}\end{center}
+
+\noindent
+Este Proyecto Final de Carrera tiene por objetivo el dise\~no, la implementaci\'on y la
+evaluaci\'on experimental de un sistema electr\'onico multicanal del tipo IoT para la
+generaci\'on y captaci\'on de ondas s\'ismicas, orientado a la caracterizaci\'on geot\'ecnica
+del suelo mediante el m\'etodo de An\'alisis Multicanal de Ondas Superficiales (MASW).
+La motivaci\'on surge de las limitaciones de los ensayos geot\'ecnicos tradicionales
+---principalmente el \emph{Standard Penetration Test} (SPT)---, que son invasivos,
+lentos y costosos, frente a los m\'etodos geof\'isicos no invasivos que permiten estimar
+el perfil de velocidad de onda de corte $V_S(z)$ desde la superficie.
+
+El sistema desarrollado consiste en una red de nodos ge\'ofono aut\'onomos, cada uno
+compuesto por un ge\'ofono de bobina m\'ovil SM-24, una cadena de acondicionamiento
+anal\'ogico implementada sobre un PSoC~5LP, y un ESP32 que aporta la conectividad
+inal\'ambrica mediante ESP-NOW. Un nodo maestro coordina el arreglo, sincroniza el
+disparo con la fuente s\'ismica y expone una interfaz web para el operador en campo.
+El procesamiento posterior ---filtrado, an\'alisis de dispersi\'on e inversi\'on---
+se realiza en un \emph{pipeline} propio en Python.
+
+Hasta la fecha se completaron: (i) el marco te\'orico y el estado del arte sobre
+propagaci\'on de ondas superficiales, instrumentaci\'on con ge\'ofonos y sistemas de
+adquisici\'on multicanal; (ii) el modelado del transductor SM-24 y el dise\~no de la
+cadena de acondicionamiento anal\'ogico; (iii) el desarrollo de un
+\emph{Digitally Assisted Analog Front-End} (DA-AFE) con auto-calibraci\'on autom\'atica
+de \emph{offset} de continua, validado experimentalmente sobre dos placas
+independientes en ocho configuraciones placa--ganancia, que redujo el \emph{offset}
+residual a la entrada del ADC de \SIrange{2.9}{45.8}{\percent} a
+\SIrange{0.4}{3.9}{\percent} del fondo de escala; (iv) la implementaci\'on de la red
+inal\'ambrica multi-nodo con sincronizaci\'on de disparo y jerarqu\'ia de memoria de tres
+niveles (RAM del ESP32, encadenado en RAM del PSoC y tarjeta SD), validada en
+capturas continuas de hasta 10 minutos; (v) una auditor\'ia pre-campo sistem\'atica que
+detect\'o y corrigi\'o varios defectos cr\'iticos de sincronizaci\'on; y (vi) campa\~nas de
+medici\'on en campo con el procesamiento MASW e inversi\'on multimodal de las curvas
+de dispersi\'on obtenidas.
+
+Los trabajos futuros comprenden la migraci\'on del prototipo desde placas de
+desarrollo cableadas hacia una PCB propia, el dise\~no y construcci\'on de una fuente
+s\'ismica repetible de tipo martillo de leva, la ampliaci\'on del arreglo a su
+configuraci\'on matricial completa, y la validaci\'on de los perfiles $V_S$ obtenidos
+contra ensayos SPT o informaci\'on geot\'ecnica de referencia.
+
+\vspace{0.3cm}
+\noindent\textbf{Palabras clave:} MASW, ondas superficiales, ge\'ofono, PSoC~5LP,
+ESP-NOW, IoT, adquisici\'on multicanal, caracterizaci\'on geot\'ecnica, calibraci\'on
+asistida digitalmente.

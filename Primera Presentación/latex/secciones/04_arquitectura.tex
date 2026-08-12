@@ -1,0 +1,332 @@
+\section{Arquitectura del sistema desarrollado}
+\label{sec:arquitectura}
+
+\subsection{Visi\'on general}
+
+El sistema es una red inal\'ambrica de nodos de adquisici\'on s\'ismica coordinada por un
+nodo maestro. La cadena completa, desde el suelo hasta el perfil $V_S$, es:
+
+\begin{center}\footnotesize
+\fbox{\parbox{0.95\textwidth}{\centering
+Ge\'ofono SM-24 $\rightarrow$ cadena anal\'ogica (PSoC~5LP) $\rightarrow$ ADC $\Delta\Sigma$
+$\rightarrow$ filtro FIR por hardware + DMA $\rightarrow$ RAM / SD \\[0.2em]
+$\downarrow$ UART \\[0.2em]
+ESP32 esclavo $\rightarrow$ ESP-NOW $\rightarrow$ ESP32 maestro (AP WiFi + SPA web + WebSocket) \\[0.2em]
+$\downarrow$ \\[0.2em]
+Servidor Python (FastAPI) $\rightarrow$ revisi\'on de campo $\rightarrow$ MASW $\rightarrow$ inversi\'on $\rightarrow$ $V_S(z)$
+}}
+\end{center}
+
+Existen dos tipos de nodo, que comparten firmware: el \textbf{nodo GEO} (ge\'ofono) y el
+\textbf{nodo HAMMER} (martillo instrumentado, que provee el instante de disparo y la
+referencia de la fuente). El nodo maestro no adquiere: coordina, sincroniza y expone la
+interfaz de operador.
+
+\subsection{Nodo ge\'ofono: cadena de acondicionamiento anal\'ogico}
+
+La cadena anal\'ogica, derivada de la topolog\'ia propuesta por Ma \emph{et
+al.}~\cite{Ma2023}, se implementa \'integramente con los bloques anal\'ogicos configurables
+internos del PSoC~5LP y componentes externos discretos. Consta de cuatro etapas en
+cascada:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{PGA} --- amplificador de instrumentaci\'on de ganancia programable, en
+    topolog\'ia de dos amplificadores operacionales, con ganancias seleccionables
+    $\times1$, $\times4$, $\times16$, $\times32$ y $\times50$.
+    \item \textbf{BP} --- filtro pasa-banda, que define la banda \'util y rechaza tanto la
+    deriva de continua como el contenido de alta frecuencia fuera de inter\'es.
+    \item \textbf{SUM} --- etapa sumadora inversora, que combina se\~nal y referencia.
+    \item \textbf{LP} --- filtro pasa-bajos de segundo orden, que act\'ua como
+    \emph{anti-aliasing} y alimenta directamente el ADC.
+\end{enumerate}
+
+Cada etapa dispone de un \textbf{VDAC dedicado} que fija su punto de operaci\'on. Cada
+nodo de referencia se desacopla mediante una red \SI{1}{\micro\farad}\,$\|$\,\SI{100}{\nano\farad}
+que, junto con la resistencia de salida interna de \SI{16}{\kilo\ohm} del VDAC, forma un
+pasa-bajos de un polo en aproximadamente \SI{9}{\hertz}, atenuando la densidad de ruido
+de \SI{750}{\nano\volt\per\sqrt{\hertz}} del VDAC por encima de esa frecuencia.
+
+\subsection{\emph{Front-end} anal\'ogico asistido digitalmente (DA-AFE)}
+\label{sec:arq-daafe}
+
+El problema que motiva esta parte del dise\~no es la acumulaci\'on de \emph{offset}: en una
+cadena de cuatro etapas con ganancia elevada, los \emph{offsets} intr\'insecos de cada
+amplificador y de cada referencia se propagan y amplifican, consumiendo rango din\'amico
+y, en el peor caso, saturando etapas intermedias antes de que llegue la se\~nal s\'ismica.
+
+La soluci\'on adoptada es un \textbf{Digitally Assisted Analog Front-End}: durante una
+fase de calibraci\'on previa a la adquisici\'on, los recursos digitales embebidos
+---multiplexor anal\'ogico, ADC $\Delta\Sigma$, filtro digital programable, VDACs y
+procesador--- se reconfiguran como un sistema de realimentaci\'on de se\~nal mixta que
+recentra cada etapa. Terminada la calibraci\'on, esos recursos vuelven a su funci\'on de
+adquisici\'on, los c\'odigos de los VDAC quedan fijos y el camino de se\~nal opera de forma
+convencional, sin ning\'un lazo digital activo.
+
+\subsubsection{Modelo}
+
+Bajo las hip\'otesis de \emph{offsets} cuasi-est\'aticos durante la calibraci\'on, carga
+despreciable entre etapas y superposici\'on lineal de las contribuciones de continua, el
+\emph{offset} residual a la salida de la etapa $i$ se expresa como
+
+\begin{equation}
+y_i^{\mathrm{DC}}=\sum_{j<i}A_{ij}\,y_j^{\mathrm{DC}}+b_i+K_i\,u_i,
+\label{eq:stage}
+\end{equation}
+
+donde $A_{ij}$ es la ganancia de continua de la etapa $j$ a la etapa $i$, $b_i$ el
+\emph{offset} intr\'inseco de la etapa $i$, y $K_i$ la ganancia que relaciona la tensi\'on
+inyectada por el VDAC $u_i$ con la salida de esa etapa. La estructura triangular de
+\eqref{eq:stage} justifica el orden de calibraci\'on: de PGA a LP, porque cada etapa
+hereda el residuo propagado por las anteriores.
+
+\subsubsection{Ley de control}
+
+El error se mapea primero al dominio del DAC de 8 bits:
+
+\begin{equation}
+\varepsilon_i[n]=\operatorname{round}\!\left(
+\frac{e_i[n]\,V_{\mathrm{ADC,span}}\,N_{\mathrm{DAC}}}
+{N_{\mathrm{ADC}}\,V_{\mathrm{DAC,span}}}\right),
+\label{eq:scale}
+\end{equation}
+
+con $N_{\mathrm{ADC}}=2^{18}$, $N_{\mathrm{DAC}}=2^{8}$,
+$V_{\mathrm{ADC,span}}=\SI{5000}{\milli\volt}$ y
+$V_{\mathrm{DAC,span}}=\SI{4096}{\milli\volt}$.
+
+Para evitar oscilaci\'on entre c\'odigos adyacentes cuando el punto de operaci\'on ideal no
+es realizable, se adopta una banda muerta con piso conservador
+$\Delta_{i,\min}^{\mathrm{impl}}=\max(1,\lceil|K_i|\rceil)$, dentro de la cual se
+suprime la integraci\'on. El controlador es un \textbf{PI en forma posicional}:
+
+\begin{equation}
+c_i^{*}[n]=c_{i,\mathrm{base}}-s_i\left[
+\frac{k_{\mathrm{P},i}}{|K_i|}\bar{\varepsilon}_i[n]
++\frac{k_{\mathrm{I},i}}{|K_i|}\sum_{q=0}^{n-1}\bar{\varepsilon}_i[q]\right],
+\label{eq:pi}
+\end{equation}
+
+con $c_{i,\mathrm{base}}$ el c\'odigo base de prealimentaci\'on y
+$s_i=\operatorname{sgn}(K_i)$. El comando se satura al rango 0--255 del DAC, con
+\textbf{anti-windup direccional}: la integraci\'on se congela \'unicamente cuando el
+residuo empujar\'ia el comando m\'as adentro de la saturaci\'on. Las ganancias $|K_i|$ se
+obtuvieron por an\'alisis simb\'olico de continua de cada etapa en MATLAB a partir de los
+valores nominales de componentes.
+
+\begin{table}[h]
+\centering\footnotesize
+\caption{Par\'ametros de calibraci\'on empleados en todas las mediciones reportadas. Las
+bandas muertas est\'an en c\'odigos equivalentes de DAC; S/L/R son muestras de
+establecimiento/enganche/refinamiento a \SI{2604}{\hertz}, la tasa vigente durante esa campa\~na de medici\'on.}
+\label{tab:cal_params}
+\begin{tabular}{lccccccc}
+\toprule
+Etapa & $|K_i|$ & $\Delta_{i,\min}^{\mathrm{impl}}$ & $\Delta_i$ & $k_{\mathrm{P},i}$ & $k_{\mathrm{I},i}$ & S/L/R & \emph{Timeout} (s)\\
+\midrule
+PGA & 1    & 1 & 18 & $10^{-3}$ & $3\times10^{-4}$ & 512/512/1024   & 11,5\\
+BP  & 1    & 1 & 3  & $10^{-4}$ & $5\times10^{-4}$ & 512/1024/1024  & 17,3\\
+SUM & 7,89 & 8 & 10 & $10^{-4}$ & $5\times10^{-4}$ & 512/512/1024   & 11,5\\
+LP  & 6    & 6 & 8  & $10^{-4}$ & $5\times10^{-4}$ & 1024/1024/2048 & 17,3\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Flujo y persistencia}
+
+Al arranque, tras un cambio de ganancia o por comando, el firmware carga los c\'odigos de
+DAC almacenados y verifica si la calibraci\'on previa sigue siendo v\'alida; si lo es,
+retorna inmediatamente a adquisici\'on. En caso contrario calibra las cuatro etapas
+secuencialmente, con reinicio del filtro y establecimiento entre etapas. Un
+\emph{watchdog} y l\'imites de conteo de muestras acotan el proceso.
+
+Durante la calibraci\'on el filtro digital programable opera como estimador de continua
+FIR de 128 \emph{taps}; durante la adquisici\'on se reconfigura con coeficientes adaptados
+al ancho de banda del ge\'ofono. Un registro en EEPROM \textbf{indexado por c\'odigo de
+ganancia} almacena la m\'ascara de etapas v\'alidas, los cuatro c\'odigos de DAC, la versi\'on
+y un CRC; las calibraciones fallidas conservan sus mejores c\'odigos acotados sin
+sobrescribir un registro v\'alido.
+
+\subsection{Adquisici\'on digital en el PSoC~5LP}
+
+\subsubsection{Cadena ADC--DMA--Filtro}
+
+La adquisici\'on evolucion\'o desde una ISR cl\'asica por muestra hacia una cadena
+gobernada por DMA en la que el procesador ARM Cortex-M3 no interviene en el camino de
+datos. El bloque de filtro digital programable (DFB) aplica el FIR de adquisici\'on, y un
+conjunto de canales DMA transporta las muestras del ADC al filtro y del filtro a memoria.
+
+La \textbf{frecuencia de muestreo nativa del sistema es \SI{2929}{\hertz}}. Este valor no
+es arbitrario: es la tasa real que resulta de la configuraci\'on de reloj del PSoC operando
+el ADC $\Delta\Sigma$ a su \textbf{resoluci\'on m\'axima de 18~bits}. Es decir, la
+arquitectura prioriza resoluci\'on sobre tasa de muestreo, y la frecuencia efectiva es
+consecuencia de esa elecci\'on y no un par\'ametro fijado libremente.
+
+A partir de esa tasa nativa se submuestrea por decimaci\'on con promediado, con factor $N$
+configurable de 1 a 100:
+
+\begin{equation}
+F_s=\frac{\SI{2929}{\hertz}}{N}.
+\end{equation}
+
+El promediado de $N$ muestras consecutivas aporta, adem\'as de la reducci\'on de tasa, una
+mejora de la relaci\'on se\~nal--ruido para el ruido incorrelado. El par\'ametro $N$ permite
+intercambiar ancho de banda por duraci\'on de captura y por relaci\'on se\~nal--ruido, y se
+configura desde la interfaz web. El ADC ofrece adem\'as cuatro configuraciones de rango de
+entrada seleccionables, todas validadas en hardware.
+
+\nota{\textbf{Punto a unificar}: los par\'ametros de calibraci\'on de la
+Tabla~\ref{tab:cal_params} y los tiempos reportados en la Secci\'on~\ref{sec:resultados}
+est\'an referidos a \SI{2604}{\hertz}, que es la tasa con la que se realiz\'o la campa\~na de
+medici\'on del art\'iculo URUCON. La configuraci\'on vigente es \SI{2929}{\hertz}. Hay que
+decidir si se re-expresan esos tiempos a la tasa actual (cambiar\'ian los valores ya
+publicados) o si se aclara expl\'icitamente que corresponden a la configuraci\'on de aquel
+experimento. Mi sugerencia es lo segundo: no tocar n\'umeros ya sometidos a revisi\'on
+externa, y declarar la tasa junto a ellos.}
+
+\subsubsection{\emph{superMaquina}: la m\'aquina de estados en hardware}
+
+La l\'ogica de captura se migr\'o de C puro (ISRs sobre un registro de selecci\'on) a un
+componente descrito en \textbf{Verilog} e instanciado en los bloques UDB del PSoC,
+denominado \emph{superMaquina}. Este bloque decide en hardware qu\'e solicitud de DMA se
+deja pasar, cu\'ando arranca y termina una captura, y qu\'e interrupciones llegan al
+procesador.
+
+La motivaci\'on es el determinismo: en un sistema multicanal el \emph{jitter} temporal se
+traduce directamente en error de velocidad de fase. Al sacar la decisi\'on de captura del
+dominio del software se elimina la dependencia de la latencia de interrupci\'on. La
+pol\'itica de eventos asociada establece que los \emph{Terminal Count} de los temporizadores
+fijos no generan interrupci\'on ---quedan retenidos en su registro de estado y los consume
+el \emph{polling} del bucle de servicio---, y que durante el muestreo el nodo no atiende
+RX/TX ni parpadeo de LED.
+
+\subsubsection{Jerarqu\'ia de memoria y almacenamiento en SD}
+
+Para soportar capturas largas se implement\'o una jerarqu\'ia de tres niveles:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{RAM del ESP32}: arena paginada de 512 lotes, el camino r\'apido para
+    capturas cortas.
+    \item \textbf{Encadenado en RAM del PSoC}: al superar los 512 lotes crudos, la
+    \emph{superMaquina} se re-arma sin reiniciar, emitiendo un \'unico evento de fin al
+    terminar.
+    \item \textbf{Tarjeta SD en el PSoC}: sistema de archivos FatFs sobre el SPI maestro
+    del TopDesign, con hasta 60\,000 lotes ($\approx\SI{11.5}{\minute}$ a
+    \SI{2929}{\hertz}). Comandos UART dedicados para estado, autotest, captura a SD y
+    lectura de lote.
+\end{enumerate}
+
+Es relevante destacar que la SD reside \textbf{en el PSoC y no en el ESP32}, lo que
+mantiene el almacenamiento del lado determinista de la cadena.
+
+\subsection{Red inal\'ambrica y sincronizaci\'on}
+
+\subsubsection{Topolog\'ia}
+
+Cada nodo de adquisici\'on integra un ESP32 conectado al PSoC por UART m\'as una l\'inea
+dedicada de sincronismo. Los esclavos se comunican con el maestro por \textbf{ESP-NOW};
+el maestro levanta simult\'aneamente un punto de acceso WiFi (\texttt{GeoNetwork},
+\texttt{192.168.4.1}) operando en modo \texttt{WIFI\_AP\_STA}.
+
+\subsubsection{Protocolo de disparo sincronizado}
+
+La secuencia de disparo es el punto cr\'itico del sistema, ya que de ella depende la
+alineaci\'on temporal entre canales:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{PRESTART}: el maestro difunde la configuraci\'on de captura; cada
+    esclavo la transfiere al PSoC y lo deja armado.
+    \item \textbf{HOT\_WAIT}: el maestro consulta a cada nodo si su PSoC confirm\'o el
+    armado.
+    \item \textbf{START\_NOW}: con todos los nodos armados, el maestro emite el disparo;
+    la captura arranca por \textbf{flanco de una l\'inea f\'isica de sincronismo}, no por
+    comando de software.
+    \item \textbf{Dump}: finalizada la captura, los datos se transfieren mediante un
+    esquema \emph{stop-and-wait} de solicitud de lotes, con pausa y reanudaci\'on seg\'un
+    la presencia del cliente WebSocket.
+\end{enumerate}
+
+El arranque por flanco f\'isico es la decisi\'on de dise\~no que hace viable la
+sincronizaci\'on multicanal: elimina de la ruta cr\'itica la latencia variable del
+\emph{stack} de radio y del software.
+
+\subsection{Nodo martillo (fuente s\'ismica)}
+
+El nodo HAMMER acondiciona un martillo instrumentado con aceler\'ometro
+PCB~Piezotronics~086D20 y provee el instante de disparo y la referencia de la se\~nal de
+la fuente. Comparte el \emph{mismo archivo de firmware} que el nodo GEO: el c\'odigo
+detecta autom\'aticamente en tiempo de compilaci\'on qu\'e tipo de hardware tiene debajo
+seg\'un los componentes presentes en el TopDesign, y configura la cadena anal\'ogica y los
+objetivos de calibraci\'on correspondientes. Esta decisi\'on elimina la bifurcaci\'on del
+firmware embebido y garantiza que el protocolo y la l\'ogica de captura sean id\'enticos en
+ambos tipos de nodo. La clase de hardware se propaga desde el PSoC hasta la interfaz web.
+
+\subsection{Interfaz de operador en campo}
+
+El maestro sirve una aplicaci\'on web de p\'agina \'unica desde su propio sistema de archivos
+LittleFS sobre su AP WiFi. Esto elimina la necesidad de llevar una computadora al campo:
+el operador se conecta con el tel\'efono. La interfaz permite configurar decimaci\'on,
+duraci\'on por tipo de nodo, l\'imites de RAM y SD, y rango de ADC; muestra el estado de
+cada nodo con indicador de intensidad de se\~nal (RSSI) del enlace ESP-NOW; refleja las
+capturas en vivo por WebSocket; y permite exportar la sesi\'on como archivo comprimido
+armado \'integramente en el navegador.
+
+\subsection{\emph{Pipeline} de procesamiento MASW}
+\label{sec:arq-pipeline}
+
+El procesamiento posterior se implement\'o en Python, sobre un servidor FastAPI que
+reemplaz\'o a una primera versi\'on artesanal y a una aplicaci\'on de escritorio PyQt previa.
+Sus componentes son:
+
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Revisi\'on de campo}: inspecci\'on de capturas con ordenamiento por
+    amplitud pico a pico, banco de filtros configurable, alineaci\'on entre tandas
+    (\emph{enfase}) por carpeta, correcci\'on de polaridad por punto de medici\'on
+    (autom\'atica y manual), mezcla de capturas tomadas a distintas frecuencias de
+    muestreo mediante remuestreo racional, deduplicaci\'on por captura, promediado por
+    carpeta y rechazo expl\'icito de carpetas defectuosas.
+    \item \textbf{An\'alisis de dispersi\'on}: construcci\'on de la imagen MASW en el dominio
+    frecuencia--velocidad de fase, visualizaci\'on tipo \emph{waterfall} y $f$--$k$, y
+    definici\'on de \textbf{regiones-pol\'igono} que permiten extraer varias curvas
+    simult\'aneas, una por modo.
+    \item \textbf{Inversi\'on}: inversi\'on multimodal usando \texttt{evodcinv} sobre el
+    motor de modelado directo \texttt{disba}, con la curva editable antes de invertir y
+    persistencia de los resultados intermedios.
+    \item \textbf{Infraestructura}: cola de trabajos de an\'alisis persistente, borrado
+    por cuarentena reversible en lugar de eliminaci\'on f\'isica, exportaciones
+    reproducibles y un \emph{gate} automatizado de 58 verificaciones como condici\'on de
+    avance.
+\end{itemize}
+
+\subsection{Organizaci\'on del repositorio}
+
+El proyecto se reorganiz\'o desde un repositorio monol\'itico hacia un superproyecto con
+subm\'odulos independientes, agrupados \textbf{por prop\'osito y no por lenguaje}:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\texttt{src/firmware/psoc} & Firmware y dise\~no anal\'ogico del PSoC~5LP \\
+\texttt{src/firmware/esp32} & Firmware de los nodos maestro y esclavo \\
+\texttt{src/interfaces/python} & Servidor FastAPI, revisi\'on de campo, exportaci\'on \\
+\texttt{src/interfaces/matlab} & Interfaces de banco (osciloscopio, ESP) \\
+\texttt{src/calculos\_modelados/matlab} & Modelo SM-24, compensadores, an\'alisis de circuito \\
+\texttt{src/calculos\_modelados/python} & MASW, martillo de leva \\
+\texttt{data} & Mediciones crudas y procesadas (Git LFS, dedup.\ por SHA-256) \\
+\texttt{docs} & Documentaci\'on, bit\'acora, comunicaciones \\
+\texttt{PCBs} & Dise\~nos electr\'onicos (KiCad, JitX) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Un \emph{commit} del superproyecto fija un SHA concreto de cada subm\'odulo, constituyendo
+una l\'inea base reproducible. Los datos de medici\'on se versionan con Git~LFS con
+deduplicaci\'on por SHA-256, conservando el repositorio los punteros, el cat\'alogo y la
+estructura.
+
+\nota{En la versi\'on de 15 p\'aginas esta secci\'on es la principal candidata a recorte
+agresivo: el Art.~19 pide un documento de \emph{Estado del Arte}, no una memoria de
+implementaci\'on. Sugerencia: reducir a ~2,5 p\'aginas conservando \S4.1 (diagrama),
+\S4.2, \S4.3 (que es el aporte metodol\'ogico y ya tiene revisi\'on externa), \S4.5.2
+(sincronizaci\'on, que es el problema t\'ecnico distintivo) y \S4.8. Las secciones
+\S4.4.3, \S4.6, \S4.7 y \S4.9 pueden resumirse en un p\'arrafo cada una o pasar a la
+Defensa Final.}

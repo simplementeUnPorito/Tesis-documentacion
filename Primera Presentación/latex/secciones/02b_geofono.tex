@@ -1,0 +1,183 @@
+\section{El ge\'ofono como transductor: modelo y respuesta}
+\label{sec:geofono}
+
+Esta secci\'on trata el transductor en detalle porque de \'el se derivan casi todas las
+especificaciones de la electr\'onica desarrollada.
+
+\subsection{Modelo mecánico}
+
+El ge\'ofono de bobina m\'ovil es un transductor \emph{inercial}: una masa suspendida por un
+resorte, solidaria a una bobina que se mueve dentro del campo de un im\'an permanente
+fijado a la carcasa. La carcasa sigue al suelo; la masa, por inercia, no. La tensi\'on de
+salida se genera por la \textbf{velocidad relativa} entre bobina e im\'an.
+
+Sea $x_g$ el desplazamiento del suelo (y por tanto de la carcasa) y $x_m$ el de la masa.
+Definiendo el desplazamiento relativo $z=x_m-x_g$, la segunda ley de Newton sobre la masa
+suspendida da
+
+\begin{equation}
+m\ddot{z}+c\dot{z}+kz=-m\ddot{x}_g
+\quad\Longleftrightarrow\quad
+\ddot{z}+2\zeta\omega_n\dot{z}+\omega_n^{2}z=-\ddot{x}_g,
+\label{eq:geo-mecanico}
+\end{equation}
+
+con $\omega_n=\sqrt{k/m}$ la frecuencia natural y $\zeta=c/(2\sqrt{km})$ el factor de
+amortiguamiento. La tensi\'on generada es proporcional a la velocidad relativa:
+
+\begin{equation}
+V_{\mathrm{out}}(t)=G_0\,\dot{z}(t),
+\label{eq:geo-fem}
+\end{equation}
+
+donde $G_0$ es la sensibilidad, en \si{\volt\per\meter\per\second}.
+
+\subsection{Las tres formas de la funci\'on de transferencia}
+\label{sec:geo-tres-formas}
+
+De \eqref{eq:geo-mecanico} y \eqref{eq:geo-fem} se obtiene la funci\'on de transferencia,
+cuya \textbf{forma depende de qu\'e variable del movimiento del suelo se tome como
+entrada}. Esta distinci\'on es importante y conviene fijarla expl\'icitamente, porque las
+tres formas circulan en la literatura y difieren en un factor $s$:
+
+\begin{align}
+\text{entrada aceleraci\'on } \ddot{x}_g:\quad
+H_a(s)&=\frac{V_{\mathrm{out}}(s)}{\ddot{X}_g(s)}
+=\frac{-G_0\,s}{s^{2}+2\zeta\omega_n s+\omega_n^{2}},
+\label{eq:geo-acel}\\[0.4em]
+\text{entrada velocidad } \dot{x}_g:\quad
+H_v(s)&=\frac{V_{\mathrm{out}}(s)}{\dot{X}_g(s)}
+=\frac{-G_0\,s^{2}}{s^{2}+2\zeta\omega_n s+\omega_n^{2}},
+\label{eq:geo-vel}\\[0.4em]
+\text{entrada desplazamiento } x_g:\quad
+H_d(s)&=\frac{V_{\mathrm{out}}(s)}{X_g(s)}
+=\frac{-G_0\,s^{3}}{s^{2}+2\zeta\omega_n s+\omega_n^{2}}.
+\label{eq:geo-desp}
+\end{align}
+
+\textbf{En este trabajo se adopta la forma en aceleraci\'on}, Ec.~\eqref{eq:geo-acel},
+como descripci\'on de referencia del transductor, siguiendo el tratamiento de Ma
+\emph{et al.}~\cite{Ma2023}, cuya topolog\'ia de acondicionamiento es la base de la cadena
+anal\'ogica implementada. La raz\'on es pr\'actica: en la forma en aceleraci\'on el ge\'ofono se
+comporta como un \textbf{filtro pasa-banda de segundo orden}, y el problema de dise\~no
+---extender su banda \'util hacia frecuencias bajas--- se formula de manera directa como
+un problema de modificaci\'on de los polos de esa funci\'on, tal como se desarrolla en la
+Secci\'on~\ref{sec:topologias}.
+
+Conviene observar que las tres formas describen el mismo dispositivo f\'isico: se
+relacionan por $H_v=s\,H_a$ y $H_d=s\,H_v$, ya que en el dominio de Laplace derivar
+equivale a multiplicar por $s$. La forma en velocidad, Ec.~\eqref{eq:geo-vel}, es la que
+justifica la afirmaci\'on habitual de que ``el ge\'ofono mide velocidad'': para
+$\omega\gg\omega_n$ se tiene $H_v\to -G_0$, es decir, respuesta plana y salida
+proporcional a la velocidad de part\'icula del suelo.
+
+\nota{\textbf{Confirmar}: en el documento fij\'e la forma en aceleraci\'on como referencia,
+por coherencia con Ma \emph{et al.} y porque es la que usa el an\'alisis del compensador.
+Si en el trabajo de MATLAB (\texttt{SM24\_model.slx}, \texttt{compensadorKai.m}) la
+entrada del modelo est\'a definida como velocidad, hay que unificar el criterio o
+declarar expl\'icitamente en cada lugar cu\'al se usa, para que las ganancias no queden
+desfasadas en un factor $\omega$.}
+
+\subsection{El problema de la respuesta en baja frecuencia}
+
+Escribiendo \eqref{eq:geo-acel} en frecuencia, la magnitud de la respuesta en aceleraci\'on
+tiene un m\'aximo en torno a $\omega_n$ y decae a ambos lados. Por debajo de $\omega_n$ la
+ca\'ida es de \SI{20}{\decibel\per decade} en aceleraci\'on (equivalentemente
+\SI{40}{\decibel\per decade} en la forma en velocidad). El resultado pr\'actico es que
+la se\~nal de baja frecuencia se atenúa hasta hundirse en el piso de ruido del
+amplificador.
+
+Este es el conflicto central del proyecto, y conviene enunciarlo con precisi\'on:
+
+\begin{itemize}[itemsep=0.15em]
+    \item La informaci\'on de las \textbf{capas profundas} reside en las componentes de
+    \textbf{baja frecuencia} de la curva de dispersi\'on, porque la profundidad de
+    penetraci\'on es proporcional a la longitud de onda.
+    \item El objetivo de \SI{50}{\meter} de profundidad exige, por lo tanto, recuperar
+    contenido espectral por debajo de la frecuencia natural del transductor.
+    \item El ge\'ofono SM-24 tiene $f_n=\SI{10}{\hertz}$, es decir, atenúa precisamente
+    la banda de mayor inter\'es para el objetivo del proyecto.
+\end{itemize}
+
+La literatura del vault clasifica los ge\'ofonos seg\'un $f_n$ y su aplicaci\'on t\'ipica:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}cll@{}}
+\toprule
+$f_n$ (\si{\hertz}) & Aplicaci\'on t\'ipica & Uso en ondas superficiales \\
+\midrule
+4{,}5 & Exploraci\'on profunda, pasiva & Pasivo (microtremores, bajas frecuencias) \\
+10   & Multiuso & Activo y pasivo \\
+14   & MASW est\'andar & Activo (maza) \\
+28   & Alta resoluci\'on superficial & Activo, capas muy someras \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Park \emph{et al.}~\cite{Park1999} emplearon ge\'ofonos de \SI{14}{\hertz} en el trabajo
+fundacional del MASW, y para el rango dominado por la maza (\SIrange{5}{50}{\hertz}) la
+respuesta es plana con variaciones menores al \SI{1}{\percent} en amplitud y
+\SI{2}{\degree} en fase, sin necesidad de correcci\'on instrumental. Para trabajo pasivo o
+profundidades mayores a \SI{30}{\meter} la recomendaci\'on habitual es
+$f_n\leq\SI{4.5}{\hertz}$.
+
+\subsubsection{Justificaci\'on de la elecci\'on del transductor}
+
+La elecci\'on del SM-24 de \SI{10}{\hertz} responde a la \textbf{disponibilidad del
+transductor en la Facultad}: es el ge\'ofono con el que se cuenta. No fue, por lo tanto,
+una elecci\'on libre de dise\~no sino una restricci\'on de partida.
+
+Esto es importante para interpretar correctamente el trabajo desarrollado. Para el
+objetivo de \SI{50}{\meter} de profundidad la literatura recomendar\'ia
+$f_n\leq\SI{4.5}{\hertz}$, de modo que el transductor disponible atenúa precisamente la
+banda que interesa. En consecuencia, \textbf{el trabajo de extensi\'on de banda descrito en
+la Secci\'on~\ref{sec:topologias} no es un refinamiento opcional sino la condici\'on que
+hace viable el objetivo del proyecto con el hardware disponible}. Es, adem\'as, una
+situaci\'on representativa del contexto que el proyecto busca atender: la de un
+laboratorio que debe obtener resultados \'utiles con el instrumental que tiene, en lugar
+de especificar el \'optimo y comprarlo.
+
+\subsection{Par\'ametros del SM-24}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+Par\'ametro & Valor & Observaci\'on \\
+\midrule
+Frecuencia natural $f_n$ & \SI{10}{\hertz} nominal & Define el l\'imite inferior sin compensar \\
+Sensibilidad $G_0$ & $\approx\SI{28.8}{\volt\per\meter\per\second}$ & Determina el nivel de se\~nal \\
+Amortiguamiento $\zeta$ & $\approx0{,}7$ con resistencia de shunt & Valor de respuesta m\'as plana \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\nota{\textbf{Verificar contra la hoja de datos y contra la medici\'on}: resistencia de
+bobina, inductancia, masa m\'ovil, amortiguamiento a circuito abierto y distorsi\'on. Estos
+valores existen medidos en el trabajo de MATLAB (\texttt{SM-24/}) pero no los volqu\'e
+ac\'a; conviene completar la tabla con \emph{valores medidos} adem\'as de los nominales,
+porque es exactamente el tipo de dato que una mesa evaluadora pide.}
+
+\subsection{Acoplamiento con el suelo}
+
+El modelo anterior supone $\dot{x}_{\mathrm{ge\acute{o}fono}}=\dot{x}_{\mathrm{suelo}}$, lo
+que exige un acoplamiento mec\'anico adecuado. Un acoplamiento deficiente ---superficie
+dura, ge\'ofono inclinado, suelo blando no compactado--- introduce una
+\textbf{resonancia espuria} en la respuesta y altera amplitud y fase del registro. El
+efecto es cr\'itico si se pretende estimar el amortiguamiento del suelo $D_S$ a partir de
+la curva de atenuaci\'on, y no despreciable para la propia curva de dispersi\'on.
+
+\subsection{Alternativa evaluada: aceler\'ometros MEMS}
+
+Se consider\'o el uso de aceler\'ometros MEMS en lugar de ge\'ofonos. Sus ventajas son
+respuesta plana desde continua, salida digital, robustez y bajo costo; su desventaja es
+un piso de ruido mayor en baja frecuencia frente a un ge\'ofono de calidad. Para MASW
+activo en el rango \SIrange{5}{100}{\hertz} son pr\'acticamente equivalentes.
+
+Se descart\'o el camino MEMS por dos razones: el ge\'ofono SM-24 ya estaba disponible, y
+---m\'as importante--- el problema de acondicionamiento anal\'ogico de un transductor
+pasivo de baja tensi\'on es precisamente donde el proyecto pod\'ia aportar contenido de
+ingenier\'ia electr\'onica, que es el objeto de un PFC de Ingenier\'ia Electr\'onica. Un nodo
+basado en MEMS habr\'ia sido, en lo esencial, un problema de integraci\'on digital.
+
+\nota{\textbf{Confirmar} que esta es efectivamente la raz\'on del descarte, o corregirla.
+No est\'a registrada en el repositorio; la reconstru\'i a partir del contexto.}

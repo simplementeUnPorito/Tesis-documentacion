@@ -1,0 +1,146 @@
+\section{Etapa 8 --- Auditor\'ia pre-campo}
+\label{sec:et8}
+\periodo{11 --- 12 de julio de 2026 \quad$\cdot$\quad 2 d\'ias, 33 \emph{commits}}
+
+Dos d\'ias enteros dedicados exclusivamente a \emph{tratar de romper el
+sistema antes de que lo rompiera el campo}. Es, en retrospectiva, la etapa
+mejor invertida del proyecto: encontr\'o tres defectos que habr\'ian arruinado
+campa\~nas completas y que no se manifestaban en las pruebas cortas de
+laboratorio.
+
+\subsection{Por qu\'e hac\'ia falta}
+
+Todo lo que se hab\'ia validado hasta ese momento eran capturas cortas. Salir a
+campo implica sesiones largas, reconexiones, cortes de energ\'ia, operaci\'on por
+interfaz web bajo sol y con una sola oportunidad por sitio. Los modos de falla
+que importan en esas condiciones son distintos de los que aparecen en el
+banco.
+
+\subsection{La jerarqu\'ia de memoria, validada}
+
+Primero hubo que confirmar que el camino de datos completo funcionaba en las
+tres escalas previstas:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Nivel} & \textbf{D\'onde vive la captura} & \textbf{Alcance} \\
+\midrule
+1 & RAM del ESP32 & capturas cortas \\
+2 & Encadenado hacia el PSoC & capturas medias \\
+3 & \textbf{Tarjeta SD, gestionada por el PSoC} (FatFs, \texttt{GEOLAST.BIN}, comandos \texttt{0xBC}--\texttt{0xBF}) & capturas largas \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{La SD vive en el \textbf{PSoC}, no en el ESP. Es coherente con la
+divisi\'on de responsabilidades del sistema: el PSoC posee la se\~nal y su
+temporizado, el ESP transporta. Se agreg\'o el comando de banco
+\texttt{sdread N} para leer bancos directamente y poder auditar lo escrito.}
+
+\subsection{La matriz de aceptaci\'on E1--E18}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Id} & \textbf{Prueba} & \textbf{Resultado} \\
+\midrule
+E1 & RAM chica por radio (\texttt{-n 4}) & PASS 120/120 \\
+E2 & SD chica por radio (\texttt{-n 600}, \SI{6.9}{\second}) & PASS 18\,000/18\,000 \\
+E3 & SD mediana por radio (\texttt{-n 3000}, \SI{34.6}{\second}) & PASS 90\,000/90\,000 \\
+E4 & Log paralelo durante E3 & \SI{3.6}{\percent} de lecturas SD sobre \SI{250}{\milli\second} (defecto H3) \\
+E5 & \textbf{Aceptaci\'on de 10 minutos} (52\,080 lotes) & \textbf{FAIL --- 0 muestras} \\
+E5b/E5c & Repetici\'on con el fix F1 & \textbf{PASS extremo a extremo} \\
+E6/E6b & Decimaci\'on 2 y FIR por radio & PASS 3000/3000 \\
+E7--E9 & Comandos \texttt{0xBE}, \texttt{0xAD}, USB estricto & PASS (33/33 en USB) \\
+E10 & Interfaz en navegador & PASS \\
+E12 & \textbf{Reconexi\'on WebSocket cortada durante el volcado} & PASS exacto \\
+E13 & STOP en vivo, en RUNNING y en DUMPING & PASS \\
+E14 & Operaci\'on completa desde la interfaz & PASS \\
+E15 & Captura SD m\'axima, 60\,000 lotes & PASS \\
+E16 & Transiciones de rango y decimaci\'on & PASS 49/49 \\
+E17 & Ciclo de energ\'ia y recuperaci\'on & PASS 30/30 \\
+E18 & \emph{Mini-soak} & PASS 5/5 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\dato{\textbf{Resultado de la prueba de aceptaci\'on final (E5c):}
+52\,080/52\,080 lotes escritos en SD y 1\,562\,400/1\,562\,400 muestras
+transferidas por radio, sobre una captura continua de 10 minutos. Cero
+p\'erdidas. Veredicto registrado: \emph{sistema del banco listo para campo}.}
+
+\subsection{Los tres defectos cr\'iticos}
+
+\subsubsection{F1 --- el \emph{watchdog} destru\'ia las capturas largas}
+
+El defecto que produjo el ``10 minutos $=$ 0 muestras'', y el m\'as instructivo
+de todos: \textbf{el mecanismo de protecci\'on era la causa de la falla}.
+
+El \emph{watchdog} \texttt{SYNC\_STALL} exist\'ia para detectar que una captura
+se hab\'ia trabado. Su margen era fijo, no proporcional a la duraci\'on de la
+captura, as\'i que en sesiones largas ---donde escribir en SD demora
+leg\'itimamente--- disparaba solo, y su acci\'on de recuperaci\'on era
+\emph{re-disparar} \texttt{START\_NOW}. Cada re-disparo destru\'ia la sesi\'on en
+curso y arrancaba otra, que a su vez volv\'ia a disparar el \emph{watchdog}. El
+resultado eran diez minutos de trabajo y cero muestras.
+
+\seleccionado{\textbf{Fix:} margen proporcional a la duraci\'on esperada, y
+aborto limpio en vez de re-disparo. La lecci\'on transferible es que un
+\emph{watchdog} cuya acci\'on correctiva reinicia el trabajo puede convertir una
+lentitud tolerable en una p\'erdida total, y que \textbf{esa clase de defecto
+solo aparece en pruebas de duraci\'on realista}.}
+
+\subsubsection{F9 --- START romp\'ia el nodo}
+
+\dato{Marcado como cr\'itico: \emph{START romp\'ia el nodo y lo dejaba inservible
+hasta reset f\'isico, siempre, con cualquier $N$}. Causa ra\'iz: una condici\'on
+de carrera entre el reintento de PRESTART del maestro y un estado ARMED del
+PSoC que no se anunciaba. El maestro reintentaba mientras el PSoC ya hab\'ia
+transicionado en silencio, y el nodo quedaba en un estado inconsistente del
+que no sal\'ia solo.}
+
+Es la contracara del logro de la Etapa~4: el mismo mecanismo de
+sincronizaci\'on que resolvi\'o el arranque coordinado ten\'ia un camino de
+reintento sin cubrir.
+
+\subsubsection{F5 --- volcado colgado por socket zombi}
+
+La herramienta de captura por WebSocket se colgaba indefinidamente si el
+socket quedaba medio abierto: sin datos, sin error, sin fin. Se corrigi\'o con
+un \emph{watchdog} de silencio y endurecimiento previo a la fase de datos, y
+se valid\'o cortando la conexi\'on a prop\'osito durante el volcado (E12), que
+reconect\'o y termin\'o bien.
+
+\subsection{Defectos menores documentados y no corregidos}
+
+Registrarlos vale tanto como corregirlos, porque evita volver a investigarlos:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Id} & \textbf{Descripci\'on} & \textbf{Estado} \\
+\midrule
+H3 & \SI{3.6}{\percent} de lecturas SD superan \SI{250}{\milli\second} (picos de \SIrange{1.2}{1.5}{\second}) & Mitigado: \emph{timeout} \SI{250}{}$\to$\SI{450}{\milli\second}; el reintento siempre salva \\
+F2 & Los ACK muestran \texttt{value \& 0xFF} (600 se ve como 88) & Cosm\'etico, documentado \\
+W3 & STOP durante el volcado: no hay re-volcado desde la interfaz (los datos quedan en la SD) & Documentado \\
+W5 & La vista previa de $N$ usa el campo de entrada y no el ACK & Documentado \\
+H4 & \emph{Prefetch} de bloque en el PSoC dar\'ia un volcado \textasciitilde{}$2\times$ m\'as r\'apido & Mejora identificada, post-campo \\
+W6/W7 & M\'aximo de RAM en 513 lotes por redondeo hacia arriba; paso del campo de duraci\'on & Corregidos \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Jerarqu\'ia de memoria RAM$\to$encadenado$\to$SD validada en hardware; SD gestionada por el PSoC con FatFs; matriz E1--E18 como procedimiento de aceptaci\'on repetible; suite de \emph{scripts} de regresi\'on (USB, SD m\'axima, transiciones de rango, recuperaci\'on por reset); \emph{watchdog} de silencio en las herramientas \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & \emph{Watchdog} con margen fijo; re-disparo de \texttt{START\_NOW} como acci\'on de recuperaci\'on; criterios de prueba que se bloqueaban por contadores benignos (F8) \\
+\addlinespace[3pt]
+\textbf{Aprendizaje} & Los defectos que importan en campo son de \emph{duraci\'on} y de \emph{reconexi\'on}, y no aparecen en pruebas cortas. Tres de ellos habr\'ian costado campa\~nas enteras \\
+\bottomrule
+\end{tabularx}
+\end{center}

@@ -1,0 +1,326 @@
+\section{Estado del arte}
+\label{sec:estado-arte}
+
+Durante el proyecto se construy\'o una base de datos bibliogr\'afica estructurada de
+\textbf{65 art\'iculos}, cada uno con an\'alisis individual que registra m\'etodo principal y
+secundario, tipo de sensor, tipo de fuente, geometr\'ia del arreglo, procesamiento e
+inversi\'on empleados, variables estimadas, limitaciones reportadas, conclusiones y
+utilidad espec\'ifica para esta tesis. Esta secci\'on sintetiza ese relevamiento.
+
+\subsection{M\'etodos de caracterizaci\'on geot\'ecnica}
+
+Los ensayos se agrupan seg\'un requieran o no acceso al subsuelo:
+
+\begin{table}[h]
+\centering
+\footnotesize
+\caption{Comparaci\'on entre m\'etodos invasivos y no invasivos.}
+\label{tab:invasivos}
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+\textbf{Caracter\'istica} & \textbf{Invasivos (borehole)} & \textbf{No invasivos} \\
+\midrule
+Ejemplos & Cross-hole (CHT), Down-hole, P-S logging, SPT, CPT, SCPT & SASW, MASW, ReMi, SPAC, HVSR, refracci\'on \\
+Costo & Elevado (requiere perforaci\'on) & Considerablemente menor \\
+Volumen muestreado & Puntual y localizado & Grandes vol\'umenes representativos \\
+Incertidumbre & Baja (medici\'on directa) & Mayor (problema inverso indirecto) \\
+Log\'istica & Pesada, equipo de perforaci\'on & Liviana, desplegable por pocas personas \\
+Estado del suelo & Perturba el entorno del sondeo & No perturbado \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La referencia cuantitativa m\'as s\'olida sobre la confiabilidad relativa de ambas familias
+es el proyecto \textbf{InterPACIFIC}, un ejercicio de comparaci\'on entre laboratorios con
+14 equipos participantes. Su primera parte~\cite{Garofalo2016a} cuantific\'o la dispersi\'on
+\emph{entre} distintos operadores aplicando m\'etodos de ondas superficiales al mismo
+sitio; la segunda~\cite{Garofalo2016b} compar\'o esos resultados contra m\'etodos de
+perforaci\'on. Las gu\'ias de buenas pr\'acticas derivadas del proyecto~\cite{Foti2018}
+constituyen la referencia normativa que orienta el dise\~no experimental de este trabajo.
+
+En la misma l\'inea de validaci\'on cruzada, Stephenson~\cite{Stephenson2005} realiz\'o una
+comparaci\'on \emph{ciega} de ReMi y MASW contra perforaciones hasta \SI{200}{\meter}, y
+Comina \emph{et al.}~\cite{Comina2011} evaluaron espec\'ificamente la confiabilidad de la
+estimaci\'on de $V_{S,30}$ a partir de ensayos de ondas superficiales.
+
+\subsection{Evoluci\'on de los m\'etodos de ondas superficiales}
+
+\subsubsection{M\'etodos activos}
+
+\begin{itemize}[itemsep=0.25em]
+    \item \textbf{Steady-State Rayleigh Method} (d\'ecada de 1950): fuente arm\'onica de
+    frecuencia variable y b\'usqueda manual de puntos en fase. Conceptualmente directo pero
+    extremadamente lento.
+
+    \item \textbf{SASW --- Spectral Analysis of Surface Waves}~\cite{Nazarian1984}: dos
+    receptores y an\'alisis del espectro cruzado para obtener el desfasaje en funci\'on de la
+    frecuencia. Introduce la funci\'on de coherencia como criterio de calidad de la
+    medici\'on. Su debilidad estructural es el \emph{phase unwrapping}: la fase medida est\'a
+    envuelta en $(-180^{\circ},+180^{\circ}]$ y los errores en la identificaci\'on de los
+    saltos se propagan directamente a la curva de dispersi\'on. Requiere adem\'as m\'ultiples
+    repeticiones con distintos espaciamientos, lo que penaliza la productividad de campo.
+
+    \item \textbf{MASW --- Multichannel Analysis of Surface Waves}~\cite{Park1999}: arreglo
+    multicanal registrado simult\'aneamente y transformado a un dominio donde la dispersi\'on
+    es observable. Al emplear todos los canales a la vez, la transformaci\'on act\'ua como un
+    filtro espacial que separa modos y discrimina ruido incoherente, eliminando el
+    problema de \emph{unwrapping} y mejorando dr\'asticamente la tasa de producci\'on de
+    campo. Es el m\'etodo adoptado en este proyecto.
+\end{itemize}
+
+La tr\'iada fundacional del MASW la completan el trabajo de
+procesamiento~\cite{Park1998}, que introduce el m\'etodo de \emph{phase-shift} ---el
+est\'andar de facto implementado en pr\'acticamente todos los programas de an\'alisis MASW,
+libres y comerciales---, y el de inversi\'on~\cite{Xia1999}, que define el algoritmo
+iterativo basado en el Jacobiano de la velocidad de fase respecto de $V_S$ por capa.
+Miller \emph{et al.}~\cite{Miller1999} demostraron tempranamente la aplicaci\'on al mapeo
+de basamento rocoso, y el trabajo de revisi\'on de Socco y Strobbia~\cite{Socco2004}
+sistematiz\'o la metodolog\'ia completa.
+
+\subsubsection{M\'etodos pasivos (evaluados, no adoptados)}
+
+Los m\'etodos pasivos aprovechan el ruido s\'ismico ambiental en lugar de una fuente
+activa, lo que elimina el problema de generar energ\'ia s\'ismica repetible:
+
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{SPAC}~\cite{Aki1957}: el trabajo fundacional de los m\'etodos pasivos,
+    basado en la autocorrelaci\'on espacial de ondas estacionarias estoc\'asticas registradas
+    en arreglos circulares.
+    \item \textbf{ReMi}~\cite{Louie2001}: emplea el mismo arreglo lineal del MASW activo,
+    aprovechando el ruido de tr\'ansito. Su factibilidad econ\'omica es muy alta ---no
+    requiere fuente--- pero su resoluci\'on depende de la direccionalidad del campo de
+    ruido.
+    \item \textbf{HVSR}~\cite{Nakamura1989,Lermo1993}: relaci\'on espectral
+    horizontal/vertical con una sola estaci\'on tri-axial. Es el m\'etodo de mejor relaci\'on
+    costo--beneficio para estimar la frecuencia fundamental del sitio, aunque no entrega
+    directamente el perfil $V_S$. Las gu\'ias SESAME~\cite{SESAME2004} sistematizan su
+    aplicaci\'on.
+\end{itemize}
+
+Park \emph{et al.}~\cite{Park2007} muestran que activo y pasivo pueden combinarse con el
+mismo equipamiento, sin costo adicional de hardware: el activo cubre las frecuencias
+altas y el pasivo extiende la curva hacia frecuencias bajas, es decir, hacia mayores
+profundidades.
+
+\nota{\textbf{Oportunidad}: el sistema desarrollado puede, en principio, adquirir en modo
+pasivo sin ninguna modificaci\'on de hardware ---basta capturar sin disparar la fuente,
+y la capacidad de captura continua de 10 minutos validada ya lo permite. Es una
+extensi\'on de bajo costo que ampliar\'ia el alcance del trabajo y que conviene mencionar
+en trabajos futuros. ¿Se consider\'o?}
+
+\subsection{Dise\~no del arreglo: los criterios cuantitativos}
+
+Esta es la parte del estado del arte que impacta m\'as directamente sobre las decisiones
+de campo, y sobre la que existe literatura espec\'ifica:
+
+\begin{itemize}[itemsep=0.25em]
+    \item \textbf{Par\'ametros \'optimos de campo}: Park \emph{et al.}~\cite{Park2002}
+    sistematizan la elecci\'on de espaciamiento, longitud de arreglo y \emph{offset} en
+    funci\'on de la profundidad objetivo.
+    \item \textbf{Efecto de campo cercano}: a distancias menores a aproximadamente media
+    longitud de onda, el campo no est\'a dominado por la onda superficial plana y la
+    velocidad de fase medida queda sesgada. Yoon y Rix~\cite{Yoon2009} cuantifican el
+    efecto para m\'etodos de arreglo con fuente activa.
+    \item \textbf{Offset m\'inimo}: Xu \emph{et al.}~\cite{Xu2006} entregan una estimaci\'on
+    cuantitativa de la distancia m\'inima fuente--primer receptor, complemento directo del
+    anterior.
+    \item \textbf{Ecuaciones de dise\~no}: Xia \emph{et al.}~\cite{Xia2006} proveen
+    relaciones simples que vinculan los par\'ametros del arreglo con el rango de
+    frecuencias y la profundidad de investigaci\'on alcanzables.
+    \item \textbf{Apilamiento}: Neducza~\cite{Neducza2007} analiza la suma coherente de
+    m\'ultiples disparos, que mejora la relaci\'on se\~nal--ruido en factor $\sqrt{N}$ y es
+    la pr\'actica adoptada en este proyecto (m\'ultiples repeticiones por punto de fuente).
+    \item \textbf{An\'alisis CMP}: Hayashi y Suzuki~\cite{Hayashi2004} introducen la
+    correlaci\'on cruzada por punto medio com\'un, que permite construir secciones
+    pseudo-2D de $V_S$ a partir de adquisici\'on rodante.
+\end{itemize}
+
+\nota{Estos cuatro criterios (\cite{Park2002,Yoon2009,Xu2006,Xia2006}) son los que
+permitir\'ian evaluar formalmente si la geometr\'ia usada en las campa\~nas realizadas es
+adecuada para el objetivo de \SI{50}{\meter}. Para poder hacerlo necesito los datos de
+geometr\'ia listados en el Ap\'endice~\ref{sec:preguntas}.}
+
+\subsection{Modos superiores e inversi\'on}
+
+\subsubsection{El problema de los modos}
+
+Tokimatsu \emph{et al.}~\cite{Tokimatsu1992} caracterizaron los efectos de los modos
+superiores sobre las caracter\'isticas de dispersi\'on, mostrando que en perfiles con
+inversiones de velocidad la energ\'ia puede migrar a modos superiores y la curva medida
+deja de corresponder al modo fundamental. Buchen y Ben-Hador~\cite{Buchen1996}
+sistematizaron el c\'alculo de modos libres, base de los motores de modelado directo
+actuales.
+
+El tratamiento moderno explota los modos superiores en lugar de evitarlos:
+Xia \emph{et al.}~\cite{Xia2003} invierten conjuntamente modo fundamental y superiores;
+Luo \emph{et al.}~\cite{Luo2009} separan modos mediante transformada de Radon lineal de
+alta resoluci\'on; y Maraschini y Foti~\cite{Maraschini2010} proponen una inversi\'on
+multimodal por Monte Carlo, aplicada a sitios con basamento somero por Bergamo
+\emph{et al.}~\cite{Bergamo2011}.
+
+\textbf{Esta l\'inea es la que sigue el \emph{pipeline} desarrollado en este proyecto},
+que extrae varias curvas simult\'aneas ---una por modo--- mediante regiones-pol\'igono
+sobre la imagen de dispersi\'on, y las invierte conjuntamente.
+
+\subsubsection{No unicidad y regularizaci\'on}
+
+La inversi\'on es un problema mal condicionado: distintos perfiles $V_S(z)$ pueden producir
+curvas de dispersi\'on indistinguibles dentro del error experimental. Foti \emph{et
+al.}~\cite{Foti2009} analizan expl\'icitamente las consecuencias de esa no unicidad sobre
+el an\'alisis de respuesta de sitio ---es decir, sobre el uso final del perfil.
+
+Las estrategias de mitigaci\'on relevadas incluyen:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Parametrizaci\'on sistem\'atica}: Cox y Teague~\cite{Cox2016} proponen el
+    m\'etodo de \emph{layering ratios} para elegir el n\'umero y espesor de capas en ausencia
+    de informaci\'on a priori ---un problema pr\'actico recurrente.
+    \item \textbf{B\'usqueda global}: Wathelet \emph{et al.}~\cite{Wathelet2004} aplican un
+    algoritmo de b\'usqueda directa (algoritmo de vecindad, base de Dinver/Geopsy) que
+    explora el espacio de modelos sin depender del modelo inicial, a diferencia de los
+    m\'etodos locales tipo Gauss-Newton.
+    \item \textbf{Cuantificaci\'on de incertidumbre}: Griffiths \emph{et
+    al.}~\cite{Griffiths2016} mapean el desajuste de la curva de dispersi\'on y la
+    incertidumbre del perfil hacia la variabilidad de la respuesta de sitio.
+\end{itemize}
+
+La inversi\'on requiere adem\'as fijar par\'ametros auxiliares ---densidad y raz\'on de
+Poisson por capa--- de influencia limitada pero no nula. En particular, ignorar el nivel
+fre\'atico equivale a asumir una raz\'on de Poisson incorrecta para las capas saturadas
+(donde el comportamiento no drenado lleva $\nu\to0{,}5$), con consecuencias
+significativas sobre el perfil resultante.
+
+\subsection{Instrumentaci\'on: ge\'ofonos y adquisici\'on}
+
+El ge\'ofono de bobina m\'ovil sigue siendo el transductor dominante por robustez, bajo
+costo y ausencia de necesidad de alimentaci\'on. Su limitaci\'on ---la ca\'ida de respuesta
+por debajo de la frecuencia natural, Secci\'on~\ref{sec:geofono}--- motiva una l\'inea de
+trabajo activa: Ma \emph{et al.}~\cite{Ma2023} proponen el m\'etodo de extensi\'on por
+aumento del amortiguamiento que es la base de la cadena implementada en este proyecto
+(desarrollado en detalle en la Secci\'on~\ref{sec:ma2023}), y Deng \emph{et
+al.}~\cite{Deng2025} reportan un circuito de acondicionamiento de baja frecuencia que
+reduce la frecuencia de corte de un ge\'ofono de \SI{4.5}{\hertz} hasta
+\SI{0.16}{\hertz}.
+
+En cuanto a plataformas de adquisici\'on de bajo costo existen antecedentes de interfaces
+embebidas para ge\'ofonos~\cite{Kafadar2020,Wijayaraja2024} y de nodos reconfigurables
+para redes de sensores~\cite{Guevara2015}. La tendencia general es reemplazar el
+sismógrafo centralizado con cableado multicanal por nodos aut\'onomos inal\'ambricos, lo
+que reduce dr\'asticamente la log\'istica de despliegue a costa de introducir el problema
+de la sincronizaci\'on temporal distribuida.
+
+\subsubsection{Plataformas mixtas programables y asistencia digital}
+
+Las plataformas de se\~nal mixta programables como el PSoC~5LP~\cite{InfineonPSoC}
+integran bloques anal\'ogicos configurables, conversores, filtros digitales programables,
+DMA y procesador en un \'unico dispositivo. Sus bloques anal\'ogicos ofrecen, sin embargo,
+menor precisi\'on, mayores \emph{offsets} y peor apareamiento que circuitos dedicados.
+
+Frente a ello, el enfoque de \emph{digitally assisted analog design} de Murmann y
+Boser~\cite{Murmann2004,Murmann2006} propone usar recursos digitales para asistir al
+circuito anal\'ogico en lugar de mejorar los componentes. Aunque se investig\'o
+principalmente a nivel de circuito integrado, este proyecto extiende la filosof\'ia al
+nivel de instrumentaci\'on de bajo costo.
+
+Las t\'ecnicas cl\'asicas de compensaci\'on de \emph{offset} siguen tres caminos:
+correcci\'on num\'erica posterior a la adquisici\'on~\cite{InfineonAN68403,Lopin2018};
+ajuste f\'isico de cada etapa~\cite{Mohan2020}; y \emph{autozero} o estabilizaci\'on por
+\emph{chopper}~\cite{EnzTemes1996,Liu2020}. Los servos de continua continuos introducen
+adem\'as un compromiso inherente entre tiempo de establecimiento y ancho de
+banda~\cite{Liu2020,Antoniadis2025}, y los \emph{front-ends} de precisi\'on que operan
+cerca del l\'imite de ruido t\'ermico del sensor~\cite{Kirchhoff2017} representan el
+enfoque opuesto: mejorar el componente anal\'ogico en lugar de asistirlo. El aporte de
+este proyecto se ubica entre ambos.
+
+\subsection{Herramientas de procesamiento e inversi\'on}
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{MASWavesPy}~\cite{OlafsdottirNGM2024,Olafsdottir2018,Olafsdottir2020}:
+    an\'alisis MASW e inversi\'on con cuantificaci\'on de incertidumbre por Monte Carlo.
+    Integrado como subm\'odulo del proyecto.
+    \item \textbf{Geopsy}~\cite{Wathelet2020}: referencia de facto en m\'etodos pasivos y
+    HVSR; implementa el algoritmo de b\'usqueda de~\cite{Wathelet2004}.
+    \item \textbf{SWprocess}~\cite{Vantassel2022}: orientado a estimaciones robustas de
+    la incertidumbre de la curva de dispersi\'on.
+    \item \textbf{disba} y \textbf{evodcinv}: modelado directo por matriz de propagaci\'on
+    e inversi\'on por algoritmos evolutivos, empleados en el \emph{pipeline} multimodal de
+    este proyecto.
+\end{itemize}
+
+\subsection{Aplicaci\'on final: del perfil $V_S$ al par\'ametro geot\'ecnico}
+
+El perfil $V_S$ no es un fin en s\'i mismo. Sus usos establecidos son:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Clasificaci\'on s\'ismica de sitio} mediante $V_{S,30}$, par\'ametro
+    normativo en los c\'odigos de dise\~no; Boore~\cite{Boore2004} sistematiza su estimaci\'on
+    a partir de modelos de velocidad someros.
+    \item \textbf{Evaluaci\'on del potencial de licuefacci\'on}: Andrus y
+    Stokoe~\cite{Andrus2000} establecieron la correlaci\'on entre resistencia a la
+    licuefacci\'on y velocidad de onda de corte.
+    \item \textbf{Correlaci\'on con ensayos de penetraci\'on}, que es la validaci\'on prevista
+    para este proyecto y se trata a continuaci\'on.
+\end{itemize}
+
+\subsubsection{Correlaciones $V_S$--SPT}
+
+Existe un cuerpo consolidado de trabajos que correlacionan $V_S$ obtenido por ondas
+superficiales con la resistencia a la penetraci\'on $N$ del SPT. Uma Maheswari \emph{et
+al.}~\cite{UmaMaheswari2010} desarrollaron correlaciones para los suelos de Chennai a
+partir de 30 sitios urbanos y 200 pares $V_S$--$N$, validadas contra cross-hole;
+Dikmen~\cite{Dikmen2009} present\'o correlaciones estad\'isticas por tipo de suelo; y
+Alhuay-Le\'on y Trejo-Nore\~na~\cite{Alhuay2021} las establecieron para las arenas
+e\'olicas de Lima ---el antecedente regional m\'as cercano metodol\'ogicamente a la
+validaci\'on que este proyecto planea realizar.
+
+\subsection{Antecedentes regionales}
+
+Se relevaron espec\'ificamente trabajos de aplicaci\'on en contextos comparables al local,
+tanto por tipo de suelo como por disponibilidad de recursos:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+Trabajo & Contexto & Relevancia para este proyecto \\
+\midrule
+Moffat \emph{et al.}~\cite{Moffat2016} & Chile & Compara $V_{S,30}$ por downhole, MASW y ReMi; 12 ge\'ofonos + maza + Geopsy: configuraci\'on econ\'omica y replicable \\
+Alhuay-Le\'on \emph{et al.}~\cite{Alhuay2021} & Per\'u & MASW + SPT sobre arenas e\'olicas; el contraste que este proyecto planea replicar \\
+Moya-Guti\'errez \emph{et al.}~\cite{Moya2020} & Colombia & Prospecci\'on geof\'isica y geot\'ecnica combinada; ge\'ofonos de \SI{14}{\hertz} \\
+Lima J\'unior \emph{et al.}~\cite{LimaJunior2012} & Brasil & Clima tropical h\'umedo ($>\SI{2000}{\milli\meter}$/a\~no), condici\'on similar a la local; aplicaci\'on a laderas inestables \\
+Ayele \emph{et al.}~\cite{Ayele2022} & Etiop\'ia & MASW con equipamiento est\'andar en contexto de recursos limitados; demuestra viabilidad \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Los sitios de investigaci\'on geot\'ecnica europeos~\cite{Long2007,Blaker2019,Quinteros2019}
+se relevaron como marco de comparaci\'on metodol\'ogica, por disponer de caracterizaci\'on
+exhaustiva de referencia.
+
+\subsection{Brecha identificada y posicionamiento del trabajo}
+
+Del relevamiento se desprende que la teor\'ia MASW, los criterios de dise\~no de arreglo,
+las buenas pr\'acticas de adquisici\'on y las herramientas de procesamiento est\'an
+disponibles, son maduras y en su mayor\'ia abiertas. La barrera de entrada real para su
+aplicaci\'on local es el \textbf{instrumental de adquisici\'on multicanal sincronizado}.
+
+Los sistemas comerciales son costosos y cerrados. Los desarrollos acad\'emicos de bajo
+costo publicados~\cite{Kafadar2020,Wijayaraja2024} suelen limitarse a la interfaz de un
+canal o a la demostraci\'on del \emph{front-end}, sin abordar el sistema completo
+---sincronizaci\'on inal\'ambrica multi-nodo, almacenamiento, interfaz de operador en campo
+y \emph{pipeline} de procesamiento--- como un conjunto integrado y validado. Y en el eje
+de la instrumentaci\'on anal\'ogica, los trabajos de extensi\'on de respuesta de baja
+frecuencia~\cite{Ma2023,Deng2025} se validan sobre un canal de laboratorio, no sobre un
+arreglo desplegado en campo.
+
+Este proyecto se posiciona en esa brecha: construir el sistema completo, de extremo a
+extremo, con componentes de bajo costo, y validarlo experimentalmente. El aporte
+metodol\'ogico espec\'ifico ---el \emph{front-end} anal\'ogico asistido digitalmente con
+auto-calibraci\'on--- surgi\'o como respuesta a un problema concreto encontrado durante la
+construcci\'on, y fue sometido a revisi\'on externa mediante su env\'io al congreso
+URUCON~2026.
+
+\nota{Esta secci\'on es el n\'ucleo formal de la Primera Presentaci\'on (el Art.~19 pide
+espec\'ificamente un ``documento de Estado del Arte''). En la versi\'on de 15 p\'aginas
+deber\'ia \emph{crecer} en peso relativo respecto de las secciones de implementaci\'on:
+sugerido 4--5 p\'aginas, conservando \S3.1, \S3.2, \S3.3, \S3.5.1, \S3.8 y \S3.9 completos,
+y comprimiendo \S3.4 y \S3.6.}

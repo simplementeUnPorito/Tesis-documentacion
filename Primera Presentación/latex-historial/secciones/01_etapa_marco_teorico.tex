@@ -1,0 +1,148 @@
+\section{Etapa 1 --- Marco te\'orico}
+\label{sec:et1}
+\periodo{25 de febrero --- 23 de marzo de 2026 \quad$\cdot$\quad 22 \emph{commits} en 9 d\'ias de trabajo}
+
+Esta etapa no produjo hardware ni c\'odigo de producci\'on. Produjo el
+\emph{criterio} con el que se tomaron todas las decisiones posteriores, y por
+eso vale la pena tenerla registrada: buena parte de lo que despu\'es se
+descart\'o se descart\'o por razones que se aprendieron ac\'a.
+
+\subsection{Punto cero}
+
+El repositorio se cre\'o el 25 de febrero de 2026 a las 16:24. Un solo
+\emph{commit}, sin contenido t\'ecnico. La primera sesi\'on real fue el 3 de
+marzo: cuatro horas continuas en las que se mont\'o el vault de Obsidian y se
+escribi\'o el primer resumen acad\'emico del Cap\'itulo~1 de Foti. De ah\'i sali\'o
+la metodolog\'ia que gobern\'o toda la investigaci\'on posterior:
+
+\begin{itemize}[itemsep=0.2em]
+\item un archivo por cap\'itulo con el resumen extenso;
+\item \textbf{conceptos at\'omicos} enlazados: una nota por idea, con
+definici\'on, intuici\'on f\'isica y criterio cuantitativo cuando existe;
+\item enlaces bidireccionales entre conceptos, de modo que el grafo del vault
+muestre qu\'e ideas sostienen a cu\'ales.
+\end{itemize}
+
+Del Cap\'itulo~1 salieron los 9 primeros conceptos at\'omicos. Al cerrar la
+etapa hab\'ia m\'as de 90, y tras la etapa siguiente superaron los 150.
+
+\subsection{Fuente primaria: Foti \emph{et al.}, los ocho cap\'itulos}
+
+La referencia estructural fue \emph{Surface Wave Methods for Near-Surface Site
+Characterization} de Sebastiano Foti y colaboradores. Se resumieron los ocho
+cap\'itulos completos entre el 3 y el 19 de marzo. Lo que qued\'o de cada uno,
+en t\'erminos de lo que despu\'es se us\'o:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Cap.} & \textbf{Tema} & \textbf{Qu\'e se us\'o despu\'es} \\
+\midrule
+1 & Panorama del m\'etodo &
+Problema directo vs.\ inverso; el flujo adquisici\'on\,$\to$\,dispersi\'on\,$\to$\,inversi\'on que estructura todo el sistema; comparaci\'on $V_{S30}$ invasivo vs.\ ondas superficiales \\
+\addlinespace[2pt]
+2 & Propagaci\'on en medios estratificados &
+Relaci\'on de dispersi\'on, tensores de esfuerzo y deformaci\'on, Ley de Hooke generalizada, derivaci\'on por potenciales el\'asticos, problema de Lamb (1904) \\
+\addlinespace[2pt]
+3 & Medici\'on &
+\textbf{El cap\'itulo de dise\~no experimental.} Traza s\'ismica y \emph{gather} multicanal, transformada 2D al dominio $(k,f)$, Nyquist en tiempo \emph{y en espacio} ($\lambda_{\min}=2\Delta x$), reglas de \emph{offset} m\'inimo y longitud de arreglo \\
+\addlinespace[2pt]
+4--5 & Dispersi\'on y atenuaci\'on &
+Velocidad de fase vs.\ de grupo; SASW y MOPA como antecedentes del multicanal \\
+\addlinespace[2pt]
+6 & Inversi\'on &
+\emph{Ill-posedness} y no unicidad; b\'usqueda local vs.\ global. Es la justificaci\'on de por qu\'e despu\'es se eligi\'o un algoritmo evolutivo y no un gradiente \\
+\addlinespace[2pt]
+7 & Casos de estudio & Contraste de \'ordenes de magnitud esperables \\
+\addlinespace[2pt]
+8 & M\'etodos avanzados &
+Ondas Love, ondas de Scholte, interferometr\'ia s\'ismica a partir de ruido ambiental \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Dos resultados del Cap\'itulo~3 se convirtieron en restricciones duras del
+dise\~no y conviene tenerlos a mano:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{\emph{Aliasing} espacial.} El espaciamiento entre ge\'ofonos
+$\Delta x$ acota el n\'umero de onda recuperable: $k_{\max}=1/(2\Delta x)$, es
+decir $\lambda_{\min}=2\Delta x$. Violar esto no degrada suavemente: hace que
+los modos r\'apidos aparezcan como modos lentos en el espectro, o sea produce
+un perfil $V_S$ \emph{plausible pero equivocado}.
+\item \textbf{Efecto de campo cercano.} A distancias cortas de la fuente el
+campo de ondas todav\'ia no est\'a dominado por la onda Rayleigh plana, y la
+velocidad de fase estimada se sesga. Fija un \emph{offset} m\'inimo.
+\end{itemize}
+
+\pendiente{Estos dos criterios son exactamente los que no se pueden verificar
+todav\'ia contra las campa\~nas realizadas, porque falta registrar la geometr\'ia
+usada (espaciamiento, longitud del arreglo, \emph{offset} m\'inimo). Ver
+\S\ref{sec:pendientes}.}
+
+\subsection{Del papel al c\'odigo: los cinco scripts de validaci\'on te\'orica}
+
+El 17 y 18 de marzo el proyecto cruz\'o de ``leer y resumir'' a ``programar''.
+Se incorpor\'o como \emph{submodule} la librer\'ia MASW-Matlab de terceros y se
+escribieron cinco scripts propios cuyo prop\'osito era comprobar que la teor\'ia
+le\'ida se entend\'ia de verdad ---es decir, reproducirla num\'ericamente:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Script} & \textbf{Qu\'e verifica} \\
+\midrule
+\texttt{p01\_ondas\_de\_cuerpo.m} & Propagaci\'on P y S, relaciones con los par\'ametros de Lam\'e \\
+\texttt{p02\_rayleigh\_love.m} & Existencia y forma de los modos superficiales \\
+\texttt{p03\_sismograma\_imagen\_dispersion.m} & \textbf{El puente al sistema real}: de un \emph{gather} sint\'etico a la imagen de dispersi\'on \\
+\texttt{p04\_inversion\_perfil\_vs.m} & Recuperaci\'on del perfil $V_S$ a partir de la curva \\
+\texttt{p05\_viscoelasticidad.m} & Atenuaci\'on y su efecto sobre el espectro \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{El flujo del \texttt{p03} ---\emph{gather} sint\'etico
+$\to$ transformada $\to$ imagen de dispersi\'on--- es el mismo que despu\'es se
+reimplement\'o en Python en \texttt{masw\_dispersion.py} (Etapa~7). La
+versi\'on MATLAB sigui\'o siendo \'util como referencia contra la cual contrastar
+la implementaci\'on propia.}
+
+\subsection{La base bibliogr\'afica: de 22 a 65 papers}
+
+Entre el 20 y el 23 de marzo se construy\'o la base de datos de literatura.
+Result\'o en una tabla estructurada con DOI, categor\'ia, relevancia declarada
+para la tesis y observaciones ---no una lista de t\'itulos--- que vive en
+\texttt{docs/investigacion/sources/research/tables/} y de la cual sali\'o
+despu\'es la bibliograf\'ia del documento de entrega.
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Referencia} & \textbf{Por qu\'e qued\'o en la base} \\
+\midrule
+Park, Miller \& Xia (1999) & El paper fundacional del MASW: define el m\'etodo multicanal y el \emph{phase-shift} \\
+Aki (1957) & Origen de los m\'etodos pasivos (SPAC); base te\'orica de la extensi\'on a ruido ambiental \\
+Foti \emph{et al.} (2018), InterPACIFIC & Comparaci\'on ciega entre laboratorios: cu\'anta dispersi\'on entre operadores es normal. Es la vara con la que medirse \\
+Moffat, Correia \& Past\'en (2016) & Validaci\'on en contexto latinoamericano \\
+Alhuay-Le\'on \& Trejo-Nore\~na (2021) & Correlaci\'on $V_S$--SPT en Per\'u: el camino de validaci\'on m\'as accesible ac\'a \\
+SESAME (2004) & Gu\'ia de referencia para HVSR \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Un grupo de la base merece menci\'on aparte porque orient\'o directamente el
+dise\~no: los papers de \textbf{hardware de bajo costo}. Son los que
+establecieron que el problema no era conseguir un ADC bueno sino resolver la
+banda baja del transductor y la sincronizaci\'on entre nodos.
+
+\subsection{Balance de la etapa}
+
+\seleccionado{\textbf{Qued\'o:} la estructura de conceptos at\'omicos como forma
+de trabajo; la librer\'ia MASW-Matlab como referencia de contraste; los cinco
+scripts de validaci\'on; la base de 65 papers con DOI y relevancia; y los dos
+criterios de dise\~no de arreglo (\emph{aliasing} espacial y campo cercano).}
+
+\descartado{\textbf{No qued\'o:} nada se descart\'o formalmente en esta etapa
+---no hab\'ia todav\'ia qu\'e descartar. Lo que s\'i qued\'o desactualizado fue la
+organizaci\'on de carpetas del vault, que se reescribi\'o dos veces (13 y 17 de
+marzo) antes de estabilizarse en la taxonom\'ia numerada 00--08.}

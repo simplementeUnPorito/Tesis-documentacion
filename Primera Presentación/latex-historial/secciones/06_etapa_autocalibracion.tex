@@ -1,0 +1,246 @@
+\section{Etapa 6 --- Auto-calibraci\'on, DMA y \texttt{superMaquina}}
+\label{sec:et6}
+\periodo{14 de junio --- 2 de julio de 2026 \quad$\cdot$\quad 11 d\'ias, 17 \emph{commits}}
+
+La etapa que produjo el resultado publicable del proyecto. Tiene tres l\'ineas
+que avanzan entrelazadas: cerrar el lazo de calibraci\'on del \emph{front-end},
+sacar la adquisici\'on de la CPU, y finalmente sacar la \emph{decisi\'on} de
+adquirir tambi\'en de la CPU.
+
+\subsection{Por qu\'e hace falta calibrar}
+
+La cadena anal\'ogica tiene cuatro etapas en cascada ---PGA, pasa-banda (BP),
+sumador (SUM) y pasa-bajos (LP)--- y cada una aporta su propio \emph{offset} de
+continua: tensiones de \emph{offset} de los operacionales, corrientes de
+polarizaci\'on, desapareamiento de resistencias. El problema es que
+\emph{el \emph{offset} se amplifica junto con la se\~nal}, y la compensaci\'on
+del ge\'ofono exige ganancia alta ---proporcional a $(\zeta_1-\zeta_0)$, con
+$\zeta_0 = 0{,}25$ y $\zeta_1$ de varios cientos: tres \'ordenes de magnitud.
+
+\dato{Dimensi\'on del problema, medida: el \emph{offset} con referencia fija a
+la salida de la etapa sumadora lleg\'o a \textbf{\SI{21.8}{\percent}} del fondo
+de escala, y a la salida del LP ---la que alimenta al ADC--- hasta
+\textbf{\SI{45.8}{\percent}}. Es decir, casi la mitad del rango de entrada
+consumido \emph{antes de aplicar se\~nal s\'ismica alguna}.}
+
+\subsection{Los tres algoritmos que se probaron}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Enfoque} & \textbf{Qu\'e pas\'o} & \textbf{Destino} \\
+\midrule
+Bisecci\'on binaria sobre c\'odigos VDAC
+& Primer intento (14 jun), solo para GEO. Funciona pero es ciego: no aprovecha que la planta es conocida, y cada etapa necesitaba su propia versi\'on
+& \textbf{Descartado} \\
+\addlinespace[2pt]
+Servo lento
+& Convergencia por integraci\'on pura
+& \textbf{Descartado} \\
+\addlinespace[2pt]
+PID
+& Se prob\'o y se abandon\'o. El t\'ermino derivativo amplifica el ruido de medici\'on del ADC sin aportar nada en una planta cuasi-est\'atica ---en la bit\'acora qued\'o descrito como \emph{``overfitting al ruido''}
+& \textbf{Descartado el D} \\
+\addlinespace[2pt]
+\textbf{PI con \emph{feedforward} f\'isico}
+& Un \'unico controlador para las cuatro etapas de GEO y las dos de HAMMER
+& \textbf{Se qued\'o} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{El 23 de junio los dos algoritmos separados (GEO y
+HAMMER) convergen en uno solo: PI puro con \emph{feedforward}}, detector de
+\emph{lock} portado de una simulaci\'on de Simulink de referencia. Las
+implementaciones de bisecci\'on y servo no se borraron de inmediato: quedaron
+compiladas fuera con \texttt{\#if 0} como referencia, y se eliminaron del
+archivo activo reci\'en el 26 de junio, una vez validado el reemplazo. Ese
+orden ---validar antes de borrar--- vale la pena registrarlo.}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.94\textwidth]{psoc_foreground_calibration_flow.drawio_horizontal.png}
+\caption{Flujo de la calibraci\'on \emph{foreground} en el PSoC: las etapas se
+calibran en orden, cada una hasta entrar en su banda muerta, antes de pasar a
+la siguiente. Al terminar, el resultado se persiste en EEPROM indexado por
+c\'odigo de ganancia.}
+\label{fig:calib-flow}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.80\textwidth]{calibration_fsm_simplified.png}
+\caption{M\'aquina de estados de la calibraci\'on, versi\'on simplificada. La
+versi\'on detallada est\'a en \texttt{docs/calibration\_fsm/}.}
+\label{fig:calib-fsm}
+\end{figure}
+
+\subsection{Los detalles finos del controlador}
+
+Tres afinaciones sucesivas, cada una corrigiendo un modo de falla real:
+
+\begin{enumerate}[itemsep=0.3em]
+\item \textbf{Escala en c\'odigos de DAC, no en volts} (24 jun). El actuador es
+un DAC; expresar el lazo en su unidad natural evita un factor de conversi\'on
+que dependía de la ganancia de etapa.
+
+\item \textbf{Banda muerta proporcional a la ganancia de etapa} (24 jun). No
+tiene sentido exigir la misma precisi\'on absoluta a una etapa de ganancia
+unitaria que a una de ganancia 32: en la primera, insistir solo agrega ciclos
+de conmutaci\'on del DAC sin mejorar nada aguas abajo.
+
+\item \textbf{Anti-\emph{windup} direccional} (25 jun). Este es el m\'as sutil.
+El integrador no se congela ante \emph{cualquier} saturaci\'on contra el riel
+del DAC, sino \'unicamente cuando seguir integrando \emph{en ese sentido}
+empeorar\'ia la saturaci\'on. Congelarlo en ambos sentidos deja al lazo incapaz
+de salir del riel. Adem\'as hubo que manejar correctamente el \textbf{signo de
+la ganancia} por etapa: \texttt{HAMMER\_PGA} es inversora y din\'amica,
+\texttt{HAMMER\_LP} es fija y no inversora.
+\end{enumerate}
+
+\dato{Primeras convergencias documentadas en hardware real:
+\texttt{HAMMER\_PGA ok=1 dac=65}, \texttt{HAMMER\_LP ok=1 dac=57} (23 jun); al
+d\'ia siguiente \texttt{HAMMER\_LP} converge con \texttt{err\_mV=0} exacto
+contra un objetivo de \SI{1024}{\milli\volt}. El 26 de junio el PI corre por
+primera vez sobre las cuatro etapas de GEO.}
+
+\subsection{Dos bugs que valen su propia entrada}
+
+\dato{\textbf{El filtro cargaba los coeficientes equivocados} (24 jun). Se
+descubri\'o que el filtro de adquisici\'on llevaba \emph{meses} cargando
+coeficientes de pasa-banda donde deb\'ia haber un pasa-bajos. No se manifestaba
+como falla evidente: el sistema funcionaba, simplemente filtraba otra cosa.}
+
+\dato{\textbf{Un pin sin soldar} (26 jun). Un problema de calibraci\'on que se
+persigui\'o como bug de firmware result\'o ser hardware. Registrado porque es la
+clase de error que consume horas de depuraci\'on en el dominio equivocado.}
+
+\subsection{Persistencia: la calibraci\'on sobrevive al reset}
+
+El 17 de junio la calibraci\'on empez\'o a guardarse en EEPROM con CRC-16. El
+1\textsuperscript{o} de julio se rehizo el esquema para guardar
+\textbf{un \emph{slot} por c\'odigo de ganancia del PGA}, porque el punto de
+operaci\'on \'optimo depende de la ganancia seleccionada.
+
+\seleccionado{Consecuencia operativa: con calibraci\'on almacenada v\'alida, el
+arranque solo ejecuta los intervalos de establecimiento por etapa
+(2560 muestras, \textasciitilde{}\SI{1.0}{\second} a \SI{2604}{\hertz}) en vez
+de la calibraci\'on completa. La diferencia entre esperar un segundo y esperar
+un minuto es la diferencia entre un instrumento usable en campo y uno que no.}
+
+\subsection{La adquisici\'on sale de la CPU}
+
+Tres pasos en tres d\'ias:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Fecha} & \textbf{Cambio} & \textbf{Consecuencia} \\
+\midrule
+17 jun & ISR cl\'asica $\to$ cadena DMA con \texttt{Filter} FIR de hardware &
+El ARM deja de intervenir en el camino de la muestra. El FIR corre en el bloque dedicado, no en software \\
+\addlinespace[2pt]
+18 jun & Multiplexor DMA de cuatro canales (crudo/filtrado $\times$ simple/lote) gobernado por \texttt{Reg\_Select} &
+Se cablea el promediado por hardware pero se lo deja inerte: la ruta existe antes de usarse \\
+\addlinespace[2pt]
+19 jun & Se activa el canal ``Lote'' &
+La calibraci\'on deja de promediar muestra a muestra en el ISR y consume ventanas ya sumadas por hardware, con verificaci\'on \emph{en tiempo de compilaci\'on} de que el tama\~no del lote DMA coincide con la ventana de calibraci\'on \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{\texttt{superMaquina}: la captura se vuelve hardware (2 de julio)}
+
+El paso final. La l\'ogica de captura ---que hasta ese momento viv\'ia en C,
+como ISRs sobre \texttt{Reg\_Select}--- se reescribi\'o como una \textbf{m\'aquina
+de estados en Verilog dentro de un bloque UDB} del PSoC.
+
+\texttt{superMaquina} decide, en hardware:
+
+\begin{itemize}[itemsep=0.2em]
+\item qu\'e DRQ de DMA se deja pasar;
+\item cu\'ando arranca y cu\'ando termina una captura;
+\item qu\'e interrupciones llegan efectivamente al ARM.
+\end{itemize}
+
+\seleccionado{\textbf{Por qu\'e importa tanto para MASW.} Mientras la captura la
+gobierna software, el instante de inicio y el intervalo entre muestras heredan
+el \emph{jitter} de las interrupciones ---latencia variable, prioridades,
+secciones cr\'iticas. En hardware, el temporizado es determinista por
+construcci\'on. Como el m\'etodo mide velocidad de fase, y la fase se mide contra
+el tiempo, \emph{determinismo temporal es exactitud de medici\'on}.}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{DigitalPathFinal_trim.png}
+\caption{Camino digital dentro del PSoC tras esta etapa: ADC $\Delta\Sigma$
+$\to$ \texttt{Filter} FIR de hardware $\to$ cadena DMA con canales
+crudo/filtrado y simple/lote, todo gobernado por \texttt{superMaquina}. El ARM
+queda fuera del camino de la muestra.}
+\label{fig:digital}
+\end{figure}
+
+En paralelo, tres \emph{timers} fijos del PSoC reemplazaron el \emph{tick} de
+sistema de \SI{10}{\milli\second} (ping de arranque/reposo, parpadeo de LED,
+\emph{watchdog} y progreso de calibraci\'on), y el ESP32 esclavo gan\'o un juego
+completo de comandos por USB para operar el \emph{pipeline} paso a paso desde
+la terminal, sin depender de la web: \texttt{probe}, \texttt{status},
+\texttt{stream}, \texttt{debugpsoc}, \texttt{pre}, \texttt{sync},
+\texttt{startnow}, \texttt{cap}, \texttt{clear}, \texttt{stop}.
+
+\seleccionado{Ese juego de comandos result\'o ser la herramienta de diagn\'ostico
+m\'as usada del proyecto: permite reproducir en aislamiento cualquier paso de
+la secuencia de captura, que es exactamente lo que hizo falta para encontrar
+los bugs cr\'iticos de la Etapa~8.}
+
+\pendiente{Pol\'itica de eventos que qued\'o fijada y conviene no romper: el
+\texttt{TC} se atiende por \emph{polling} de \texttt{STATUS\_TC} y \textbf{no}
+por interrupci\'on; la ISR maneja \'unicamente muestras; y \texttt{CLEAR\_FLAGS}
+est\'a prohibido durante \texttt{SAMPLING}.}
+
+\subsection{Resultado medido de la auto-calibraci\'on}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.92\textwidth]{autocalibration_stage_outputs_5_to_20s.png}
+\caption{Trayectorias de calibraci\'on de las cuatro etapas anal\'ogicas
+capturadas con osciloscopio. La correcci\'on visible abarca unos
+\SI{7}{\second}. Cada etapa se calibra en orden y su salida queda dentro de la
+banda muerta antes de pasar a la siguiente.}
+\label{fig:calib-traj}
+\end{figure}
+
+Sobre \textbf{dos placas ensambladas independientemente} y \textbf{ocho
+configuraciones placa--ganancia}, con $N=10$ reinicios apareados por
+configuraci\'on:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\emph{Offset} residual a la salida LP & de \SIrange{2.9}{45.8}{\percent} del fondo de escala a \SIrange{0.4}{3.9}{\percent} \\
+Observaciones individuales calibradas & entre \SIrange{0.1}{5.2}{\percent} \\
+Prueba de signos de una cola, etapa LP & rechaza la hip\'otesis nula en \textbf{las ocho} configuraciones (10 de 10 reinicios, $p\approx10^{-3}$ exacto); \textbf{sobrevive a la correcci\'on de Bonferroni} \\
+Ajuste del controlador & \textbf{\'unica configuraci\'on} para todas las placas y ganancias, sin reajuste por placa ni por ganancia \\
+Tiempo & correcci\'on visible \textasciitilde{}\SI{7}{\second}; completitud informal \textasciitilde{}\SI{10}{\second}; ventanas l\'imite configuradas \SI{57.6}{\second} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\dato{\textbf{El \'unico vencimiento de tiempo l\'imite observado en banco} fue
+el de una placa alimentada mientras su ge\'ofono estaba en movimiento: el
+transitorio de alterna viola la hip\'otesis cuasi-est\'atica que la calibraci\'on
+\emph{foreground} requiere. Es una limitaci\'on entendida, no una falla.}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Controlador PI \'unico con \emph{feedforward}, banda muerta proporcional y anti-\emph{windup} direccional; persistencia en EEPROM con CRC-16 indexada por c\'odigo de ganancia; adquisici\'on por DMA con FIR en hardware; promediado por lote; \texttt{superMaquina} en UDB; comandos USB de diagn\'ostico \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & Bisecci\'on binaria; servo lento; t\'ermino derivativo del PID; \texttt{Reg\_Select} como gobierno de la captura; \emph{tick} de sistema de \SI{10}{\milli\second} \\
+\addlinespace[3pt]
+\textbf{Qued\'o abierto} & Deriva de largo plazo y apareamiento entre canales del arreglo completo, sin caracterizar. La evidencia obtenida concierne al \emph{punto de operaci\'on} de la cadena, no al desempe\~no s\'ismico extremo a extremo \\
+\bottomrule
+\end{tabularx}
+\end{center}

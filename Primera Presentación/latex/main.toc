@@ -1,0 +1,84 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Introducci\'on}{6}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Contexto y motivaci\'on}{6}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}El problema instrumental}{6}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Objetivo del proyecto}{6}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Estado de avance y alcance de este documento}{7}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Fundamentos te\'oricos}{7}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Comportamiento del suelo y elasticidad a peque\~nas deformaciones}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Ondas de cuerpo y ondas superficiales}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Dispersi\'on geom\'etrica: el principio del m\'etodo}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Modos de propagaci\'on}{9}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}El flujo de trabajo: adquisici\'on, procesamiento e inversi\'on}{9}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Limitaciones de la adquisici\'on}{9}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}El problema inverso}{10}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}El ge\'ofono como transductor}{10}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Estado del arte}{11}{section.3}%
+\contentsline {subsection}{\numberline {3.1}M\'etodos de caracterizaci\'on geot\'ecnica}{11}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Evoluci\'on de los m\'etodos de ondas superficiales}{11}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Instrumentaci\'on: ge\'ofonos y sistemas de adquisici\'on}{12}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Plataformas mixtas programables y dise\~no anal\'ogico asistido digitalmente}{12}{subsubsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.4}Herramientas de procesamiento e inversi\'on}{12}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Brecha identificada y posicionamiento del trabajo}{13}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Arquitectura del sistema desarrollado}{13}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Visi\'on general}{13}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Nodo ge\'ofono: cadena de acondicionamiento anal\'ogico}{13}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}\emph {Front-end} anal\'ogico asistido digitalmente (DA-AFE)}{14}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Modelo}{14}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Ley de control}{14}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Flujo y persistencia}{15}{subsubsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.4}Adquisici\'on digital en el PSoC~5LP}{15}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Cadena ADC--DMA--Filtro}{15}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}\emph {superMaquina}: la m\'aquina de estados en hardware}{16}{subsubsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {4.4.3}Jerarqu\'ia de memoria y almacenamiento en SD}{16}{subsubsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.5}Red inal\'ambrica y sincronizaci\'on}{16}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Topolog\'ia}{16}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2}Protocolo de disparo sincronizado}{16}{subsubsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.6}Nodo martillo (fuente s\'ismica)}{17}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Interfaz de operador en campo}{17}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}\emph {Pipeline} de procesamiento MASW}{17}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Organizaci\'on del repositorio}{17}{subsection.4.9}%
+\contentsline {section}{\numberline {5}Desarrollo del trabajo por per\'iodos}{18}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Del 25 de febrero al 23 de marzo --- Construcci\'on del marco te\'orico}{18}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Del 10 al 15 de abril --- Consolidaci\'on del conocimiento}{18}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Del 17 al 30 de abril --- Transductor, primeras se\~nales y dos pivotes de dise\~no}{19}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Del 5 al 20 de mayo --- Caracterizaci\'on espectral y cadena anal\'ogica completa}{19}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Del 24 de mayo al 10 de junio --- El sistema inal\'ambrico multi-nodo}{20}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Del 14 al 30 de junio --- Auto-calibraci\'on del \emph {front-end}}{20}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Del 1 al 12 de julio --- Determinismo, almacenamiento y procesamiento MASW}{21}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Del 15 al 29 de julio --- Comunicaci\'on cient\'ifica y reorganizaci\'on}{21}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}1 de agosto --- Hacia el hardware definitivo y la fuente s\'ismica}{22}{subsection.5.9}%
+\contentsline {subsection}{\numberline {5.10}S\'intesis: caminos explorados y descartados}{22}{subsection.5.10}%
+\contentsline {section}{\numberline {6}Metodolog\'ia experimental y validaci\'on}{23}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Estrategia general de validaci\'on}{23}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Modelado y caracterizaci\'on del transductor}{23}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Validaci\'on experimental del DA-AFE}{23}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Dise\~no experimental}{23}{subsubsection.6.3.1}%
+\contentsline {subsubsection}{\numberline {6.3.2}Procedimiento de medici\'on}{24}{subsubsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.3}An\'alisis estad\'istico}{24}{subsubsection.6.3.3}%
+\contentsline {subsection}{\numberline {6.4}Auditor\'ia pre-campo del sistema completo}{24}{subsection.6.4}%
+\contentsline {subsubsection}{\numberline {6.4.1}Defectos cr\'iticos encontrados y corregidos}{24}{subsubsection.6.4.1}%
+\contentsline {subsubsection}{\numberline {6.4.2}Criterio de aceptaci\'on}{25}{subsubsection.6.4.2}%
+\contentsline {subsection}{\numberline {6.5}Campa\~nas de medici\'on en campo}{25}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Procesamiento de los registros de campo}{25}{subsection.6.6}%
+\contentsline {section}{\numberline {7}Resultados}{26}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Validaci\'on experimental del DA-AFE}{26}{subsection.7.1}%
+\contentsline {subsubsection}{\numberline {7.1.1}S\'intesis de los resultados}{26}{subsubsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.2}Temporizaci\'on}{26}{subsubsection.7.1.2}%
+\contentsline {subsubsection}{\numberline {7.1.3}Limitaciones declaradas}{27}{subsubsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.2}Validaci\'on funcional del sistema de adquisici\'on}{27}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Adquisici\'on en campo y procesamiento MASW}{28}{subsection.7.3}%
+\contentsline {section}{\numberline {8}Trabajos futuros}{28}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Consolidaci\'on del hardware: de placas de desarrollo a PCB propia}{28}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Fuente s\'ismica repetible: el martillo de leva}{29}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Conectividad y flujo de datos en campo}{29}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Ampliaci\'on del arreglo y campa\~na de validaci\'on}{29}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Caracterizaci\'on complementaria de la instrumentaci\'on}{29}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Mejoras identificadas y documentadas, de menor prioridad}{30}{subsection.8.6}%
+\contentsline {section}{\numberline {9}Conclusiones parciales}{30}{section.9}%
+\contentsline {section}{\numberline {A}Ap\'endice: inventario de lo desarrollado}{31}{appendix.Alph1}%
+\contentsline {subsection}{\numberline {A.1}Firmware}{31}{subsection.Alph1.1}%
+\contentsline {subsection}{\numberline {A.2}Modelado y an\'alisis (MATLAB / Simulink)}{32}{subsection.Alph1.2}%
+\contentsline {subsection}{\numberline {A.3}Procesamiento (Python)}{32}{subsection.Alph1.3}%
+\contentsline {subsection}{\numberline {A.4}Documentaci\'on producida}{32}{subsection.Alph1.4}%
+\contentsline {subsection}{\numberline {A.5}Datos experimentales}{32}{subsection.Alph1.5}%

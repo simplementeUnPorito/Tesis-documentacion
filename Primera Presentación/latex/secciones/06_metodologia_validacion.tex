@@ -1,0 +1,174 @@
+\section{Metodolog\'ia experimental y validaci\'on}
+\label{sec:metodologia}
+
+\subsection{Estrategia general de validaci\'on}
+
+La validaci\'on del sistema se organiz\'o en cuatro niveles, de menor a mayor integraci\'on:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{Verificaci\'on de modelos} contra medici\'on de laboratorio (modelo del
+    SM-24, modelo del amplificador operacional real, ganancias de continua de cada etapa).
+    \item \textbf{Pruebas unitarias y de regresi\'on automatizadas} sobre el firmware y el
+    software de procesamiento.
+    \item \textbf{Caracterizaci\'on cuantitativa en banco} con instrumental de referencia
+    (osciloscopio de cuatro canales) sobre m\'ultiples placas y configuraciones.
+    \item \textbf{Pruebas de aceptaci\'on de sistema completo} (auditor\'ia pre-campo) y
+    campa\~nas de medici\'on en campo.
+\end{enumerate}
+
+\subsection{Modelado y caracterizaci\'on del transductor}
+
+El ge\'ofono SM-24 se model\'o en Simulink a partir de las ecuaciones de la
+Secci\'on~\ref{sec:geo-tres-formas}, y el
+modelo se contrast\'o con mediciones sobre el transductor real. Se desarrollaron
+herramientas propias de an\'alisis:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \texttt{geophone\_scope.m} y \texttt{geophone\_scope\_simple.m}: adquisici\'on y
+    visualizaci\'on en tiempo real sobre puerto serie.
+    \item \texttt{analisis\_espectral.m}: estimaci\'on de densidad espectral de potencia
+    por el m\'etodo de Welch y c\'alculo de relaci\'on se\~nal--ruido por entidad de medici\'on.
+    \item \texttt{ComparacionFiltros.m}: comparaci\'on cuantitativa de topolog\'ias de
+    filtro, que fundament\'o la elecci\'on de MFB.
+    \item Protocolo de barridos de la cadena anal\'ogica con \emph{script} de an\'alisis
+    dedicado, que permiti\'o contrastar la respuesta medida contra el modelo del circuito
+    con valores de componentes reales.
+\end{itemize}
+
+El modelado del amplificador operacional real ($A_0=\SI{90}{\decibel}$,
+$f_p=\SI{8}{\mega\hertz}$) result\'o necesario porque el modelo ideal no reproduc\'ia el
+comportamiento medido del compensador en el extremo superior de la banda.
+
+\subsection{Validaci\'on experimental del DA-AFE}
+\label{sec:met-daafe}
+
+Este es el experimento m\'as riguroso realizado hasta la fecha, y el que fue sometido a
+revisi\'on externa.
+
+\subsubsection{Dise\~no experimental}
+
+Se evaluaron \textbf{ocho configuraciones placa--ganancia}: las cinco ganancias del PGA
+sobre la Placa~A, m\'as las ganancias $\times16$, $\times32$ y $\times50$ sobre la
+Placa~B. Cada configuraci\'on se evalu\'o mediante \textbf{diez reinicios apareados}
+($N=10$).
+
+Las decisiones metodol\'ogicas relevantes fueron:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Referencia com\'un}: se aplic\'o una \'unica l\'inea base de c\'odigos fijos,
+    elegida emp\'iricamente sobre la Placa~B a $\times50$, \emph{sin} adaptarla a cada
+    configuraci\'on. Esto es deliberadamente desfavorable a la l\'inea base: las reducciones
+    reportadas acotan superiormente el beneficio respecto de un ajuste fijo por placa, en
+    lugar de replicarlo.
+    \item \textbf{Configuraci\'on \'unica de controlador}: los mismos par\'ametros de la
+    Tabla~\ref{tab:cal_params} para todas las placas y ganancias, sin reajuste.
+    \item \textbf{Medici\'on apareada}: dentro de cada reinicio se registr\'o siempre primero
+    la condici\'on de referencia fija y luego la calibrada.
+    \item \textbf{Escritura en EEPROM deshabilitada} tras la calibraci\'on, de modo que
+    cada reinicio partiera exactamente de la misma l\'inea base.
+    \item \textbf{Exclusiones declaradas}: la Placa~B a $\times1$ y $\times4$ se
+    excluyeron porque sus residuos de l\'inea base ya ca\'ian dentro de las bandas muertas,
+    impidiendo actualizaciones correctivas. El comportamiento esperado se confirm\'o con
+    un diagn\'ostico separado de banda muerta m\'as estrecha.
+\end{itemize}
+
+\subsubsection{Procedimiento de medici\'on}
+
+Un osciloscopio Tektronix TDS~2004B de cuatro canales registr\'o la tensi\'on media de
+salida de las etapas PGA, BP, SUM y LP sobre una ventana de \SI{1}{\second} posterior al
+establecimiento. Las masas de las puntas se conectaron a $V_{\mathrm{ref}}=V_{DDA}/2$,
+de modo que cada canal midiera $V_{\mathrm{etapa}}-V_{\mathrm{ref}}$. La salida LP se
+adopt\'o como m\'etrica principal por alimentar directamente al ADC.
+
+\subsubsection{An\'alisis estad\'istico}
+
+Se aplic\'o una \textbf{prueba de signos de una cola}~\cite{Conover1999} sobre las
+mediciones apareadas de la etapa LP. La elecci\'on de una prueba no param\'etrica responde
+al tama\~no de muestra y a no asumir normalidad de los residuos.
+
+\subsection{Auditor\'ia pre-campo del sistema completo}
+\label{sec:auditoria}
+
+Antes de las campa\~nas de campo se ejecut\'o una auditor\'ia sistem\'atica sobre hardware
+real, con una matriz de pruebas de aceptaci\'on identificadas E1--E18 que cubri\'o: capturas
+en RAM y en SD de distinta duraci\'on, decimaci\'on y filtrado por radio, comandos de
+captura a SD, verificaci\'on estricta por USB, interfaz en navegador, reconexi\'on de
+WebSocket, detenci\'on en vivo, transiciones de rango y decimaci\'on, ciclo de apagado y
+recuperaci\'on, y prueba de resistencia prolongada.
+
+\subsubsection{Defectos cr\'iticos encontrados y corregidos}
+
+La auditor\'ia detect\'o defectos que habr\'ian invalidado una campa\~na de campo. Se destacan
+tres por su valor metodol\'ogico:
+
+\begin{itemize}[itemsep=0.25em]
+    \item \textbf{F1 --- Capturas largas destruidas por el \emph{watchdog}.} Un
+    \emph{watchdog} de estancamiento de sincronizaci\'on re-disparaba el comando de arranque
+    y destru\'ia las sesiones largas en SD. El s\'intoma observado era desconcertante: una
+    captura de 10 minutos aceptada con \emph{cero muestras}. Se corrigi\'o con un margen
+    proporcional y un aborto limpio.
+    \item \textbf{F9 --- El arranque romp\'ia el nodo.} Defecto de carrera:
+    el maestro esperaba la confirmaci\'on de armado con un tiempo l\'imite de
+    \SI{120}{\milli\second}, pero la confirmaci\'on real de ``PSoC armado'' tarda
+    \SI{130}{\milli\second}. El reintento reemit\'ia la secuencia completa de preparaci\'on,
+    forzando un segundo comando de configuraci\'on; pero el PSoC, ya armado, entra en
+    silencio total por dise\~no. El comando nunca se confirmaba, y el esclavo interpretaba
+    el vencimiento como fallo y liberaba el almac\'en, mientras el PSoC segu\'ia f\'isicamente
+    armado esperando un flanco de sincronismo que nadie volver\'ia a emitir. El nodo quedaba
+    inutilizable hasta un reinicio f\'isico. Es un ejemplo did\'actico de c\'omo una carrera
+    de \SI{10}{\milli\second} entre dos temporizadores produce una falla determinista y
+    total. Se corrigi\'o en dos capas: el reintento dej\'o de reemitir la preparaci\'on, y el
+    comando de preparaci\'on se hizo idempotente.
+    \item \textbf{F5 --- Cliente colgado en conexi\'on semiabierta.} La herramienta de
+    descarga no ten\'ia \emph{watchdog} de silencio y quedaba bloqueada sobre un
+    \emph{socket} zombi.
+\end{itemize}
+
+\subsubsection{Criterio de aceptaci\'on}
+
+La prueba de aceptaci\'on definitiva consisti\'o en una captura continua de 10 minutos con
+verificaci\'on de integridad de extremo a extremo: conteo de lotes en SD, conteo de
+muestras recibidas por radio, tama\~no en bytes, n\'umero de conexiones y desconexiones, y
+recomputaci\'on de la suma SHA-256. La adopci\'on de un criterio de integridad
+criptogr\'afica ---en lugar de una inspecci\'on visual de las se\~nales--- fue deliberada:
+permite distinguir una transferencia completa de una truncada, distinci\'on que result\'o
+decisiva, ya que un intento previo hab\'ia capturado correctamente en SD pero entregado un
+archivo truncado por el lado del cliente.
+
+\subsection{Campa\~nas de medici\'on en campo}
+
+Se realizaron campa\~nas de adquisici\'on en varios sitios, con conjuntos de datos crudos
+catalogados y versionados con Git~LFS y deduplicaci\'on por SHA-256. El cat\'alogo registra
+del orden de \textbf{22\,000 archivos crudos} (aproximadamente \SI{28}{\gibi\byte})
+distribuidos en tres sitios de medici\'on, m\'as los conjuntos procesados
+correspondientes.
+
+El procedimiento de campo consiste en desplegar el arreglo lineal de nodos ge\'ofono con
+espaciamiento conocido, ubicar el nodo martillo en la posici\'on de fuente, verificar por
+la interfaz web que todos los nodos est\'an presentes y calibrados, y ejecutar una serie
+de disparos por punto de fuente. Se registran m\'ultiples repeticiones por punto para
+permitir apilamiento y evaluaci\'on de repetibilidad.
+
+\subsection{Procesamiento de los registros de campo}
+
+El tratamiento de los registros incorpor\'o varias correcciones sistem\'aticas que
+surgieron de la propia pr\'actica:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Polaridad}: se estableci\'o una convenci\'on fija (ge\'ofono no invertido,
+    martillo invertido) y se implement\'o correcci\'on de polaridad por punto de medici\'on,
+    autom\'atica y manual, dado que un error de signo en un canal corrompe la imagen de
+    dispersi\'on.
+    \item \textbf{Alineaci\'on entre tandas (\emph{enfase})}: aplicada por carpeta de
+    medici\'on, con una etapa de limpieza de desplazamientos por se\~nal.
+    \item \textbf{Mezcla de frecuencias de muestreo}: los registros tomados a
+    \SI{2929}{\hertz} y a \SI{1020}{\hertz} se combinan mediante remuestreo racional.
+    \item \textbf{Deduplicaci\'on por captura} y \textbf{rechazo expl\'icito de carpetas}
+    defectuosas, que las excluye de los promedios sin alterar su validez individual.
+\end{itemize}
+
+\nota{Para la versi\'on de 15 p\'aginas: conservar \S5.3 completo (es el experimento
+publicable) y \S5.4.1 resumido a los defectos F1 y F9 en un p\'arrafo. \S5.2, \S5.5 y
+\S5.6 pueden comprimirse fuertemente. Pendiente a definir con el tutor: si conviene
+incluir ya el n\'umero de puntos de fuente y la geometr\'ia exacta de las campa\~nas
+realizadas, o dejarlo para la Defensa Final.}

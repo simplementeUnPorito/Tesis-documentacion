@@ -1,0 +1,166 @@
+\section{Fundamentos te\'oricos}
+\label{sec:fundamentos}
+
+Esta secci\'on resume el marco te\'orico que sustenta el m\'etodo MASW, elaborado a partir
+del estudio sistem\'atico del texto de referencia de Foti \emph{et al.}~\cite{Foti2014}
+y de la literatura complementaria. El material fue organizado durante el proyecto como
+un \emph{vault} de conocimiento en Obsidian, con los ocho cap\'itulos del libro resumidos
+y m\'as de 140 conceptos at\'omicos interconectados (ver Secci\'on~\ref{sec:cronologia}).
+
+\subsection{Comportamiento del suelo y elasticidad a peque\~nas deformaciones}
+
+Los suelos son materiales particulados, multif\'asicos y discontinuos, cuyo comportamiento
+mec\'anico es inherentemente no lineal e irreversible. Sin embargo, la elasticidad lineal
+provee un marco consistente para interpretar los ensayos s\'ismicos, porque los niveles
+de deformaci\'on que producen las ondas s\'ismicas son extremadamente peque\~nos: t\'ipicamente
+$\gamma<10^{-5}$, muy por debajo del umbral no lineal del suelo ($\gamma\approx10^{-4}$
+a $10^{-3}$). A estas deformaciones la curva esfuerzo--deformaci\'on es esencialmente
+lineal y el m\'odulo de corte alcanza su valor m\'aximo $G_{\max}$.
+
+La respuesta el\'astica lineal de un s\'olido is\'otropo queda completamente descrita por
+dos constantes el\'asticas ---por ejemplo las constantes de Lam\'e $\lambda$ y
+$\mu\equiv G$---, y las velocidades s\'ismicas se expresan como
+
+\begin{equation}
+V_P=\sqrt{\frac{\lambda+2G}{\rho}},\qquad V_S=\sqrt{\frac{G}{\rho}},
+\label{eq:velocidades}
+\end{equation}
+
+donde $\rho$ es la densidad. Esta relaci\'on directa entre velocidad y m\'odulo el\'astico
+es la base f\'isica de toda la s\'ismica aplicada.
+
+Una observaci\'on relevante para la elecci\'on del m\'etodo: en suelos saturados la
+compresibilidad del fluido intersticial domina la respuesta volum\'etrica, haciendo que
+$V_P\to\SI{1500}{\meter\per\second}$ (la velocidad del sonido en agua) sin relaci\'on con
+la rigidez del esqueleto s\'olido. $V_S$, en cambio, refleja \'unicamente la rigidez de
+corte del esqueleto y es insensible al contenido de agua. Por eso $V_S$ ---y no
+$V_P$--- es el par\'ametro objetivo de la caracterizaci\'on geot\'ecnica.
+
+La disipaci\'on de energ\'ia observada incluso a deformaciones muy peque\~nas se modela
+extendiendo el marco a viscoelasticidad lineal, reemplazando el m\'odulo real por el
+m\'odulo complejo $G^{*}=G(1+2iD_S)$, con $D_S$ la raz\'on de amortiguamiento material.
+Esto introduce un n\'umero de onda complejo $k^{*}=k+i\alpha$, cuya parte real controla
+la velocidad de fase y cuya parte imaginaria controla el decaimiento espacial de
+amplitud.
+
+\subsection{Ondas de cuerpo y ondas superficiales}
+
+En un medio el\'astico is\'otropo infinito se propagan dos tipos de ondas de cuerpo: las
+ondas P (compresionales) y las ondas S (de corte). La presencia de una superficie libre
+genera, adem\'as, ondas superficiales: las ondas Rayleigh (movimiento el\'iptico retr\'ogrado
+en el plano vertical) y las ondas Love (movimiento horizontal transversal, que requieren
+estratificaci\'on).
+
+Para los m\'etodos de caracterizaci\'on desde superficie, las ondas Rayleigh son las
+relevantes por dos motivos cuantitativos. Primero, la partici\'on de energ\'ia: a distancias
+de una o dos longitudes de onda de una fuente puntual vertical, las ondas superficiales
+concentran aproximadamente el \SI{67}{\percent} de la energ\'ia total radiada. Segundo,
+el decaimiento geom\'etrico: las ondas superficiales decaen como $r^{-0.5}$ frente a
+$r^{-2}$ de las ondas de cuerpo en superficie. La combinaci\'on de ambos efectos hace
+que, a distancia suficiente de la fuente, el registro de un ge\'ofono vertical est\'e
+dominado por el tren Rayleigh ---el llamado \emph{ground roll}, que en s\'ismica de
+reflexi\'on se considera ruido y que aqu\'i es precisamente la se\~nal de inter\'es.
+
+\subsection{Dispersi\'on geom\'etrica: el principio del m\'etodo}
+
+En un semiespacio homog\'eneo la velocidad de fase Rayleigh $V_R$ es independiente de la
+frecuencia y vale aproximadamente $0{,}9\,V_S$. La dispersi\'on aparece cuando el medio
+es verticalmente heterog\'eneo.
+
+El mecanismo es geom\'etrico: la profundidad de penetraci\'on de una onda Rayleigh es
+proporcional a su longitud de onda $\lambda$. Componentes de baja frecuencia (longitud
+de onda larga) involucran un espesor grande de suelo y por lo tanto su velocidad de
+fase queda determinada por un promedio ponderado que incluye las capas profundas;
+componentes de alta frecuencia (longitud de onda corta) muestrean s\'olo las capas
+superficiales. En consecuencia, en un perfil normalmente dispersivo (rigidez creciente
+con la profundidad) la velocidad de fase crece al disminuir la frecuencia.
+
+La funci\'on $V_R(f)$ ---la \textbf{curva de dispersi\'on}--- es entonces una firma del
+perfil $V_S(z)$. El m\'etodo MASW consiste en medir experimentalmente esa curva y
+resolver el problema inverso para recuperar el perfil.
+
+\subsection{Modos de propagaci\'on}
+
+En un medio estratificado la relaci\'on de dispersi\'on admite m\'ultiples soluciones para
+cada frecuencia: el modo fundamental y los modos superiores. Cada modo tiene su propia
+curva $V_R(f)$ y su propia distribuci\'on de energ\'ia con la profundidad.
+
+Esto tiene dos consecuencias pr\'acticas importantes. La primera es que la curva
+experimental medida no siempre corresponde al modo fundamental: en perfiles con
+inversiones de velocidad (una capa r\'igida sobre una blanda) o con contrastes fuertes,
+los modos superiores pueden dominar la energ\'ia en ciertos rangos de frecuencia, y lo
+que se mide es en realidad una \emph{curva aparente} o \emph{efectiva} que salta entre
+modos. Interpretarla como fundamental produce un perfil $V_S$ err\'oneo. La segunda es
+que, cuando los modos superiores pueden identificarse por separado, aportan informaci\'on
+adicional que reduce la no-unicidad de la inversi\'on. Por este motivo el
+\emph{pipeline} desarrollado en este proyecto implementa extracci\'on e inversi\'on
+multimodal (Secci\'on~\ref{sec:arq-pipeline}).
+
+\subsection{El flujo de trabajo: adquisici\'on, procesamiento e inversi\'on}
+
+La metodolog\'ia est\'andar de los m\'etodos de ondas superficiales sigue tres pasos
+encadenados:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{Adquisici\'on}: registro del movimiento vertical de la superficie
+    mediante un arreglo lineal de ge\'ofonos, excitado por una fuente impulsiva
+    (m\'etodo activo) o aprovechando ruido ambiental (m\'etodo pasivo).
+    \item \textbf{Procesamiento}: transformaci\'on del registro del dominio
+    espacio--tiempo $(x,t)$ a un dominio donde la dispersi\'on sea observable
+    ---frecuencia--n\'umero de onda $(f,k)$, frecuencia--velocidad de fase $(f,V)$ o
+    frecuencia--lentitud--- y extracci\'on de la curva de dispersi\'on como el lugar
+    geom\'etrico de los m\'aximos espectrales (\emph{picking}).
+    \item \textbf{Inversi\'on}: resoluci\'on del problema inverso no lineal para obtener
+    el perfil $V_S(z)$ que mejor reproduce la curva experimental.
+\end{enumerate}
+
+\subsubsection{Limitaciones de la adquisici\'on}
+
+El dise\~no del arreglo impone l\'imites duros al rango de frecuencias recuperable, y estos
+l\'imites condicionan directamente las especificaciones del sistema electr\'onico:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{L\'imite superior de frecuencia}: determinado por el espaciamiento
+    entre receptores $\Delta x$ v\'ia \emph{aliasing} espacial ($\lambda_{\min}=2\Delta x$),
+    y por la atenuaci\'on de las componentes de alta frecuencia en los ge\'ofonos lejanos.
+    \item \textbf{L\'imite inferior de frecuencia}: determinado por la longitud total
+    del arreglo $L$, que fija la longitud de onda m\'axima resoluble y, por lo tanto, la
+    profundidad m\'axima de investigaci\'on (regla pr\'actica: $z_{\max}\approx L/2$ a $L/3$).
+    \item \textbf{Efecto de campo cercano}: a distancias de la fuente menores a
+    aproximadamente media longitud de onda, el campo de ondas no est\'a a\'un dominado por
+    la onda superficial plana y la velocidad de fase medida est\'a sesgada. Esto impone
+    una distancia m\'inima fuente--primer ge\'ofono.
+\end{itemize}
+
+Un objetivo de \SI{50}{\meter} de profundidad implica entonces arreglos de longitud
+considerable y, sobre todo, capacidad de recuperar componentes de baja frecuencia con
+buena relaci\'on se\~nal--ruido. Este es exactamente el requisito que tensiona la
+instrumentaci\'on, y el que motiva tanto el trabajo de compensaci\'on de la respuesta del
+ge\'ofono como el de calibraci\'on del \emph{front-end} descritos m\'as adelante.
+
+\subsubsection{El problema inverso}
+
+La inversi\'on es un problema mal condicionado y no \'unico: distintos perfiles $V_S(z)$
+pueden producir curvas de dispersi\'on pr\'acticamente indistinguibles dentro del error
+experimental. Las estrategias habituales combinan parametrizaci\'on en capas,
+regularizaci\'on, informaci\'on a priori y algoritmos de b\'usqueda global. La inversi\'on
+requiere adem\'as fijar par\'ametros auxiliares ---densidad y raz\'on de Poisson por capa---
+que tienen influencia limitada pero no nula sobre la curva; en particular, ignorar el
+nivel fre\'atico equivale a asumir una raz\'on de Poisson incorrecta para las capas
+saturadas (donde el comportamiento no drenado lleva $\nu\to0{,}5$), con consecuencias
+significativas sobre el perfil resultante.
+
+\subsection{Del m\'etodo a la instrumentaci\'on}
+\label{sec:fund-geofono}
+
+Los l\'imites de adquisici\'on enunciados arriba se traducen en requisitos concretos sobre
+la electr\'onica: recuperar contenido de baja frecuencia con buena relaci\'on
+se\~nal--ruido, y garantizar que todos los canales del arreglo compartan exactamente la
+misma referencia temporal. El transductor que impone esos requisitos ---el ge\'ofono--- se
+trata en detalle en la Secci\'on~\ref{sec:geofono}, y las topolog\'ias de acondicionamiento
+estudiadas para satisfacerlos, en la Secci\'on~\ref{sec:topologias}.
+
+\nota{Para la versi\'on de 15 p\'aginas esta secci\'on deber\'ia bajar a ~2 p\'aginas:
+conservar \S2.1 (reducido a la Ec.~\ref{eq:velocidades} y el argumento de $V_S$ vs
+$V_P$), \S2.3 completo (es el principio del m\'etodo) y \S2.5.1 (porque justifica las
+especificaciones del hardware). \S2.2 y \S2.4 pueden comprimirse a un p\'arrafo cada uno.}

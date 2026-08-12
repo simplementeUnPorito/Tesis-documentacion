@@ -1,0 +1,132 @@
+\section{Etapa 11 --- La placa nueva (rama \texttt{cambios-hardware})}
+\label{sec:et11}
+\periodo{2 --- 12 de agosto de 2026 \quad$\cdot$\quad etapa en curso}
+
+\dato{La bit\'acora diaria termina el 1\textsuperscript{o} de agosto. Esta
+secci\'on est\'a reconstruida directamente de los \emph{commits} y de la
+documentaci\'on de construcci\'on del firmware, no de la bit\'acora.}
+
+Se dise\~n\'o una placa propia ---hasta ac\'a todo hab\'ia corrido sobre
+\emph{kits} de desarrollo y una \emph{carrier} intermedia
+(CY8CKIT-059 $+$ ESP32 DevKitC)--- y eso oblig\'o a rehacer el TopDesign del
+PSoC y buena parte del enlace entre procesadores. Todo el trabajo vive en la
+rama \texttt{cambios-hardware}, deliberadamente separada de \texttt{main}.
+
+\subsection{Cambios en el PSoC}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Cambio} & \textbf{Motivo y consecuencia} \\
+\midrule
+\textbf{IDAC en lugar de VDAC} en las cuatro referencias de calibraci\'on &
+Se pasa a fijar las referencias por \emph{corriente} en vez de por tensi\'on,
+con las globales de placa $R = \SI{30}{\kilo\ohm}$,
+$V_{\mathrm{ref}} = \SI{2.048}{\volt}$,
+$I_{fs} = \SI{31.875}{\micro\ampere}$ y helpers de conversi\'on
+c\'odigo$\leftrightarrow$tensi\'on. \textbf{El LSB queda en
+\SI{3.75}{\milli\volt}}, que es la nueva resoluci\'on del actuador del lazo PI
+de la Etapa~6 \\
+\addlinespace[3pt]
+\textbf{La UART queda solo como RX} &
+El TX desaparece del TopDesign nuevo \\
+\addlinespace[3pt]
+\textbf{Subida PSoC$\to$ESP por I\textsuperscript{2}C} (\texttt{psoc\_link\_*}, PSoC maestro) &
+\emph{La UART a 115\,200 era el cuello de botella del \emph{stream} de
+muestras.} El protocolo de \emph{frames} no cambia: cambia el medio \\
+\addlinespace[3pt]
+\textbf{\texttt{PGAout}}: nueva etapa de salida del \emph{pipeline} GEO &
+Configurable por el comando \texttt{0xA8}, igual que \texttt{PGAgain} y \texttt{PGAvdac} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{El principio de la Etapa~4 sobrevive intacto
+al cambio de placa}: el medio del enlace cambi\'o por tercera vez
+(SPI $\to$ UART $\to$ I\textsuperscript{2}C) sin tocar el protocolo. Que el
+formato de \emph{frames} sea independiente del transporte es lo que hizo
+barata cada migraci\'on.}
+
+\subsubsection{Trampas del TopDesign nuevo, registradas}
+
+\pendiente{Estas cost\'o encontrarlas y conviene no volver a tropezar:
+\begin{itemize}[itemsep=0.15em,topsep=0.2em]
+\item El componente se llama \texttt{I2C\_1}, \textbf{no} \texttt{I2C}.
+\item \textbf{El TopDesign nuevo no tiene pin LED}: hubo que sacar el
+\emph{include} directo de \texttt{LED.h} para que los \emph{guards}
+\texttt{CY\_PINS\_LED\_H} hicieran efecto.
+\item Los pines de \texttt{SPIp} quedaron \textbf{repartidos en varios
+puertos}, as\'i que el \emph{fitter} dej\'o de emitir los macros agregados; para
+el CS de la SD se usan los del pin~0.
+\end{itemize}
+Y sigue vigente la regla del proyecto: \textbf{nunca editar a mano}
+\texttt{.cyprj}, \texttt{.cydwr}, \texttt{.cysch} ni \texttt{.cyfit} ---solo
+\texttt{.c} y \texttt{.h}. Romper esto ya rompi\'o un \emph{build} una vez.}
+
+\dato{Estado del \emph{build} tras adaptar el firmware al TopDesign nuevo:
+\textbf{compila}. Flash \SI{60400}{\byte}, SRAM \SI{51928}{\byte}.}
+
+\subsection{Cambios en el ESP32}
+
+\textbf{El enlace pasa a ser asim\'etrico.} ESP\,$\to$\,PSoC sigue por UART
+(porque el PSoC conserva el RX); PSoC\,$\to$\,ESP pasa a I\textsuperscript{2}C
+con el PSoC de maestro y el ESP de esclavo en \texttt{PSOC\_I2C\_ADDR}
+(GPIO\,21/22). Los bytes entran a un \emph{ring buffer} y \texttt{poll()} los
+consume con el mismo \emph{parser} de \emph{frames} de siempre.
+
+\textbf{Sincronizaci\'on: se elimina el cable.} Desaparecen
+\texttt{SYNC\_IN\_PIN} y la ISR \texttt{onSyncEdge}. Ya no hay sincronizaci\'on
+por cable desde el maestro: \textbf{el arranque llega \'unicamente por ESP-NOW},
+y es el propio esclavo el que genera el flanco hacia el PSoC por
+\texttt{SYNC\_TO\_PSOC\_PIN}, el \'unico pin de \emph{sync} que queda.
+
+\seleccionado{Esto simplifica el despliegue en campo ---un cable menos por
+nodo--- \textbf{sin violar el principio de instante cero por flanco f\'isico}:
+el flanco sigue existiendo, solo que ahora lo genera el esclavo localmente al
+recibir el disparo por radio. La sincronizaci\'on entre nodos vuelve a depender
+enteramente de la calidad del PRESTART/HOT\_WAIT de la Etapa~4.}
+
+\pendiente{Consecuencia directa: \textbf{el presupuesto de \emph{jitter} hay
+que rehacerlo} para esta topolog\'ia. Con \emph{sync} por cable, una parte del
+error estaba acotada por hardware; ahora todo el error de sincronizaci\'on pasa
+por el enlace de radio. Es la verificaci\'on m\'as urgente de esta etapa.}
+
+\textbf{Interfaz local en el nodo} (OLED por SPI $+$ botones). Cada esclavo
+puede operarse sin maestro y sin tel\'efono. Junto con los comandos USB de la
+Etapa~6, completa tres v\'ias independientes de operaci\'on:
+interfaz local, USB y web.
+
+\textbf{\texttt{PGAout} en toda la cadena de control}: comando \texttt{0xA8},
+configuraci\'on dirigida por ESP-NOW, comando USB \texttt{pgaout N}, fila propia
+en el panel web ---visible solo cuando el PSoC reporta
+\texttt{hw\_class=GEO}--- con persistencia, y exportaci\'on como
+\texttt{pgaout\_code}/\texttt{pgaout\_gain} en los metadatos.
+
+\seleccionado{Que un par\'ametro nuevo aparezca simult\'aneamente en el firmware,
+en los tres frentes de operaci\'on \emph{y} en los metadatos exportados es la
+se\~nal de que la arquitectura de configuraci\'on madur\'o: agregar una etapa ya
+no es un parche, es rellenar un patr\'on.}
+
+\subsection{PCBs}
+
+El repositorio \texttt{PCBs} contiene el proyecto en \textbf{KiCad} y en
+\textbf{JitX} (m\'as un \texttt{JitX\_para\_port}), con \emph{commits} hasta el
+9 de agosto.
+
+\pendiente{No hay bit\'acora de esta etapa y la decisi\'on KiCad frente a JitX
+no est\'a registrada en ning\'un lado. \textbf{¿Cu\'al es el proyecto vigente y por
+qu\'e se explor\'o el otro?}}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Placa propia; IDAC como referencia de calibraci\'on (LSB \SI{3.75}{\milli\volt}); enlace asim\'etrico UART bajada / I\textsuperscript{2}C subida; etapa \texttt{PGAout}; interfaz local OLED $+$ botones; \emph{sync} \'unicamente por ESP-NOW con flanco generado localmente \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & VDAC como referencia; TX de la UART del PSoC; \emph{sync} por cable entre maestro y esclavo (\texttt{SYNC\_IN\_PIN} y su ISR); pin de LED en el TopDesign \\
+\addlinespace[3pt]
+\textbf{Qued\'o abierto} & Rehacer el presupuesto de \emph{jitter} sin cable de \emph{sync}; recalibrar el lazo PI con la nueva resoluci\'on del IDAC; validar la placa contra la matriz E1--E18 de la Etapa~8; decidir KiCad frente a JitX \\
+\bottomrule
+\end{tabularx}
+\end{center}

@@ -1,0 +1,318 @@
+\section{Etapa 3 --- Electr\'onica anal\'ogica y modelo del transductor}
+\label{sec:et3}
+\periodo{17 de abril --- 20 de mayo de 2026 \quad$\cdot$\quad 9 d\'ias de trabajo registrados}
+
+La etapa m\'as densa en decisiones de dise\~no. Arranca con el modelo del
+ge\'ofono y termina con la cadena anal\'ogica que sigue en uso. Contiene los
+\textbf{dos pivotes de arquitectura} del proyecto.
+
+\subsection{El problema de partida}
+
+El SM-24 tiene frecuencia natural $f_n = \SI{10}{\hertz}$ y amortiguamiento
+$\zeta_0 = 0{,}25$. En la forma en aceleraci\'on su respuesta es
+
+\begin{equation}
+H_a(s) = \frac{-G_0\,s}{s^2 + 2\zeta_0\omega_n s + \omega_n^2},
+\qquad \omega_n = 2\pi\cdot\SI{10}{\hertz}.
+\label{eq:hgeo}
+\end{equation}
+
+Por debajo de $f_n$ la respuesta cae a \SI{20}{\decibel} por d\'ecada. El
+problema es que la informaci\'on de las capas profundas del suelo vive
+justamente ah\'i: mayor profundidad de investigaci\'on significa mayor longitud
+de onda, y mayor longitud de onda significa menor frecuencia. Con el
+transductor tal cual, la profundidad alcanzable est\'a acotada por el
+transductor, no por el suelo ni por la electr\'onica.
+
+\subsection{Primer intento: filtro RC pasivo de entrada (17 de abril)}
+
+El primer ataque fue un filtro RC pasivo antes del amplificador, dise\~nado por
+optimizaci\'on num\'erica (\texttt{FiltroPasivoEntrada.m}): se plante\'o la
+funci\'on de transferencia conjunta ge\'ofono\,$+$\,RC ---que resulta de tercer
+orden--- y se buscaron $R$ y $C$ que aplanaran la respuesta. Se explor\'o en
+paralelo una alternativa por \textbf{observador de estado} en Simulink
+(\texttt{SM24\_model\_Observer1.slx}).
+
+Ambas cosas se abandonaron el 18 de abril, menos de 28 horas despu\'es.
+
+\descartado{\textbf{Filtro RC pasivo de entrada.} Motivos registrados en la
+bit\'acora: \textbf{(1)} la frecuencia de corte queda a merced de la tolerancia
+de los componentes ---con \SIrange{5}{10}{\percent} t\'ipico, $f_c$ se corre lo
+suficiente como para amplificar de m\'as la resonancia del ge\'ofono en vez de
+compensarla---; \textbf{(2)} deriva t\'ermica de los condensadores en trabajo de
+campo entre \SI{0}{\celsius} y \SI{40}{\celsius}; \textbf{(3)} \emph{fase no
+lineal}, que para MASW es descalificante, porque el m\'etodo mide justamente
+velocidad de fase y un error de fase se traduce directo en error de velocidad;
+y \textbf{(4)} el PSoC ya trae DSP, as\'i que el filtrado sale gratis en
+componentes.}
+
+\pendiente{La bit\'acora del 18/04 presenta estos motivos como
+\emph{reconstrucci\'on} a partir del \emph{diff}, no como testimonio directo
+---dice literalmente ``las razones probables''--- y en un pasaje habla de un
+ge\'ofono de \SI{4.5}{\hertz}, que no es el SM-24. El motivo (3), fase lineal,
+es el t\'ecnicamente decisivo y el que sostiene el resto del dise\~no.
+\textbf{Confirmar cu\'al fue el motivo real.}}
+
+\subsection{Lo que reemplaz\'o al RC: FIR con decimaci\'on en cascada}
+
+En lugar del RC se dise\~n\'o una cadena de tres etapas FIR de 32 coeficientes
+(\texttt{fir1(31,\,0.15)}, ventana de Hamming), cada una seguida de decimaci\'on
+$\times 4$ ---decimaci\'on total $\times 64$.
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Propiedad} & \textbf{Por qu\'e importa ac\'a} \\
+\midrule
+Fase lineal exacta & Todas las frecuencias se retardan lo mismo: no contamina la curva de dispersi\'on. Es la raz\'on principal \\
+Estabilidad incondicional & Solo ceros, sin polos \\
+Coeficientes exactos & Sin tolerancia, sin deriva t\'ermica, sin envejecimiento \\
+Reconfigurable & Cambiar $f_c$ es cambiar una l\'inea, no un componente \\
+Costo computacional & Decimar en cascada cuesta $\approx 32(1+\tfrac14+\tfrac1{16})\approx 42$ MAC/muestra equivalentes, contra los \textasciitilde{}2000 coeficientes que exigir\'ia un \'unico filtro de $\times64$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{El principio qued\'o y estructura todo el sistema:} lo que
+puede resolverse en digital con fase controlada se resuelve en digital; lo
+anal\'ogico se reserva para lo que \emph{solo} puede hacerse antes de
+cuantizar ---acondicionar el nivel y extender la banda del transductor.}
+
+\subsection{Segundo intento: compensaci\'on activa}
+
+Con el RC descartado, el problema de la banda baja segu\'ia intacto: ning\'un
+filtro digital puede recuperar informaci\'on que el transductor atenu\'o por
+debajo del piso de ruido \emph{antes} del ADC. La extensi\'on de banda tiene que
+ocurrir en anal\'ogico.
+
+Entre el 22 y el 30 de abril se probaron tres l\'ineas:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Script} & \textbf{Enfoque} & \textbf{Destino} \\
+\midrule
+\texttt{compensadorKai.m} & Compensador anal\'itico de forma cerrada & Explorado \\
+\texttt{compensadorPazos.m} & B\'usqueda exhaustiva sobre el espacio de componentes & Explorado \\
+\texttt{Compensador.m} & Filtro activo VCVS / Sallen-Key & \textbf{Descartado 30/04} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+La forma objetivo qued\'o fijada como
+
+\begin{equation}
+H_3(s) = \frac{2(\zeta_1-\zeta_0)\,\omega_n\,s}
+              {s^2 + 2\zeta_1\omega_n s + \omega_n^2},
+\label{eq:objetivo}
+\end{equation}
+
+con $\zeta_0=0{,}25$ ---el del ge\'ofono, que el numerador debe reproducir para
+cancelar sus polos--- y $\zeta_1$ el amortiguamiento \emph{nuevo}, mucho mayor,
+que fija el denominador de la etapa pasa-banda. En el script de abril se us\'o
+$\zeta_1=100$ como valor de trabajo; la caracterizaci\'on medida de julio
+(Etapa~9) da $\zeta_1 \approx 937$ para el circuito calibrado.
+
+Esta es exactamente la estrategia de Ma \emph{et al.} (2023): \textbf{no se
+cancelan polos ni ceros}, se sube el amortiguamiento manteniendo $\omega_n$.
+La red completa resulta $1 - H_3(s)$ ---pasa-todo menos pasa-banda---, y \emph{eso
+explica por qu\'e la cadena anal\'ogica del proyecto tiene una etapa pasa-banda
+seguida de una suma}: el pasa-banda y la resta \textbf{son} la compensaci\'on.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.86\textwidth]{extension_banda.png}
+\caption{Qu\'e hace la compensaci\'on. Al elevar $\zeta_1$, los polos complejos
+del transductor se separan en dos reales y el inferior queda en
+$\omega_n/(2\zeta_1)$. El corte de \SI{-3}{\decibel} pasa de
+\SI{8.0}{\hertz} sin compensar a \SI{0.51}{\hertz} con el $\zeta_1=10$ de Ma
+\emph{et al.}\ y a \SI{0.010}{\hertz} con el $\zeta_1\approx 937$ que resulta
+del denominador BP medido en la tanda calibrada del 21/07. Calculado a partir
+de la Ec.~\eqref{eq:hgeo} y $1-H_3$ con $f_n = \SI{10.2046}{\hertz}$.
+\textbf{Esta es la respuesta \emph{de dise\~no}}; la muesca realmente medida
+resulta \SI{26.3}{\decibel} menos profunda de lo previsto (Etapa~9).}
+\label{fig:extension}
+\end{figure}
+
+\subsection{El pivote de topolog\'ia: Sallen-Key $\to$ MFB (30 de abril)}
+
+El 30 de abril se escribi\'o \texttt{ComparacionFiltros.m}, que superpone los
+Bode de tres funciones: la MFB propuesta, la Sallen-Key vigente y la respuesta
+objetivo de la Ec.~\eqref{eq:objetivo}. Ese gr\'afico fue la herramienta de
+decisi\'on.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.9\textwidth]{comparacion_topologias.png}
+\caption{Reproducci\'on del \texttt{ComparacionFiltros.m} original, con los
+mismos valores de componente. Arriba, las tres respuestas; abajo, la
+desviaci\'on contra el objetivo. En \SIrange{0.1}{200}{\hertz} la MFB se aparta
+\SI{0.19}{\decibel} como m\'aximo y la Sallen-Key \SI{0.26}{\decibel}: en
+magnitud son intercambiables. \textbf{El pivote no se decidi\'o por respuesta.}}
+\label{fig:topologias}
+\end{figure}
+
+\seleccionado{\textbf{Topolog\'ia MFB (\emph{Multiple Feedback}).} Criterio, en
+orden de peso:
+\begin{enumerate}[itemsep=0.1em,topsep=0.2em]
+\item \textbf{Menor sensibilidad de $Q$ y $\omega_0$ a las tolerancias.} Es lo
+decisivo: se usan componentes de tolerancia floja y hay que replicar varios
+canales apareados. La Sallen-Key realimenta en positivo y por lo tanto
+\emph{amplifica} el error de componentes; la MFB usa solo realimentaci\'on
+negativa.
+\item Mejor atenuaci\'on en alta frecuencia.
+\item La baja impedancia de entrada de la MFB no penaliza, porque hay etapas
+de ganancia antes de ella.
+\item La inversi\'on de fase se revierte en digital sin costo.
+\item El producto ganancia-ancho de banda de los operacionales es enorme
+frente a las frecuencias Rayleigh: no es limitante.
+\end{enumerate}
+Dicho de otro modo: \emph{las desventajas cl\'asicas de la MFB son inocuas en
+esta banda, y su ventaja ataca el problema real}.}
+
+\descartado{\textbf{Topolog\'ia Sallen-Key / VCVS.} No por respuesta ---la
+Fig.~\ref{fig:topologias} muestra que cumpl\'ia--- sino por sensibilidad a
+tolerancias, riesgo de oscilaci\'on con ganancia mayor que uno, e impedancia de
+salida real no nula del operacional.}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{AnalogPathFinal_trim.png}
+\caption{La cadena anal\'ogica que result\'o de esta etapa y sigue vigente:
+PGA $\to$ pasa-banda (MFB) $\to$ sumador en corriente $\to$ pasa-bajos, con
+referencia ajustable por etapa. El pasa-banda y la suma \emph{son} la red de
+compensaci\'on $1-H_3$: no son dos bloques que casualmente est\'an en serie.}
+\label{fig:cadena}
+\end{figure}
+
+El mismo d\'ia entr\'o la otra decisi\'on de la etapa: la \textbf{suma en
+corriente} mediante amplificador de transimpedancia. M\'ultiples se\~nales
+entran por resistencias a un nodo de tierra virtual y el TIA convierte la suma
+de corrientes en tensi\'on. Es un sumador lineal que no carga las fuentes y que
+escala agregando una resistencia por entrada ---esa es la etapa SUM de la
+cadena definitiva.
+
+\subsection{Medici\'on: MFB contra Sallen-Key en banco}
+
+La decisi\'on por an\'alisis se contrast\'o despu\'es con datos. Se capturaron
+conjuntos con las dos topolog\'ias (\texttt{MFB\_DigitalFilterLPF.mat} y
+\texttt{Sallen\_Key.mat}) y se construy\'o \texttt{analisis\_espectral.m} (264
+l\'ineas) como banco de comparaci\'on:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{PSD} cruda y filtrada, cada medici\'on en gris y la media
+$\pm\sigma$ en color, con las bandas de inter\'es resaltadas;
+\item \textbf{SNR por sesi\'on}, para identificar capturas at\'ipicas y
+descartarlas con criterio en vez de a ojo;
+\item \textbf{espectrogramas}, que hacen visible el evento transitorio ---un
+auto pasando aparece como una mancha de energ\'ia en \SIrange{2}{20}{\hertz}
+durante \SIrange{1}{3}{\second}.
+\end{itemize}
+
+\dato{\textbf{Vol\'umen experimental de la etapa:} 18 sesiones de captura el 28
+de abril, 41 sesiones entre el 2 y el 4 de mayo. El patr\'on de tiempos del 4 de
+mayo alterna micro-sesiones de \SIrange{3}{16}{\second} ---cambiar un
+componente, reconectar, verificar--- con sesiones largas de
+\SIrange{30}{60}{\minute} de captura estable.}
+
+\subsection{Primeras se\~nales reales y primera salida a exteriores}
+
+El 20 de abril lleg\'o la primera se\~nal real del SM-24 a la PC, v\'ia
+\texttt{geophone\_scope.m} (657 l\'ineas), un osciloscopio virtual en MATLAB
+sobre puerto serie. El 29 de abril el ge\'ofono sali\'o por primera vez al
+exterior ---las capturas \texttt{mesitaEstacionamiento*.mat}, unos 13 segundos
+de se\~nal cada una, en el estacionamiento de la Facultad: un sitio con fuentes
+de vibraci\'on abundantes y predecibles (autos, personas caminando) a pocos
+metros del laboratorio.
+
+\subsection{La cadena de firmware toma forma}
+
+Para el 29 de abril el PSoC ya ten\'ia el \emph{pipeline} completo
+ADC\,$\to$\,DFB\,$\to$\,FIR\,$\to$\,UART, con:
+
+\begin{itemize}[itemsep=0.2em]
+\item cuatro configuraciones de ADC seleccionables;
+\item el \textbf{DFB} (filtro digital en hardware del PSoC) filtrando la salida
+del $\Delta\Sigma$ antes del FIR por software;
+\item un \textbf{notch FIR de \SI{50}{\hertz}} contra la interferencia de red
+(\texttt{notch.m});
+\item protocolo binario propio hacia la PC: \texttt{0xAA} muestra de 12 bytes,
+\texttt{0xCC} confirmaci\'on de estado, \texttt{0xDD} evento de \emph{debug},
+y comandos \texttt{[0xBB][CMD][LEN][payload]} en sentido inverso;
+\item \emph{heartbeat} autom\'atico cada \textasciitilde{}\SI{2}{\second} para
+detectar cuelgues.
+\end{itemize}
+
+\descartado{\textbf{El notch de \SI{50}{\hertz} termin\'o retirado} (decisi\'on
+posterior, Etapa~9). La interferencia de red es determinista y de forma
+conocida, as\'i que conviene \emph{estimarla y restarla} en post-proceso por
+ajuste no lineal de m\'inimos cuadrados: eso no introduce retardo de grupo, es
+reversible y ---lo importante--- no borra se\~nal s\'ismica \'util, que en
+\SI{50}{\hertz} todav\'ia la hay.}
+
+\subsection{Calibraci\'on manual del \emph{offset} (10 de mayo)}
+
+``Calibraci\'on a manita ya funciona''. El \emph{offset} de continua de la
+cadena diferencial se cancel\'o desplazando a mano las referencias de los VDAC,
+con un protocolo de configuraci\'on PSoC$\leftrightarrow$MATLAB
+(\emph{request} \texttt{0xA5}) para leer y fijar par\'ametros en caliente.
+
+\seleccionado{Este es el germen directo de la auto-calibraci\'on de la
+Etapa~6: primero se demostr\'o que ajustando las referencias se
+cancelaba el \emph{offset}, y despu\'es se cerr\'o el lazo para que lo hiciera el
+firmware solo.}
+
+\subsection{Cierre del compensador: del ideal al circuito real (17--20 de mayo)}
+
+Hasta ac\'a el compensador exist\'ia como funci\'on de transferencia. Faltaba
+convertirlo en un circuito con componentes comprables y operacionales reales,
+y eso ocup\'o tres d\'ias duros ---el mensaje de \emph{commit} del 18 de mayo
+fue \emph{``ayudame dios anal\'ogico quiero sucumbir al diablo digital''}.
+
+\textbf{El operacional real entra al modelo.} Se dej\'o de suponer ganancia
+infinita: se model\'o el amplificador con $A_0 = \SI{90}{\decibel}$ y polo
+dominante en \SI{8}{\mega\hertz}, y se reverific\'o la respuesta del
+compensador con esa no idealidad
+(\texttt{graficar\_compensador\_csv.py}). Este es el paso que suele delatar un
+dise\~no que ``andaba en el papel''.
+
+\textbf{B\'usqueda de componentes.} Se escribieron cuatro variantes de
+optimizaci\'on en paralelo, atacando el mismo problema desde \'angulos
+distintos. La que qued\'o plantea el espacio de b\'usqueda como continuo en tres
+dimensiones $[\log_{10}R_1, \log_{10}C_1, \log_{10}C_2]$ y luego:
+
+\begin{enumerate}[itemsep=0.15em]
+\item determina $R_2$ imponiendo la condici\'on de $\omega_0$ exacta ---o sea,
+elimina una dimensi\'on por restricci\'on en vez de por b\'usqueda;
+\item resuelve las razones del sumador anal\'iticamente por m\'inimos cuadrados;
+\item reci\'en al final hace \emph{snap} a valores comerciales y resuelve lo que
+no exista con redes en T.
+\end{enumerate}
+
+\seleccionado{El orden importa y es la lecci\'on transferible: \emph{optimizar
+en el continuo, restringir por f\'isica, discretizar al final}. Discretizar
+antes de optimizar deja el \'optimo fuera de la grilla.}
+
+\textbf{La cadena entra al PSoC (20 de mayo).} Con el proyecto
+\texttt{DiferencialToSingleEnded} se implement\'o por primera vez la cadena
+anal\'ogica completa dentro del PSoC ---el \texttt{main.c} que arranca todos los
+bloques anal\'ogicos en la secuencia correcta. A la \'una de la ma\~nana, con
+osciloscopio conectado: \emph{``Datos y m\'as datos, empieza la locura''}.
+
+\dato{Se agreg\'o adem\'as un AMUX para poder \emph{medir el modo com\'un} de la
+entrada diferencial, y el protocolo se comprimi\'o a 4 bytes multiplexando tipo
+y canal en el segundo byte.}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Compensaci\'on activa por elevaci\'on de $\zeta$ (no cancelaci\'on polo-cero); topolog\'ia MFB; suma en corriente por TIA; filtrado de fase lineal en digital; DFB en hardware; protocolo binario propio; ajuste de \emph{offset} por VDAC \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & Filtro RC pasivo de entrada; observador de estado; topolog\'ia Sallen-Key/VCVS; notch de \SI{50}{\hertz} (m\'as tarde) \\
+\addlinespace[3pt]
+\textbf{Qued\'o abierto} & El \emph{offset} se cancelaba a mano y hab\'ia que repetirlo por placa y por ganancia: no escalaba a un arreglo de varios nodos \\
+\bottomrule
+\end{tabularx}
+\end{center}

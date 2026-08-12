@@ -1,0 +1,114 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Panorama general}{6}{section.1}%
+\contentsline {subsection}{\numberline {1.1}De qu\'e se trata el proyecto}{6}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Escala del trabajo}{6}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Los diez repositorios}{7}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Las etapas}{7}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Etapa 1 --- Marco te\'orico}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Punto cero}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Fuente primaria: Foti \emph {et al.}, los ocho cap\'itulos}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Del papel al c\'odigo: los cinco scripts de validaci\'on te\'orica}{9}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}La base bibliogr\'afica: de 22 a 65 papers}{9}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Balance de la etapa}{10}{subsection.2.5}%
+\contentsline {section}{\numberline {3}Etapa 2 --- Investigaci\'on asistida}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Qu\'e se le pidi\'o al agente}{10}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Qu\'e produjo}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Consolidaci\'on y cierre}{11}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Etapa 3 --- Electr\'onica anal\'ogica y modelo del transductor}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}El problema de partida}{11}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Primer intento: filtro RC pasivo de entrada (17 de abril)}{11}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Lo que reemplaz\'o al RC: FIR con decimaci\'on en cascada}{12}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Segundo intento: compensaci\'on activa}{12}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}El pivote de topolog\'ia: Sallen-Key $\to $ MFB (30 de abril)}{12}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Medici\'on: MFB contra Sallen-Key en banco}{14}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Primeras se\~nales reales y primera salida a exteriores}{14}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}La cadena de firmware toma forma}{15}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}Calibraci\'on manual del \emph {offset} (10 de mayo)}{15}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}Cierre del compensador: del ideal al circuito real (17--20 de mayo)}{15}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}Balance de la etapa}{16}{subsection.4.11}%
+\contentsline {section}{\numberline {5}Etapa 4 --- La red inal\'ambrica ESP-NOW}{16}{section.5}%
+\contentsline {subsection}{\numberline {5.1}El problema que resuelve}{16}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Arquitectura adoptada}{16}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}La secuencia de sincronizaci\'on: c\'omo se lleg\'o a PRESTART}{17}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}C\'omo se midi\'o la sincronizaci\'on}{17}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Hitos de funcionamiento}{17}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}En paralelo: acondicionamiento del martillo (28--29 de mayo)}{18}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Refactor de cierre (31 de mayo, PR \#2)}{18}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Balance de la etapa}{18}{subsection.5.8}%
+\contentsline {section}{\numberline {6}Etapa 5 --- Consolidaci\'on del nodo e interfaz de campo}{18}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Un solo firmware para dos nodos distintos}{18}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}La PC deja de ser necesaria (8 de junio)}{19}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}El notch de \SI {50}{\hertz } se retira (7 y 9 de junio)}{19}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}El \emph {handoff} de \emph {jitter} (10 de junio)}{19}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Balance de la etapa}{20}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Etapa 6 --- Auto-calibraci\'on, DMA y \texttt {superMaquina}}{20}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Por qu\'e hace falta calibrar}{20}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Los tres algoritmos que se probaron}{20}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Los detalles finos del controlador}{21}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Dos bugs que valen su propia entrada}{21}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Persistencia: la calibraci\'on sobrevive al reset}{22}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}La adquisici\'on sale de la CPU}{22}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}\texttt {superMaquina}: la captura se vuelve hardware (2 de julio)}{24}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}Resultado medido de la auto-calibraci\'on}{25}{subsection.7.8}%
+\contentsline {subsection}{\numberline {7.9}Balance de la etapa}{26}{subsection.7.9}%
+\contentsline {section}{\numberline {8}Etapa 7 --- El \emph {pipeline} MASW en Python y las campa\~nas de campo}{26}{section.8}%
+\contentsline {subsection}{\numberline {8.1}La geometr\'ia real de las campa\~nas}{26}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}El dato crudo, tal cual sali\'o del arreglo}{27}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Lo que se implement\'o en Python}{27}{subsection.8.3}%
+\contentsline {subsubsection}{\numberline {8.3.1}Las doce fases de pulido del revisor de campo}{28}{subsubsection.8.3.1}%
+\contentsline {subsubsection}{\numberline {8.3.2}Grupos de dispersi\'on y multimodalidad (9 de julio)}{29}{subsubsection.8.3.2}%
+\contentsline {subsection}{\numberline {8.4}En paralelo, en el firmware}{30}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Resultado: el perfil $V_S(z)$}{31}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Balance de la etapa}{32}{subsection.8.6}%
+\contentsline {section}{\numberline {9}Etapa 8 --- Auditor\'ia pre-campo}{32}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Por qu\'e hac\'ia falta}{32}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}La jerarqu\'ia de memoria, validada}{32}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}La matriz de aceptaci\'on E1--E18}{33}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Los tres defectos cr\'iticos}{33}{subsection.9.4}%
+\contentsline {subsubsection}{\numberline {9.4.1}F1 --- el \emph {watchdog} destru\'ia las capturas largas}{33}{subsubsection.9.4.1}%
+\contentsline {subsubsection}{\numberline {9.4.2}F9 --- START romp\'ia el nodo}{33}{subsubsection.9.4.2}%
+\contentsline {subsubsection}{\numberline {9.4.3}F5 --- volcado colgado por socket zombi}{34}{subsubsection.9.4.3}%
+\contentsline {subsection}{\numberline {9.5}Defectos menores documentados y no corregidos}{34}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Balance de la etapa}{34}{subsection.9.6}%
+\contentsline {section}{\numberline {10}Etapa 9 --- Art\'iculo URUCON y caracterizaci\'on medida de la cadena}{34}{section.10}%
+\contentsline {subsection}{\numberline {10.1}El art\'iculo: \emph {Automatic DC-Offset Calibration for a Low-Cost Geophone Front End}}{35}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}El protocolo de barridos: c\'omo se midi\'o la cadena}{35}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Tratamiento de datos: lo que se hizo bien}{35}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Un conjunto de datos completo, descartado}{36}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}La tanda calibrada del 21 de julio}{36}{subsection.10.5}%
+\contentsline {subsubsection}{\numberline {10.5.1}El hallazgo principal: la muesca no llega a profundidad}{36}{subsubsection.10.5.1}%
+\contentsline {subsection}{\numberline {10.6}Discrepancia a resolver sobre $\zeta $}{37}{subsection.10.6}%
+\contentsline {subsection}{\numberline {10.7}Balance de la etapa}{37}{subsection.10.7}%
+\contentsline {section}{\numberline {11}Etapa 10 --- Ruptura arquitect\'onica y portaci\'on a la web}{37}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Del monolito al superproyecto (21 de julio)}{38}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Reorganizaci\'on por prop\'osito (24 de julio)}{38}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}El pivote de interfaz: de PyQt a web}{38}{subsection.11.3}%
+\contentsline {subsubsection}{\numberline {11.3.1}Lo que trajo la portaci\'on (29 de julio)}{38}{subsubsection.11.3.1}%
+\contentsline {subsection}{\numberline {11.4}Otras l\'ineas del per\'iodo}{39}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Balance de la etapa}{39}{subsection.11.5}%
+\contentsline {section}{\numberline {12}Etapa 11 --- La placa nueva (rama \texttt {cambios-hardware})}{39}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Cambios en el PSoC}{40}{subsection.12.1}%
+\contentsline {subsubsection}{\numberline {12.1.1}Trampas del TopDesign nuevo, registradas}{40}{subsubsection.12.1.1}%
+\contentsline {subsection}{\numberline {12.2}Cambios en el ESP32}{40}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}PCBs}{41}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}Balance de la etapa}{41}{subsection.12.4}%
+\contentsline {section}{\numberline {13}Inventario de lo construido}{41}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Firmware}{42}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Interfaces y post-proceso}{42}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}Datos}{43}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Documentaci\'on e investigaci\'on}{43}{subsection.13.4}%
+\contentsline {subsection}{\numberline {13.5}Instrumentaci\'on de laboratorio}{43}{subsection.13.5}%
+\contentsline {section}{\numberline {14}Tabla maestra de decisiones}{43}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Cadena anal\'ogica}{44}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}Procesamiento de se\~nal}{45}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}Firmware y arquitectura embebida}{45}{subsection.14.3}%
+\contentsline {subsection}{\numberline {14.4}Comunicaci\'on y sincronizaci\'on}{46}{subsection.14.4}%
+\contentsline {subsection}{\numberline {14.5}Robustez (auditor\'ia pre-campo)}{46}{subsection.14.5}%
+\contentsline {subsection}{\numberline {14.6}Herramientas e infraestructura}{47}{subsection.14.6}%
+\contentsline {subsection}{\numberline {14.7}Los principios que sobrevivieron a todo}{47}{subsection.14.7}%
+\contentsline {section}{\numberline {15}Qu\'e queda abierto}{47}{section.15}%
+\contentsline {subsection}{\numberline {15.1}Lo que hay que resolver antes de escribir la entrega}{47}{subsection.15.1}%
+\contentsline {subsection}{\numberline {15.2}Mediciones que faltan}{48}{subsection.15.2}%
+\contentsline {subsection}{\numberline {15.3}Preguntas sin respuesta registrada}{48}{subsection.15.3}%
+\contentsline {subsection}{\numberline {15.4}Deuda t\'ecnica conocida}{49}{subsection.15.4}%
+\contentsline {subsection}{\numberline {15.5}Nota de cierre}{49}{subsection.15.5}%

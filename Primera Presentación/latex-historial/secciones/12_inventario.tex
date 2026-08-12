@@ -1,0 +1,114 @@
+\section{Inventario de lo construido}
+\label{sec:inventario}
+
+Qu\'e existe hoy y d\'onde est\'a. Sirve para reencontrar una pieza sin tener que
+recorrer los diez repositorios.
+
+\subsection{Firmware}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\multicolumn{2}{@{}l@{}}{\textbf{PSoC 5LP} --- \texttt{src/firmware/psoc}, \textasciitilde{}1200 archivos \texttt{.c}/\texttt{.h} (mayormente generados), 10 fuentes Verilog} \\
+\midrule
+Cadena anal\'ogica & PGA $\to$ BP $\to$ SUM $\to$ LP, con referencias por IDAC (antes VDAC) y AMux dedicados por etapa \\
+Adquisici\'on & ADC $\Delta\Sigma$ multi-rango, \texttt{Filter} FIR de hardware, cadena DMA con canales crudo/filtrado $\times$ simple/lote \\
+\texttt{superMaquina} & M\'aquina de estados de captura en UDB (Verilog): gobierna DRQ de DMA, inicio y fin de captura, y qu\'e IRQ llegan al ARM \\
+Auto-calibraci\'on & Controlador PI con \emph{feedforward}, banda muerta por etapa, anti-\emph{windup} direccional, detector de \emph{lock}, persistencia en EEPROM con CRC-16 por c\'odigo de ganancia \\
+Almacenamiento & FatFs sobre SD (\texttt{GEOLAST.BIN}, comandos \texttt{0xBC}--\texttt{0xBF}, banco \texttt{sdread N}) \\
+Firmware unificado & Un \texttt{main.c} que compila como GEO o HAMMER seg\'un el TopDesign \\
+\midrule
+\multicolumn{2}{@{}l@{}}{\textbf{ESP32} --- \texttt{src/firmware/esp32}, maestro $+$ esclavos} \\
+\midrule
+Red & ESP-NOW para control y sincronizaci\'on; PRESTART/HOT\_WAIT; \emph{store-and-forward} \\
+Enlace al PSoC & Asim\'etrico: UART en bajada, I\textsuperscript{2}C en subida (PSoC maestro) \\
+Interfaz web & Aplicaci\'on servida por el maestro sobre su propio AP, con relay WebSocket \\
+Interfaz local & OLED SPI $+$ botones en el esclavo (placa nueva) \\
+Diagn\'ostico & Comandos USB \texttt{probe}, \texttt{status}, \texttt{stream}, \texttt{debugpsoc}, \texttt{pre}, \texttt{sync}, \texttt{startnow}, \texttt{cap}, \texttt{clear}, \texttt{stop}, \texttt{range N}, \texttt{pgaout N}, \texttt{sdread N} \\
+Instrumentaci\'on & \texttt{CMD\_SCOPE\_START} y \texttt{SCOPE\_MULTI} para medir \emph{jitter} con osciloscopio \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Interfaces y post-proceso}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\multicolumn{2}{@{}l@{}}{\textbf{Python} --- \texttt{src/interfaces/python} (68 m\'odulos) y \texttt{src/calculos\_modelados/python} (16)} \\
+\midrule
+Servidor & FastAPI con est\'aticos, pesta\~nas, tema, visor de se\~nal con decimado min/max \\
+\texttt{review\_field\_data.py} & Revisi\'on de campo: orden por pico a pico, filtros, \'enfasis, alineaci\'on entre tandas, \emph{waterfall}, $f$--$k$, \emph{picking} de dispersi\'on, polaridad, dedup, mezcla de $F_s$ \\
+\texttt{masw\_dispersion.py} & \emph{Gather} $\to$ imagen de dispersi\'on por \emph{phase-shift}; grupos de dispersi\'on multimodo con combinaci\'on ponderada \\
+\texttt{masw\_inversion.py} & Inversi\'on a $V_S(z)$ con \texttt{evodcinv} sobre \texttt{disba} \\
+\texttt{deletion.py} & Cuarentena reversible de registros \\
+\texttt{AnalysisJobs} & Cola persistente de an\'alisis \\
+\texttt{smoke\_test.py} & \emph{Gate} de 58 verificaciones \\
+C\'alculo de compensadores & Siete variantes de \texttt{calculoCompensador*}, \texttt{calculoMFB\_LPF.py}, \texttt{sim\_compensador\_bp.py} \\
+\texttt{leva\_martillo/} & Modelo 2D del martillo de leva \\
+\midrule
+\multicolumn{2}{@{}l@{}}{\textbf{MATLAB} --- \texttt{src/interfaces/matlab} (14 \texttt{.m}) y \texttt{src/calculos\_modelados/matlab} (28)} \\
+\midrule
+\texttt{geophone\_scope.m} / \texttt{\_simple.m} & Osciloscopio virtual sobre puerto serie (657 l\'ineas la versi\'on completa) \\
+\texttt{analisis\_espectral.m} & PSD, SNR por sesi\'on y espectrogramas por entidad (264 l\'ineas) \\
+\texttt{AnalisisCircuito/} & \texttt{analizar\_barridos\_cadena\_analogica.m}, \texttt{cancelar\_armonicos\_linea\_ls.m}, \texttt{verificar\_calibracion\_potenciometro.m}, gr\'aficos GEO$\to$ADC \\
+\texttt{SM-24/} & \texttt{Compensador.m}, \texttt{compensadorKai.m}, \texttt{compensadorPazos.m}, \texttt{filtroFir.m} \\
+\texttt{CalculosRapidos/} & \texttt{ComparacionFiltros.m} (el gr\'afico del pivote), \texttt{notch.m}, \texttt{removeLineNoise\_SpectrumEstimation.m} \\
+\texttt{pruebas\_teoricas/} & \texttt{p01}--\texttt{p05}: validaci\'on num\'erica de la teor\'ia \\
+\texttt{Fisica loca/} & Martillo de leva en Simscape Multibody \\
+\texttt{third-party/} & Librer\'ia MASW-Matlab, usada como referencia de contraste \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Datos}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+\textbf{Conjunto} & \textbf{Tama\~no} & \textbf{Contenido} \\
+\midrule
+\texttt{raw/Canchiga} & 12{,}4~GiB & 74 capturas, 18 posiciones \\
+\texttt{raw/Canchita} & 10{,}8~GiB & 87 capturas, 20 posiciones \\
+\texttt{raw/Canchita\_2} & 5{,}0~GiB & 13 capturas, 10 posiciones \\
+\texttt{raw/Estacionamiento} & 3~MiB & Prueba inicial en exteriores \\
+\texttt{raw/Osciloscopio*} & \textasciitilde{}20~MiB & Barridos de la cadena anal\'ogica: tanda descartada del 20/07, calibraci\'on y verificaci\'on del 21/07 \\
+\texttt{processed/Canchita\_procesado} & 530~MiB & \emph{Waterfall}, curva de dispersi\'on, perfil $V_S$, promedios, manifiesto \\
+\texttt{processed/Canchita\_grupo1\_procesado} & 415~MiB & Grupo 1 procesado por separado \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Todo versionado con Git LFS de almacenamiento por carpeta y deduplicaci\'on
+SHA-256, con manifiesto de ruta, tama\~no y \emph{hash} por archivo.
+
+\subsection{Documentaci\'on e investigaci\'on}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Bit\'acora & 66 entradas diarias con an\'alisis de \emph{diff} \emph{commit} por \emph{commit}, \textasciitilde{}1{,}3~MB \\
+Vault de investigaci\'on & 232 notas: 8 cap\'itulos de Foti resumidos $+$ \textasciitilde{}150 conceptos at\'omicos enlazados \\
+Base bibliogr\'afica & 65 papers con DOI, categor\'ia y relevancia declarada \\
+Art\'iculo URUCON & \emph{Automatic DC-Offset Calibration for a Low-Cost Geophone Front End}, 5 p\'aginas, con revisi\'on adversarial simulada \\
+Protocolos & \texttt{PROTOCOLO\_BARRIDOS\_} \texttt{CADENA\_ANALOGICA.md}, \texttt{BUILD\_PROGRAM\_PSOC}, \texttt{PORT\_PLAN}, \texttt{PLAN\_CONECTIVIDAD\_} \texttt{MASTER.md} \\
+\emph{Handoffs} & \texttt{HANDOFF\_SESION\_2026-07-12.md} (auditor\'ia pre-campo), \emph{handoff} de \emph{jitter} del 10/06 \\
+Legado & \texttt{docs/legacy/pyqt\_field\_review/} --- \emph{snapshot} congelado de la app PyQt como referencia de paridad \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Instrumentaci\'on de laboratorio}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Generador Agilent 33220A & Barridos logar\'itmicos con \texttt{SYNC} hacia el trigger externo \\
+Osciloscopio Tektronix TDS2004B & 4 canales, uno por etapa anal\'ogica; sondas en $10\times$ obligatorio \\
+Ge\'ofono SM-24 & \SI{10}{\hertz}, $\zeta_0 = 0{,}25$ \\
+Aceler\'ometro de impacto PCB Piezotronics 086D20 & Canal de martillo \\
+CY8CKIT-059 $+$ ESP32 DevKitC & \emph{Carrier} intermedia, previa a la placa propia \\
+pyOCD & Depuraci\'on en placa (con \'el se vio la tormenta de IRQ) \\
+\bottomrule
+\end{tabularx}
+\end{center}

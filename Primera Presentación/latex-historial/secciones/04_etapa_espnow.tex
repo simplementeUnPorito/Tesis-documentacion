@@ -1,0 +1,153 @@
+\section{Etapa 4 --- La red inal\'ambrica ESP-NOW}
+\label{sec:et4}
+\periodo{24 de mayo --- 3 de junio de 2026 \quad$\cdot$\quad 7 d\'ias de trabajo, 18 \emph{commits}}
+
+\subsection{El problema que resuelve}
+
+Un sism\'ografo multicanal convencional cablea todos los ge\'ofonos a un
+digitalizador \'unico, y entonces la sincronizaci\'on entre canales es gratis:
+hay un solo reloj. Al pasar a nodos inal\'ambricos independientes, cada nodo
+tiene su propio reloj y su propio arranque, y \emph{la sincronizaci\'on pasa a
+ser el problema central del sistema}.
+
+Y no es un problema menor de comodidad. En MASW, un desfasaje entre canales se
+traduce directamente en un error de velocidad de fase, que se propaga a la
+curva de dispersi\'on y de ah\'i al perfil $V_S$. Un arreglo desincronizado no
+da un resultado ruidoso: da un resultado \emph{equivocado y cre\'ible}.
+
+\subsection{Arquitectura adoptada}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Elemento} & \textbf{Rol} \\
+\midrule
+Maestro ESP32 & Coordina el arreglo, sincroniza el disparo, concentra los vol\'umenes de datos y expone la interfaz hacia la PC \\
+Esclavos ESP32 & Uno por nodo. Comandan al PSoC local, reciben las muestras y las retienen hasta el volcado \\
+ESP-NOW & Enlace de control y sincronizaci\'on: sin asociaci\'on previa, latencia baja y predecible ---lo que hace falta para disparar, no para transferir \\
+PSoC & Adquisici\'on real. El ESP no toca la se\~nal: pide, espera y transporta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\descartado{\textbf{Enlace SPI PSoC\,$\leftrightarrow$\,ESP.} La primera
+versi\'on (24 de mayo) usaba SPI con el PSoC como esclavo. Se reemplaz\'o por
+UART en el refactor del 31 de mayo. En la placa de agosto la subida vuelve a
+cambiar, ahora a I\textsuperscript{2}C (Etapa~11): es la interfaz que
+m\'as veces se revis\'o del proyecto.}
+
+\subsection{La secuencia de sincronizaci\'on: c\'omo se lleg\'o a PRESTART}
+
+Vale la pena registrar la evoluci\'on completa, porque es el mejor ejemplo de
+c\'omo el sistema aprendi\'o a no confiar en el tiempo.
+
+\textbf{Intento 1 --- espera fija.} \verb|ARM| $\to$ esperar $N$ ms $\to$
+\verb|START|. Falla cuando ESP-NOW tarda m\'as que $N$: el esclavo recibe
+\verb|START| antes de estar en \verb|ARMED| y directamente no arranca. El
+s\'intoma es traicionero, porque el resto del arreglo s\'i arranca.
+
+\textbf{Intento 2 --- \emph{probe}/ACK con medici\'on de RTT} (25 de mayo). Ya
+no se supone la latencia: se mide. Mejora, pero sigue habiendo ventana entre
+la confirmaci\'on y el disparo.
+
+\textbf{Soluci\'on --- PRESTART con HOT\_WAIT} (26 de mayo). Se agrega un estado
+intermedio en el que el maestro \emph{verifica} que todos los esclavos est\'an
+calientes antes de emitir el disparo real:
+
+\begin{center}\small
+\texttt{IDLE $\to$ ARMING $\to$ ARMED $\to$ \textbf{PRESTART} $\to$ RUNNING $\to$ STOPPING}
+\end{center}
+
+\begin{enumerate}[itemsep=0.15em]
+\item El maestro difunde \verb|CMD_ARM|.
+\item Espera los \verb|ARM_ACK| con \emph{timeout}.
+\item Entra en PRESTART y consulta a cada esclavo su estado (HOT\_WAIT:
+consulta cada \SI{20}{\milli\second}, \emph{timeout} total
+\SI{120}{\milli\second}, 3 reintentos, todo configurable).
+\item Solo con todos confirmados emite el \verb|START| real.
+\end{enumerate}
+
+\seleccionado{\textbf{Y todo el mecanismo es no bloqueante.} Este es el detalle
+que lo hizo funcionar: los pulsos de \emph{debug} usaban
+\texttt{delayMicroseconds()}, lo que congelaba el CPU \SI{1}{\milli\second} y
+hac\'ia perder callbacks de ESP-NOW ---es decir, \emph{el propio instrumento de
+medici\'on causaba la p\'erdida del \emph{ACK} que se estaba tratando de
+diagnosticar}. Se reescribi\'o con marcas de tiempo y verificaci\'on en el
+\emph{loop}. Cambio chico en c\'odigo, decisivo en comportamiento.}
+
+\subsection{C\'omo se midi\'o la sincronizaci\'on}
+
+No se dio por buena: se instrument\'o. Se agreg\'o el comando
+\verb|CMD_SCOPE_START| (\texttt{0x60}), un disparo \emph{falso} que hace que
+todos los nodos emitan un pulso GPIO de \SI{1}{\milli\second} sin muestrear ni
+responder. Con el osciloscopio en los pines de \emph{sync} de los tres nodos
+(maestro GPIO\,15, esclavo\,1 GPIO\,32, esclavo\,2 GPIO\,22), la separaci\'on
+entre pulsos \emph{es} la latencia de sincronizaci\'on del sistema.
+
+Y para no medir una sola vez, el estado \verb|SCOPE_MULTI| repite el disparo
+128 veces con \SI{1}{\second} de separaci\'on, de modo que el osciloscopio
+acumule estad\'istica de \emph{jitter} sin intervenci\'on manual.
+
+\dato{Objetivo de dise\~no fijado en esta etapa: todos los pulsos dentro de
+\SI{1}{\milli\second} entre s\'i.}
+
+\pendiente{El \emph{jitter} medido sobre el arreglo completo y desplegado en
+campo sigue sin volcarse al documento. Ver \S\ref{sec:pendientes}.}
+
+\subsection{Hitos de funcionamiento}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Fecha} & \textbf{Mensaje} & \textbf{Qu\'e significa} \\
+\midrule
+26 may & \emph{``Parece que funciona la putaaaa''} & Primera transmisi\'on extremo a extremo: PSoC $\to$ ESP esclavo $\to$ ESP maestro $\to$ MATLAB \\
+3 jun & \emph{``Locura parece que ya funciona super bien''} & Sistema estable tras corregir el \emph{beacon} a \SI{10}{\hertz}, \emph{store-and-forward} en \texttt{VER} y UART a 115\,200~baudios \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{En paralelo: acondicionamiento del martillo (28--29 de mayo)}
+
+La fuente de impacto necesita su propio canal, porque marca el instante cero
+de la captura. Se cre\'o el proyecto PSoC \texttt{AcondicionamientoMartillo}
+para el aceler\'ometro de impacto \textbf{PCB Piezotronics 086D20}, con cadena
+propia: \texttt{LPF\_ref} $+$ \texttt{LPF\_ADC} $+$ referencia de
+\SI{1.024}{\volt}.
+
+Que sea un proyecto aparte no es casual: el martillo y el ge\'ofono tienen
+rangos de se\~nal y anchos de banda muy distintos, y compartir cadena habr\'ia
+obligado a comprometer los dos.
+
+\subsection{Refactor de cierre (31 de mayo, PR \#2)}
+
+El PR \#2 consolid\'o la etapa:
+
+\begin{itemize}[itemsep=0.2em]
+\item enlace PSoC\,$\leftrightarrow$\,ESP migrado de SPI a \textbf{UART};
+\item contador de muestras $N$ ampliado a 16 bits;
+\item m\'aquina de estados expl\'icita en el PSoC;
+\item \textbf{arranque del PSoC solo por flanco f\'isico} ---no por comando---,
+que es lo que garantiza que el instante cero sea el mismo en todos los nodos
+independientemente de la latencia del enlace;
+\item \texttt{debug\_log.h} unificado y READMEs por proyecto.
+\end{itemize}
+
+\seleccionado{\textbf{El principio que sobrevivi\'o a todo:} el disparo viaja
+por software, pero el instante cero lo define un \emph{flanco f\'isico}. Todos
+los rediseños posteriores ---incluida la placa de agosto, que cambia el enlace
+de subida a I\textsuperscript{2}C--- mantuvieron esa separaci\'on.}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & ESP-NOW para control y sincronizaci\'on; PRESTART/HOT\_WAIT; disparo por flanco f\'isico; instrumentaci\'on de \emph{jitter} por pulso GPIO; \texttt{SCOPE\_MULTI} para estad\'istica autom\'atica; UART hacia el PSoC; canal dedicado de martillo \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & Espera fija tras ARM; enlace SPI PSoC$\leftrightarrow$ESP; pulsos de \emph{debug} bloqueantes \\
+\addlinespace[3pt]
+\textbf{Qued\'o abierto} & La captura segu\'ia gobernada por c\'odigo C en el PSoC, con el \emph{jitter} atado a las interrupciones. Ese es el punto de partida de la Etapa~5 \\
+\bottomrule
+\end{tabularx}
+\end{center}

@@ -1,0 +1,95 @@
+\section{Ap\'endice: inventario de lo desarrollado}
+\label{sec:inventario}
+
+Inventario de referencia de artefactos producidos durante el proyecto. No forma parte de
+la entrega formal; se incluye para facilitar la revisi\'on con el tutor y como \'indice
+para el libro de tesis de la Defensa Final.
+
+\subsection{Firmware}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Artefacto} & \textbf{Descripci\'on} \\
+\midrule
+\texttt{AcondicionamientoAnalogico} & Proyecto PSoC principal: cadena anal\'ogica de 4 etapas, ADC $\Delta\Sigma$, DFB, DMA, SD, calibraci\'on \\
+\texttt{AcondicionamientoMartillo} & Proyecto PSoC del nodo martillo (aceler\'ometro 086D20) \\
+\emph{superMaquina} & Componente Verilog en UDB: m\'aquina de estados de captura \\
+M\'odulo de calibraci\'on & Controlador PI por etapa, anti-windup direccional, banda muerta configurable, persistencia EEPROM+CRC \\
+Firmware ESP32 esclavo & UART al PSoC, ESP-NOW, arena RAM paginada, comandos de banco por USB \\
+Firmware ESP32 maestro & Coordinaci\'on, disparo sincronizado, relay de descarga, AP WiFi, servidor web \\
+Interfaz web (SPA) & Configuraci\'on, estado de nodos, RSSI, captura en vivo, exportaci\'on \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Modelado y an\'alisis (MATLAB / Simulink)}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\texttt{SM24\_model.slx} & Modelo del ge\'ofono SM-24 \\
+\texttt{compensadorKai.m} & Compensador de extensi\'on de banda, dise\~no anal\'itico \\
+\texttt{compensadorPazos.m} & Compensador por b\'usqueda exhaustiva \\
+\texttt{ComparacionFiltros.m} & Comparaci\'on cuantitativa MFB vs.\ Sallen-Key \\
+\texttt{analisis\_espectral.m} & PSD por Welch y SNR por entidad de medici\'on \\
+\texttt{notch.m}, \texttt{filtroFir.m} & Dise\~no de FIR \emph{notch} \SI{50}{\hertz} y multibanda \\
+\texttt{geophone\_scope.m} & Osciloscopio sobre puerto serie (versi\'on completa y simplificada) \\
+Protocolo de barridos & Caracterizaci\'on de la cadena anal\'ogica con \emph{script} de an\'alisis \\
+\emph{Fisica loca} & Modelo Simscape Multibody del martillo de leva \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Procesamiento (Python)}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\texttt{masw\_dispersion.py} & An\'alisis de dispersi\'on, imagen MASW \\
+\texttt{masw\_inversion.py} & Inversi\'on multimodal (\texttt{evodcinv} sobre \texttt{disba}) \\
+\texttt{review\_field\_data.py} & Revisi\'on de campo: filtros, enfase, polaridad, \emph{waterfall}, picks \\
+Servidor FastAPI & Interfaz web de procesamiento, cola de trabajos, exportaci\'on \\
+\texttt{smoke\_test.py} & \emph{Gate} de 58 verificaciones \\
+\texttt{leva\_martillo.py} & Modelo anal\'itico 2D del martillo de leva \\
+Herramientas de regresi\'on & \texttt{usb\_regression\_test.py}, \texttt{sd\_max\_regression\_test.py} \\
+\texttt{maswavespy} & Subm\'odulo de referencia externo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Documentaci\'on producida}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\emph{Vault} Obsidian & 8 cap\'itulos resumidos, $>$140 conceptos at\'omicos interconectados \\
+Base bibliogr\'afica & 65 art\'iculos con an\'alisis estructurado individual \\
+Bit\'acora & 66 jornadas documentadas con an\'alisis t\'ecnico por \emph{commit} \\
+Art\'iculo URUCON~2026 & Comunicaci\'on cient\'ifica sobre el DA-AFE, con revisi\'on \\
+Planes de prueba & Matriz de auditor\'ia pre-campo, documentos de traspaso t\'ecnico \\
+\texttt{TOPDESIGN\_TO\_KICAD.md} & Recuperaci\'on de valores del esquem\'atico con nivel de confianza \\
+\texttt{BUILD\_PROGRAM\_PSOC.md} & Procedimiento de compilaci\'on, conexionado y advertencias el\'ectricas \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Datos experimentales}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+\textbf{Conjunto} & \textbf{Archivos} & \textbf{Naturaleza} \\
+\midrule
+Canchiga & 9\,312 & Registros de campo crudos \\
+Canchita & 9\,930 & Registros de campo crudos \\
+Canchita (2.\textsuperscript{a} campa\~na) & 2\,472 & Registros de campo crudos \\
+Estacionamiento & 12 & Registros preliminares \\
+Osciloscopio & 156+ & Caracterizaci\'on de calibraci\'on y verificaci\'on \\
+Procesados & 3\,524 & Salidas del \emph{pipeline} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Todos versionados con Git~LFS y deduplicaci\'on por SHA-256, con manifiesto por archivo
+(ruta, tama\~no y suma).

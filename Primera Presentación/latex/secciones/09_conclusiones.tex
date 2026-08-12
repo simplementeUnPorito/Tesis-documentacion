@@ -1,0 +1,63 @@
+\section{Conclusiones parciales}
+\label{sec:conclusiones}
+
+El trabajo realizado hasta la fecha permite extraer las siguientes conclusiones
+parciales, entendidas como estado de avance y no como cierre del proyecto.
+
+\textbf{Sobre el marco te\'orico.} Se complet\'o el estudio sistem\'atico de los m\'etodos de
+ondas superficiales, con los ocho cap\'itulos del texto de referencia resumidos, m\'as de
+140 conceptos at\'omicos interconectados y una base bibliogr\'afica de 65 art\'iculos
+analizados individualmente. El relevamiento confirma que la teor\'ia MASW, las buenas
+pr\'acticas de adquisici\'on y las herramientas de procesamiento son maduras y accesibles,
+y que la barrera de entrada real para su aplicaci\'on local es el \textbf{instrumental de
+adquisici\'on multicanal sincronizado}. Esto valida el enfoque del proyecto: el aporte
+est\'a en el sistema de adquisici\'on, no en el m\'etodo de an\'alisis.
+
+\textbf{Sobre el desarrollo instrumental.} Se construy\'o un sistema completo y funcional
+que cubre la cadena entera, desde el transductor hasta el perfil $V_S(z)$: cadena
+anal\'ogica de cuatro etapas con ganancia programable, adquisici\'on digital determinista
+gobernada por una m\'aquina de estados en hardware, jerarqu\'ia de almacenamiento de tres
+niveles, red inal\'ambrica multi-nodo con disparo sincronizado por flanco f\'isico,
+interfaz web de operador que elimina la necesidad de una computadora en campo, y un
+\emph{pipeline} de procesamiento con inversi\'on multimodal. El sistema fue validado
+funcionalmente mediante una auditor\'ia sistem\'atica con criterios de integridad
+verificables.
+
+\textbf{Sobre el aporte metodol\'ogico.} El desarrollo del \emph{front-end} anal\'ogico
+asistido digitalmente constituye el resultado m\'as maduro del proyecto. Aplicar la
+filosof\'ia de \emph{digitally assisted analog design}~\cite{Murmann2004} ---concebida
+originalmente a nivel de circuito integrado--- al nivel de instrumentaci\'on de bajo costo
+result\'o efectivo: el \emph{offset} residual a la entrada del ADC se redujo de hasta
+\SI{45.8}{\percent} a menos de \SI{3.9}{\percent} del fondo de escala, con una \'unica
+configuraci\'on de controlador para todas las placas y ganancias evaluadas, y con
+significancia estad\'istica en las ocho configuraciones. El car\'acter \emph{foreground} de
+la calibraci\'on ---activa antes de adquirir y desactivada durante la adquisici\'on---
+preserva un camino de se\~nal puramente anal\'ogico, evitando el compromiso entre tiempo de
+establecimiento y ancho de banda propio de los servos de continua continuos. Este
+resultado fue sometido a revisi\'on externa mediante su env\'io al congreso URUCON~2026.
+
+\textbf{Sobre la metodolog\'ia de trabajo.} Dos pr\'acticas resultaron decisivas y merecen
+destacarse. La primera es la \textbf{verificaci\'on automatizada} como condici\'on de
+avance: las suites de pruebas de firmware y el \emph{gate} de verificaciones del software
+detectaron defectos que de otro modo habr\'ian llegado a campo. La segunda es la adopci\'on
+de \textbf{criterios de aceptaci\'on verificables} en lugar de inspecci\'on visual: la
+comprobaci\'on de integridad por suma criptogr\'afica permiti\'o distinguir una transferencia
+completa de una truncada, distinci\'on que result\'o decisiva en la auditor\'ia. Los defectos
+cr\'iticos encontrados ---en particular la carrera de \SI{10}{\milli\second} que dejaba
+inutilizable un nodo de forma determinista--- ilustran por qu\'e un sistema distribuido de
+adquisici\'on sincronizada requiere validaci\'on sistem\'atica y no meramente funcional.
+
+\textbf{Sobre lo pendiente.} El proyecto no est\'a cerrado. La validaci\'on que constituye
+su criterio de \'exito \'ultimo ---el contraste cuantitativo de los perfiles $V_S$ obtenidos
+contra un ensayo geot\'ecnico de referencia--- a\'un no se realiz\'o. Tampoco est\'an
+resueltos el hardware definitivo en PCB propia ni la fuente s\'ismica repetible, ambos
+frentes iniciados pero no concluidos. La caracterizaci\'on de apareamiento entre canales y
+de \emph{jitter} sobre el arreglo completo, que es cr\'itica para la calidad de la imagen
+de dispersi\'on, est\'a hasta ahora acotada s\'olo por presupuesto te\'orico y por medici\'on
+sobre pocos nodos.
+
+\textbf{Balance.} El estado de avance corresponde a un sistema que \textbf{funciona de
+extremo a extremo y produce resultados}, con una parte de la instrumentaci\'on validada
+cuantitativamente y sometida a revisi\'on externa, y con los frentes restantes
+identificados, acotados y ya iniciados. El trabajo restante es de consolidaci\'on y
+validaci\'on externa, no de exploraci\'on.

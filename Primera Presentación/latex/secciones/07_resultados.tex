@@ -1,0 +1,170 @@
+\section{Resultados}
+\label{sec:resultados}
+
+\subsection{Validaci\'on experimental del DA-AFE}
+
+El resultado cuantitativo m\'as s\'olido obtenido hasta la fecha corresponde a la
+validaci\'on de la auto-calibraci\'on del \emph{front-end} anal\'ogico, cuyo dise\~no
+experimental se describe en la Secci\'on~\ref{sec:met-daafe}.
+
+La Tabla~\ref{tab:results} presenta la media y la desviaci\'on est\'andar muestral del
+\emph{offset} residual normalizado sobre diez reinicios apareados. Cada columna es una
+configuraci\'on placa--ganancia y cada fila una etapa anal\'ogica en orden de calibraci\'on;
+en cada celda, el valor superior corresponde a la referencia fija compartida y el
+inferior a la condici\'on calibrada. Leer una columna de arriba hacia abajo muestra c\'omo
+el \emph{offset} se reduce etapa por etapa.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.0pt}
+\caption{\emph{Offset} de continua residual (\% del fondo de escala del rango nominal de
+\SI{5}{\volt} del ADC), media $\pm$ desviaci\'on est\'andar muestral sobre $N=10$ reinicios
+apareados. En cada celda: arriba, referencia fija compartida; abajo, condici\'on
+calibrada. Menor es mejor.}
+\label{tab:results}
+\begin{tabular}{lcccccccc}
+\toprule
+Etapa & A,\,$\times1$ & A,\,$\times4$ & A,\,$\times16$ & A,\,$\times32$ & A,\,$\times50$ & B,\,$\times16$ & B,\,$\times32$ & B,\,$\times50$\\
+\midrule
+\multirow{2}{*}{PGA}
+ & $3{,}5\pm0{,}2$ & $2{,}4\pm0{,}1$ & $2{,}4\pm0{,}1$ & $1{,}0\pm0{,}2$ & $1{,}2\pm0{,}3$ & $2{,}1\pm0{,}1$ & $1{,}0\pm0{,}2$ & $2{,}5\pm0{,}1$\\
+ & $3{,}4\pm0{,}3$ & $2{,}1\pm0{,}3$ & $1{,}9\pm0{,}2$ & $0{,}5\pm0{,}2$ & $1{,}0\pm0{,}5$ & $1{,}7\pm0{,}1$ & $0{,}5\pm0{,}2$ & $1{,}8\pm0{,}3$\\
+\addlinespace[2pt]
+\multirow{2}{*}{BP}
+ & $1{,}5\pm2{,}2$ & $4{,}9\pm0{,}3$ & $3{,}8\pm0{,}9$ & $7{,}0\pm0{,}4$ & $1{,}0\pm0{,}7$ & $0{,}66\pm0{,}02$ & $0{,}66\pm0{,}01$ & $0{,}65\pm0{,}01$\\
+ & $1{,}2\pm0{,}2$ & $1{,}0\pm0{,}2$ & $1{,}5\pm1{,}5$ & $1{,}0\pm0{,}5$ & $0{,}9\pm0{,}5$ & $0{,}66\pm0{,}02$ & $0{,}66\pm0{,}01$ & $0{,}65\pm0{,}02$\\
+\addlinespace[2pt]
+\multirow{2}{*}{SUM}
+ & $\mathbf{21{,}8\pm1{,}1}^{\dagger}$ & $6{,}7\pm1{,}0$ & $4{,}9\pm1{,}5$ & $7{,}4\pm0{,}3$ & $0{,}4\pm0{,}2$ & $4{,}5\pm0{,}8$ & $8{,}0\pm0{,}8$ & $0{,}9\pm0{,}6$\\
+ & $0{,}8\pm0{,}2$ & $1{,}0\pm0{,}3$ & $1{,}4\pm1{,}5$ & $0{,}6\pm0{,}2$ & $\mathbf{0{,}8\pm0{,}6}^{\ddagger}$ & $0{,}6\pm0{,}5$ & $1{,}2\pm0{,}3$ & $0{,}9\pm0{,}6$\\
+\addlinespace[2pt]
+\multirow{2}{*}{LP}
+ & $\mathbf{45{,}8\pm3{,}1}^{\dagger}$ & $\mathbf{42{,}6\pm4{,}2}^{\dagger}$ & $\mathbf{29{,}6\pm6{,}8}^{\dagger}$ & $\mathbf{12{,}4\pm1{,}3}^{\dagger}$ & $4{,}1\pm2{,}1$ & $3{,}0\pm0{,}1$ & $2{,}9\pm0{,}1$ & $2{,}9\pm0{,}1$\\
+ & $3{,}2\pm0{,}9$ & $3{,}9\pm0{,}8$ & $2{,}3\pm1{,}4$ & $1{,}7\pm0{,}7$ & $1{,}2\pm0{,}4$ & $0{,}7\pm0{,}1$ & $0{,}4\pm0{,}2$ & $0{,}7\pm0{,}2$\\
+\bottomrule
+\end{tabular}
+
+\vspace{2pt}
+\footnotesize
+$^{\dagger}$Referencia fija $\geq\SI{10}{\percent}$ del fondo de escala.\quad
+$^{\ddagger}$\'Unica media calibrada superior a su l\'inea base.
+\end{table}
+
+\subsubsection{S\'intesis de los resultados}
+
+\begin{itemize}[itemsep=0.2em]
+    \item En las ocho configuraciones evaluadas, el \emph{offset} residual a la salida LP
+    ---la que alimenta directamente al ADC--- se redujo de
+    \SIrange{2.9}{45.8}{\percent} a \SIrange{0.4}{3.9}{\percent} del fondo de escala.
+    Las observaciones individuales calibradas se ubicaron entre
+    \SIrange{0.1}{5.2}{\percent}.
+    \item Una \textbf{prueba de signos de una cola}~\cite{Conover1999} sobre las
+    mediciones apareadas de la etapa LP rechaz\'o la hip\'otesis nula de ausencia de
+    reducci\'on en \textbf{las ocho configuraciones} (10 de 10 reinicios apareados, con
+    $p\approx10^{-3}$ exacto), resultado que sobrevive a la correcci\'on de Bonferroni
+    por comparaciones m\'ultiples.
+    \item El resultado se obtuvo con una \textbf{\'unica configuraci\'on de controlador}
+    para todas las placas y ganancias, sin reajuste espec\'ifico por placa ni por
+    ganancia, lo que respalda la robustez del m\'etodo.
+    \item Las etapas cuyo residuo de l\'inea base ya se ubica dentro de su banda muerta
+    quedan sin modificar por dise\~no, comportamiento visible en la fila BP de la Placa~B.
+\end{itemize}
+
+\subsubsection{Temporizaci\'on}
+
+La correcci\'on visible en las trayectorias de calibraci\'on abarca aproximadamente
+\SI{7}{\second}, y las observaciones informales de banco indicaron completitud en torno
+a los \SI{10}{\second}. Las ventanas de tiempo l\'imite configuradas totalizan
+\SI{57.6}{\second} (aproximadamente \SI{60.5}{\second} incluyendo establecimiento y
+refinamiento), excluyendo la sobrecarga de conmutaci\'on. Cuando existe una calibraci\'on
+almacenada v\'alida s\'olo se ejecutan los intervalos de establecimiento por etapa
+(2560 muestras, alrededor de \SI{1.0}{\second} a \SI{2604}{\hertz}, tasa vigente en esa campa\~na).
+
+No se registraron vencimientos de tiempo l\'imite durante los experimentos reportados. El
+\'unico observado en banco correspondi\'o a una placa alimentada mientras su ge\'ofono estaba
+en movimiento, cuyo transitorio de alterna viola la hip\'otesis cuasi-est\'atica requerida
+por la calibraci\'on \emph{foreground}.
+
+\subsubsection{Limitaciones declaradas}
+
+Por transparencia se explicitan las limitaciones del experimento, tal como fueron
+reportadas en la comunicaci\'on cient\'ifica:
+
+\begin{itemize}[itemsep=0.15em]
+    \item El estudio se limit\'o a \textbf{dos placas ensambladas independientemente} y a
+    un orden de calibraci\'on fijo; no establece desempe\~no estad\'istico poblacional.
+    \item No se caracteriz\'o la \textbf{deriva de largo plazo} ni el apareamiento entre
+    canales a lo largo de un arreglo completo.
+    \item La evidencia concierne al \textbf{punto de operaci\'on} de la cadena de
+    acondicionamiento, no al desempe\~no s\'ismico de extremo a extremo.
+    \item La mejora relativamente modesta en la etapa PGA refleja el criterio de parada
+    seleccionado (banda muerta amplia por tener $|K_{\mathrm{PGA}}|=1$) y no
+    inestabilidad del controlador. Un diagn\'ostico separado con banda muerta m\'as estrecha
+    redujo el residuo LP de \SI{2.98}{\percent} a \SI{0.84}{\percent}, indicando que hay
+    margen de mejora por optimizaci\'on de par\'ametros.
+\end{itemize}
+
+No obstante, un \emph{offset} de referencia fija como el \SI{21.8}{\percent} medido a la
+salida de la etapa sumadora ya consume m\'as de la quinta parte del rango de entrada del
+amplificador y del ADC antes de aplicar se\~nal s\'ismica alguna, lo que dimensiona la
+relevancia pr\'actica de la correcci\'on.
+
+\subsection{Validaci\'on funcional del sistema de adquisici\'on}
+
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Auditor\'ia pre-campo}: la matriz de pruebas de aceptaci\'on E1--E18 se
+    complet\'o con resultado satisfactorio en todos sus \'items, tras la correcci\'on de los
+    defectos cr\'iticos descritos en la Secci\'on~\ref{sec:auditoria}.
+    \item \textbf{Captura continua de 10 minutos}: 52\,080 lotes escritos en SD sobre
+    52\,080 esperados, 1\,562\,400 muestras transferidas por radio sobre 1\,562\,400
+    esperadas, 4\,687\,200 bytes, una \'unica conexi\'on, cero desconexiones y suma
+    SHA-256 recomputada coincidente.
+    \item \textbf{Regresi\'on por USB}: 33 de 33 verificaciones satisfactorias, cubriendo
+    modos crudo y filtrado, escritura y lectura de SD, confirmaciones de comando y
+    restauraci\'on de estado.
+    \item \textbf{Repetibilidad de extremo a extremo}: 10 de 10 ciclos completos
+    satisfactorios, con integridad verificada en cada uno.
+    \item \textbf{Robustez de comunicaci\'on}: corte de WebSocket inyectado durante la
+    descarga con recuperaci\'on correcta y transferencia completada; detenci\'on en vivo
+    validada tanto durante la captura como durante la descarga.
+    \item \textbf{Transiciones de configuraci\'on}: 49 de 49 transiciones de rango de ADC
+    y factor de decimaci\'on satisfactorias; 30 de 30 ciclos de apagado y recuperaci\'on.
+    \item \textbf{Software de procesamiento}: \emph{gate} automatizado de 58
+    verificaciones satisfactorio como condici\'on de avance del porteo web.
+\end{itemize}
+
+\subsection{Adquisici\'on en campo y procesamiento MASW}
+
+Se realizaron campa\~nas de medici\'on en tres sitios (con dos campa\~nas separadas en uno
+de ellos), cuyos conjuntos de datos crudos
+est\'an catalogados y versionados con deduplicaci\'on por suma criptogr\'afica. El cat\'alogo
+registra del orden de \textbf{22\,000 archivos crudos} (aproximadamente
+\SI{28}{\gibi\byte}) junto con los conjuntos procesados correspondientes.
+
+Sobre esos registros el \emph{pipeline} produce:
+
+\begin{itemize}[itemsep=0.15em]
+    \item Registros multicanal coherentes visualizables en formato \emph{waterfall} y de
+    trazas, con correcci\'on de polaridad y alineaci\'on entre tandas.
+    \item Im\'agenes de dispersi\'on en el dominio frecuencia--velocidad de fase, con
+    combinaci\'on ponderada de m\'ultiples disparos.
+    \item Curvas de dispersi\'on extra\'idas por modo mediante regiones-pol\'igono, editables
+    antes de la inversi\'on.
+    \item Perfiles $V_S(z)$ obtenidos por inversi\'on multimodal.
+\end{itemize}
+
+\nota{\textbf{Pendiente importante a conversar.} Los perfiles $V_S$ obtenidos a\'un no
+est\'an contrastados contra un ensayo de referencia (SPT o similar), por lo que en este
+documento se reportan como resultado del \emph{pipeline} y no como caracterizaci\'on
+geot\'ecnica validada del sitio. Hay que decidir si conviene: (a) presentar un perfil
+$V_S$ concreto ya en la Primera Presentaci\'on aclarando expl\'icitamente que la validaci\'on
+externa est\'a pendiente, o (b) reportar \'unicamente la capacidad del \emph{pipeline} y
+dejar los perfiles para la Defensa Final. Mi sugerencia es (a) con la aclaraci\'on, porque
+demuestra que la cadena completa cierra.}
+
+\nota{Faltan por incorporar a este documento las \textbf{figuras}: cadena anal\'ogica,
+diagrama de hardware digital, trayectorias de calibraci\'on, \emph{waterfall} de campo e
+imagen de dispersi\'on. Todas existen ya en \texttt{docs/Urucom\_2026\_compact/imagenes/}
+y en las salidas del \emph{pipeline}; falta elegir cu\'ales entran seg\'un el recorte que
+definamos.}

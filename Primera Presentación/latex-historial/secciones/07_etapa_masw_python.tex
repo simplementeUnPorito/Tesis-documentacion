@@ -1,0 +1,262 @@
+\section{Etapa 7 --- El \emph{pipeline} MASW en Python y las campa\~nas de campo}
+\label{sec:et7}
+\periodo{3 --- 9 de julio de 2026 \quad$\cdot$\quad campa\~nas los d\'ias 3, 7 y 8; 11 \emph{commits}}
+
+Etapa doble: se sali\'o a medir en serio y, en paralelo, se construy\'o de cero
+la cadena de post-proceso que convierte esos registros en un perfil $V_S(z)$.
+Es la etapa en la que el proyecto deja de ser un sistema de adquisici\'on y
+pasa a ser un m\'etodo completo.
+
+\subsection{La geometr\'ia real de las campa\~nas}
+
+Este dato no estaba volcado en ning\'un documento y se reconstruy\'o para este
+historial a partir de los \texttt{metadata.json} de cada carpeta de captura.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{geometria_campanas.png}
+\caption{Posiciones de receptor efectivamente ocupadas en cada sitio,
+reconstruidas desde los metadatos de campo. El \'area del marcador es
+proporcional a la cantidad de capturas en esa posici\'on.}
+\label{fig:geometria}
+\end{figure}
+
+\seleccionado{\textbf{El arreglo multicanal no existe f\'isicamente: se
+sintetiza.} Cada captura tiene un \'unico ge\'ofono m\'as el canal de martillo
+(\texttt{n\_slaves}~$=2$, roles \texttt{hammer}\,$+$\,\texttt{geo}). El
+\emph{gather} multicanal se construye repitiendo el disparo en el mismo origen
+y \emph{moviendo el receptor} de posici\'on en posici\'on. Es la forma correcta
+de hacer MASW cuando se tienen dos nodos y no veinticuatro, y explica por qu\'e
+la sincronizaci\'on y la repetibilidad del disparo fueron tan centrales: sin
+repetibilidad entre disparos, el arreglo sintetizado directamente no cierra.}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l r r r X@{}}
+\toprule
+\textbf{Sitio} & \textbf{Pos.} & \textbf{Rango} & \textbf{Capturas} & \textbf{$F_s$ presentes} \\
+\midrule
+Canchiga    & 18 & \SIrange{10}{50}{\meter} & 74 & \SI{1020}{\hertz} y \SI{2929}{\hertz} \\
+Canchita    & 20 & \SIrange{10}{50}{\meter} & 87 & \SI{1020}{\hertz} y \SI{2929}{\hertz} \\
+Canchita 2  & 10 & \SIrange{10}{30}{\meter} & 13 & \SI{1020}{\hertz} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\dato{\textbf{Par\'ametros de la geometr\'ia:} fuente (martillo) en el origen,
+espaciamiento $\Delta x = \SI{2}{\meter}$, \emph{offset} m\'inimo
+\SI{10}{\meter}, apertura del arreglo $L = \SI{40}{\meter}$
+(\SI{20}{\meter} en Canchita~2).}
+
+Contrastando contra los criterios de dise\~no que se hab\'ian aprendido en la
+Etapa~1:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Criterio} & \textbf{Valor} & \textbf{Lectura} \\
+\midrule
+\emph{Aliasing} espacial & $\lambda_{\min} = 2\Delta x = \SI{4}{\meter}$ &
+\textbf{Cumplido abajo, violado arriba.} La longitud de onda m\'as corta en los
+\emph{picks} es de \SI{2}{\meter}, la mitad del l\'imite: todo \emph{pick} con
+$\lambda < \SI{4}{\meter}$ est\'a \emph{aliased} \\
+\addlinespace[2pt]
+\emph{Offset} m\'inimo & \SI{10}{\meter} &
+Razonable frente al efecto de campo cercano para las frecuencias de trabajo \\
+\addlinespace[2pt]
+Apertura & $L = \SI{40}{\meter}$ &
+\textbf{Es la restricci\'on activa.} La resoluci\'on en baja frecuencia est\'a
+acotada por la apertura, y los \emph{picks} llegan a
+$\lambda = \SI{130}{\meter}$, m\'as de tres veces $L$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\pendiente{\textbf{Los \emph{picks} de alta frecuencia hay que revisarlos.} Con
+$\Delta x = \SI{2}{\meter}$, cualquier longitud de onda menor que
+\SI{4}{\meter} viola el muestreo espacial. Con la velocidad de fase que se
+observa en el extremo alto ($\approx\SI{60}{\meter\per\second}$), eso ocurre
+por encima de $f \approx c/\lambda_{\min} \approx \SI{15}{\hertz}$ ---y es
+justamente la banda donde la curva se aplana en
+\SI{60}{\meter\per\second}. Un modo r\'apido con \emph{aliasing} aparece como
+un modo lento: la meseta puede ser un artefacto de la geometr\'ia y no una capa
+blanda real. Es la \'unica manera de reconciliar la curva con el criterio del
+Cap.~3 de Foti, y afecta a m\'as de la mitad de los 51 \emph{picks}.}
+
+\pendiente{\textbf{Esta es la otra observaci\'on cr\'itica.} Con
+$L = \SI{40}{\meter}$, la profundidad con soporte geom\'etrico real es del orden
+de $L/2 = \SI{20}{\meter}$; el modelo invertido, en cambio, se extiende hasta
+\SI{82.6}{\meter} de base. Las capas por debajo de \textasciitilde{}\SI{20}{\meter}
+\emph{no est\'an sostenidas por la apertura del arreglo} y deben leerse como
+extrapolaci\'on del modelo, no como medici\'on. Para el objetivo declarado de
+\SI{50}{\meter} hace falta un arreglo m\'as largo ---y esto es una conclusi\'on
+accionable: la extensi\'on de banda hacia abajo ya est\'a resuelta por
+electr\'onica, pero la \emph{apertura} sigue siendo el cuello de botella.}
+
+\subsection{El dato crudo, tal cual sali\'o del arreglo}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{gather_sintetizado.png}
+\caption{\emph{Gather} ensamblado directamente desde los binarios crudos
+(\texttt{raw\_f32le.bin}) de la campa\~na Canchita, una traza por posici\'on,
+alineadas por el pico del canal de martillo de cada disparo. Cada traza est\'a
+normalizada a su propio m\'aximo. Derecha: relaci\'on se\~nal-ruido aparente,
+calculada como RMS de la ventana posterior al impacto contra RMS de la ventana
+previa del mismo registro. \emph{Verificaci\'on cruzada}: la llegada en la traza
+de \SI{10}{\meter} ronda los \SI{200}{\milli\second}, o sea
+$\approx\SI{50}{\meter\per\second}$ aparente, consistente con la velocidad
+Rayleigh esperable del perfil invertido
+($0{,}92\cdot V_{S,\text{sup}} = 0{,}92\cdot\SI{62.9}{} \approx
+\SI{58}{\meter\per\second}$). El dato crudo y la inversi\'on concuerdan por
+caminos independientes.}
+\label{fig:gather}
+\end{figure}
+
+Dos cosas se leen directamente de la Fig.~\ref{fig:gather} y no estaban
+registradas en ning\'un lado:
+
+\dato{\textbf{El tren dispersivo se ve a simple vista} entre \SI{10}{} y
+\SI{26}{\meter}: paquete de baja frecuencia con \emph{moveout} normal, que es
+exactamente lo que el m\'etodo necesita.}
+
+\dato{\textbf{La mitad lejana del arreglo est\'a limitada por ruido.} SNR
+aparente mediana de \SI{18.9}{\decibel} entre \SI{10}{} y \SI{26}{\meter}
+(rango \SIrange{12.7}{25.8}{\decibel}) contra \SI{4.9}{\decibel} entre
+\SI{30}{} y \SI{50}{\meter} (rango \SIrange{-2.1}{12.0}{\decibel}): hay
+posiciones lejanas \emph{por debajo de \SI{0}{\decibel}}. Se nota adem\'as un
+salto de car\'acter entre \SI{26}{} y \SI{30}{\meter}, consistente con que esas
+posiciones provienen de jornadas distintas.}
+
+\seleccionado{Esto refuerza la conclusi\'on sobre la apertura desde otro
+\'angulo: no alcanza con alargar el arreglo, hay que alargarlo \emph{con
+energ\'ia suficiente}. O sea, el l\'imite pr\'actico para llegar a
+\SI{50}{\meter} es tanto geom\'etrico como de la fuente de impacto ---lo que
+justifica directamente el trabajo del martillo de leva (Etapa~10).}
+
+\subsection{Lo que se implement\'o en Python}
+
+El 7 de julio el repositorio de interfaces sum\'o \textasciitilde{}4600 l\'ineas
+de una sola vez:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{M\'odulo} & \textbf{Qu\'e hace} \\
+\midrule
+\texttt{masw\_dispersion.py} & Del \emph{gather} sintetizado a la imagen de dispersi\'on $(f,c)$ por \emph{phase-shift}. Es la reimplementaci\'on propia del \texttt{p03} de MATLAB de la Etapa~1 \\
+\texttt{masw\_inversion.py} & Inversi\'on de la curva a perfil $V_S(z)$ mediante \texttt{evodcinv} sobre \texttt{disba} ---algoritmo evolutivo, elegido por la no unicidad del problema (Cap.~6 de Foti) \\
+\texttt{review\_field\_data.py} & Aplicaci\'on de revisi\'on: inspeccionar, filtrar, alinear y aceptar o rechazar registros antes de procesarlos \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsubsection{Las doce fases de pulido del revisor de campo}
+
+El 8 de julio el revisor recibi\'o doce fases sucesivas. Lo que qued\'o
+funcionalmente:
+
+\begin{itemize}[itemsep=0.2em]
+\item ordenamiento de trazas por amplitud pico a pico;
+\item banco de filtros y pesta\~na de \'enfasis;
+\item \textbf{alineaci\'on entre tandas}, necesaria porque las capturas de una
+misma posici\'on provienen de disparos distintos;
+\item \emph{waterfall} y an\'alisis $f$--$k$;
+\item selecci\'on (\emph{picking}) de la curva de dispersi\'on sobre la imagen;
+\item \textbf{mezcla de tasas de muestreo}: los registros a \SI{2929}{\hertz} y
+a \SI{1020}{\hertz} se combinan por \texttt{resample\_poly}, porque las
+campa\~nas del 3 y del 7--8 de julio se tomaron con configuraciones distintas;
+\item \emph{deduplicaci\'on} por captura ---el mismo disparo pod\'ia quedar
+guardado dos veces;
+\item \textbf{polaridad fija}: ge\'ofono no invertido, martillo invertido.
+\end{itemize}
+
+\subsubsection{Grupos de dispersi\'on y multimodalidad (9 de julio)}
+
+Se implementaron \textbf{grupos de dispersi\'on independientes}: se definen $N$
+regiones-pol\'igono sobre la imagen y cada una produce su propia curva, con
+combinaci\'on ponderada de las im\'agenes. Esto es lo que habilita el tratamiento
+\textbf{multimodal}: el modo fundamental y los modos superiores se separan como
+grupos distintos, se editan a mano si hace falta, y se invierten juntos.
+
+\seleccionado{Invertir con modos superiores adem\'as del fundamental es la
+manera est\'andar de atacar la no unicidad: cada modo pesa distinto las capas,
+as\'i que usarlos en conjunto restringe el espacio de soluciones mucho m\'as que
+el fundamental solo.}
+
+\subsection{En paralelo, en el firmware}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Cambio} & \textbf{Motivo} \\
+\midrule
+$F_s$ de \SI{2929}{\hertz} a \SI{1020}{\hertz} (7 jul) & Ajuste de compromiso entre resoluci\'on temporal y volumen de datos por captura \\
+\addlinespace[2pt]
+Rangos de ADC seleccionables desde la web: primero 2 ($\pm\SI{2.5}{\volt}$ / $\pm\SI{0.512}{\volt}$), luego 4 (8 jul) & Permite adaptar el rango a la distancia fuente--receptor sin recompilar. Todas validadas en hardware con el comando de banco \texttt{range N} \\
+\addlinespace[2pt]
+Correcci\'on del bug de escala del ADC & Los conteos por volt no correspond\'ian al rango activo \\
+\addlinespace[2pt]
+\texttt{Timer\_3} dedicado como \emph{watchdog} de captura & Detecta capturas que no progresan \\
+\addlinespace[2pt]
+\textbf{\emph{Circuit-breaker} anti-tormenta de IRQ} & Se observ\'o en placa, con pyOCD, una tormenta de interrupciones que dejaba al nodo inservible. El breaker la detecta y se auto-recupera \\
+\addlinespace[2pt]
+Techo de captura del esclavo de 512 a 360 lotes & Regresi\'on encontrada en campo \\
+\addlinespace[2pt]
+Indicador de RSSI en la web (8 jul) & Diagnosticar en terreno si un nodo est\'a en el borde del alcance, antes de perder una tanda \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Resultado: el perfil $V_S(z)$}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.92\textwidth]{waterfall_promedios.png}
+\caption{\emph{Waterfall} de los promedios de Canchita, tal como lo produce el
+revisor de campo tras aceptar los registros: 21 promedios sobre 598 muestras
+revisadas. Es la entrada real del c\'alculo de dispersi\'on ---la
+Fig.~\ref{fig:gather} muestra el mismo arreglo sin promediar ni filtrar.}
+\label{fig:waterfall}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{masw_resultado.png}
+\caption{Resultado de la campa\~na Canchita. Izquierda: 51 \emph{picks} de la
+curva de dispersi\'on contra la curva te\'orica del modelo invertido
+(desajuste declarado \SI{2.55}{\percent}; RMS observado-te\'orico
+\SI{22}{\meter\per\second}). Derecha: perfil $V_S(z)$ de nueve capas m\'as
+semiespacio. La l\'inea de trazos marca $L/2$, hasta donde la apertura del
+arreglo da soporte geom\'etrico.}
+\label{fig:masw}
+\end{figure}
+
+\dato{\textbf{N\'umeros del resultado (Canchita):}
+banda \SIrange{5.11}{29.75}{\hertz};
+velocidad de fase observada \SIrange{60}{668}{\meter\per\second};
+longitudes de onda \SIrange{2}{130.6}{\meter};
+perfil de \SI{62.9}{\meter\per\second} en superficie a
+\SI{1011.5}{\meter\per\second} en el semiespacio;
+desajuste \SI{2.55}{\percent}.
+Del total de 598 muestras revisadas se aceptaron 21 promedios y se
+descartaron 9 capturas por criterio expl\'icito.}
+
+\pendiente{El perfil no tiene todav\'ia contraste externo (SPT o ensayo
+invasivo). El camino m\'as accesible es la correlaci\'on $V_S$--SPT reportada
+para Per\'u y otros contextos regionales, ya en la bibliograf\'ia. Sin ese
+contraste, el resultado demuestra que \emph{la cadena cierra de extremo a
+extremo}, que no es poco, pero no que el perfil sea correcto.}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & \emph{Pipeline} propio de dispersi\'on e inversi\'on; inversi\'on evolutiva con \texttt{evodcinv}/\texttt{disba}; grupos de dispersi\'on multimodo; revisor de campo con aceptaci\'on expl\'icita de registros; mezcla de $F_s$ por \texttt{resample\_poly}; rangos de ADC conmutables; \emph{watchdog} y \emph{circuit-breaker} de captura; RSSI en la interfaz \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & $F_s$ \'unica fija; rango de ADC \'unico; techo de 512 lotes por captura \\
+\addlinespace[3pt]
+\textbf{Qued\'o abierto} & Apertura del arreglo insuficiente para el objetivo de \SI{50}{\meter}; falta validaci\'on externa del perfil \\
+\bottomrule
+\end{tabularx}
+\end{center}

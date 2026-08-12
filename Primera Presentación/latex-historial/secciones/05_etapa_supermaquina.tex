@@ -1,0 +1,93 @@
+\section{Etapa 5 --- Consolidaci\'on del nodo e interfaz de campo}
+\label{sec:et5}
+\periodo{4 --- 10 de junio de 2026 \quad$\cdot$\quad 6 d\'ias, 9 \emph{commits}}
+
+Etapa corta y de mucha consecuencia: el sistema deja de ser un banco de
+laboratorio y empieza a parecerse a un instrumento que se puede llevar al
+campo.
+
+\subsection{Un solo firmware para dos nodos distintos}
+
+El 4 de junio se unific\'o el firmware. Hasta ese momento hab\'ia dos ramas de
+c\'odigo: el nodo ge\'ofono y el nodo martillo. Pasaron a compartir un \'unico
+\texttt{main.c} que \textbf{detecta en tiempo de compilaci\'on qu\'e hardware
+tiene debajo}, inspeccionando qu\'e bloques declara el TopDesign del PSoC, y se
+compila como GEO o como HAMMER en consecuencia.
+
+\seleccionado{\textbf{Es la decisi\'on de arquitectura de software m\'as
+rentable del proyecto.} Elimina la bifurcaci\'on del firmware embebido: el
+protocolo, el \emph{store-and-forward}, la m\'aquina de estados y el manejo de
+errores tienen \emph{una sola} implementaci\'on. Un arreglo con nodos que
+divergen en firmware es un arreglo que se desincroniza de maneras dif\'iciles
+de diagnosticar; ac\'a eso directamente no puede pasar. Lo \'unico que difiere
+entre nodos es la cadena anal\'ogica, que es donde \emph{debe} diferir.}
+
+\subsection{La PC deja de ser necesaria (8 de junio)}
+
+El maestro ESP32 pas\'o a servir una aplicaci\'on web completa sobre su propio
+punto de acceso WiFi, con relay WebSocket para telemetr\'ia en vivo.
+
+Esto cambia el modo de operaci\'on en campo: ya no hace falta llevar una
+notebook con MATLAB y un cable USB. Se levanta el AP del maestro, se conecta
+el tel\'efono y se opera desde ah\'i. Para un instrumento que se despliega en
+terreno, esa diferencia es pr\'actica, no cosm\'etica.
+
+\subsection{El notch de \SI{50}{\hertz} se retira (7 y 9 de junio)}
+
+Aqu\'i ocurre el descarte que se hab\'ia anticipado en la Etapa~3,
+y ocurre en dos pasos:
+
+\descartado{\textbf{Paso 1 (7 de junio): fuera el LMS adaptativo.} Se hab\'ia
+probado cancelar la interferencia de red con un filtro adaptativo LMS. Se
+reemplaz\'o por estimaci\'on directa por m\'inimos cuadrados. Motivo: el LMS
+\emph{converge} ---tiene transitorio de adaptaci\'on--- y en una captura
+s\'ismica de pocos segundos el transitorio ocupa una fracci\'on no despreciable
+del registro; adem\'as su comportamiento depende de la se\~nal, lo que
+introduce una no linealidad efectiva que arruina la comparabilidad entre
+canales.}
+
+\descartado{\textbf{Paso 2 (9 de junio): fuera el notch arm\'onico del cliente
+web.} La \SI{50}{\hertz} cae \emph{dentro} de la banda \'util del MASW, as\'i que
+un notch borra se\~nal junto con la interferencia, e introduce retardo de grupo
+justo donde se mide fase.}
+
+\seleccionado{\textbf{Lo que qued\'o:} la interferencia de red es determinista y
+de forma conocida (sinusoide de frecuencia conocida m\'as arm\'onicos). Se la
+\emph{estima} por ajuste no lineal de m\'inimos cuadrados y se la \emph{resta}.
+Sin retardo de grupo, sin p\'erdida de se\~nal en la banda, reversible, y
+aplicado en post-proceso ---o sea, el dato crudo se conserva intacto.}
+
+En el mismo movimiento se subi\'o la tasa del ADC a \SI{3}{\kilo\hertz}.
+
+\subsection{El \emph{handoff} de \emph{jitter} (10 de junio)}
+
+Documento de an\'alisis de robustez del sistema de sincronizaci\'on. Contiene el
+hallazgo m\'as fino de la etapa:
+
+\dato{\textbf{Bug ACK-antes-de-GPIO.} El esclavo confirmaba la recepci\'on del
+disparo \emph{antes} de haber generado el flanco f\'isico que realmente arranca
+al PSoC. El maestro entonces cre\'ia sincronizado un arreglo que a\'un no lo
+estaba, y el error no aparec\'ia como falla sino como \emph{jitter} ---es decir,
+como una peque\~na incertidumbre en el instante cero de cada canal, exactamente
+la cantidad que MASW convierte en error de velocidad de fase.}
+
+El documento adem\'as plantea el \textbf{presupuesto de \emph{jitter} entre
+nodos}, que es la forma correcta de encarar el problema: en vez de perseguir
+``que sincronice bien'', se enumeran las contribuciones (latencia ESP-NOW,
+resoluci\'on del disparo, deriva de reloj, retardo del flanco) y se acota cada
+una.
+
+\pendiente{El presupuesto est\'a planteado te\'oricamente y verificado sobre
+pocos nodos; falta la medici\'on sobre el arreglo completo desplegado.}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Firmware \'unico con detecci\'on de hardware en compilaci\'on; interfaz web embebida en el maestro (operaci\'on sin PC); cancelaci\'on de red por ajuste de m\'inimos cuadrados en post-proceso; presupuesto de \emph{jitter} como m\'etodo \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & Firmware bifurcado GEO/HAMMER; filtro adaptativo LMS; notch arm\'onico en el cliente; ACK emitido antes del flanco f\'isico \\
+\bottomrule
+\end{tabularx}
+\end{center}

@@ -1,0 +1,124 @@
+% =====================================================================
+%  Primera Presentación — Proyecto Final de Carrera
+%  SUCIO / BORRADOR DE TRABAJO — sin límite de páginas.
+%
+%  OJO: el Art. 19 del Reglamento de PFC exige, para la entrega formal,
+%  un documento de Estado del Arte de MÁXIMO 15 PÁGINAS INCLUYENDO LA
+%  BIBLIOGRAFÍA. Este archivo NO cumple ese límite a propósito: es el
+%  volcado completo de todo lo hecho, para revisarlo con el tutor y
+%  recortar juntos. La versión de entrega se deriva de acá.
+%
+%  Autor: Elías David Álvarez Martínez
+%  Compilar: pdflatex main -> bibtex main -> pdflatex main x2
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-noquoting]{babel}
+\usepackage{lmodern}
+\usepackage[left=2.4cm,right=2.4cm,top=2.4cm,bottom=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{array,tabularx,booktabs,multirow}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+
+\sisetup{output-decimal-marker={,},per-mode=symbol}
+\graphicspath{{../../Urucom_2026_compact/imagenes/}{imagenes/}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+
+% --- Marca de BORRADOR en el encabezado (sin fancyhdr, para no depender de paquetes extra) ---
+\makeatletter
+\renewcommand{\@oddhead}{%
+  \parbox{\textwidth}{%
+    \footnotesize\itshape Borrador de trabajo --- no es la versi\'on de entrega
+    \hfill \upshape\thepage\\[-0.6em]\rule{\textwidth}{0.4pt}}}
+\renewcommand{\@evenhead}{\@oddhead}
+\renewcommand{\@oddfoot}{}
+\renewcommand{\@evenfoot}{}
+\makeatother
+
+\newcommand{\universidad}{Universidad Cat\'olica ``Nuestra Se\~nora de la Asunci\'on''}
+\newcommand{\facultad}{Facultad de Ciencias y Tecnolog\'ias}
+\newcommand{\departamento}{Departamento de Ingenier\'ia Electr\'onica e Inform\'atica}
+\newcommand{\titulo}{Dise\~no e implementaci\'on de un sistema electr\'onico multicanal
+del tipo IoT para caracterizaci\'on geot\'ecnica del suelo mediante ondas s\'ismicas}
+\newcommand{\alumno}{El\'ias David \'Alvarez Mart\'inez}
+\newcommand{\carrera}{Ingenier\'ia Electr\'onica}
+\newcommand{\tutor}{Enrique A. Vargas Cabral, Ph.D.}
+\newcommand{\matricula}{Y24137}
+
+% Caja para marcar pendientes/decisiones a conversar con el tutor
+\newcommand{\nota}[1]{%
+  \par\vspace{0.3em}%
+  \noindent\fcolorbox{gray!60}{gray!10}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\footnotesize\textbf{[Nota para el tutor]} #1}}%
+  \par\vspace{0.3em}}
+
+\begin{document}
+
+% ---------------------------------------------------------------- PORTADA
+\thispagestyle{empty}
+\begin{center}
+    {\large \universidad}\par
+    {\facultad}\par
+    {\departamento}\par
+    \vspace{0.8cm}
+    {\Large\bfseries \titulo}\par
+    \vspace{0.4cm}
+    {\bfseries Proyecto Final de Carrera --- Primera Presentaci\'on}\par
+    \vspace{0.15cm}
+    {\itshape Borrador de trabajo (versi\'on extendida, sin recortar)}\par
+    \vspace{0.15cm}
+    Agosto de 2026
+\end{center}
+
+\vspace{0.4cm}
+\begin{tabularx}{\textwidth}{@{}lX lX@{}}
+\textbf{Alumno:} & \alumno & \textbf{Carrera:} & \carrera \\
+\textbf{Tutor:} & \tutor & \textbf{Matr\'icula:} & \matricula \\
+\end{tabularx}
+
+\vspace{0.6cm}
+\hrule
+\vspace{0.4cm}
+
+\nota{Este documento es deliberadamente m\'as largo que el l\'imite reglamentario.
+El Art.~19 del Reglamento de PFC (nov.~2023) exige para la Primera Presentaci\'on
+un documento de Estado del Arte de \textbf{m\'aximo 15 p\'aginas incluyendo la
+bibliograf\'ia}. El objetivo de esta versi\'on es exponer \emph{todo} lo realizado
+hasta la fecha para decidir en conjunto qu\'e entra y qu\'e queda fuera de la
+entrega formal. Las secciones candidatas a recorte est\'an marcadas con notas
+como esta.}
+
+\input{secciones/00_resumen}
+
+\newpage
+
+\input{secciones/01_introduccion}
+\input{secciones/02_fundamentos}
+\input{secciones/02b_geofono}
+\input{secciones/03_estado_del_arte}
+\input{secciones/03b_topologias}
+\input{secciones/04_arquitectura}
+\input{secciones/05_desarrollo_cronologico}
+\input{secciones/06_metodologia_validacion}
+\input{secciones/07_resultados}
+\input{secciones/08_trabajos_futuros}
+\input{secciones/09_conclusiones}
+\appendix
+\input{secciones/A1_inventario}
+\input{secciones/A2_preguntas}
+
+\newpage
+\bibliographystyle{IEEEtranS}
+\bibliography{referencias,ampliacion}
+
+\end{document}

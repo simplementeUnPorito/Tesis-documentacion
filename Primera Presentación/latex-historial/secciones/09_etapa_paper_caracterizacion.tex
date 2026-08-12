@@ -1,0 +1,208 @@
+\section{Etapa 9 --- Art\'iculo URUCON y caracterizaci\'on medida de la cadena}
+\label{sec:et9}
+\periodo{15 --- 23 de julio de 2026 \quad$\cdot$\quad 5 d\'ias de trabajo}
+
+Dos l\'ineas: escribir y someter a revisi\'on el art\'iculo sobre la
+auto-calibraci\'on, y ---en paralelo--- \textbf{medir de verdad} la cadena
+anal\'ogica con generador y osciloscopio, en vez de confiar en el modelo.
+
+\subsection{El art\'iculo: \emph{Automatic DC-Offset Calibration for a Low-Cost
+Geophone Front End}}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+15 jul & Reescritura de las Secciones III y IV con datos experimentales reales (dos placas, barrido de ganancia completo). Se agrega el \emph{flag} de firmware \texttt{CAL\_PI\_FORCE\_MIN\_DEADBAND} para el experimento decisivo sobre el estancamiento del PGA \\
+\addlinespace[2pt]
+15 jul & \textbf{Revisi\'on editorial simulada}: se somete el propio art\'iculo a un panel de cinco revisores ficticios antes de mandarlo \\
+\addlinespace[2pt]
+16 jul & Respuesta a esa revisi\'on: siete referencias nuevas, tabla de resultados ampliada a las cuatro etapas (no solo LP), ecuaciones de banda muerta con justificaci\'on expl\'icita, y \textbf{una correcci\'on de honestidad} sobre qu\'e es realmente la condici\'on ``Default'' \\
+\addlinespace[2pt]
+23 jul & Reuni\'on con el tutor; compresi\'on de 6 a 5 p\'aginas; figura GEO$\to$ADC lado a lado nueva. Panel de revisi\'on simulado da \emph{Minor Revision}, $\approx$65/100 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{Vale registrar el m\'etodo: \textbf{someter el trabajo a una
+revisi\'on adversarial antes de exponerlo}. Lo que produjo no fue cosm\'etico
+---la ampliaci\'on de la tabla a las cuatro etapas y la correcci\'on sobre la
+condici\'on ``Default'' son cambios de fondo que salieron de esa cr\'itica.}
+
+Del mismo per\'iodo es el cierre de una deuda de nomenclatura: el componente
+\texttt{GEO\_ADDER} se renombr\'o a \texttt{GEO\_SUM} en todo el firmware
+(esquem\'atico, calibraci\'on, tablas por etapa), con recalibraci\'on de la
+ganancia del PI ($\times2{,}63$) y banda muerta configurable por etapa.
+
+\subsection{El protocolo de barridos: c\'omo se midi\'o la cadena}
+
+Este es el documento t\'ecnico m\'as riguroso que produjo el proyecto
+(\texttt{PROTOCOLO\_BARRIDOS\_CADENA\_ANALOGICA.md}). Registra c\'omo medir la
+respuesta en frecuencia de las cuatro etapas con un generador Agilent 33220A y
+un osciloscopio Tektronix TDS2004B:
+
+\begin{itemize}[itemsep=0.2em]
+\item CH1 $=$ salida PGA, CH2 $=$ BP, CH3 $=$ sumador (compensador), CH4 $=$ LP;
+\item \texttt{SYNC} del generador $\to$ \texttt{EXT TRIG} del osciloscopio, de
+modo que el flanco de \emph{sync} marque el comienzo del barrido;
+\item \textbf{sondas en $10\times$ obligatoriamente}: en $1\times$ la
+capacitancia de la sonda es comparable con el $C_f = \SI{177}{\pico\farad}$ del
+nodo BP y lo carga de forma apreciable ---o sea, \emph{el instrumento
+modificar\'ia el circuito que quiere medir};
+\item nueve bandas de barrido logar\'itmico desde
+\SIrange{100}{1}{} m\SI{}{\hertz}--\SI{}{\hertz} hasta
+\SIrange{20}{200}{\kilo\hertz}, cada una con su base de tiempo;
+\item tres repeticiones por banda cuando sea posible;
+\item \textbf{control previo de sondas}: conectar los cuatro canales al mismo
+seno y verificar que las razones den $1\angle 0^{\circ}$, para detectar una
+sonda descompensada \emph{antes} de atribuirle el error al circuito.
+\end{itemize}
+
+\dato{\textbf{Precauci\'on documentada sobre la etapa SUM.} En la banda donde
+$BP/PGA \approx -1$, las dos corrientes de entrada del sumador se cancelan en
+torno al \SI{95}{\percent}. Eso hace que el cociente medido sea
+extremadamente sensible al ruido y a los valores reales de los resistores. La
+recomendaci\'on registrada es \emph{abrir temporalmente una de las dos ramas}
+para identificar la etapa sin la cancelaci\'on, y usar la medici\'on de cuatro
+canales solo como validaci\'on en la configuraci\'on final.}
+
+\subsection{Tratamiento de datos: lo que se hizo bien}
+
+El script de an\'alisis (\texttt{analizar\_barridos\_cadena\_analogica.m},
+\texttt{AnalisisCircuito/}) incorpora varias decisiones que conviene no perder:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{Modelo del operacional, no ideal}: $A_0=\SI{90}{\decibel}$,
+GBW $=\SI{8}{\mega\hertz}$, $R_{in}=\SI{35}{\mega\ohm}$,
+$R_{out}=\SI{20}{\ohm}$, $C_{in}=\SI{18}{\pico\farad}$. El \emph{slew rate}
+(\SI{4.3}{\volt\per\micro\second}) se trata como l\'imite \emph{no lineal} de
+amplitud y no como un polo, que es lo correcto.
+\item \textbf{Cancelaci\'on de red por m\'inimos cuadrados}, la misma t\'ecnica
+que en el ESP: se estima la fundamental de \SI{50}{\hertz} y se restan
+\emph{solo} los arm\'onicos dentro del pasabanda. Se excluye del ajuste un
+entorno de tres ciclos alrededor de cada cruce del barrido \textbf{para no
+borrar el est\'imulo}, y se omite la regresi\'on si el registro no contiene al
+menos dos ciclos de red.
+\item \textbf{Recuperaci\'on parcial de capturas saturadas}: una saturaci\'on ya
+no descarta la captura entera. Se excluye un ciclo alrededor de cada recorte y
+los tramos lineales continuos restantes entran como submuestras
+independientes. En la tanda calibrada esto recuper\'o 22 combinaciones
+captura-etapa de 9 capturas saturadas.
+\item \textbf{Deduplicaci\'on por SHA-256}: se detect\'o que \texttt{XD\_ALL0006}
+era copia exacta de \texttt{XD\_ALL0005} en los cuatro canales y se elimin\'o.
+\item \textbf{Orden ampliado con criterio}: dos polos extra por cada
+operacional en el camino, aumentando tambi\'en el grado del numerador para
+conservar el grado relativo (BP 4/3, compensador 5/4, LP 4/2, PGA$\to$ADC
+11/8).
+\end{itemize}
+
+\subsection{Un conjunto de datos completo, descartado}
+
+\descartado{\textbf{\texttt{Osciloscopio\_descartado\_2026-07-20\_BP\_43k}} ---
+una tanda completa de barridos, con sus 156 archivos y m\'as de 20 gr\'aficos ya
+producidos, qued\'o archivada como descartada. Motivo: la rama BP ten\'ia
+instalado \SI{8200}{\ohm} donde el dise\~no requiere \SI{7501.9}{\ohm}, de modo
+que la etapa no estaba realizando la compensaci\'on buscada. Se conserva en el
+repositorio en vez de borrarse, con el motivo en el nombre de la carpeta.}
+
+\seleccionado{Conservar el conjunto descartado \emph{con el motivo en el
+nombre} es la decisi\'on correcta: permite volver a \'el si aparece una duda, y
+evita que alguien lo reprocese sin saber por qu\'e no vale.}
+
+\subsection{La tanda calibrada del 21 de julio}
+
+Se rehicieron los barridos con la rama BP corregida a
+$\SI{6.8}{\kilo\ohm} + $ potenci\'ometro. Resultados de identificaci\'on:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l r r r X@{}}
+\toprule
+\textbf{Etapa} & \textbf{Pts.} & \textbf{Coh.\ med.} & \textbf{RMS ajuste} & \textbf{Estado} \\
+\midrule
+BP (CH2/CH1) & 85 & 0{,}968 & \SI{6.49}{\decibel} & Parcial: polo inferior fuera de banda, alta frecuencia no ideal \\
+COMP (CH3/CH1) & 71 & 0{,}964 & \SI{0.38}{\decibel} & Identificaci\'on buena; el pot no es estimable de forma confiable \\
+LP (CH4/CH3) & 33 & 0{,}945 & \SI{0.60}{\decibel} & Confiable en la banda \'util \\
+PGA$\to$ADC (CH4/CH1) & 61 & \textbf{0{,}995} & \SI{0.20}{\decibel} & Confiable; din\'amica subs\'onica no observable \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\dato{Se extendi\'o la medici\'on hasta \SI{10}{\milli\hertz} con la captura
+\texttt{XD\_ALL0017} (\SIrange{0.01}{0.05}{\hertz}), libre de saturaci\'on, que
+aporta 14 puntos por transferencia con coherencia mediana entre
+0{,}988 y 0{,}9998.}
+
+\subsubsection{El hallazgo principal: la muesca no llega a profundidad}
+
+\dato{En $f_0 = \SI{10.2046}{\hertz}$, el modelo completo predice
+$CH3/CH1 = \SI{-57.58}{\decibel}$. La medici\'on da $\approx\SI{-31.26}{\decibel}$:
+la muesca \textbf{es reproducible} ---dos capturas independientes difieren solo
+\SI{0.42}{\decibel}, y dos barridos nuevos concuerdan--- pero queda
+\textbf{\SI{26.33}{\decibel} menos profunda} que el objetivo.}
+
+La causa est\'a identificada y es geom\'etrica, no de firmware:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+Cursor para cancelaci\'on exacta & \SI{632.556}{\ohm} & \multirow{2}{*}{} \\
+Cursor objetivo para $\zeta_0 = 0{,}25$ & \SI{634.539}{\ohm} & \\
+\textbf{Separaci\'on entre ambos ajustes} & \textbf{\SI{1.98}{\ohm}} & sobre un potenci\'ometro de recorrido \SI{2}{\kilo\ohm} \\
+Posici\'on efectiva estimada por profundidad & $\approx\SI{674}{\ohm}$ & unos \SI{39}{\ohm} por encima del objetivo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{El ajuste requerido es de \SI{1.98}{\ohm} sobre un
+recorrido de \SI{2000}{\ohm}: una parte en mil.} Esa es la raz\'on real por la
+que la compensaci\'on no alcanza su profundidad de dise\~no, y es una conclusi\'on
+de dise\~no, no un problema de calibraci\'on: \emph{la sensibilidad del ajuste
+est\'a mal escalada}. La conclusi\'on pr\'actica que qued\'o escrita es no seguir
+con m\'as barridos anchos, sino recalibrar alrededor de \SI{10.2046}{\hertz} con
+mayor sensibilidad vertical en CH3 y repetir un barrido estrecho.}
+
+\dato{\textbf{Lo que s\'i funciona:} el LP se comporta como se espera
+(\SI{13.19}{}/\SI{13.20}{\decibel} medidos contra \SI{13.98}{\decibel} del
+modelo; \SI{0.435}{\decibel} RMS en toda la banda de ajuste
+\SIrange{10.6}{984}{\hertz}), y la cadena PGA$\to$ADC se identifica con
+\SI{0.20}{\decibel} y \SI{1.16}{\degree} RMS. \textbf{El circuito es
+repetible}; lo que no est\'a logrado es la calibraci\'on fina de la cancelaci\'on.}
+
+\subsection{Discrepancia a resolver sobre $\zeta$}
+
+\pendiente{\textbf{Hay que aclarar esto antes de escribir el documento de
+entrega.} Los archivos de resultados distinguen tres cantidades que se han
+venido mezclando:
+\begin{itemize}[itemsep=0.15em,topsep=0.2em]
+\item \texttt{zeta0\_objetivo} $= 0{,}25$, descrito como \emph{``numerador de
+Hcompensate''}. Es el amortiguamiento del ge\'ofono, que el numerador del
+compensador debe reproducir para cancelar sus polos.
+\item \texttt{zeta1\_denominador\_BP}: $980{,}03$ en la tanda descartada del
+20/07 y $937{,}40$ en la calibrada del 21/07. Es el amortiguamiento
+\emph{nuevo}, el que efectivamente extiende la banda.
+\item \texttt{zeta\_realizada\_componentes}: \textbf{$83{,}661$} en la tanda
+descartada (con la resistencia de \SI{8200}{\ohm} equivocada) y
+\textbf{$0{,}250000000000114$} en la calibrada.
+\end{itemize}
+Es decir: seg\'un estos archivos, \textbf{$83{,}661$ no es un objetivo de
+dise\~no sino el valor que el numerador realizaba \emph{por error}} con el
+resistor equivocado, y la tanda calibrada del d\'ia siguiente lo lleva
+exactamente a $0{,}25$, que s\'i es el objetivo. Esto contradice la
+interpretaci\'on que ven\'ia usando el borrador de la Primera Presentaci\'on.
+\textbf{Confirmame cu\'al es la lectura correcta}, porque cambia la redacci\'on
+de la secci\'on de compensaci\'on: no es lo mismo decir ``se busc\'o
+$\zeta_1 = 83{,}661$'' que decir ``se detect\'o que el circuito estaba
+realizando $83{,}661$ en lugar de $0{,}25$ y se corrigi\'o''.}
+
+\subsection{Balance de la etapa}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Se qued\'o} & Protocolo de barridos reproducible; identificaci\'on por \texttt{tfest} con orden justificado; modelo de operacional real; cancelaci\'on de red por m\'inimos cuadrados tambi\'en en el an\'alisis; recuperaci\'on parcial de capturas saturadas; deduplicaci\'on por SHA-256; revisi\'on adversarial simulada como paso previo a publicar \\
+\addlinespace[3pt]
+\textbf{Se descart\'o} & Tanda completa del 20/07 con BP de \SI{43}{\kilo\ohm} y rama de \SI{8200}{\ohm}; nomenclatura \texttt{GEO\_ADDER}; sondas en $1\times$ \\
+\addlinespace[3pt]
+\textbf{Qued\'o abierto} & La muesca de compensaci\'on est\'a \SI{26.33}{\decibel} por encima de su profundidad de dise\~no; el ajuste de \SI{1.98}{\ohm} sobre \SI{2}{\kilo\ohm} es impracticable como est\'a y sugiere rehacer el divisor con mayor resoluci\'on \\
+\bottomrule
+\end{tabularx}
+\end{center}

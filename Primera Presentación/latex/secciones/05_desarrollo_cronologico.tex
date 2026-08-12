@@ -1,0 +1,283 @@
+\section{Desarrollo del trabajo por per\'iodos}
+\label{sec:cronologia}
+
+Esta secci\'on documenta \emph{todo} lo realizado, agrupado por per\'iodos de trabajo, e
+incluye los caminos explorados y abandonados, que son parte del trabajo de ingenier\'ia
+aunque no aparezcan en el resultado final. La fuente es la bit\'acora del proyecto, que
+registra \textbf{66 jornadas de trabajo activo} y aproximadamente \textbf{230
+\emph{commits}} entre el 25 de febrero y el 1 de agosto de 2026.
+
+\subsection{Del 25 de febrero al 23 de marzo --- Construcci\'on del marco te\'orico}
+
+En este per\'iodo se cre\'o el repositorio del proyecto y se construy\'o la base te\'orica y
+bibliogr\'afica del m\'etodo. Se mont\'o un \emph{vault} de conocimiento estructurado en
+Obsidian y se resumieron \'integramente los ocho cap\'itulos del texto de referencia de
+Foti \emph{et al.}, produciendo alrededor de 3000 l\'ineas de material propio: desde los
+fundamentos de mec\'anica del continuo y propagaci\'on de ondas hasta la inversi\'on y los
+casos de estudio. Se desarroll\'o en detalle el Problema de Lamb (1904) y el tratamiento
+del n\'umero de onda complejo en medios viscoel\'asticos, y se estableci\'o el criterio
+cuantitativo del efecto de campo cercano, que luego condicionar\'ia la geometr\'ia de los
+arreglos de medici\'on.
+
+Se escribieron cinco \emph{scripts} MATLAB de verificaci\'on te\'orica y se incorpor\'o como
+subm\'odulo el c\'odigo MATLAB de MASW disponible p\'ublicamente, como banco de contraste.
+Paralelamente se construy\'o una base de datos bibliogr\'afica que creci\'o de 22 a
+\textbf{65 art\'iculos} curados, cada uno con an\'alisis estructurado individual, junto con
+34 PDFs. De ese relevamiento surgieron los trabajos fundacionales que orientan el
+proyecto (Park \emph{et al.}~1999, Xia \emph{et al.}~1999, las gu\'ias
+InterPACIFIC~2018) y los antecedentes regionales de validaci\'on cruzada MASW--SPT.
+
+\subsection{Del 10 al 15 de abril --- Consolidaci\'on del conocimiento}
+
+Se ejecut\'o un proceso asistido y supervisado de consolidaci\'on del \emph{vault}: se
+enriquecieron los conceptos existentes, se ampli\'o el conjunto de conceptos at\'omicos
+interconectados hasta superar los \textbf{140}, se integraron los art\'iculos de la base
+bibliogr\'afica dentro de los cap\'itulos correspondientes, se agregaron ejemplos trabajados
+por cap\'itulo y se realiz\'o una pasada de enlazado cruzado. Se embebieron adem\'as las
+figuras del texto de referencia y se reorganiz\'o el repositorio de recursos gr\'aficos.
+
+\nota{Este bloque se apoy\'o fuertemente en asistencia de IA bajo supervisi\'on. Conviene
+decidir con el tutor cu\'anto explicitar en el documento entregado y con qu\'e encuadre
+metodol\'ogico.}
+
+\subsection{Del 17 al 30 de abril --- Transductor, primeras se\~nales y dos pivotes de dise\~no}
+
+Aqu\'i comienza el trabajo de hardware. Se model\'o el ge\'ofono SM-24 en Simulink a partir
+de su funci\'on de transferencia de segundo orden y se cre\'o el primer proyecto en PSoC
+Creator. El problema de dise\~no qued\'o planteado de inmediato: c\'omo extender la banda
+\'util por debajo de la frecuencia natural del transductor, donde reside la informaci\'on de
+las capas profundas.
+
+\textbf{Se explor\'o y descart\'o un primer camino.} Se dise\~n\'o y optimiz\'o un filtro pasivo
+RC de entrada; a las 24 horas se elimin\'o en favor de un esquema de \textbf{FIR digital
+con decimaci\'on en cadena}, m\'as flexible y libre de tolerancias de componentes.
+
+Se ejecut\'o una sesi\'on intensiva de desarrollo de firmware que produjo la arquitectura de
+banco de pruebas del PSoC, un FIR en formato Q1.15 cargable desde el anfitri\'on, la
+primera arquitectura de red ESP32 sobre WiFi, y una suite de \textbf{125 pruebas
+automatizadas}. Esa suite detect\'o defectos reales que de otro modo habr\'ian llegado a
+campo: un desbordamiento en la conversi\'on Q1.15, un error en el estado del bloque de
+filtro por canal y una divisi\'on por cero que produc\'ia NaN.
+
+Se obtuvo la \textbf{primera se\~nal real del SM-24}. Para poder verla se desarroll\'o
+\texttt{geophone\_scope.m}, un osciloscopio en MATLAB sobre puerto serie de 657 l\'ineas,
+y m\'as tarde una versi\'on simplificada. Se implementaron dos compensadores de extensi\'on
+de banda por caminos distintos ---uno anal\'itico y otro por b\'usqueda exhaustiva--- y se
+analiz\'o un filtro VCVS como compensador activo, con su funci\'on de transferencia completa
+y el an\'alisis de compromisos frente a la alternativa digital.
+
+Se construy\'o una prueba de concepto de la cadena diferencial completa
+(\texttt{ADC $\to$ DFB $\to$ FIR notch $\to$ UART}), con un \textbf{filtro FIR
+\emph{notch} de \SI{50}{\hertz} de 465 coeficientes} dise\~nado con \texttt{firls} para
+suprimir la interferencia de red el\'ectrica, y se realizaron 18 sesiones de captura.
+
+\textbf{El segundo pivote} cerr\'o el per\'iodo: se abandon\'o la topolog\'ia Sallen-Key/VCVS y
+se adopt\'o \textbf{MFB} (\emph{Multiple Feedback}), decisi\'on respaldada por un an\'alisis
+comparativo cuantitativo, junto con la suma en corriente mediante amplificador de
+transimpedancia. Se realizaron las \textbf{primeras capturas en exteriores}.
+
+\subsection{Del 5 al 20 de mayo --- Caracterizaci\'on espectral y cadena anal\'ogica completa}
+
+Se desarroll\'o \texttt{analisis\_espectral.m}, una herramienta de estimaci\'on de densidad
+espectral de potencia por el m\'etodo de Welch y c\'alculo de relaci\'on se\~nal--ruido por
+entidad de medici\'on, y con ella se realiz\'o la comparaci\'on experimental sistem\'atica
+entre las topolog\'ias MFB y Sallen-Key sobre datos reales. Se dise\~n\'o un filtro FIR
+multibanda de orden 800 y se acumularon 41 sesiones de captura.
+
+Se logr\'o la \textbf{calibraci\'on manual del \emph{offset} diferencial} mediante ajuste de
+las referencias VDAC de cada etapa ---el antecedente directo de la auto-calibraci\'on
+autom\'atica desarrollada un mes despu\'es--- junto con un protocolo de configuraci\'on
+PSoC$\to$MATLAB. El protocolo de transmisi\'on evolucion\'o a 4 bytes con tipo y canal
+multiplexados, y se agreg\'o un multiplexor anal\'ogico para medir el modo com\'un.
+
+Un hallazgo relevante de este per\'iodo: el modelo de amplificador operacional ideal no
+reproduc\'ia el comportamiento medido del compensador en el extremo superior de la banda.
+Se incorpor\'o el \textbf{modelo del operacional real} ($A_0=\SI{90}{\decibel}$,
+$f_p=\SI{8}{\mega\hertz}$) y se valid\'o contra medici\'on. Se atac\'o el dise\~no del
+compensador con cuatro estrategias de optimizaci\'on en paralelo.
+
+El per\'iodo cierra con \texttt{DiferencialToSingleEnded}: la \textbf{cadena anal\'ogica
+completa} implementada en el PSoC, con la secuencia correcta de arranque de todos los
+bloques anal\'ogicos.
+
+\subsection{Del 24 de mayo al 10 de junio --- El sistema inal\'ambrico multi-nodo}
+
+Se dise\~n\'o e implement\'o la red: arquitectura maestro--esclavo sobre \textbf{ESP-NOW},
+con enlace al PSoC y comunicaci\'on con el anfitri\'on. Sigui\'o una depuraci\'on intensiva
+sobre hardware real, que incorpor\'o un \emph{beacon} de diagn\'ostico, una sonda de arranque
+con confirmaci\'on y medici\'on de tiempo de ida y vuelta, almacenamiento y reenv\'io, y
+pulsos de depuraci\'on por hardware para poder observar la temporizaci\'on con osciloscopio.
+
+El 26 de mayo se alcanz\'o el \textbf{primer funcionamiento de extremo a extremo}: con la
+incorporaci\'on de la fase de preparaci\'on previa al disparo, el sistema transmiti\'o datos
+reales del PSoC hasta el anfitri\'on por primera vez.
+
+En paralelo se cre\'o el proyecto PSoC dedicado al \textbf{martillo instrumentado} para el
+aceler\'ometro PCB~Piezotronics~086D20. Poco despu\'es se tom\'o una decisi\'on de arquitectura
+de software importante: unificar el firmware de ambos tipos de nodo en un \textbf{\'unico
+archivo} que detecta autom\'aticamente en compilaci\'on qu\'e hardware tiene debajo, evitando
+la bifurcaci\'on del c\'odigo embebido.
+
+Se realiz\'o una refactorizaci\'on mayor que migr\'o el enlace PSoC$\leftrightarrow$ESP32 de
+\textbf{SPI a UART}, ampli\'o el contador de muestras a 16 bits e introdujo una m\'aquina de
+estados en el PSoC. Luego se corrigieron tres problemas de radiofrecuencia y
+temporizaci\'on que estabilizaron el sistema (frecuencia del \emph{beacon}, almacenamiento
+y reenv\'io, y velocidad de la UART).
+
+El per\'iodo cierra con dos hitos: la \textbf{interfaz web embebida} ---el maestro sirve
+una aplicaci\'on de p\'agina \'unica sobre su propio punto de acceso, eliminando la necesidad
+de llevar una computadora al campo--- y un an\'alisis formal de robustez de la
+sincronizaci\'on que identific\'o un defecto de confirmaci\'on-antes-de-GPIO y estableci\'o el
+presupuesto de \emph{jitter} entre nodos.
+
+\subsection{Del 14 al 30 de junio --- Auto-calibraci\'on del \emph{front-end}}
+
+Este per\'iodo produjo el aporte metodol\'ogico central del proyecto, y es un buen ejemplo
+de iteraci\'on de dise\~no porque \textbf{el algoritmo se reemplaz\'o dos veces}.
+
+La primera implementaci\'on us\'o \textbf{b\'usqueda binaria} (bisecci\'on) sobre los c\'odigos
+VDAC, y se valid\'o en hardware real. Sobre esa base se realizaron dos avances
+estructurales: la adquisici\'on migr\'o de una ISR cl\'asica a una \textbf{cadena gobernada
+por DMA con filtro FIR embebido}, dejando al procesador fuera del camino de datos; y la
+calibraci\'on gan\'o \textbf{persistencia en EEPROM con CRC-16}, sobreviviendo a un
+reinicio. La cadena DMA se generaliz\'o luego a un multiplexor de cuatro canales
+(crudo/filtrado $\times$ individual/lote) y se activ\'o el \textbf{promediado por
+hardware}, de modo que la calibraci\'on dej\'o de promediar muestra a muestra en la
+interrupci\'on y pas\'o a consumir ventanas ya sumadas, con verificaci\'on de coherencia en
+tiempo de compilaci\'on.
+
+El 23 de junio se produjo el \textbf{reemplazo total del algoritmo}. Tras convivir con
+bisecci\'on binaria, un servo lento y variantes de control PID, el sistema converg\'io en
+un \'unico
+\textbf{controlador PI} con prealimentaci\'on f\'isica y detector de enganche, unificado
+para ambos tipos de nodo, y se document\'o la primera calibraci\'on exitosa sobre hardware
+real.
+
+El refinamiento posterior aport\'o: escala del error en c\'odigos de DAC, banda muerta
+proporcional a la ganancia de cada etapa, \textbf{anti-windup direccional} ---el
+integrador se congela contra el l\'imite del DAC \'unicamente en el sentido que empeorar\'ia
+la saturaci\'on--- y manejo correcto de ganancias con signo. El controlador se generaliz\'o
+a las cuatro etapas de la placa de ge\'ofono y se elimin\'o definitivamente el c\'odigo de
+bisecci\'on heredado.
+
+Dos hallazgos de este per\'iodo merecen menci\'on por su valor pr\'actico. Primero, se
+descubri\'o que el filtro de adquisici\'on llevaba \emph{meses} cargando coeficientes de
+pasa-banda en lugar del pasa-bajos que correspond\'ia. Segundo, un problema que aparentaba
+ser de firmware result\'o ser \textbf{un pin sin soldar}. El per\'iodo cierra corrigiendo
+cuatro defectos de campo documentados y agregando detecci\'on autom\'atica del tipo de nodo,
+propagada desde el PSoC hasta la interfaz web.
+
+\subsection{Del 1 al 12 de julio --- Determinismo, almacenamiento y procesamiento MASW}
+
+El modelo de captura pas\'o de estar gobernado por temporizador a basarse en
+\textbf{confirmaci\'on real de fin de captura por nodo}, y la EEPROM de calibraci\'on se
+redise\~n\'o para mantener \textbf{un registro independiente por c\'odigo de ganancia}.
+
+El cambio de arquitectura m\'as importante fue el nacimiento de \textbf{\emph{superMaquina}}:
+la l\'ogica de captura migr\'o de C a una m\'aquina de estados descrita en \textbf{Verilog} e
+instanciada en los bloques UDB del PSoC, que decide en hardware qu\'e solicitud de DMA se
+deja pasar y cu\'ando arranca y termina una captura. La motivaci\'on es el determinismo: en
+un sistema multicanal el \emph{jitter} temporal se traduce directamente en error de
+velocidad de fase. Se agreg\'o adem\'as un conjunto completo de comandos por USB para operar
+el \emph{pipeline} paso a paso desde terminal, sin depender de la web.
+
+Se consolid\'o la pol\'itica de eventos ``determinismo primero'': los eventos de fin de
+cuenta de los temporizadores dejaron de generar interrupci\'on y pasaron a consumirse por
+sondeo, se dedic\'o un temporizador al \emph{watchdog} de captura, y se agreg\'o un
+\textbf{cortacircuitos anti-tormenta de interrupciones} ---una condici\'on efectivamente
+observada en placa mediante depuraci\'on por pyOCD--- con auto-recuperaci\'on. El ADC pas\'o
+de dos a \textbf{cuatro configuraciones de rango de entrada}, todas validadas en
+hardware, y la interfaz web sum\'o indicador de intensidad de se\~nal del enlace.
+
+En paralelo arranc\'o el \emph{pipeline} de procesamiento en Python, que sum\'o cerca de
+\textbf{4600 l\'ineas} de una vez: m\'odulos de an\'alisis de dispersi\'on e inversi\'on MASW y
+una aplicaci\'on de revisi\'on de datos de campo. Esta \'ultima recibi\'o doce fases de pulido
+(ordenamiento por amplitud pico a pico, banco de filtros, alineaci\'on entre tandas,
+\emph{waterfall} y $f$--$k$, selecci\'on de curvas) y luego la capacidad de definir grupos
+de dispersi\'on independientes con combinaci\'on ponderada de im\'agenes, base de la
+inversi\'on multimodal. Se integr\'o \texttt{maswavespy} como subm\'odulo y se corri\'o la
+primera deconvoluci\'on sobre una captura real de campo.
+
+El per\'iodo cierra con la \textbf{auditor\'ia pre-campo} descrita en detalle en la
+Secci\'on~\ref{sec:auditoria}, que encontr\'o y corrigi\'o varios defectos cr\'iticos y emiti\'o
+el veredicto de sistema listo para campo.
+
+\subsection{Del 15 al 29 de julio --- Comunicaci\'on cient\'ifica y reorganizaci\'on}
+
+Se redact\'o el art\'iculo sobre la auto-calibraci\'on para el congreso URUCON~2026,
+incorporando datos experimentales reales de dos placas con barrido completo de ganancia.
+El art\'iculo se someti\'o a un panel de revisi\'on editorial simulada y se respondi\'o a las
+observaciones: siete referencias nuevas, tabla de resultados ampliada a las cuatro etapas
+en lugar de solo la \'ultima, ecuaciones de banda muerta con justificaci\'on expl\'icita, y
+una correcci\'on de honestidad cient\'ifica sobre qu\'e representa realmente la condici\'on de
+referencia. Tras una reuni\'on con el tutor se comprimi\'o de seis a cinco p\'aginas.
+
+En el firmware se salda una deuda de nomenclatura renombrando por completo la etapa
+sumadora, y se hace configurable la banda muerta por etapa. En MATLAB se establece un
+protocolo formal de barridos de la cadena anal\'ogica con \emph{script} de an\'alisis y
+datos reales, que permiti\'o contrastar la respuesta medida contra el modelo del circuito
+con valores de componentes reales.
+
+Se produjo tambi\'en una \textbf{ruptura arquitect\'onica} del repositorio: el historial
+monol\'itico se preserv\'o y el proyecto se reinici\'o como superproyecto con siete
+subm\'odulos independientes, reorganizados poco despu\'es \textbf{por prop\'osito y no por
+lenguaje} (firmware, interfaces, c\'alculos y modelados).
+
+Finalmente se port\'o el servidor Python de una implementaci\'on artesanal a
+\textbf{FastAPI}, con un \emph{gate} automatizado como condici\'on de avance, y se
+migr\'o la aplicaci\'on de escritorio PyQt de revisi\'on de campo a la web hasta alcanzar
+paridad funcional, incorporando cuarentena reversible en lugar de borrado f\'isico, cola
+de trabajos de an\'alisis persistente, exportaciones reproducibles y un \emph{gate} de
+\textbf{58 verificaciones}.
+
+\subsection{1 de agosto --- Hacia el hardware definitivo y la fuente s\'ismica}
+
+Se migr\'o el conexionado PSoC$\leftrightarrow$ESP32 a una \textbf{placa portadora
+intermedia} con asignaci\'on de pines definitiva verificada por \emph{script}, primer paso
+hacia una PCB propia. Este trabajo requiri\'o reconstruir por ingenier\'ia inversa los
+valores de componentes del esquem\'atico anal\'ogico, dado que el archivo del dise\~no es un
+binario propietario sin herramientas de lectura p\'ublicas; la reconstrucci\'on se realiz\'o
+contrastando el binario con la asignaci\'on generada por el ajustador y las cabeceras de
+pines, declarando expl\'icitamente el nivel de confianza de cada valor recuperado. El
+resultado es que el dise\~no anal\'ogico dej\'o de estar atrapado en un formato cerrado.
+
+En paralelo arranc\'o el dise\~no del \textbf{martillo de leva}, la fuente s\'ismica
+repetible, atacado simult\'aneamente con un modelo anal\'itico 2D en Python y un modelo 3D
+en Simscape Multibody derivado del CAD real. Ambos modelos detectaron errores propios ---
+una interferencia axial entre la leva y el brazo, y una violaci\'on de conservaci\'on de
+energ\'ia--- que est\'an pendientes de resoluci\'on.
+
+\subsection{S\'intesis: caminos explorados y descartados}
+
+Por su valor metodol\'ogico se listan expl\'icitamente las alternativas evaluadas y
+abandonadas, con el motivo del descarte.
+
+\begin{table}[h]
+\centering\footnotesize
+\caption{Alternativas de dise\~no evaluadas y descartadas durante el proyecto.}
+\label{tab:descartes}
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+\textbf{Alternativa} & \textbf{Motivo del descarte} & \textbf{Per\'iodo} \\
+\midrule
+Filtro pasivo RC de entrada & Reemplazado por FIR digital con decimaci\'on: m\'as flexible, sin tolerancias de componentes & abr. \\
+Topolog\'ia Sallen-Key / VCVS & An\'alisis comparativo favorece MFB (comportamiento con ganancia y sensibilidad a componentes) & abr. \\
+Compensaci\'on anal\'ogica activa del ge\'ofono & Complejidad y sensibilidad frente a la alternativa digital & abr.--may. \\
+Filtro adaptativo LMS para \emph{notch} & Reemplazado por m\'inimos cuadrados, m\'as predecible & jun. \\
+\emph{Notch} arm\'onico en el cliente web & Simplificaci\'on del \emph{pipeline}; se trata en post-proceso & jun. \\
+Enlace SPI PSoC$\leftrightarrow$ESP32 & Migrado a UART por robustez e integraci\'on con el protocolo & may. \\
+Calibraci\'on por bisecci\'on binaria & Reemplazada por PI unificado; no manejaba bien ruido ni signo de ganancia & jun. \\
+Servo lento y variantes PID & Se descarta el t\'ermino derivativo: amplifica el ruido de medici\'on del ADC sin aportar en una planta cuasi-est\'atica; el controlador final es PI & jun. \\
+Captura gobernada por temporizador & Reemplazada por confirmaci\'on real de fin por nodo & jul. \\
+L\'ogica de captura en C sobre registro & Reemplazada por m\'aquina de estados en Verilog (determinismo) & jul. \\
+Servidor HTTP artesanal & Migrado a FastAPI & jul. \\
+Aplicaci\'on de escritorio PyQt & Portada a la web para unificar la interfaz de operador & jul. \\
+Repositorio monol\'itico & Superproyecto con subm\'odulos organizados por prop\'osito & jul. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\nota{Esta secci\'on completa no entra en las 15 p\'aginas. Propuesta: para la entrega
+formal reducirla a \emph{una p\'agina}, con un p\'arrafo por per\'iodo, m\'as la
+Tabla~\ref{tab:descartes} (que es la que mejor muestra criterio de ingenier\'ia). El
+texto \'integro se conserva para el libro de tesis de la Defensa Final.}

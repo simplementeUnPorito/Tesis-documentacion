@@ -1,0 +1,109 @@
+\section{Panorama general}
+\label{sec:panorama}
+
+\subsection{De qu\'e se trata el proyecto}
+
+El objetivo es construir un sismógrafo multicanal de bajo costo para
+caracterizaci\'on geot\'ecnica del suelo mediante el m\'etodo MASW
+(\emph{Multichannel Analysis of Surface Waves}): se golpea el suelo con una
+fuente de impacto, se registra la llegada de las ondas Rayleigh en un arreglo
+lineal de ge\'ofonos, se construye la imagen de dispersi\'on
+velocidad-de-fase/frecuencia y se invierte esa curva para obtener el perfil de
+velocidad de onda de corte $V_S(z)$.
+
+Lo que distingue a este sistema de un sism\'ografo comercial es el conjunto de
+restricciones autoimpuestas:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{El transductor es el que hay}, no el que conviene: ge\'ofonos
+SM-24 de \SI{10}{\hertz} disponibles en la Facultad. Para llegar a las
+profundidades de inter\'es hace falta informaci\'on por debajo de su frecuencia
+natural, de modo que \emph{extender la banda hacia abajo por v\'ia electr\'onica
+deja de ser un refinamiento y pasa a ser la condici\'on que hace viable el
+objetivo}.
+\item \textbf{Nodos inal\'ambricos e independientes}, no un cable de decenas de
+metros con un digitalizador central. Eso convierte la sincronizaci\'on entre
+canales en un problema de dise\~no de primer orden.
+\item \textbf{Todo el procesamiento en herramientas propias}, desde la
+adquisici\'on hasta la inversi\'on multimodal.
+\end{itemize}
+
+\subsection{Escala del trabajo}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{timeline_commits.png}
+\caption{Actividad de desarrollo semanal en los diez repositorios del proyecto.
+La intensidad codifica cantidad de \emph{commits} por semana en escala
+comprimida (ra\'iz cuadrada), porque de otro modo la sesi\'on de 233
+\emph{commits} de abril aplastar\'ia todo el resto. La fila
+\emph{Superproyecto} concentra la historia anterior a la modularizaci\'on de
+julio de 2026: hasta ese momento todo viv\'ia en un \'unico repositorio, y por
+eso las filas de los subm\'odulos arrancan m\'as tarde aunque el trabajo sea
+anterior.}
+\label{fig:timeline}
+\end{figure}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}lX r@{}}
+\toprule
+\textbf{Dimensi\'on} & \textbf{Detalle} & \textbf{Cantidad} \\
+\midrule
+Per\'iodo activo & 25 feb 2026 --- 12 ago 2026 & 25 semanas \\
+\emph{Commits} & suma de los diez repositorios & 1261 \\
+D\'ias con actividad & registrados en la bit\'acora & 66 \\
+Bit\'acora & entradas diarias con an\'alisis de \emph{diff} & \textasciitilde{}1{,}3~MB \\
+Bibliograf\'ia & base curada con DOI y relevancia & 65 papers \\
+Notas de concepto & vault Obsidian, conceptos at\'omicos & \textasciitilde{}153 \\
+Datos crudos de campo & tres sitios, LFS con dedup SHA-256 & \textasciitilde{}29~GiB \\
+Datos procesados & \emph{waterfalls}, dispersi\'on, perfiles & \textasciitilde{}1{,}1~GiB \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Los diez repositorios}
+
+En julio de 2026 el monolito se parti\'o en un superproyecto con subm\'odulos
+organizados \emph{por prop\'osito}, no por lenguaje. La organizaci\'on final es:
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{Ruta} & \textbf{Repositorio} & \textbf{Contenido} \\
+\midrule
+\texttt{src/firmware/psoc} & Tesis-firmware-psoc & Adquisici\'on: cadena anal\'ogica configurable, ADC $\Delta\Sigma$, DFB, DMA, m\'aquina de estados en UDB, FatFs sobre SD \\
+\texttt{src/firmware/esp32} & Tesis-firmware-esp32 & Red ESP-NOW maestro/esclavo, sincronizaci\'on de disparo, volcado de capturas, servidor web embebido \\
+\texttt{src/interfaces/python} & Tesis-interfaces-python & Servidor FastAPI, interfaz web de revisi\'on de campo, cola de an\'alisis \\
+\texttt{src/interfaces/matlab} & Tesis-interfaces-matlab & Osciloscopio virtual y bancos de prueba contra el hardware \\
+\texttt{src/calculos\_modelados/matlab} & Tesis-calculos-matlab & Modelo del SM-24, compensadores, identificaci\'on de la cadena anal\'ogica, martillo de leva en Simscape \\
+\texttt{src/calculos\_modelados/python} & Tesis-calculos-python & C\'alculo de compensadores, MASW, martillo de leva 2D \\
+\texttt{docs} & Tesis-documentacion & Vault de investigaci\'on, bit\'acora, papers, art\'iculo URUCON, esta presentaci\'on \\
+\texttt{data} & Tesis-datos & Registros crudos y procesados de campo y de osciloscopio \\
+\texttt{PCBs} & Tesis-PCBs & Dise\~nos de placa \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\emph{(el superproyecto \texttt{Tesis} sostiene los \emph{gitlinks} y la historia previa a la partici\'on)}} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Las etapas}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+\textbf{\S} & \textbf{Per\'iodo} & \textbf{Qu\'e pas\'o} \\
+\midrule
+\ref{sec:et1} & 25 feb -- 23 mar & Marco te\'orico: Foti completo, 65 papers, scripts de validaci\'on \\
+\ref{sec:et2} & 10 -- 15 abr & Investigaci\'on asistida: 140 conceptos at\'omicos \\
+\ref{sec:et3} & 17 abr -- 20 may & Electr\'onica anal\'ogica: modelo del SM-24, compensaci\'on, dos pivotes de topolog\'ia \\
+\ref{sec:et4} & 24 may -- 3 jun & Red ESP-NOW: sincronizaci\'on de disparo entre nodos \\
+\ref{sec:et5} & 4 -- 10 jun & Consolidaci\'on del nodo: firmware \'unico e interfaz web embebida \\
+\ref{sec:et6} & 14 jun -- 2 jul & Auto-calibraci\'on, DMA y \texttt{superMaquina} \\
+\ref{sec:et7} & 3 -- 9 jul & Campa\~nas de campo y \emph{pipeline} MASW en Python \\
+\ref{sec:et8} & 11 -- 12 jul & Auditor\'ia pre-campo, SD en el PSoC, tres bugs cr\'iticos \\
+\ref{sec:et9} & 15 -- 23 jul & Art\'iculo URUCON y caracterizaci\'on medida de la cadena \\
+\ref{sec:et10} & 21 jul -- 1 ago & Ruptura arquitect\'onica y portaci\'on de la interfaz a web \\
+\ref{sec:et11} & 2 -- 12 ago & Placa nueva: rama \texttt{cambios-hardware} \\
+\bottomrule
+\end{tabularx}
+\end{center}

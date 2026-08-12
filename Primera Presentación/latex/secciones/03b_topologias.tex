@@ -1,0 +1,381 @@
+\section{Dise\~no del \emph{front-end} anal\'ogico: topolog\'ias estudiadas y ensayadas}
+\label{sec:topologias}
+
+Esta secci\'on documenta las topolog\'ias de acondicionamiento que se estudiaron, cu\'ales se
+llegaron a implementar y ensayar, y por qu\'e se descartaron las que se descartaron. Es el
+n\'ucleo del trabajo de electr\'onica del proyecto.
+
+\subsection{Planteo del problema de compensaci\'on}
+
+Partiendo de la respuesta en aceleraci\'on del transductor, Ec.~\eqref{eq:geo-acel}:
+
+\begin{equation}
+H_a(s)=\frac{-G_0\,s}{s^{2}+2\zeta_0\omega_n s+\omega_n^{2}},
+\end{equation}
+
+el objetivo es extender la banda plana hacia frecuencias menores que $\omega_n$. Hay dos
+familias de soluciones conceptualmente distintas:
+
+\begin{enumerate}[itemsep=0.2em]
+    \item \textbf{Cancelaci\'on de polos y ceros}: aplicar un filtro cuya funci\'on de
+    transferencia sea la inversa de $H_a$ en la banda de inter\'es, cancelando los polos
+    del transductor e imponiendo otros nuevos. Es directo pero fr\'agil: la cancelaci\'on
+    exacta exige conocer $\omega_n$ y $\zeta_0$ con precisi\'on, y estos par\'ametros varían
+    entre unidades, con la temperatura y con el envejecimiento. Una cancelaci\'on
+    imperfecta deja un residuo que se amplifica junto con la se\~nal.
+    \item \textbf{Modificaci\'on del amortiguamiento}: dejar $\omega_n$ intacta y
+    \emph{aumentar} el factor de amortiguamiento de $\zeta_0$ a un valor $\zeta_1\gg\zeta_0$.
+    Un sistema de segundo orden fuertemente sobreamortiguado tiene sus dos polos reales y
+    muy separados, de modo que la banda entre ellos se vuelve plana. Es la estrategia
+    adoptada por Ma \emph{et al.}~\cite{Ma2023} y la que se sigui\'o en este proyecto.
+\end{enumerate}
+
+\subsection{La topolog\'ia de referencia: Ma \emph{et al.} (2023)}
+\label{sec:ma2023}
+
+El trabajo de Ma \emph{et al.}~\cite{Ma2023} es la referencia principal de la cadena
+anal\'ogica implementada, y merece un tratamiento detallado porque la arquitectura del
+proyecto se deriva casi directamente de \'el.
+
+\subsubsection{Principio}
+
+El objetivo es transformar la respuesta del ge\'ofono de
+
+\begin{equation}
+H_a(s)=\frac{-G_0\,s}{s^{2}+2\zeta_0\omega_n s+\omega_n^{2}}
+\qquad\text{a}\qquad
+H_a'(s)=\frac{-G_0\,s}{s^{2}+2\zeta_1\omega_n s+\omega_n^{2}},
+\end{equation}
+
+es decir, aumentar el amortiguamiento manteniendo la frecuencia natural. La red de
+compensaci\'on necesaria es el cociente entre ambas, y admite una descomposici\'on notable:
+
+\begin{equation}
+H_{\mathrm{comp}}(s)=\frac{H_a'(s)}{H_a(s)}
+=1-\frac{2(\zeta_1-\zeta_0)\,\omega_n\,s}{s^{2}+2\zeta_1\omega_n s+\omega_n^{2}}.
+\label{eq:ma-comp}
+\end{equation}
+
+La Ec.~\eqref{eq:ma-comp} es el resultado clave: la compensaci\'on requerida es
+\textbf{un camino directo (pasa-todo, ganancia unitaria) menos un filtro pasa-banda de
+segundo orden}. Esto se implementa con dos bloques f\'isicos:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item un \textbf{filtro pasa-banda de segundo orden}, y
+    \item una \textbf{etapa restadora} (sumador inversor) que sustrae la salida del
+    pasa-banda de la se\~nal directa.
+\end{enumerate}
+
+\textbf{Esta descomposici\'on explica directamente la arquitectura de cuatro etapas
+adoptada en este proyecto} (PGA $\to$ BP $\to$ SUM $\to$ LP, Secci\'on~\ref{sec:arq-daafe}):
+las etapas BP y SUM \emph{son} la implementaci\'on f\'isica de la
+Ec.~\eqref{eq:ma-comp}, con el PGA aportando la ganancia programable y el LP actuando
+como \emph{anti-aliasing} antes del conversor.
+
+\subsubsection{Par\'ametros del trabajo original}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+Concepto & Valor en Ma \emph{et al.}~\cite{Ma2023} & En este proyecto \\
+\midrule
+Ge\'ofono & JF-20DX (Sercel) & SM-24 \\
+$f_n$ & \SI{10}{\hertz} & \SI{10}{\hertz} \\
+Sensibilidad & \SI{2.73}{\volt\per\meter\per\second} & $\approx\SI{28.8}{\volt\per\meter\per\second}$ \\
+Resistencia de bobina & \SI{395}{\ohm} & (a completar) \\
+Inductancia de bobina & \SI{50}{\milli\henry} & (a completar) \\
+Masa m\'ovil & \SI{11}{\gram} & (a completar) \\
+$\zeta_0$ del ge\'ofono & 0{,}3 & \textbf{0{,}25} \\
+$\zeta_1$ objetivo & 10 & \textbf{83{,}661} \\
+Frecuencia objetivo & \SI{0.5}{\hertz} & (a definir) \\
+Topolog\'ia del pasa-banda & Sallen-Key & \textbf{MFB} (ver \S\ref{sec:mfb}) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Los valores de componentes reportados para el pasa-banda son
+$C_1=C_2=\SI{10}{\micro\farad}$, $R_1=\SI{78}{\ohm}$, $R_2=\SI{78}{\kilo\ohm}$
+(es decir $R_2=1000R_1$) y $R_3=\SI{52}{\ohm}$ ($\approx 2R_1/3$); la etapa restadora usa
+$R_4=\SI{1}{\kilo\ohm}$, $R_5=\SI{13}{\kilo\ohm}$, $R_6=\SI{100}{\kilo\ohm}$ y
+$R_f=\SI{10.3}{\kilo\ohm}$, con ganancia $\times10$.
+
+\subsubsection{Resultados reportados}
+
+\begin{itemize}[itemsep=0.15em]
+    \item Respuesta plana extendida de \SIrange{1}{100}{\hertz}, con puntos de
+    \SI{-3}{\decibel} en \SI{0.5}{\hertz} y \SI{200}{\hertz}.
+    \item Sensibilidad resultante $\approx\SI{194}{\milli\volt}$ por
+    \si{\meter\per\second\squared} en la banda \SIrange{1}{100}{\hertz}.
+    \item Mejora de relaci\'on se\~nal--ruido frente al m\'etodo de cancelaci\'on de polos y
+    ceros: \SI{+1.51}{\decibel} a \SI{1}{\hertz}, \SI{+17.52}{\decibel} a
+    \SI{10}{\hertz} y \SI{+21.28}{\decibel} a \SI{20}{\hertz}.
+    \item Las curvas de ruido de ambos m\'etodos se mantienen por debajo del modelo de
+    ruido alto de Peterson (NHNM).
+\end{itemize}
+
+La comparaci\'on con el m\'etodo de polos y ceros es justamente el argumento cuantitativo
+que respalda haber elegido la familia de ``modificaci\'on del amortiguamiento'' sobre la de
+``cancelaci\'on'', y es un resultado que conviene citar expl\'icitamente al justificar el
+dise\~no.
+
+\subsection{Topolog\'ias del filtro: lo que se prob\'o}
+\label{sec:mfb}
+
+\subsubsection{Filtro pasivo RC de entrada --- implementado y descartado}
+
+La primera aproximaci\'on (17 de abril) fue un filtro pasivo RC a la entrada, con un
+\emph{script} de optimizaci\'on dedicado (\texttt{FiltroPasivoEntrada.m}) para elegir los
+valores de componentes. Se descart\'o en menos de \SI{24}{\hour} en favor de un FIR digital
+con decimaci\'on.
+
+El argumento t\'ecnico contra el filtrado pasivo previo a la amplificaci\'on est\'a bien
+articulado en la literatura de instrumentaci\'on: cuando la \textbf{resistencia de fuente
+es variable o desconocida}, un filtro pasivo antes de la amplificaci\'on tiene una
+frecuencia de corte que depende de esa resistencia, y por lo tanto no est\'a bajo control
+del dise\~nador~\cite{Delis2025}. En el caso de un ge\'ofono esto es exactamente lo que
+ocurre: la impedancia de la fuente es la de la bobina (resistencia en serie con
+inductancia) en paralelo con la resistencia de amortiguamiento, y esa combinaci\'on
+cambia entre unidades y con la temperatura. A esto se suma que el filtro pasivo atenúa
+la se\~nal \emph{antes} de amplificarla, lo que empeora la relaci\'on se\~nal--ruido
+referida a la entrada.
+
+\subsubsection{Sallen-Key / VCVS --- implementado, ensayado y descartado}
+
+Entre el 27 de abril y el 5 de mayo se estudi\'o e implement\'o la topolog\'ia VCVS
+(\emph{Voltage-Controlled Voltage Source}, es decir Sallen-Key), que es la que emplea el
+trabajo de referencia~\cite{Ma2023}. Se desarroll\'o el an\'alisis completo de la funci\'on
+de transferencia del pasa-banda VCVS (\texttt{Compensador.m}) y se llev\'o a medici\'on.
+
+Se descart\'o el 30 de abril tras el an\'alisis comparativo sistem\'atico realizado con
+\texttt{ComparacionFiltros.m}, que contrast\'o ambas topolog\'ias sobre datos reales de
+captura y en simulaci\'on. El criterio de la decisi\'on se detalla a continuaci\'on.
+
+\subsubsection{MFB (\emph{Multiple Feedback}) --- topolog\'ia adoptada}
+
+El 30 de abril se adopt\'o la topolog\'ia MFB, junto con la \textbf{suma en corriente}
+mediante amplificador de transimpedancia. Esta \'ultima decisi\'on es coherente con la
+estructura de la Ec.~\eqref{eq:ma-comp}: al ser la MFB inversora y trabajar contra una
+masa virtual, la resta entre el camino directo y el pasa-banda se realiza sumando
+corrientes en un nodo, sin necesidad de una etapa diferencial adicional.
+
+\paragraph{Criterio de la decisi\'on.} Apartarse de la topolog\'ia del trabajo de
+referencia~\cite{Ma2023} requiere argumento expl\'icito. Las razones que sustentaron el
+cambio fueron, en orden de peso:
+
+\begin{enumerate}[itemsep=0.3em]
+    \item \textbf{Menor sensibilidad de $Q$ y $\omega_0$ a las tolerancias de los
+    componentes.} Es el argumento decisivo. En la Sallen-Key pasa-banda las sensibilidades
+    del factor de calidad y de la frecuencia central respecto de los valores de $R$ y $C$
+    crecen con la propia $Q$, de modo que un filtro selectivo construido con componentes
+    de tolerancia com\'un se aparta apreciablemente del dise\~no nominal. La MFB presenta
+    sensibilidades m\'as bajas y acotadas. Dado que el proyecto se construye
+    deliberadamente con \textbf{componentes de tolerancia no ajustada}, esta propiedad se
+    traduce directamente en repetibilidad entre placas ---que es, adem\'as, el requisito
+    de un sistema multicanal donde todos los canales deben responder igual.
+
+    \item \textbf{Mejor atenuaci\'on en alta frecuencia.} La MFB decae de forma m\'as
+    limpia fuera de la banda de paso, sin el repunte que la Sallen-Key puede presentar a
+    frecuencias altas por acoplamiento directo a trav\'es de los capacitores cuando el
+    amplificador pierde ganancia de lazo. Esto importa porque la etapa alimenta,
+    aguas abajo, a un conversor: todo residuo de alta frecuencia se traduce en
+    \emph{aliasing}.
+
+    \item \textbf{La baja impedancia de entrada de la MFB no penaliza.} La objeci\'on
+    cl\'asica contra la MFB es que su entrada carga a la etapa previa. Aqu\'i es irrelevante:
+    el filtro no ve directamente al ge\'ofono sino la salida de baja impedancia de las
+    etapas anteriores de la cadena. La desventaja principal de la topolog\'ia queda
+    neutralizada por el orden de la arquitectura.
+
+    \item \textbf{La inversi\'on de fase no tiene costo.} La MFB es inversora, pero en un
+    sistema cuya salida se digitaliza, revertir el signo es una operaci\'on trivial en el
+    dominio digital. Se trata de una desventaja nominal sin consecuencia pr\'actica.
+
+    \item \textbf{El producto ganancia--ancho de banda no es limitante.} La MFB exige m\'as
+    ganancia de lazo al amplificador que la Sallen-Key para una misma $Q$. En esta
+    aplicaci\'on el margen es amplio: el GBW de los amplificadores empleados es \'ordenes de
+    magnitud mayor que las frecuencias de inter\'es de las ondas Rayleigh
+    (unidades a decenas de \si{\hertz}). La restricci\'on que suele decidir en contra de la
+    MFB simplemente no opera en este rango.
+\end{enumerate}
+
+En s\'intesis: en la banda s\'ismica de inter\'es las desventajas de la MFB (impedancia de
+entrada, inversi\'on de fase, exigencia de GBW) son inocuas por construcci\'on de la cadena
+y por el rango de frecuencias, mientras que su ventaja ---robustez frente a tolerancias
+de componentes--- ataca directamente el problema real del proyecto, que es construir
+varios canales repetibles con componentes de bajo costo.
+
+El antecedente m\'as cercano en la literatura reciente es el amplificador de
+instrumentaci\'on con filtro diferencial de m\'ultiple realimentaci\'on (MFDFIA) propuesto
+por Delis \emph{et al.}~\cite{Delis2025} para adquisici\'on de bioseñales. Aunque su
+aplicaci\'on es distinta, el problema es estructuralmente el mismo que el de este
+proyecto: una fuente de \textbf{se\~nal muy peque\~na con impedancia de fuente variable o
+desconocida}, donde filtrar antes de amplificar es problem\'atico y filtrar despu\'es no
+elimina el ruido, la interferencia de red ni los artefactos ya amplificados. La
+propuesta de ese trabajo es precisamente \textbf{fusionar el filtrado con la primera
+etapa de amplificaci\'on}, en lugar de tratarlos como bloques separados.
+
+Caracter\'isticas relevantes de esa topolog\'ia:
+
+\begin{itemize}[itemsep=0.15em]
+    \item Emplea \textbf{dos amplificadores operacionales en la primera etapa}; por la
+    simetr\'ia del circuito, el an\'alisis puede hacerse por separado para modo diferencial y
+    modo com\'un mediante un equivalente de un solo amplificador.
+    \item El rechazo de modo com\'un del conjunto queda determinado \'unicamente por el
+    CMRR de la segunda etapa.
+    \item En el ejemplo de aplicaci\'on reportado (adquisici\'on de EEG) se obtiene banda
+    plana dentro de \SI{1}{\decibel} entre \SI{0.7}{\hertz} y \SI{25.4}{\hertz}, ganancia
+    de \SI{34.1}{\decibel} y ruido referido a la entrada de \SI{70.66}{\nano\volt} rms en
+    el rango \SIrange{0.1}{10}{\hertz}.
+\end{itemize}
+
+La coincidencia con este proyecto es notable en dos puntos: el PGA implementado es un
+\textbf{amplificador de instrumentaci\'on de dos amplificadores
+operacionales}~\cite{CypressAN60319}, y la banda de inter\'es y los niveles de se\~nal son
+del mismo orden.
+
+Este antecedente respalda, desde una aplicaci\'on independiente, las dos decisiones
+centrales de la cadena implementada: amplificar antes de filtrar, y emplear m\'ultiple
+realimentaci\'on en el filtro.
+
+\subsection{Compensaci\'on: anal\'ogica frente a digital}
+
+En paralelo con las topolog\'ias de filtro se explor\'o el problema de la compensaci\'on
+propiamente dicha, con tres enfoques:
+
+\begin{enumerate}[itemsep=0.2em]
+    \item \textbf{Compensador anal\'itico} (\texttt{compensadorKai.m}, 22 de abril):
+    c\'alculo directo de la red de compensaci\'on a partir de los par\'ametros del transductor.
+    \item \textbf{Compensador por b\'usqueda exhaustiva} (\texttt{compensadorPazos.m}):
+    barrido sobre el espacio de par\'ametros evaluando el resultado, en lugar de resolver
+    anal\'iticamente. Se justifica porque la soluci\'on anal\'itica ideal suele no ser
+    realizable con valores comerciales de componentes.
+    \item \textbf{Cuatro motores de b\'usqueda en paralelo} (18 de mayo): cuando ninguno de
+    los dos enfoques anteriores converg\'ia a una soluci\'on satisfactoria, se atac\'o el
+    problema con cuatro estrategias de optimizaci\'on simult\'aneas.
+\end{enumerate}
+
+Un hallazgo relevante de esta etapa (17 de mayo) fue que \textbf{el modelo de
+amplificador operacional ideal no reproduc\'ia el comportamiento medido} en el extremo
+superior de la banda. Se incorpor\'o entonces el modelo del operacional real, con ganancia
+de lazo abierto $A_0=\SI{90}{\decibel}$ y polo dominante $f_p=\SI{8}{\mega\hertz}$, y se
+valid\'o contra medici\'on con \texttt{graficar\_compensador\_csv.py}. Es un resultado
+did\'actico: el producto ganancia--ancho de banda finito del operacional limita la
+compensaci\'on realizable, y omitirlo lleva a dise\~nar redes que en el banco no se
+comportan como en la simulaci\'on.
+
+\subsubsection{El factor de amortiguamiento objetivo}
+
+El barrido de la cadena anal\'ogica realizado el 20--21 de julio estableci\'o los valores de
+dise\~no del compensador: \textbf{amortiguamiento inicial del ge\'ofono
+$\zeta_0=0{,}25$ y amortiguamiento objetivo $\zeta_1\approx83{,}661$}.
+
+Conviene subrayar que esto \textbf{no es una discrepancia sino el resultado buscado}, y
+que sigue exactamente la estrategia de la Ec.~\eqref{eq:ma-comp}: aumentar fuertemente el
+amortiguamiento manteniendo $\omega_n$ fija. La diferencia con el trabajo de
+referencia~\cite{Ma2023} es de grado, no de naturaleza: all\'i se pasa de
+$\zeta_0=0{,}3$ a $\zeta_1=10$ (un factor $\approx33$), mientras que aqu\'i se va de
+$0{,}25$ a $83{,}661$ (un factor $\approx335$), es decir, un dise\~no un orden de magnitud
+m\'as agresivo.
+
+La interpretaci\'on f\'isica es directa. Con $\zeta_1\gg1$ el par de polos complejos
+conjugados del transductor se separa en dos polos reales situados aproximadamente en
+
+\begin{equation}
+\omega_{p1}\approx\frac{\omega_n}{2\zeta_1},
+\qquad
+\omega_{p2}\approx 2\zeta_1\omega_n,
+\end{equation}
+
+de modo que la banda comprendida entre ambos se vuelve plana. Para
+$f_n=\SI{10}{\hertz}$ y $\zeta_1=83{,}661$ el polo inferior cae en el orden de
+\SI{0.06}{\hertz}: se extiende la respuesta \emph{muy} por debajo de la frecuencia
+natural del transductor, que es precisamente lo que exige el objetivo de
+\SI{50}{\meter} de profundidad con un ge\'ofono de \SI{10}{\hertz}
+(Secci\'on~\ref{sec:geofono}).
+
+\nota{\textbf{Verificar antes de la entrega}: (a) el valor exacto de la frecuencia de
+corte inferior resultante y el ancho de banda plano efectivamente medido, para poder
+compararlos con los \SIrange{1}{100}{\hertz} que reporta Ma \emph{et al.}; (b) el precio
+de un $\zeta_1$ tan alto ---la compensaci\'on requiere ganancia proporcional a
+$(\zeta_1-\zeta_0)$, de modo que un factor $335$ amplifica tambi\'en el ruido y el
+\emph{offset} de la etapa, lo que enlaza directamente con la necesidad de la
+auto-calibraci\'on descrita en la Secci\'on~\ref{sec:arq-daafe}. Ese v\'inculo, si se
+sostiene con n\'umeros, es un buen argumento narrativo: \emph{la compensaci\'on agresiva es
+la causa de que el control de \emph{offset} sea imprescindible}.}
+
+\subsection{Filtrado de la interferencia de red}
+
+Un problema recurrente fue la interferencia de la red el\'ectrica de \SI{50}{\hertz}, que
+cae dentro de la banda de inter\'es del MASW y por lo tanto no puede simplemente filtrarse
+con un pasa-bajos. Se ensayaron sucesivamente:
+
+\begin{enumerate}[itemsep=0.2em]
+    \item \textbf{FIR \emph{notch} de \SI{50}{\hertz}} (29 de abril): dise\~nado con
+    \texttt{firls} (m\'inimos cuadrados con bandas ponderadas), 465 coeficientes,
+    implementado en el bloque de filtro digital del PSoC. Se opt\'o por \texttt{firls}
+    en lugar de \texttt{firpm} (Parks-McClellan) por el comportamiento del error en las
+    bandas de transici\'on.
+    \item \textbf{FIR multibanda de orden 800} (5 de mayo).
+    \item \textbf{Filtro adaptativo LMS} --- ensayado y \textbf{descartado} (7 de junio) en
+    favor de una soluci\'on por \textbf{m\'inimos cuadrados}, de comportamiento m\'as
+    predecible. Un filtro adaptativo persigue la interferencia, pero si la se\~nal de
+    inter\'es tiene contenido en la misma banda, el adaptador puede converger a cancelar
+    parte de la se\~nal.
+    \item \textbf{\emph{Notch} arm\'onico en el cliente web} --- implementado y luego
+    \textbf{eliminado} (9 de junio) para simplificar el \emph{pipeline}; el tratamiento
+    de la interferencia se traslad\'o al post-proceso, donde puede revisarse y revertirse.
+\end{enumerate}
+
+\subsubsection{Soluci\'on adoptada: ajuste no lineal por m\'inimos cuadrados}
+
+\textbf{El filtro \emph{notch} fue finalmente retirado de la cadena.} La supresi\'on de la
+interferencia de red se realiza hoy en post-proceso mediante un \textbf{ajuste no lineal
+por m\'inimos cuadrados} de la componente de \SI{50}{\hertz}, documentado en la interfaz
+web del sistema.
+
+El razonamiento que justifica el cambio es s\'olido y conviene explicitarlo. La
+interferencia de red es una se\~nal \emph{determinista y de forma conocida}: una sinusoide
+de frecuencia pr\'oxima a \SI{50}{\hertz} con amplitud y fase desconocidas, m\'as
+eventualmente sus arm\'onicos. Frente a esa estructura:
+
+\begin{itemize}[itemsep=0.2em]
+    \item Un \emph{notch} de 465 coeficientes \textbf{elimina irreversiblemente} todo el
+    contenido de la se\~nal en esa banda ---incluida la se\~nal s\'ismica de inter\'es, ya que
+    \SI{50}{\hertz} cae dentro de la banda \'util del MASW--- e introduce un retardo de
+    grupo apreciable que, en un sistema multicanal, debe ser id\'entico en todos los
+    canales so pena de introducir error de velocidad de fase.
+    \item Un ajuste por m\'inimos cuadrados \textbf{estima} los par\'ametros de la
+    interferencia (amplitud, fase y frecuencia exacta) y sustrae \'unicamente esa
+    componente, preservando el resto del contenido espectral en la misma banda. No
+    introduce retardo, no altera la fase de la se\~nal s\'ismica, y al operar en
+    post-proceso es revisable y reversible.
+\end{itemize}
+
+Se trata, en definitiva, de reemplazar un filtrado ciego por una \textbf{estimaci\'on y
+cancelaci\'on de una interferencia de modelo conocido}. Es la misma l\'inea de razonamiento
+que llev\'o a descartar el filtro adaptativo LMS: cuando la interferencia tiene estructura
+conocida, estimarla es preferible a perseguirla adaptativamente o a suprimir la banda
+entera.
+
+\nota{\textbf{Verificar}: si el ajuste se hace sobre toda la traza o por ventanas, y si
+estima tambi\'en los arm\'onicos (\SI{100}{\hertz}, \SI{150}{\hertz}) o s\'olo la
+fundamental. Conviene tener el detalle porque es una decisi\'on de procesamiento
+defendible y bien fundamentada.}
+
+\subsection{S\'intesis de la cadena adoptada}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\toprule
+Etapa & Topolog\'ia & Funci\'on \\
+\midrule
+PGA & Amp.\ de instrumentaci\'on de 2 op-amp & Ganancia programable $\times1$ a $\times50$; primera amplificaci\'on antes de cualquier filtrado \\
+BP  & MFB pasa-banda & Realiza el t\'ermino sustractivo de la Ec.~\eqref{eq:ma-comp} \\
+SUM & Sumador inversor (suma en corriente) & Resta el pasa-banda del camino directo: completa la compensaci\'on \\
+LP  & Pasa-bajos de 2.\textsuperscript{o} orden & \emph{Anti-aliasing} previo al ADC \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Cada etapa dispone de un VDAC dedicado para fijar su punto de operaci\'on, lo que habilita
+la auto-calibraci\'on descrita en la Secci\'on~\ref{sec:arq-daafe}.

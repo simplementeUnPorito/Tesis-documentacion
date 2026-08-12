@@ -1,0 +1,281 @@
+\section{Tabla maestra de decisiones}
+\label{sec:descartes}
+
+Todo lo que se prob\'o y no qued\'o, con el motivo y qu\'e lo reemplaz\'o. Es la
+secci\'on m\'as \'util para recordar \emph{por qu\'e} el sistema es como es ---y para
+no volver a probar algo que ya se descart\'o con raz\'on.
+
+\subsection{Cadena anal\'ogica}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Descartado} & \textbf{Motivo} & \textbf{Reemplazo} & \textbf{Fecha} \\
+\midrule
+Filtro RC pasivo de entrada
+& Fase no lineal (descalificante para MASW); tolerancia de componentes; deriva t\'ermica; el PSoC ya tiene DSP
+& Cadena FIR de fase lineal con decimaci\'on en cascada $\times4^3$
+& 18/04 \\
+\addlinespace[2pt]
+Observador de estado (Simulink)
+& Explorado y abandonado junto con el RC
+& Compensaci\'on activa en anal\'ogico
+& 18/04 \\
+\addlinespace[2pt]
+Topolog\'ia Sallen-Key / VCVS
+& Realimentaci\'on positiva amplifica el error de componentes; riesgo de oscilaci\'on con $G>1$; impedancia de salida real. \textbf{No fue por respuesta}: ambas cumpl\'ian dentro de \SI{0.3}{\decibel}
+& \textbf{MFB} (\emph{Multiple Feedback})
+& 30/04 \\
+\addlinespace[2pt]
+Cancelaci\'on polo-cero como estrategia
+& No es lo que hace falta: se busca \emph{elevar el amortiguamiento} manteniendo $\omega_n$
+& Estrategia de Ma \emph{et al.}: pasa-todo menos pasa-banda
+& abr--may \\
+\addlinespace[2pt]
+Amplificador operacional ideal en el modelo
+& El dise\~no ``andaba en el papel'' pero no contemplaba $A_0$ ni GBW finitos
+& Modelo con $A_0=\SI{90}{\decibel}$, GBW $=\SI{8}{\mega\hertz}$, $R_{in}$, $R_{out}$, $C_{in}$
+& 17/05 \\
+\addlinespace[2pt]
+Discretizar a valores comerciales antes de optimizar
+& Deja el \'optimo fuera de la grilla
+& Optimizar en el continuo $\to$ restringir por f\'isica $\to$ \emph{snap} y redes en T al final
+& 18/05 \\
+\addlinespace[2pt]
+Rama BP con \SI{8200}{\ohm} (dise\~no pide \SI{7501.9}{\ohm})
+& El compensador realizaba $\zeta = 83{,}661$ en vez de $0{,}25$
+& \SI{6.8}{\kilo\ohm} $+$ potenci\'ometro de \SI{2}{\kilo\ohm}
+& 21/07 \\
+\addlinespace[2pt]
+Sondas de osciloscopio en $1\times$
+& Su capacitancia es comparable al $C_f = \SI{177}{\pico\farad}$ del nodo BP: el instrumento carga el circuito que mide
+& Sondas compensadas en $10\times$
+& 20/07 \\
+\addlinespace[2pt]
+VDAC como referencia de calibraci\'on
+& Cambio de placa
+& IDAC, LSB \SI{3.75}{\milli\volt}
+& 03/08 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Procesamiento de se\~nal}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Descartado} & \textbf{Motivo} & \textbf{Reemplazo} & \textbf{Fecha} \\
+\midrule
+Filtro adaptativo LMS para \SI{50}{\hertz}
+& Tiene transitorio de convergencia, que en una captura de pocos segundos ocupa fracci\'on apreciable del registro; y su comportamiento depende de la se\~nal, lo que rompe la comparabilidad entre canales
+& Estimaci\'on directa por m\'inimos cuadrados
+& 07/06 \\
+\addlinespace[2pt]
+Notch de \SI{50}{\hertz} (FIR y notch arm\'onico en el cliente)
+& La \SI{50}{\hertz} cae \emph{dentro} de la banda \'util del MASW: el notch borra se\~nal e introduce retardo de grupo justo donde se mide fase
+& Ajuste no lineal de m\'inimos cuadrados en post-proceso: sin retardo, reversible, conserva el crudo
+& 09/06 \\
+\addlinespace[2pt]
+$F_s$ \'unica fija
+& Distintos compromisos entre resoluci\'on temporal y volumen por captura
+& $F_s$ conmutable ($2929$ y \SI{1020}{\hertz} usadas en campo); mezcla posterior por \texttt{resample\_poly}
+& 07/07 \\
+\addlinespace[2pt]
+Rango de ADC \'unico
+& El nivel de se\~nal var\'ia mucho con la distancia fuente--receptor
+& 2 y luego 4 rangos seleccionables desde la web, validados con \texttt{range N}
+& 07--08/07 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Firmware y arquitectura embebida}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Descartado} & \textbf{Motivo} & \textbf{Reemplazo} & \textbf{Fecha} \\
+\midrule
+Firmware bifurcado GEO / HAMMER
+& Dos implementaciones del mismo protocolo divergen y desincronizan el arreglo
+& \'Unico \texttt{main.c} con detecci\'on de hardware en tiempo de compilaci\'on
+& 04/06 \\
+\addlinespace[2pt]
+Bisecci\'on binaria sobre c\'odigos VDAC
+& Ciega: no aprovecha que la planta es conocida; una versi\'on por etapa
+& Controlador PI unificado
+& 23/06 \\
+\addlinespace[2pt]
+Servo lento
+& Convergencia por integraci\'on pura
+& Controlador PI unificado
+& 23/06 \\
+\addlinespace[2pt]
+T\'ermino derivativo del PID
+& Amplifica el ruido de medici\'on del ADC sin aportar en planta cuasi-est\'atica (\emph{``overfitting al ruido''})
+& \textbf{PI} con \emph{feedforward} f\'isico
+& 23/06 \\
+\addlinespace[2pt]
+Anti-\emph{windup} sim\'etrico
+& Congelar el integrador en ambos sentidos deja al lazo sin poder salir del riel
+& Anti-\emph{windup} \textbf{direccional}
+& 25/06 \\
+\addlinespace[2pt]
+ISR cl\'asica de adquisici\'on
+& El ARM en el camino de la muestra introduce \emph{jitter}
+& Cadena DMA con \texttt{Filter} FIR de hardware
+& 17/06 \\
+\addlinespace[2pt]
+\texttt{Reg\_Select} como gobierno de la captura
+& El temporizado heredaba el \emph{jitter} de las interrupciones. \emph{Determinismo temporal es exactitud de medici\'on}
+& \texttt{superMaquina}: m\'aquina de estados en UDB (Verilog)
+& 02/07 \\
+\addlinespace[2pt]
+\emph{Tick} de sistema de \SI{10}{\milli\second}
+& Un \'unico \emph{tick} para funciones de per\'iodos muy distintos
+& Tres \emph{timers} fijos dedicados
+& 02/07 \\
+\addlinespace[2pt]
+Interrupci\'on por \texttt{TC}
+& Pol\'itica de determinismo: la ISR maneja \emph{solo} muestras
+& \emph{Polling} de \texttt{STATUS\_TC}; \texttt{CLEAR\_FLAGS} prohibido en \texttt{SAMPLING}
+& 07/07 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Comunicaci\'on y sincronizaci\'on}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Descartado} & \textbf{Motivo} & \textbf{Reemplazo} & \textbf{Fecha} \\
+\midrule
+Espera fija tras \texttt{ARM}
+& El esclavo pod\'ia recibir \texttt{START} sin estar en \texttt{ARMED}: el nodo simplemente no arranca, y el resto del arreglo s\'i
+& \emph{Probe}/ACK con RTT medido, y luego PRESTART con HOT\_WAIT
+& 25--26/05 \\
+\addlinespace[2pt]
+Pulsos de \emph{debug} con \texttt{delayMicroseconds()}
+& Bloquean \SI{1}{\milli\second} y hacen perder callbacks de ESP-NOW: \emph{el instrumento de medici\'on causaba la falla que se buscaba}
+& Pulsos no bloqueantes por marca de tiempo
+& 26/05 \\
+\addlinespace[2pt]
+Enlace SPI PSoC$\leftrightarrow$ESP
+& Reemplazado en el refactor del PR \#2
+& UART, y despu\'es I\textsuperscript{2}C en la subida
+& 31/05 \\
+\addlinespace[2pt]
+ACK emitido antes del flanco f\'isico
+& El maestro cre\'ia sincronizado un arreglo que a\'un no lo estaba; se manifestaba como \emph{jitter}, no como falla
+& ACK despu\'es del flanco
+& 10/06 \\
+\addlinespace[2pt]
+UART de \SI{115200}{} como subida de muestras
+& Cuello de botella del \emph{stream}
+& I\textsuperscript{2}C con PSoC de maestro; \emph{mismo protocolo, otro medio}
+& 03/08 \\
+\addlinespace[2pt]
+\emph{Sync} por cable maestro$\to$esclavo (\texttt{SYNC\_IN\_PIN})
+& Un cable menos por nodo en campo
+& Disparo \'unicamente por ESP-NOW; el esclavo genera el flanco local
+& 03/08 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Robustez (auditor\'ia pre-campo)}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Descartado} & \textbf{Motivo} & \textbf{Reemplazo} & \textbf{Fecha} \\
+\midrule
+\emph{Watchdog} \texttt{SYNC\_STALL} con margen fijo
+& \textbf{F1:} en capturas largas disparaba solo y \emph{re-disparaba} \texttt{START\_NOW}, destruyendo la sesi\'on. 10 minutos $=$ 0 muestras
+& Margen proporcional a la duraci\'on y aborto limpio
+& 11/07 \\
+\addlinespace[2pt]
+Reintento de PRESTART sin cubrir el ARMED silencioso del PSoC
+& \textbf{F9:} START romp\'ia el nodo hasta reset f\'isico, siempre
+& Carrera cerrada
+& 12/07 \\
+\addlinespace[2pt]
+Herramienta WS sin \emph{watchdog} de silencio
+& \textbf{F5:} colgada indefinida ante socket medio abierto
+& \emph{Watchdog} de silencio $+$ endurecimiento pre-DATA
+& 12/07 \\
+\addlinespace[2pt]
+Criterios de prueba bloqueados por contadores benignos
+& \textbf{F8:} el contador \texttt{drop} del \emph{framer} bloqueaba pruebas sin ser un error
+& Solo \texttt{bBad}/\texttt{badLen} bloquean
+& 12/07 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Herramientas e infraestructura}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X l@{}}
+\toprule
+\textbf{Descartado} & \textbf{Motivo} & \textbf{Reemplazo} & \textbf{Fecha} \\
+\midrule
+Repositorio monol\'itico
+& Ciclos de vida distintos; \textasciitilde{}29~GiB de datos crudos envenenaban el historial
+& Superproyecto con subm\'odulos $+$ LFS con dedup SHA-256
+& 21/07 \\
+\addlinespace[2pt]
+\texttt{src/} organizado por lenguaje
+& Separaba cosas que se usan juntas: hay interfaces y modelado en dos lenguajes cada uno
+& Organizaci\'on \textbf{por prop\'osito}
+& 24/07 \\
+\addlinespace[2pt]
+\texttt{http.server} artesanal
+& L\'imites para servir la aplicaci\'on de revisi\'on
+& FastAPI $+$ est\'aticos
+& 25/07 \\
+\addlinespace[2pt]
+App de escritorio PyQt \texttt{field\_review\_app}
+& Se port\'o a web. \textbf{No se borr\'o}: se congel\'o como referencia de paridad en \texttt{docs/legacy/}
+& Interfaz web con paridad funcional
+& 26--29/07 \\
+\addlinespace[2pt]
+Borrado f\'isico de registros rechazados
+& Un descarte err\'oneo de datos de campo es irreparable
+& Cuarentena reversible (\texttt{deletion.py})
+& 29/07 \\
+\addlinespace[2pt]
+\emph{Sketch} \texttt{MasterFoo}
+& Descartable por dise\~no: exist\'ia para responder si serv\'ia el \emph{hotspot} del celular. Respondi\'o
+& Plan de conectividad modo ENLACE
+& 24/07 \\
+\addlinespace[2pt]
+Tanda \texttt{Osciloscopio\_descartado\_2026-07-20\_BP\_43k}
+& Rama BP con el resistor equivocado. \textbf{Se conserva con el motivo en el nombre}
+& Tanda calibrada del 21/07
+& 20/07 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Los principios que sobrevivieron a todo}
+
+\seleccionado{Ocho decisiones nunca se revirtieron, y son las que en la
+pr\'actica definen el sistema:
+\begin{enumerate}[itemsep=0.15em,topsep=0.25em]
+\item \textbf{Fase lineal siempre.} Todo el filtrado que toca la se\~nal
+conserva la fase, porque el m\'etodo mide fase.
+\item \textbf{El instante cero lo define un flanco f\'isico}, no un mensaje.
+\item \textbf{Determinismo temporal por hardware}, no por software.
+\item \textbf{El protocolo es independiente del medio.} SPI $\to$ UART $\to$
+I\textsuperscript{2}C sin tocar los \emph{frames}.
+\item \textbf{El dato crudo no se toca.} Toda correcci\'on discutible ---red
+el\'ectrica, polaridad, \'enfasis--- vive en post-proceso y es reversible.
+\item \textbf{Nada se borra: se cuarentena o se archiva con el motivo.}
+\item \textbf{Validar antes de borrar.} Lo reemplazado queda como referencia
+hasta que el reemplazo se prueba.
+\item \textbf{Un solo firmware, un solo controlador, un solo protocolo.}
+Cada bifurcaci\'on evitada es un modo de falla evitado.
+\end{enumerate}}

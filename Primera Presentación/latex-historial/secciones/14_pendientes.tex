@@ -1,0 +1,126 @@
+\section{Qu\'e queda abierto}
+\label{sec:pendientes}
+
+Ordenado por impacto sobre el objetivo del proyecto, no por dificultad.
+
+\subsection{Lo que hay que resolver antes de escribir la entrega}
+
+\begin{enumerate}[itemsep=0.45em]
+
+\item \textbf{La discrepancia sobre $\zeta$} (Etapa~9). Los archivos de
+resultados dicen que $0{,}25$ es el objetivo (\texttt{zeta0\_objetivo},
+numerador del compensador, igual al amortiguamiento del ge\'ofono) y que
+$83{,}661$ fue el valor que el circuito realizaba \emph{por error} con la
+resistencia equivocada, corregido a $0{,}250000000000114$ en la tanda
+calibrada. El borrador de la Primera Presentaci\'on afirma lo contrario.
+\emph{Es lo primero a aclarar}, porque cambia la redacci\'on de toda la secci\'on
+de compensaci\'on.
+
+\item \textbf{La profundidad alcanzable no est\'a sostenida por la geometr\'ia}
+(Etapa~7). Con apertura $L = \SI{40}{\meter}$, el soporte geom\'etrico
+llega a \textasciitilde{}\SI{20}{\meter}, pero el modelo invertido se extiende
+hasta \SI{82.6}{\meter}. O se alarga el arreglo, o se declara expl\'icitamente
+que por debajo de \SI{20}{\meter} el perfil es extrapolaci\'on del modelo. Para
+el objetivo de \SI{50}{\meter} no alcanza con la banda: hace falta apertura.
+
+\item \textbf{La mitad lejana del arreglo est\'a limitada por ruido}
+(Etapa~7): SNR mediana \SI{4.9}{\decibel} entre \SI{30}{} y
+\SI{50}{\meter}, con posiciones bajo \SI{0}{\decibel}. Alargar el arreglo sin
+aumentar la energ\'ia de la fuente no resuelve nada. Esto le da prioridad al
+martillo de leva.
+
+\item \textbf{La muesca de compensaci\'on est\'a \SI{26.33}{\decibel} por encima
+de su profundidad de dise\~no} (Etapa~9), y la causa es que el ajuste
+requerido es de \SI{1.98}{\ohm} sobre un potenci\'ometro de \SI{2}{\kilo\ohm}
+---una parte en mil. La acci\'on registrada es recalibrar alrededor de
+\SI{10.2046}{\hertz} con mayor sensibilidad vertical en CH3 y repetir un
+barrido estrecho; la acci\'on de fondo es rehacer el divisor con resoluci\'on
+adecuada.
+
+\end{enumerate}
+
+\subsection{Mediciones que faltan}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}X l@{}}
+\toprule
+\textbf{Medici\'on} & \textbf{Impacto} \\
+\midrule
+\emph{Jitter} real del arreglo completo desplegado. Adem\'as, tras eliminar el \emph{sync} por cable (Etapa~11), \textbf{el presupuesto de \emph{jitter} hay que rehacerlo entero}: ahora todo el error de sincronizaci\'on pasa por el enlace de radio & Alto \\
+\addlinespace[2pt]
+Apareamiento entre canales. Un desfasaje entre canales se traduce directamente en error de velocidad de fase & Alto \\
+\addlinespace[2pt]
+Banda plana efectivamente lograda tras compensar, medida. Es el resultado que cierra la l\'inea del \emph{front-end} y permite compararse con los \SIrange{1}{100}{\hertz} de Ma \emph{et al.} & Alto \\
+\addlinespace[2pt]
+Ruido del sistema referido a la entrada, contra el l\'imite t\'ermico del ge\'ofono. Pertinente porque la compensaci\'on amplifica tambi\'en el ruido & Medio-alto \\
+\addlinespace[2pt]
+Par\'ametros medidos del SM-24: resistencia e inductancia de bobina, masa m\'ovil, sensibilidad real. Existen en el trabajo de MATLAB pero no est\'an volcados & Medio \\
+\addlinespace[2pt]
+Autonom\'ia del nodo y consumo. No registrado en ning\'un lado & Medio \\
+\addlinespace[2pt]
+Validaci\'on externa del perfil $V_S$ contra SPT o ensayo invasivo. Sin ella, el resultado demuestra que la cadena cierra, no que el perfil sea correcto & Alto \\
+\addlinespace[2pt]
+Recalibrar el lazo PI con la resoluci\'on del IDAC (LSB \SI{3.75}{\milli\volt}) y revalidar la placa nueva contra la matriz E1--E18 & Alto \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Preguntas sin respuesta registrada}
+
+\pendiente{\textbf{Sobre el descarte del filtro RC pasivo (18/04).} La
+bit\'acora reconstruye cuatro motivos ---fase no lineal, tolerancia, deriva
+t\'ermica, y que el PSoC ya tiene DSP--- pero los presenta como \emph{``razones
+probables''} inferidas del \emph{diff}, no como testimonio, y en un pasaje
+habla de un ge\'ofono de \SI{4.5}{\hertz} que no es el SM-24. El motivo
+t\'ecnicamente decisivo, y el que sostiene el resto del dise\~no, es la fase
+lineal. \textbf{¿Fue ese el motivo real, o simplemente result\'o m\'as c\'omodo el
+FIR digital?}}
+
+\pendiente{\textbf{KiCad o JitX.} El repositorio \texttt{PCBs} tiene los dos
+proyectos y no hay bit\'acora de agosto. \textbf{¿Cu\'al es el vigente y por qu\'e
+se explor\'o el otro?}}
+
+\pendiente{\textbf{Adquisici\'on pasiva.} El sistema puede, en principio,
+operar en modo pasivo (ReMi, SPAC) simplemente capturando sin disparar la
+fuente ---la captura continua de 10 minutos ya est\'a validada. Combinar activo
+y pasivo extiende la curva de dispersi\'on hacia frecuencias bajas, es decir
+hacia mayores profundidades, sin hardware adicional. Dado que la apertura es
+hoy la restricci\'on activa, es la extensi\'on de alcance m\'as barata disponible.
+\textbf{¿Se consider\'o?}}
+
+\pendiente{\textbf{Los nombres internos de los sitios} (Canchiga, Canchita,
+Estacionamiento) ¿se mantienen o se formalizan en la entrega?}
+
+\pendiente{\textbf{El uso de asistencia de IA} fue intensivo y est\'a
+documentado en detalle en la bit\'acora. ¿Se explicita en la entrega, y con qu\'e
+encuadre metodol\'ogico? Conviene decidirlo antes de que lo pregunte la mesa.}
+
+\subsection{Deuda t\'ecnica conocida}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Vault de investigaci\'on & No se audita desde abril. Puede tener conceptos escritos suponiendo compensaci\'on por cancelaci\'on polo-cero, enfoque abandonado \\
+\addlinespace[2pt]
+H4 & \emph{Prefetch} de bloque en el PSoC dar\'ia un volcado \textasciitilde{}$2\times$ m\'as r\'apido. Identificado, no implementado \\
+\addlinespace[2pt]
+W3 & STOP durante el volcado deja los datos en la SD sin forma de re-volcarlos desde la interfaz \\
+\addlinespace[2pt]
+F2 / W5 & Cosm\'eticos, documentados \\
+\addlinespace[2pt]
+Nombres de carpeta de campo & No siempre coinciden con la posici\'on declarada en el metadato (\texttt{muestra28\_22} declara \SI{30}{\meter}). \textbf{El metadato es el autoritativo}; conviene no volver a leer geometr\'ia del nombre \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Nota de cierre}
+
+Vale la pena registrar el balance: el proyecto resolvi\'o bien los dos
+problemas que se propuso resolver ---extender la banda del transductor por
+electr\'onica y sincronizar nodos inal\'ambricos con precisi\'on suficiente---, y
+tiene evidencia estad\'istica publicable de la auto-calibraci\'on. Lo que qued\'o
+al descubierto al medir en campo es que \textbf{el cuello de botella se
+mud\'o}: ya no es el ge\'ofono ni la electr\'onica, es la \emph{apertura del
+arreglo} y la \emph{energ\'ia de la fuente}. Eso es un buen problema, porque
+significa que la parte dif\'icil y original del trabajo est\'a hecha, y lo que
+falta es geometr\'ia y mec\'anica.

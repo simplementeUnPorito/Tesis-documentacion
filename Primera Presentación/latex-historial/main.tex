@@ -1,0 +1,149 @@
+% =====================================================================
+%  HISTORIAL TÉCNICO COMPLETO DEL PROYECTO
+%  Ayuda-memoria de todo lo investigado, desarrollado, probado,
+%  descartado y seleccionado — de febrero a agosto de 2026.
+%
+%  Este NO es el documento de entrega. La entrega formal (Primera
+%  Presentación, Art. 19, máx. 15 páginas) vive en ../latex/.
+%  Este archivo existe para recordar el trabajo hecho, con datos y
+%  figuras reales, sin límite de extensión.
+%
+%  Autor: Elías David Álvarez Martínez
+%  Compilar: pdflatex main -> pdflatex main
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-noquoting]{babel}
+\usepackage{lmodern}
+\usepackage[left=2.2cm,right=2.2cm,top=2.4cm,bottom=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{array,tabularx,booktabs,multirow,longtable}
+\usepackage[table]{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+\sisetup{output-decimal-marker={,},per-mode=symbol}
+\graphicspath{%
+  {figuras/}%
+  {../../Urucom_2026_compact/imagenes/}%
+  {../../calibration_fsm/}%
+  {../../investigacion/Assets/}%
+}
+\captionsetup{font=small,labelfont=bf}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+
+% Rutas y nombres de archivo largos en tablas: permitir corte y dar aire al
+% algoritmo de linea antes de que desborde el margen.
+\setlength{\emergencystretch}{3em}
+\sloppy
+\makeatletter
+\renewcommand{\ttdefault}{lmtt}
+\makeatother
+
+% --- Encabezado manual (fancyhdr NO está instalado en este MiKTeX) ---
+\makeatletter
+\renewcommand{\@oddhead}{%
+  \parbox{\textwidth}{%
+    \footnotesize\itshape Historial t\'ecnico --- ayuda memoria del proyecto
+    \hfill \upshape\thepage\\[-0.6em]\rule{\textwidth}{0.4pt}}}
+\renewcommand{\@evenhead}{\@oddhead}
+\renewcommand{\@oddfoot}{}
+\renewcommand{\@evenfoot}{}
+\makeatother
+
+% --- Cajas semánticas -------------------------------------------------
+\definecolor{cajaDesc}{HTML}{FBEAEA}   % descartado
+\definecolor{cajaSel}{HTML}{E8F2EA}    % seleccionado / conclusión
+\definecolor{cajaDato}{HTML}{EAEFF7}   % dato duro / medición
+\definecolor{cajaDuda}{HTML}{F2F2F2}   % pendiente / a confirmar
+
+\newcommand{\cajita}[3]{%
+  \par\vspace{0.35em}%
+  \noindent\fcolorbox{black!25}{#1}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\footnotesize\textbf{#2} #3}}%
+  \par\vspace{0.35em}}
+
+\newcommand{\descartado}[1]{\cajita{cajaDesc}{[Descartado]}{#1}}
+\newcommand{\seleccionado}[1]{\cajita{cajaSel}{[Se qued\'o]}{#1}}
+\newcommand{\dato}[1]{\cajita{cajaDato}{[Dato medido]}{#1}}
+\newcommand{\pendiente}[1]{\cajita{cajaDuda}{[Pendiente / a confirmar]}{#1}}
+
+% Etiqueta de rango de fechas al inicio de cada etapa
+\newcommand{\periodo}[1]{{\small\bfseries\itshape #1}\par\vspace{0.2em}}
+
+\begin{document}
+
+% ---------------------------------------------------------------- PORTADA
+\thispagestyle{empty}
+\begin{center}
+    \vspace*{1.5cm}
+    {\Large\bfseries Historial t\'ecnico del proyecto}\par
+    \vspace{0.5cm}
+    {\large Dise\~no e implementaci\'on de un sistema electr\'onico multicanal\\
+    del tipo IoT para caracterizaci\'on geot\'ecnica del suelo\\
+    mediante ondas s\'ismicas}\par
+    \vspace{1.0cm}
+    {\itshape Ayuda-memoria de todo lo investigado, desarrollado, probado,\\
+    descartado y seleccionado}\par
+    \vspace{0.3cm}
+    {25 de febrero --- 12 de agosto de 2026}\par
+    \vspace{1.2cm}
+    \begin{tabularx}{0.8\textwidth}{@{}lX@{}}
+    \textbf{Alumno} & El\'ias David \'Alvarez Mart\'inez (Y24137) \\
+    \textbf{Carrera} & Ingenier\'ia Electr\'onica \\
+    \textbf{Tutor} & Enrique A. Vargas Cabral, Ph.D. \\
+    \textbf{Instituci\'on} & UCA --- Facultad de Ciencias y Tecnolog\'ias \\
+    \end{tabularx}
+\end{center}
+
+\vspace{1.0cm}
+\hrule
+\vspace{0.5cm}
+
+\noindent\textbf{Qu\'e es este documento.} No es la entrega de la Primera
+Presentaci\'on ---esa es un documento de Estado del Arte de m\'aximo 15
+p\'aginas y vive en \texttt{docs/Primera Presentaci\'on/latex/}. Esto es el
+registro completo del trabajo: qu\'e se ley\'o, qu\'e se dise\~n\'o, qu\'e se
+midi\'o, qu\'e fall\'o y por qu\'e se descart\'o. Est\'a reconstruido a partir de
+la bit\'acora diaria (66 entradas, \textasciitilde{}1{,}3~MB), del historial de
+\emph{commits} de los diez repositorios del proyecto (1262 \emph{commits}) y de
+los datos crudos y procesados de las campa\~nas de campo.
+
+\vspace{0.3cm}
+\noindent\textbf{C\'omo leerlo.} Est\'a ordenado cronol\'ogicamente en etapas.
+Dentro de cada etapa se distingue con color lo que se
+\colorbox{cajaSel}{\strut se qued\'o}, lo que se
+\colorbox{cajaDesc}{\strut se descart\'o}, los
+\colorbox{cajaDato}{\strut datos medidos} y lo que queda
+\colorbox{cajaDuda}{\strut pendiente}.
+
+\newpage
+\tableofcontents
+\newpage
+
+\input{secciones/00_panorama}
+\input{secciones/01_etapa_marco_teorico}
+\input{secciones/02_etapa_investigacion_ia}
+\input{secciones/03_etapa_analogica}
+\input{secciones/04_etapa_espnow}
+\input{secciones/05_etapa_supermaquina}
+\input{secciones/06_etapa_autocalibracion}
+\input{secciones/07_etapa_masw_python}
+\input{secciones/08_etapa_auditoria_campo}
+\input{secciones/09_etapa_paper_caracterizacion}
+\input{secciones/10_etapa_reorganizacion_web}
+\input{secciones/11_etapa_placa_nueva}
+\input{secciones/12_inventario}
+\input{secciones/13_descartes}
+\input{secciones/14_pendientes}
+
+\end{document}

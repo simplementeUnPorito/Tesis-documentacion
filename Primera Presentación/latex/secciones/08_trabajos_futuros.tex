@@ -1,0 +1,113 @@
+\section{Trabajos futuros}
+\label{sec:futuros}
+
+Los trabajos pendientes se agrupan en cinco frentes, ordenados aproximadamente por
+prioridad y por dependencia mutua.
+
+\subsection{Consolidaci\'on del hardware: de placas de desarrollo a PCB propia}
+
+El sistema opera hoy sobre placas de desarrollo (CY8CKIT-059 y ESP32~DevKitC) cableadas
+entre s\'i. El 1 de agosto se dio el primer paso de la migraci\'on al adoptar una
+\textbf{placa portadora intermedia} con asignaci\'on de pines definitiva y verificada
+autom\'aticamente. Los pasos restantes son:
+
+\begin{itemize}[itemsep=0.15em]
+    \item Trasladar el dise\~no anal\'ogico completo a \textbf{KiCad}, aprovechando que los
+    valores de componentes ya fueron recuperados del formato binario propietario y
+    documentados con su nivel de confianza.
+    \item Dise\~nar, fabricar y ensamblar la PCB del nodo ge\'ofono, integrando PSoC, ESP32,
+    alimentaci\'on, conector de ge\'ofono y ranura de tarjeta SD.
+    \item Resolver la alimentaci\'on aut\'onoma del nodo: dimensionamiento de bater\'ia,
+    regulaci\'on de bajo ruido y estimaci\'on de autonom\'ia para una jornada de campo.
+    \item Dise\~nar el encapsulado y el sistema de acople al terreno.
+\end{itemize}
+
+\subsection{Fuente s\'ismica repetible: el martillo de leva}
+
+La calidad de la imagen de dispersi\'on depende directamente de la repetibilidad de la
+fuente, y una maza operada manualmente introduce variabilidad en energ\'ia, punto de
+impacto y verticalidad. Wood y Cox~\cite{Wood2012} cuantificaron el efecto del tipo de
+fuente sobre el sesgo y la incertidumbre de la curva de dispersi\'on, lo que justifica el
+esfuerzo de mecanizar el impacto.
+
+El dise\~no del \textbf{martillo de leva} arranc\'o el 1 de agosto con dos modelos
+paralelos: uno anal\'itico bidimensional en Python y uno tridimensional en Simscape
+Multibody derivado del CAD. Ambos detectaron errores propios que est\'an pendientes de
+resoluci\'on: una \textbf{interferencia axial entre la leva y el brazo} (que invalida los
+resultados de la simulaci\'on 3D en su estado actual) y una \textbf{violaci\'on de la
+conservaci\'on de energ\'ia} en el modelo 2D. Las tareas siguientes son corregir ambos
+modelos, converger a un perfil de leva, construir el mecanismo y caracterizar
+experimentalmente la repetibilidad de la energ\'ia entregada y del instante de impacto.
+
+\subsection{Conectividad y flujo de datos en campo}
+
+El flujo actual requiere que un navegador est\'e escuchando en el momento de la captura,
+porque el maestro no persiste los datos: \'estos se espejan en vivo por WebSocket y el
+navegador los acumula. Adem\'as, mientras el tel\'efono est\'a conectado al punto de acceso
+del maestro, el sistema operativo m\'ovil tiende a cortar o despriorizar los datos
+m\'oviles al no detectar salida a internet, lo que bloquea cualquier sincronizaci\'on
+autom\'atica.
+
+Est\'a dise\~nado y con firmware implementado ---aunque a\'un sin probar en hardware--- un
+\textbf{modo ENLACE} del maestro que resuelve ambos problemas permiti\'endole asociarse a
+una red con salida a internet mientras mantiene su punto de acceso. Quedan pendientes:
+
+\begin{itemize}[itemsep=0.15em]
+    \item Probar el modo ENLACE en hardware y verificar que los esclavos adopten
+    correctamente el canal del maestro cuando \'este cambia al asociarse a un router.
+    \item Corregir un bloqueo mutuo detectado en el escaneo de redes cuando existe un
+    identificador de red guardado que no est\'a presente.
+    \item Implementar el servidor de datos del lado del anfitri\'on para persistencia
+    autom\'atica, eliminando la dependencia de un navegador activo durante la captura.
+\end{itemize}
+
+\subsection{Ampliaci\'on del arreglo y campa\~na de validaci\'on}
+
+\begin{itemize}[itemsep=0.15em]
+    \item Escalar el arreglo desde la configuraci\'on actual hasta el n\'umero de canales
+    objetivo, y caracterizar experimentalmente el \textbf{apareamiento entre canales} y
+    el \emph{jitter} de sincronizaci\'on real sobre el arreglo completo ---magnitud que
+    hasta ahora s\'olo se acot\'o por presupuesto te\'orico y por medici\'on sobre pocos nodos.
+    \item Implementar y ensayar las \textbf{configuraciones matriciales} de medici\'on
+    previstas en la propuesta, m\'as all\'a del arreglo lineal.
+    \item Ejecutar una campa\~na de medici\'on en un sitio con \textbf{informaci\'on
+    geot\'ecnica de referencia disponible} (SPT o equivalente).
+    \item \textbf{Contrastar cuantitativamente} los perfiles $V_S$ obtenidos por MASW
+    contra esa referencia. Este es el criterio de \'exito \'ultimo del proyecto y la
+    validaci\'on que a\'un no se realiz\'o.
+\end{itemize}
+
+\subsection{Caracterizaci\'on complementaria de la instrumentaci\'on}
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Validaci\'on estad\'istica sobre m\'as unidades}: el estudio del DA-AFE se
+    limit\'o a dos placas; extenderlo a una poblaci\'on mayor permitir\'ia afirmaciones a
+    nivel poblacional.
+    \item \textbf{Deriva de largo plazo y comportamiento t\'ermico}: caracterizar la
+    estabilidad de la calibraci\'on a lo largo de una jornada de campo y frente a
+    variaciones de temperatura, no evaluadas hasta ahora.
+    \item \textbf{Optimizaci\'on de par\'ametros del controlador}: el diagn\'ostico con banda
+    muerta m\'as estrecha mostr\'o margen de mejora; una resoluci\'on de ajuste m\'as fina
+    podr\'ia lograrse con DAC de salida de corriente o topolog\'ias de inyecci\'on con
+    amortiguador, sin modificar el m\'etodo de calibraci\'on.
+    \item \textbf{Extensi\'on del DA-AFE a otras funciones}: la calibraci\'on de
+    \emph{offset} de continua es una demostraci\'on de factibilidad; el mismo principio de
+    asistencia digital no intrusiva puede aplicarse a otras tareas de calibraci\'on y
+    optimizaci\'on anal\'ogica.
+    \item \textbf{Caracterizaci\'on de ruido del sistema completo} referido a la entrada,
+    y comparaci\'on con el l\'imite de ruido t\'ermico del ge\'ofono.
+\end{itemize}
+
+\subsection{Mejoras identificadas y documentadas, de menor prioridad}
+
+Durante la auditor\'ia pre-campo se documentaron mejoras que no bloquean la operaci\'on:
+prelectura de bloque en el PSoC para acelerar la descarga aproximadamente al doble;
+posibilidad de reintentar la descarga desde la interfaz tras una detenci\'on (los datos
+permanecen en la SD); y correcci\'on de dos detalles cosm\'eticos en la presentaci\'on de
+confirmaciones de comando y de la vista previa de decimaci\'on.
+
+\nota{Este es el bloque que la mesa evaluadora suele mirar con m\'as atenci\'on en una
+Primera Presentaci\'on, porque define el alcance restante. Para la versi\'on de 15 p\'aginas
+sugiero conservarlo casi completo (~1,5 p\'aginas), recortando \S7.6 y comprimiendo
+\S7.5. Conviene adem\'as acordar con el tutor un \textbf{cronograma con fechas} para estos
+frentes, que hoy no existe y que la mesa probablemente pida.}

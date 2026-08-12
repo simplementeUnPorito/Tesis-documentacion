@@ -1,0 +1,70 @@
+\section{Etapa 2 --- Investigaci\'on asistida}
+\label{sec:et2}
+\periodo{10 --- 15 de abril de 2026 \quad$\cdot$\quad \textasciitilde{}119 \emph{commits} en 4 d\'ias}
+
+Etapa corta en calendario y enorme en volumen. Se defini\'o un procedimiento de
+trabajo ---en la jerga de la herramienta, una \emph{skill} llamada
+\texttt{INVESTIGADOR}--- y se lo dej\'o correr de forma aut\'onoma sobre el vault
+de investigaci\'on durante dos d\'ias.
+
+\subsection{Qu\'e se le pidi\'o al agente}
+
+El procedimiento fijaba cuatro cosas, y vale la pena registrarlas porque son
+las que hicieron que el resultado fuera utilizable y no ruido:
+
+\begin{enumerate}[itemsep=0.2em]
+\item \textbf{Naturaleza anal\'itica}: no resumir por resumir, sino explicar el
+mecanismo f\'isico.
+\item \textbf{Gesti\'on de fuentes}: todo lo que se afirme debe rastrearse a la
+base de 65 papers ya construida en la Etapa~1 ---sin fuente, no entra.
+\item \textbf{Arquitectura en Obsidian}: un concepto por archivo, con bloque de
+definici\'on, ejemplo concreto tomado de un paper real, y enlaces salientes.
+\item \textbf{Criterio cient\'ifico}: distinguir lo establecido de lo
+especulativo.
+\end{enumerate}
+
+\subsection{Qu\'e produjo}
+
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}X r@{}}
+\toprule
+\textbf{Resultado} & \textbf{Cantidad} \\
+\midrule
+Conceptos at\'omicos enriquecidos (definici\'on + ejemplo + enlaces) & 65 \\
+Conceptos at\'omicos nuevos & \textasciitilde{}37 \\
+Total de conceptos en el vault al cierre & \textasciitilde{}140 \\
+Ejemplos concretos por cap\'itulo (uno por cada uno de los 8) & 4 c/u \\
+\emph{Wikilinks} rotos al cerrar la verificaci\'on & 0 \\
+Archivos hu\'erfanos (sin ning\'un enlace entrante) & 0 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Los conceptos nuevos se agruparon en tres bloques que anticipan exactamente lo
+que despu\'es hubo que implementar:
+
+\begin{itemize}[itemsep=0.2em]
+\item \textbf{Procesamiento de se\~nales}: transformadas, ventaneo,
+\emph{phase-shift} ---base del \texttt{masw\_dispersion.py} de la Etapa~7.
+\item \textbf{Inversi\'on avanzada}: no unicidad, regularizaci\'on, b\'usqueda
+global ---justificaci\'on del uso de un algoritmo evolutivo en la Etapa~7.
+\item \textbf{Se\~nales discretas}: muestreo, \emph{aliasing}, cuantizaci\'on
+---base del dise\~no del ADC y la decimaci\'on en la Etapa~3.
+\end{itemize}
+
+\subsection{Consolidaci\'on y cierre}
+
+El 15 de abril se revis\'o manualmente lo producido, se reorganizaron las
+im\'agenes en \texttt{Assets/} y se cerr\'o la rama. Este paso importa: el
+resultado del agente no se acept\'o autom\'aticamente, se revis\'o antes de
+integrarlo.
+
+\seleccionado{\textbf{Qued\'o:} el vault de \textasciitilde{}140 conceptos
+enlazados, que funcion\'o despu\'es como referencia r\'apida durante todo el
+dise\~no ---sobre todo los conceptos de procesamiento y de inversi\'on. Tambi\'en
+qued\'o el m\'etodo: definir el criterio primero, dejar correr, revisar despu\'es.}
+
+\pendiente{El vault no se volvi\'o a auditar despu\'es de abril. Algunos
+conceptos pueden haber quedado desactualizados respecto de decisiones
+posteriores ---por ejemplo, todo lo que se escribi\'o suponiendo compensaci\'on
+por cancelaci\'on polo-cero, enfoque que se abandon\'o (Etapa~3).}
