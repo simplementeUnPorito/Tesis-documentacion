@@ -7,6 +7,14 @@ Esta etapa no produjo hardware ni c\'odigo de producci\'on. Produjo el
 eso vale la pena tenerla registrada: buena parte de lo que despu\'es se
 descart\'o se descart\'o por razones que se aprendieron ac\'a.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{fundamentos_dispersion.png}
+\caption{Esquema de lectura construido para fijar el v\'inculo entre registro,
+dispersi\'on, longitud de onda y perfil $V_S(z)$. Las curvas son did\'acticas y no datos
+de una campa\~na.}
+\end{figure}
+
 \subsection{Punto cero}
 
 El repositorio se cre\'o el 25 de febrero de 2026 a las 16:24. Un solo
@@ -75,10 +83,11 @@ campo de ondas todav\'ia no est\'a dominado por la onda Rayleigh plana, y la
 velocidad de fase estimada se sesga. Fija un \emph{offset} m\'inimo.
 \end{itemize}
 
-\pendiente{Estos dos criterios son exactamente los que no se pueden verificar
-todav\'ia contra las campa\~nas realizadas, porque falta registrar la geometr\'ia
-usada (espaciamiento, longitud del arreglo, \emph{offset} m\'inimo). Ver
-\S\ref{sec:pendientes}.}
+\dato{La geometr\'ia fue reconstruida despu\'es (Etapa~7):
+$\Delta x=\SI{2}{\meter}$, \emph{offset} m\'inimo de \SI{10}{\meter} y
+$L=\SI{40}{\meter}$ en el grupo principal. Por tanto
+$\lambda_{\min}=\SI{4}{\meter}$, y la apertura no sostiene el objetivo de
+\SI{50}{\meter}.}
 
 \subsection{Del papel al c\'odigo: los cinco scripts de validaci\'on te\'orica}
 
@@ -106,6 +115,73 @@ $\to$ transformada $\to$ imagen de dispersi\'on--- es el mismo que despu\'es se
 reimplement\'o en Python en \texttt{masw\_dispersion.py} (Etapa~7). La
 versi\'on MATLAB sigui\'o siendo \'util como referencia contra la cual contrastar
 la implementaci\'on propia.}
+
+\subsubsection{Qu\'e cubri\'o cada script, en detalle}
+
+Vale desglosarlo porque los cinco scripts son, en conjunto, el recorrido completo
+por los cap\'itulos 2 y 3 de Foti, y cada uno declara en su cabecera las
+ecuaciones exactas del libro que reproduce. Son \num{3207} l\'ineas de MATLAB
+comentado; funcionan hoy como el mejor resumen operativo de la teor\'ia que
+sostiene el proyecto.
+
+\paragraph{\texttt{p01\_ondas\_de\_cuerpo.m} (722 l\'ineas)} --- Ondas de cuerpo
+en medio el\'astico infinito, homog\'eneo e isotr\'opico. Foti \S2.1.3,
+Ecs.~2.11 (Navier), 2.15, 2.17 ($V_p$, $V_s$), 2.18 ($V_p/V_s$ frente a $\nu$) y
+2.19--2.22. Cubre: de las constantes de Lam\'e a las velocidades; P frente a S;
+propagaci\'on de un pulso; el car\'acter \textbf{no dispersivo} del medio
+homog\'eneo ---explicitado como el punto que ``cambiar\'a totalmente'' al pasar a
+medios estratificados---; polarizaci\'on (P paralela a la propagaci\'on, S
+perpendicular); por qu\'e siempre $V_p>V_s$; y ---clave para justificar todo el
+m\'etodo--- \textbf{por qu\'e las ondas superficiales usan $V_s$ y no $V_p$}: la
+insensibilidad de $V_p$ en suelos saturados.
+
+\paragraph{\texttt{p02\_rayleigh\_love.m} (647 l\'ineas)} --- Ondas superficiales.
+Parte del semiespacio homog\'eneo y luego \emph{agrega una capa}, que es
+exactamente el momento en que aparece la dispersi\'on. Cubre: la ecuaci\'on
+secular (Foti Ec.~2.42) como ra\'iz del determinante de la matriz de rigidez
+din\'amica; la relaci\'on $V_R\approx 0{,}92\,V_s$; el movimiento el\'iptico
+retr\'ogrado de part\'icula; la \textbf{profundidad de penetraci\'on}
+$\approx 0{,}94\,\lambda_R$ ---el n\'umero que despu\'es fundamenta todo el
+argumento de banda contra profundidad---; y la condici\'on de existencia de Love
+($V_{S1}<c_L<V_{S2}$). Usa
+\texttt{MASWaves\_theoretical\_dispersion\_curve()} por el m\'etodo de matriz de
+rigidez din\'amica (Foti Ec.~2.74, $\Phi_R=0$, b\'usqueda de ra\'ices por cambio
+de signo del determinante).
+
+\paragraph{\texttt{p03\_sismograma\_imagen\_dispersion.m} (543 l\'ineas)} --- El
+puente entre la teor\'ia y lo que hace un equipo en campo. Declara el flujo
+completo: modelo de suelo $\to$ sismograma sint\'etico $u(x,t)$ $\to$ imagen de
+dispersi\'on $c$--$f$ $\to$ curva $c(f)$ $\to$ inversi\'on. Cubre: la
+\emph{wavelet} de Ricker como descripci\'on de la fuente; sumaci\'on modal
+$u(x,t)=\mathrm{IFFT}[S(\omega)e^{ik(\omega)x}]/\sqrt{x}$ (Foti Ec.~2.75); la
+dispersi\'on \emph{visible} en el sismograma; el decaimiento geom\'etrico
+---cuerpo $\sim 1/r$ frente a Rayleigh $\sim 1/\sqrt{r}$, Foti \S2.4.3---; el
+m\'etodo de desplazamiento de fase de Park \emph{et al.} (1998); y la distinci\'on
+entre velocidad aparente y velocidad modal (Foti Ecs.~2.93--2.95).
+
+\paragraph{\texttt{p04\_inversion\_perfil\_vs.m} (651 l\'ineas)} --- Inversi\'on.
+Declara expl\'icitamente que \emph{no} pretende ser una inversi\'on de
+producci\'on sino construir intuici\'on sobre cuatro cosas: sensibilidad (qu\'e
+par\'ametro del suelo controla qu\'e parte de $c(f)$); \textbf{no unicidad};
+\emph{grid search} como la forma m\'as simple de inversi\'on, con visualizaci\'on
+de la superficie de desajuste sobre $V_{S1}$ y $h_1$; y el perfil $V_S(z)$ como
+producto final. Usa la curva te\'orica del modelo de dos capas de p02/p03 como si
+fuera ``la curva medida en campo'', lo que permite comparar perfil verdadero
+contra perfil invertido y \emph{ver} la no unicidad en lugar de leerla.
+
+\paragraph{\texttt{p05\_viscoelasticidad.m} (644 l\'ineas)} --- Viscoelasticidad
+lineal y amortiguamiento material, cerrando el cap\'itulo 2 de Foti (\S2.5).
+
+\seleccionado{\textbf{Por qu\'e esta etapa import\'o m\'as de lo que parece.} Los
+cinco scripts no produjeron ning\'un resultado que aparezca en el sistema final,
+y sin embargo son la raz\'on por la que despu\'es se pudieron tomar decisiones de
+dise\~no con criterio propio: la profundidad de penetraci\'on
+$\approx 0{,}94\lambda_R$ de p02 es lo que convierte ``queremos
+\SI{50}{\meter}'' en ``necesitamos \SIrange{1}{2.5}{\hertz}'', que es la
+especificaci\'on que gobierna toda la electr\'onica del proyecto. La cadena
+completa del argumento ---objetivo de profundidad $\to$ longitud de onda $\to$
+frecuencia $\to$ compensaci\'on del ge\'ofono $\to$ ganancia agresiva $\to$
+DA-AFE--- empieza en un \emph{script} de marzo.}
 
 \subsection{La base bibliogr\'afica: de 22 a 65 papers}
 

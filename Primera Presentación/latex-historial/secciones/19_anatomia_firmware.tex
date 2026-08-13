@@ -1,0 +1,203 @@
+\section{Anatom\'ia del firmware: qu\'e hace cada m\'odulo}
+\label{sec:anatomia-firmware}
+
+Las etapas cronol\'ogicas cuentan \emph{cu\'ando} se construy\'o cada cosa. Esta
+secci\'on cuenta \emph{d\'onde qued\'o}, que es la pregunta que uno se hace seis
+meses despu\'es cuando quiere volver a tocar algo. Es el mapa del c\'odigo
+embebido tal como est\'a hoy, en la rama \texttt{cambios-hardware}.
+
+\subsection{PSoC 5LP --- proyecto \texttt{AcondicionamientoAnalogico.cydsn}}
+
+\num{7806} l\'ineas de C propias, m\'as el TopDesign gr\'afico y los componentes
+de biblioteca. El repositorio contiene adem\'as varios proyectos hist\'oricos
+(\texttt{Comparation}, \texttt{ComparacionDiferencial},
+\texttt{DiferencialToSingleEnded}, \texttt{Martillo\_ESP},
+\texttt{FiltradoDiferencial}, \texttt{USBFS\_UART01}) que documentan etapas
+anteriores y no se compilan hoy.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+M\'odulo & L\'in. & Responsabilidad \\
+\midrule
+\texttt{main.c} & 3317 & M\'aquina de estados de alto nivel, protocolo UART, gesti\'on de captura, jerarqu\'ia de memoria, FatFs/SD \\
+\texttt{calibration.c} & 1627 & Lazo PI de auto-calibraci\'on de \emph{offset}, secuenciamiento por etapas, conmutaci\'on del AMux \\
+\texttt{psoc\_hw.c} & 678 & Abstracci\'on del hardware: c\'odigos de PGA, VDAC/IDAC, clase de nodo \\
+\texttt{psoc\_adc.c} & 236 & Servicio del ADC $\Delta\Sigma$ y contadores de ISR \\
+\texttt{crc.c} & 114 & CRC para la persistencia en EEPROM \\
+\texttt{psoc\_debug.c} & 100 & Instrumentaci\'on y trazas \\
+\texttt{psoc\_nv.c} & 97 & Registro no vol\'atil indexado por c\'odigo de ganancia \\
+\texttt{filter\_coeffs.c} & 82 & Coeficientes del FIR, con guarda contra desincronizaci\'on del \emph{customizer} \\
+\texttt{FIR\_adquisition.c} / \texttt{FIR\_calibration.c} & 4 c/u & Tablas de coeficientes Q23 generadas \\
+\texttt{shared/transport\_spi.c} & --- & Transporte SPI compartido entre proyectos \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{Firmware \'unico para GEO y HAMMER, resuelto en tiempo de
+compilaci\'on por el TopDesign.} La cabecera de \texttt{main.c} lo declara
+expl\'icitamente: si el proyecto tiene el componente \texttt{PGAgain} $\to$
+\texttt{PSOC\_HW\_CLASS = GEO}; si tiene \texttt{PGA} $\to$ \texttt{HAMMER}. No
+hay que tocar nada al cambiar de proyecto. Es la decisi\'on que elimin\'o la
+bifurcaci\'on del firmware embebido y garantiza que el protocolo y la l\'ogica de
+captura sean id\'enticos en los dos tipos de nodo ---que es lo que permite
+confiar en que las dos se\~nales est\'an alineadas.}
+
+\subsubsection{El protocolo UART, tal como est\'a documentado en el c\'odigo}
+
+Conviene transcribirlo porque est\'a en un comentario de cabecera y es la
+referencia real:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Sentido & Trama \\
+\midrule
+TX datos & \texttt{[0xAB][n=30][seq\_lo][seq\_hi]} + $30\times3$ bytes (crudo LE: b0,b1,b2) + \texttt{[crc XOR]} --- 95 bytes \\
+RX 1 par\'am. & \texttt{[0xAB][cmd][param][cmd\^{}param]} \\
+RX 2 par\'am. & \texttt{[0xAB][0xA3][n\_lo][n\_hi][0xA3\^{}n\_lo\^{}n\_hi]} --- fija $N$ lotes \\
+Ping & PSoC$\to$ESP \texttt{[0xAB][0xC0][0x00][0xC0]} \\
+Pong & ESP$\to$PSoC \texttt{[0xAB][0xC1][0x00][0xC1]} \\
+ACK de config & PSoC$\to$ESP \texttt{[0xAB][0xC2][cmd][val][0xC2\^{}cmd\^{}val]} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}ll ll@{}}
+\toprule
+C\'odigo & Comando & C\'odigo & Comando \\
+\midrule
+\texttt{0xA5} & \emph{status} / \emph{probe} & \texttt{0xB1} & armar (espera SYNC) \\
+\texttt{0xA6} & fijar PGA (0--8)            & \texttt{0xB3} & rampa de depuraci\'on (0/1) \\
+\texttt{0xA9} & ACK \emph{legacy}           & \texttt{0xB4} & arranque inmediato \\
+\texttt{0xAA} & ACK \emph{legacy}           & \texttt{0xB5} & calibrar referencias \\
+\texttt{0xA3} & fijar $N$ lotes             & \texttt{0xC1} & \emph{pong} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\dato{\textbf{El PSoC no habla por UART durante la ventana cr\'itica.} Muestrea
+$N$ lotes de 30 muestras crudas, los guarda \'integramente en RAM \emph{sin
+transmitir}, y reci\'en despu\'es los env\'ia. El arranque del muestreo es por el
+pin digital \texttt{SYNC\_IN}, que maneja el ESP. Esa separaci\'on ---capturar
+primero, comunicar despu\'es--- es lo que impide que el protocolo de comunicaci\'on
+contamine la temporizaci\'on de la adquisici\'on.}
+
+\subsubsection{Componentes del TopDesign por clase de nodo}
+
+Tomado de la cabecera de \texttt{main.c}:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+GEO & \texttt{UART}, \texttt{ADC}, \texttt{AMux\_ADC}, \texttt{VDAC\_ref\_*}, \texttt{PGAgain}, \texttt{OPAref}, \texttt{PGAp}, \texttt{PGAn}, \texttt{LPF\_1}, \texttt{LPF\_2}, \texttt{OPAbp}, \texttt{OPAsum}, \texttt{OPAlp}, \texttt{Timer}, \texttt{LED}, \texttt{isr\_*} \\
+\addlinespace[2pt]
+HAMMER & \texttt{UART}, \texttt{ADC}, \texttt{AMux\_ADC}, \texttt{VDAC\_PGA}, \texttt{VDAC\_LP}, \texttt{PGA}, \texttt{Opa\_ref\_PGA}, \texttt{Opa\_LP}, \texttt{LPF\_ADC}, \texttt{Timer}, \texttt{LED} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+El nodo HAMMER qued\'o simplificado en la revisi\'on ``Precambios'': ya no lleva
+etapa de referencia de entrada separada. Tiene sentido ---el aceler\'ometro del
+martillo entrega una se\~nal grande y no necesita ni compensaci\'on de banda ni la
+ganancia agresiva que exige el ge\'ofono.
+
+\pendiente{\textbf{Una trampa registrada en el propio c\'odigo}, que vale
+conservar porque ya rompi\'o un enlace una vez: \texttt{LED.h} \emph{no} se
+incluye directamente en \texttt{main.c}. La placa nueva no tiene el pin de LED
+en el TopDesign; \texttt{project.h} s\'olo lo trae si el pin existe, y
+\texttt{led\_write()} / \texttt{led\_toggle()} ya est\'an protegidos por
+\texttt{CY\_PINS\_LED\_H}. Incluirlo a mano hac\'ia que la guarda diera verdadero
+y el enlace fallara por \texttt{LED\_Write} / \texttt{LED\_Read} ausentes.}
+
+\subsection{ESP32 --- maestro}
+
+\num{4410} l\'ineas de C++ repartidas en diez m\'odulos, m\'as la aplicaci\'on web
+de \num{8250} l\'ineas servida desde LittleFS.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+M\'odulo & L\'in. & Responsabilidad \\
+\midrule
+\texttt{main.cpp} & 2013 & M\'aquina de estados del maestro, orquestaci\'on de captura, \emph{dump} \\
+\texttt{link\_mode.h} & 751 & Modo ENLACE: aprovisionamiento de la red del cliente, cola de capturas en LittleFS, mDNS \\
+\texttt{web\_relay.h} & 475 & Puente WebSocket $\leftrightarrow$ protocolo binario \\
+\texttt{web\_server.h} & 356 & Servidor HTTP/WS embebido \\
+\texttt{matlab\_transport.h} & 270 & Transporte Serial USB para MATLAB \\
+\texttt{espnow\_rx.h} & 215 & Recepci\'on ESP-NOW de lotes de los esclavos \\
+\texttt{sync\_protocol.h} & 196 & Mensajes de sincronizaci\'on ---copia id\'entica a la del esclavo \\
+\texttt{link\_rssi.h} & 146 & Intensidad de se\~nal esclavos$\leftrightarrow$maestro \\
+\texttt{debug\_log.h} & 99 & Registro unificado, legible por humano y por m\'aquina \\
+\texttt{scope\_pulse.h} & 78 & Pulsos GPIO para la medici\'on con osciloscopio \\
+\texttt{master\_log.h} & 11 & \emph{Shim} de compatibilidad \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\texttt{sync\_protocol.h} es \textbf{byte a byte el mismo archivo}
+en maestro y esclavo, y el comentario de cabecera lo dice: ``copia del esclavo,
+id\'entica''. Es una decisi\'on deliberada contra la clase de error m\'as
+insidiosa de un protocolo binario distribuido: que las dos puntas diverjan en una
+definici\'on de estructura y el s\'intoma aparezca como datos corruptos meses
+despu\'es.}
+
+\subsection{ESP32 --- esclavo}
+
+\num{5386} l\'ineas de C++.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+M\'odulo & L\'in. & Responsabilidad \\
+\midrule
+\texttt{main.cpp} & 3517 & M\'aquina de estados del esclavo, disparo, encadenado, \emph{watchdogs} \\
+\texttt{psoc\_uart.cpp/.h} & 676 & Enlace ESP esclavo $\leftrightarrow$ PSoC 5LP \\
+\texttt{local\_ui.cpp/.h} & 414 & \textbf{Interfaz local en la placa nueva}: OLED por SPI y botones \\
+\texttt{sync\_protocol.h} & 216 & Mensajes ESP-NOW maestro$\leftrightarrow$esclavos \\
+\texttt{espnow\_transport.h} & 159 & Env\'io de lotes del PSoC al maestro \\
+\texttt{sd\_storage.cpp/.h} & 141 & SD opcional en esclavos GEO \\
+\texttt{debug\_log.h} & 104 & Registro unificado \\
+\texttt{espnow\_compat.h} & 81 & Compatibilidad ESP-NOW entre ESP32 y ESP8266 \\
+\texttt{scope\_pulse.h} & 78 & Pulsos GPIO de medici\'on \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\dato{\textbf{La interfaz local del esclavo es de la etapa de la placa nueva}
+(3 de agosto). Antes, un esclavo era una caja ciega: para saber su estado hab\'ia
+que preguntarle al maestro. Con OLED por SPI y botones, cada nodo muestra y
+permite ajustar su propio estado ---incluidos PGA y PGAout--- lo que en campo
+cambia el procedimiento por completo: se puede verificar un nodo sin desplegar la
+red entera.}
+
+\subsection{\texttt{MasterFoo}: el \emph{sketch} descartable}
+
+Un tercer proyecto, de un solo archivo, creado el 24 de julio con el prop\'osito
+declarado de \emph{validar el hotspot del celular} antes de comprometer cambios
+en el maestro real. Se conserva porque documenta c\'omo se valid\'o el modo
+ENLACE sin arriesgar el firmware de producci\'on: primero un banco de pruebas
+m\'inimo, despu\'es la integraci\'on.
+
+\subsection{Utilidades de soporte del repositorio de firmware}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Archivo & Para qu\'e \\
+\midrule
+\texttt{program\_psoc.ps1} & Programaci\'on del PSoC por l\'inea de comandos, sin abrir PSoC Creator \\
+\texttt{extract\_topdesign\_strings.ps1} & Extrae los nombres de componentes del TopDesign, que es un binario \\
+\texttt{verify\_carrier\_pinout.ps1} & Verifica el pinout de la placa portadora contra lo esperado \\
+\texttt{TOPDESIGN\_TO\_KICAD.md} & Puente entre el esquem\'atico del PSoC y el dise\~no de PCB \\
+\texttt{BUILD\_PROGRAM\_PSOC.md} & Procedimiento de compilaci\'on y grabaci\'on (16 revisiones: es el documento m\'as editado del repositorio) \\
+\texttt{simulate\_hammer\_dummy.py} & Simulador de nodo martillo para probar sin hardware \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{Que \texttt{BUILD\_PROGRAM\_PSOC.md} sea el archivo con m\'as
+revisiones del repositorio del PSoC no es casualidad}: el flujo de compilaci\'on
+y grabaci\'on de PSoC Creator es fr\'agil y cada cambio de TopDesign obligaba a
+reajustarlo. Documentarlo fue m\'as barato que recordarlo.}

@@ -6,6 +6,22 @@ Dos l\'ineas: escribir y someter a revisi\'on el art\'iculo sobre la
 auto-calibraci\'on, y ---en paralelo--- \textbf{medir de verdad} la cadena
 anal\'ogica con generador y osciloscopio, en vez de confiar en el modelo.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{identificacion_compensador_medida.png}
+\caption{Identificaci\'on experimental hist\'orica del compensador. Los puntos medidos
+documentan la respuesta observada; la curva de modelo superpuesta es provisional porque
+el primer modelo de operacional confundi\'o GBW con polo dominante.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{geofono_vs_cadena_medida.png}
+\caption{Comparaci\'on hist\'orica entre respuesta del ge\'ofono y cadena medida. Se
+conserva como diagn\'ostico, no como validaci\'on vigente de la banda compensada hasta
+repetir la s\'intesis y la medici\'on.}
+\end{figure}
+
 \subsection{El art\'iculo: \emph{Automatic DC-Offset Calibration for a Low-Cost
 Geophone Front End}}
 
@@ -71,11 +87,15 @@ El script de an\'alisis (\texttt{analizar\_barridos\_cadena\_analogica.m},
 \texttt{AnalisisCircuito/}) incorpora varias decisiones que conviene no perder:
 
 \begin{itemize}[itemsep=0.2em]
-\item \textbf{Modelo del operacional, no ideal}: $A_0=\SI{90}{\decibel}$,
-GBW $=\SI{8}{\mega\hertz}$, $R_{in}=\SI{35}{\mega\ohm}$,
+\item \textbf{Modelo del operacional, no ideal}: se registraron
+$A_0=\SI{90}{\decibel}$, GBW $=\SI{8}{\mega\hertz}$,
+$R_{in}=\SI{35}{\mega\ohm}$,
 $R_{out}=\SI{20}{\ohm}$, $C_{in}=\SI{18}{\pico\farad}$. El \emph{slew rate}
 (\SI{4.3}{\volt\per\micro\second}) se trata como l\'imite \emph{no lineal} de
-amplitud y no como un polo, que es lo correcto.
+amplitud y no como un polo, que es lo correcto. Sin embargo, otros scripts
+introdujeron el GBW de \SI{8}{\mega\hertz} como si fuera el polo dominante; esa
+parte del resultado queda invalidada. La relaci\'on $f_p=f_t/A_0$ ya se corrigi\'o
+en el c\'odigo, pero falta repetir la s\'intesis y el contraste.
 \item \textbf{Cancelaci\'on de red por m\'inimos cuadrados}, la misma t\'ecnica
 que en el ESP: se estima la fundamental de \SI{50}{\hertz} y se restan
 \emph{solo} los arm\'onicos dentro del pasabanda. Se excluye del ajuste un
@@ -167,11 +187,10 @@ modelo; \SI{0.435}{\decibel} RMS en toda la banda de ajuste
 \SI{0.20}{\decibel} y \SI{1.16}{\degree} RMS. \textbf{El circuito es
 repetible}; lo que no est\'a logrado es la calibraci\'on fina de la cancelaci\'on.}
 
-\subsection{Discrepancia a resolver sobre $\zeta$}
+\subsection{Lectura resuelta de los tres valores de \texorpdfstring{$\zeta$}{zeta}}
 
-\pendiente{\textbf{Hay que aclarar esto antes de escribir el documento de
-entrega.} Los archivos de resultados distinguen tres cantidades que se han
-venido mezclando:
+Los archivos de resultados distinguen tres cantidades que se hab\'ian venido
+mezclando:
 \begin{itemize}[itemsep=0.15em,topsep=0.2em]
 \item \texttt{zeta0\_objetivo} $= 0{,}25$, descrito como \emph{``numerador de
 Hcompensate''}. Es el amortiguamiento del ge\'ofono, que el numerador del
@@ -183,15 +202,11 @@ compensador debe reproducir para cancelar sus polos.
 descartada (con la resistencia de \SI{8200}{\ohm} equivocada) y
 \textbf{$0{,}250000000000114$} en la calibrada.
 \end{itemize}
-Es decir: seg\'un estos archivos, \textbf{$83{,}661$ no es un objetivo de
-dise\~no sino el valor que el numerador realizaba \emph{por error}} con el
-resistor equivocado, y la tanda calibrada del d\'ia siguiente lo lleva
-exactamente a $0{,}25$, que s\'i es el objetivo. Esto contradice la
-interpretaci\'on que ven\'ia usando el borrador de la Primera Presentaci\'on.
-\textbf{Confirmame cu\'al es la lectura correcta}, porque cambia la redacci\'on
-de la secci\'on de compensaci\'on: no es lo mismo decir ``se busc\'o
-$\zeta_1 = 83{,}661$'' que decir ``se detect\'o que el circuito estaba
-realizando $83{,}661$ en lugar de $0{,}25$ y se corrigi\'o''.}
+Por tanto, \textbf{$83{,}661$ no es un objetivo de dise\~no}: es el valor que
+el numerador realizaba por error con la resistencia equivocada. La tanda
+calibrada lo lleva a $0{,}25$, mientras que $937{,}40$ permanece como
+amortiguamiento del denominador BP. Esta lectura queda adoptada como
+autoritativa y corrige la interpretaci\'on anterior del borrador de entrega.
 
 \subsection{Balance de la etapa}
 

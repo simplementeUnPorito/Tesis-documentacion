@@ -1,0 +1,124 @@
+\section{Evidencia de la auditor\'ia pre-campo: los artefactos que quedaron}
+\label{sec:evidencia-auditoria}
+
+La auditor\'ia previa a la campa\~na dej\'o algo poco habitual y muy valioso:
+\textbf{archivos de evidencia con el antes y el despu\'es de cada correcci\'on},
+en formato legible por m\'aquina, en
+\texttt{src/firmware/esp32/Nodo comunicaci\'on/master/artifacts/}. No son notas
+sobre lo que pas\'o: son el registro que la propia herramienta de prueba escribi\'o
+mientras pasaba.
+
+\subsection{El fallo F1 y su correcci\'on, en n\'umeros}
+
+El caso mejor documentado es el defecto \textbf{F1}: el \emph{watchdog} de
+\texttt{SYNC\_STALL} destru\'ia las capturas largas a tarjeta SD. Existen los dos
+archivos, el de la corrida fallida y el de la corrida que pas\'o, con la misma
+configuraci\'on nominal:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r r X@{}}
+\toprule
+& \textbf{Antes (falla)} & \textbf{Despu\'es (PASS)} & \\
+\midrule
+Muestras escritas & \textbf{0} & \textbf{\num{1562400}} & de \num{1562400} esperadas \\
+Lotes & 0 & \num{52080} & de 30 muestras cada uno \\
+Bytes en disco & 0 & \num{4687200} & $=\num{1562400}\times3$ (entero de 24 bits) \\
+Duraci\'on pedida & \SI{600}{\second} & \SI{600}{\second} & a \SI{2604}{\hertz}, sin decimar \\
+Tiempo transcurrido & \SI{3420.6}{\second} & \SI{2626.5}{\second} & \\
+\textbf{Desconexiones} & \textbf{15} & \textbf{0} & \\
+\textbf{Conexiones} & \textbf{16} & \textbf{1} & \\
+Limpieza final & fallida & correcta & \\
+Estado & \texttt{error} & \texttt{ok} & \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+El mensaje de error de la corrida fallida se conserva literal y describe el modo
+de falla con precisi\'on: \texttt{PhaseTimeout: VER/captura timeout:
+muestras=0/1562400}, seguido de \texttt{final\_cleanup/STOP no confirmado: falta
+ACK 0xA4}. Las \textbf{15 desconexiones} y \textbf{16 reconexiones} son la firma
+del \emph{watchdog} re-disparando: cada reintento cortaba el enlace y reiniciaba
+la sesi\'on, de modo que la captura nunca llegaba a completarse.
+
+\seleccionado{\textbf{La aritm\'etica cierra exactamente} en la corrida que pasa:
+$\num{52080}$ lotes $\times\,30$ muestras $=\num{1562400}$ muestras, que a
+\SI{2604}{\hertz} son exactamente \SI{600}{\second}; y
+$\num{1562400}\times3$ bytes $=\num{4687200}$ bytes, coincidentes con el tama\~no
+real del archivo. Ni una muestra de m\'as (\texttt{extra\_samples}${}=0$) ni de
+menos. \textbf{Cero desconexiones y una sola conexi\'on} en 44 minutos de
+operaci\'on continua.}
+
+\dato{\textbf{Un dato de rendimiento que conviene tener presente}: capturar
+\SI{600}{\second} llev\'o \SI{2626}{\second} de reloj, es decir que la
+\textbf{transferencia de los datos tarda unas cuatro veces m\'as que la captura}.
+La captura en s\'i es tiempo real; el volcado por WebSocket con esquema
+\emph{stop-and-wait} es el cuello de botella. Para una jornada de campo con
+capturas largas esto no es un detalle: define cu\'antos puntos se alcanzan a
+medir por d\'ia.}
+
+\subsection{Otros artefactos conservados}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+Artefacto & Muestras & Qu\'e demuestra \\
+\midrule
+\texttt{geo\_sd\_smoke\_5} & --- & Prueba de humo m\'inima de la SD (3 variantes: base, \texttt{\_v2} y \texttt{\_pass}) \\
+\texttt{geo\_sd\_medium\_600} & \num{18000} & 600 lotes, \SI{54000}{} bytes, 0 desconexiones, \SI{34.6}{\second} \\
+\texttt{e5c\_geo10min\_2604\_pass} & \num{1562400} & La corrida de \SI{10}{\minute} completa que pasa \\
+\texttt{geo\_10min\_2604} & 0 & La corrida fallida, conservada como evidencia del defecto \\
+\texttt{f9\_start\_flow\_pass} & --- & Los escenarios del flujo de START tras corregir F9 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{Conservar el archivo de la corrida fallida es la decisi\'on
+correcta} y merece se\~nalarse. Lo natural habr\'ia sido borrarlo al conseguir el
+PASS. Mantenerlo permite hoy, un mes despu\'es, reconstruir exactamente qu\'e
+fallaba y cu\'anto mejor\'o ---y es lo que hace posible la tabla de arriba.}
+
+\subsection{Los barridos crudos de osciloscopio}
+
+En \texttt{data/raw/Osciloscopio/} se conservan los archivos originales del
+osciloscopio, organizados \textbf{una carpeta por d\'ecada de barrido}:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\multicolumn{2}{@{}l}{15 carpetas, 4 archivos CSV cada una (un canal por archivo) $=$ \textbf{60 CSV crudos}} \\
+\midrule
+\texttt{100mHz\_1Hz} & \texttt{100mHzto1Hz\_200s\_25s\_div} \\
+\texttt{500mHz\_5Hz} & \texttt{500mHzto5Hz\_40s\_5s\_div} \\
+\texttt{2.5Hz\_25Hz} & \texttt{2.5Hzto25Hz\_8s\_1s\_div} \\
+\texttt{10Hz\_100Hz} & \texttt{10Hzto100Hz\_2s\_250ms\_div} \\
+\texttt{30Hz\_300Hz} & \texttt{50Hzto500Hz\_400ms\_50ms\_div} \\
+\texttt{100Hz\_1kHz} & \texttt{250Hzto2.5kHz\_80ms\_10ms\_div} \\
+--- & \texttt{1kHzto10kHz\_20ms\_2.5ms\_div} \\
+--- & \texttt{5kHzto50kHz\_4ms\_500us\_div} \\
+--- & \texttt{20kHzto200kHz\_1ms\_100us\_div} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+La nomenclatura registra la banda \emph{y} la base de tiempo del osciloscopio, de
+modo que cada archivo es reproducible sin consultar una libreta. Las dos
+convenciones de nombre (\texttt{100mHz\_1Hz} frente a
+\texttt{100mHzto1Hz\_200s\_25s\_div}) corresponden a dos tandas distintas; la
+segunda, m\'as expl\'icita, es la que se mantuvo.
+
+\subsection{La m\'aquina de estados de la calibraci\'on}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.98\textwidth]{mosaico_fsm_calibracion.png}
+\caption{Las dos versiones del diagrama de la m\'aquina de estados de
+auto-calibraci\'on, generadas por \texttt{docs/calibration\_fsm/draw\_calibration\_fsm.py}:
+la simplificada, que es la que se us\'o en el art\'iculo, y la detallada, con
+todas las transiciones y guardas.}
+\label{fig:mosaico-fsm}
+\end{figure}
+
+\seleccionado{El diagrama est\'a \textbf{generado por c\'odigo}
+(\texttt{draw\_calibration\_fsm.py}) y no dibujado a mano, lo que significa que
+puede regenerarse si la m\'aquina cambia. Acompa\~na un
+\texttt{calibration\_fsm\_explanation.md} con la descripci\'on de cada estado.}

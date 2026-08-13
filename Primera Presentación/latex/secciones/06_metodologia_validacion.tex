@@ -35,15 +35,62 @@ herramientas propias de an\'alisis:
     con valores de componentes reales.
 \end{itemize}
 
-El modelado del amplificador operacional real ($A_0=\SI{90}{\decibel}$,
-$f_p=\SI{8}{\mega\hertz}$) result\'o necesario porque el modelo ideal no reproduc\'ia el
-comportamiento medido del compensador en el extremo superior de la banda.
+\begin{sloppypar}
+Para hacer trazable el estado MASW mostrado en resultados, se fija el siguiente
+\emph{snapshot}: \texttt{data} en el commit
+{\ttfamily\footnotesize 76c4254b19cf\allowbreak c1f85edb9fb9\allowbreak
+201b40c7f250\allowbreak b413},
+software de procesamiento en
+{\ttfamily\footnotesize 30b60517d337\allowbreak 7d175ecc7070\allowbreak
+278c25cbca35\allowbreak b7ec}
+y archivo
+\nolinkurl{data/processed/Canchita/field_review_masw_state.json}, con SHA-256
+{\ttfamily\footnotesize 8f8bf4d59a09\allowbreak 2b8f321b2829\allowbreak
+af07fbfd3e03\allowbreak 374304c57310\allowbreak 3c39e1a43df3\allowbreak 0006}.
+El estado guarda: imagen $c=\SIrange{50}{170}{\meter\per\second}$ con paso
+\SI{0.1}{\meter\per\second} y $f=\SIrange{0.1}{35}{\hertz}$; grupo~1 con peso~1 y
+grupo~2 con peso~0; 113 puntos etiquetados como modo~0; e inversi\'on de siete capas
+m\'as semiespacio, 1000 iteraciones, $b_s=8$, $b_h=12$, $\nu=0{,}35$ y
+$\rho=\SI{1850}{\kilogram\per\meter\cubed}$. El desajuste del \emph{port} se define como
+\end{sloppypar}
+
+\begin{equation}
+E=\frac{100}{n}\sum_{i=1}^{n}\frac{|c_i^{\mathrm{obs}}-c_i^{\mathrm{teo}}|}
+{c_i^{\mathrm{obs}}}\quad[\%].
+\end{equation}
+
+Este \emph{snapshot} permite repetir el estado num\'erico guardado, pero no reconstruye
+por s\'i solo todas las decisiones manuales que llevaron al pol\'igono de selecci\'on. Esa
+limitaci\'on es una raz\'on adicional para tratar la inversi\'on como exploratoria. La SNR
+de la Fig.~\ref{fig:gather-main}, por su parte, se calcul\'o sobre la primera captura
+v\'alida a \SI{1020}{\hertz} de cada posici\'on, no sobre una traza apilada: cociente entre
+la desviaci\'on est\'andar posterior y previa al impacto, expresado como
+$20\log_{10}(\sigma_{\mathrm{s}}/\sigma_{\mathrm{r}})$, donde los sub\'indices
+$\mathrm{s}$ y $\mathrm{r}$ identifican las ventanas de se\~nal y ruido.
+
+El modelo ideal no reprodujo el comportamiento medido del compensador en el extremo
+superior de la banda. El primer modelo no ideal usado en los c\'alculos combin\'o
+$A_0=\SI{90}{\decibel}$ con \SI{8}{\mega\hertz}, pero confundi\'o frecuencia de ganancia
+unitaria con polo dominante. Esa parametrizaci\'on queda invalidada y debe recalcularse;
+la funci\'on monopolo ya fue corregida en los scripts, pero la s\'intesis y la medici\'on
+deben repetirse. El resultado anterior no se usa para sostener una banda compensada ya
+demostrada.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{barrido_crudo_cadena.png}
+\caption{Ejemplo de barrido experimental conservado como evidencia de laboratorio:
+se\~nales crudas de excitaci\'on y salida de la cadena antes de la estimaci\'on arm\'onica.
+Los puntos medidos siguen siendo v\'alidos como registro; cualquier superposici\'on con
+el modelo no ideal anterior debe recalcularse con el polo dominante corregido.}
+\label{fig:barrido-crudo-metodo}
+\end{figure}
 
 \subsection{Validaci\'on experimental del DA-AFE}
 \label{sec:met-daafe}
 
-Este es el experimento m\'as riguroso realizado hasta la fecha, y el que fue sometido a
-revisi\'on externa.
+Este es el experimento m\'as riguroso realizado hasta la fecha y fue documentado en la
+comunicaci\'on sometida a URUCON~2026; a\'un no se cuenta con dictamen externo.
 
 \subsubsection{Dise\~no experimental}
 
@@ -135,6 +182,141 @@ permite distinguir una transferencia completa de una truncada, distinci\'on que 
 decisiva, ya que un intento previo hab\'ia capturado correctamente en SD pero entregado un
 archivo truncado por el lado del cliente.
 
+\subsection{El sitio de ensayo: contexto geol\'ogico y verdad de terreno disponible}
+\label{sec:sitio-sev}
+
+Un elemento poco habitual en un trabajo de instrumentaci\'on, y que conviene explotar, es
+que el sitio principal de medici\'on cuenta con una \textbf{caracterizaci\'on geof\'isica
+independiente, previa y co-localizada}, realizada por terceros con un m\'etodo distinto.
+
+En julio de 2023 la consultora V\'ictor Gonz\'alez \& Asoc.~S.S.\ ejecut\'o un estudio
+hidrogeol\'ogico para la Facultad de Ciencias y Tecnolog\'ias de la UC, Campus Asunci\'on
+--- Sede Santa Librada~\cite{GonzalezHidro2023}, sobre un \'area de proyecto de
+\SI{0.186}{\kilo\meter\squared}. El estudio incluy\'o tres \textbf{Sondeos El\'ectricos
+Verticales} (SEV) con arreglo Schlumberger, medidos con un resistiv\'imetro GOLD~DDC-8
+(hasta \SI{700}{\volt} y \SI{3}{\ampere}, $AB/2$ m\'aximo \SI{500}{\meter}) e
+interpretados con el programa IPI2win de la Universidad Estatal de Mosc\'u.
+
+\textbf{El SEV~01 se ejecut\'o en la cancha de f\'utbol de la UC} (UTM
+$X=\num{435595}$, $Y=\num{7198920}$), que es el mismo predio en el que se realizaron las
+campa\~nas de adquisici\'on de este proyecto. Es, por lo tanto, una medici\'on
+independiente del mismo subsuelo, con un m\'etodo geof\'isico completamente distinto
+---resistividad el\'ectrica en corriente continua en lugar de ondas superficiales--- y
+anterior al proyecto, de modo que no puede haber sido influida por \'el.
+
+\subsubsection{Modelos geoel\'ectricos obtenidos}
+
+\begin{table}[h]
+\centering\footnotesize
+\caption{Modelos de capas invertidos de los tres SEV~\cite{GonzalezHidro2023}.
+$\rho$: resistividad; $h$: espesor; $d$: profundidad a la base. El SEV~01 es el
+co-localizado con las campa\~nas de este proyecto.}
+\label{tab:sev}
+\begin{tabular}{@{}llrrrl@{}}
+\toprule
+Sondeo & Capa & $\rho$ [\si{\ohm\meter}] & $h$ [\si{\meter}] & $d$ [\si{\meter}] & Interpretaci\'on \\
+\midrule
+\multirow{6}{*}{\shortstack[l]{\textbf{SEV~01}\\ Cancha de f\'utbol\\ $AB/2=\SI{125}{\meter}$\\ cota \SI{72}{\meter} s.n.m.}}
+ & 1 & 1186  & 1{,}00 & 1{,}00  & Suelo residual seco, muy compactado \\
+ & 2 & 15    & 1{,}06 & 2{,}06  & Nivel conductivo delgado (arcilloso) \\
+ & 3 & 105   & 2{,}09 & 4{,}15  & Sedimentos areno-cuarzosos \\
+ & 4 & 24{,}2 & 19{,}9 & \textbf{24{,}0} & Cementaci\'on arcillosa; \textbf{base del suelo} \\
+ & 5 & 126   & 47{,}7 & \textbf{71{,}8} & Acu\'ifero Cuaternario/Pati\~no \\
+ & 6 & 6{,}42 & --- & --- & Areniscas con matriz arcillosa \\
+\midrule
+\multirow{4}{*}{\shortstack[l]{SEV~02\\ Lindero norte\\ $AB/2=\SI{125}{\meter}$}}
+ & 1 & 220   & 1{,}00 & 1{,}00  & Suelo residual seco \\
+ & 2 & 36{,}6 & 12{,}0 & 13{,}0 & Sedimentos con mayor arcilla \\
+ & 3 & 95{,}8 & 9{,}73 & 22{,}7 & Nivel cuarzoso \\
+ & 4 & 30{,}8 & --- & --- & Basal arcilloso \\
+\midrule
+\multirow{4}{*}{\shortstack[l]{SEV~03 (param\'etrico)\\ Junto al pozo FT01\\ $AB/2=\SI{80}{\meter}$}}
+ & 1 & 202   & 1{,}02 & 1{,}02 & Suelo residual seco \\
+ & 2 & 117   & 7{,}34 & 8{,}36 & Areno-cuarzoso resistivo \\
+ & 3 & 54{,}4 & 56{,}1 & 64{,}5 & Acu\'ifero \\
+ & 4 & 3{,}64 & --- & --- & Basal arcilloso \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El SEV~03 es \textbf{param\'etrico}: se midi\'o junto a un pozo tubular profundo existente
+(FT01, \SI{50}{\meter} de profundidad, en operaci\'on, conductividad el\'ectrica
+\SI{130}{\micro\siemens\per\centi\meter}, pH~7{,}1), de modo que su modelo est\'a anclado
+a litolog\'ia conocida. Eso da trazabilidad a la interpretaci\'on de los otros dos.
+
+\subsubsection{Qu\'e aporta esto al proyecto}
+
+\paragraph{a) Contrastes esperables en el perfil $V_S$.} El SEV~01 sit\'ua la
+\textbf{base del suelo en \SI{24.0}{\meter}} y la base de la secuencia media en
+\SI{71.8}{\meter}. Debe subrayarse una salvedad metodol\'ogica: \textbf{un contraste de
+resistividad no es un contraste de rigidez}. La resistividad responde a porosidad,
+salinidad del fluido y contenido de arcilla; $V_S$ responde a la rigidez al corte del
+esqueleto. Coinciden a menudo, porque ambos siguen los cambios litol\'ogicos, pero no por
+construcci\'on. Por eso las profundidades de la Tabla~\ref{tab:sev} se enuncian aqu\'i como
+\emph{contrastes esperables} contra los cuales contrastar el perfil invertido, y no como
+una predicci\'on que el MASW deba reproducir. Aun as\'i, el valor de la comparaci\'on es
+alto: una interfaz a \SI{24}{\meter} cae de lleno dentro del objetivo de
+\SI{50}{\meter} del proyecto, y es exactamente el tipo de rasgo que un perfil $V_S$
+correctamente invertido deber\'ia resolver.
+
+\paragraph{b) El nivel fre\'atico, con un n\'umero concreto.} El estudio ubica el nivel
+del agua \textbf{entre \SI{10}{} y \SI{30}{\meter} de profundidad}, con la aclaraci\'on
+expresa de que la campa\~na se realiz\'o en \'epoca de escasas precipitaciones, de modo
+que se trata de una cota de estiaje y no del r\'egimen anual. Esto cierra un cabo suelto
+del \S\ref{sec:no-unicidad}: all\'i se se\~nala que ignorar el nivel fre\'atico equivale a
+asumir una raz\'on de Poisson incorrecta en las capas saturadas, donde el comportamiento
+no drenado lleva $\nu\to0{,}5$. Ahora existe un rango concreto y con fuente para
+parametrizar esa transici\'on en la inversi\'on ---y, m\'as importante, la advertencia de
+que su profundidad es \textbf{estacional}, por lo que la fecha de cada campa\~na de este
+proyecto es un dato relevante y no un detalle administrativo.
+
+\paragraph{c) Marco litol\'ogico.} El sitio se asienta sobre el \textbf{Grupo Asunci\'on}
+(Cret\'acico), relleno de una fosa tect\'onica tipo semi-graben: la Formaci\'on Pati\~no
+en la base (fanglomerados, del orden de \SI{100}{\meter} de espesor) y la Formaci\'on
+Yaguar\'on por encima (areniscas cuarzosas de grano fino a medio, friables, con matriz
+arcillosa), que constituye el nivel productor del \textbf{Acu\'ifero Pati\~no}. Se trata
+de sedimentos cl\'asticos poco cementados: es decir, exactamente el r\'egimen de suelo
+blando a intermedio para el cual se asumieron velocidades de onda Rayleigh
+$V_R\approx\SIrange{150}{250}{\meter\per\second}$ al derivar la banda objetivo en la
+Ec.~\eqref{eq:geo-banda-objetivo}. La hip\'otesis que sostiene el requisito de banda del
+proyecto queda as\'i respaldada por la geolog\'ia documentada del sitio y no s\'olo por un
+valor de manual.
+
+\paragraph{d) Un paralelo instructivo sobre la limitaci\'on de apertura.} El propio
+estudio declara que la exploraci\'on qued\'o limitada a \SI{125}{\meter} de profundidad
+``por limitaciones de espacio en \'area eminentemente urbana''. Es la misma clase de
+restricci\'on ---no instrumental sino de sitio--- que limita la apertura del arreglo de
+este proyecto, y vale citarla porque muestra que el problema no es exclusivo de un
+prototipo de bajo costo: un equipo comercial operado por especialistas enfrent\'o la
+misma barrera en el mismo predio.
+
+\paragraph{e) Contraste con el criterio de Comina.} La geometr\'ia efectivamente
+desplegada (apertura $L=\SI{40}{\meter}$, v\'ease m\'as abajo) admite longitudes de onda
+resueltas del orden de la propia apertura. Frente al criterio
+$\lambda_{\max}>\SI{60}{\meter}$ de Comina \emph{et al.}~\cite{Comina2011}
+(\S\ref{sec:buenas-practicas}), \textbf{la apertura actual es insuficiente} para el
+r\'egimen en que la no unicidad deja de dominar el error de $V_{S,30}$. Esto identifica
+con precisi\'on el pr\'oximo cuello de botella del proyecto: \emph{no es la electr\'onica,
+es la longitud del tendido}. Ampliar la apertura no requiere diseño nuevo, requiere m\'as
+nodos ---que es justamente lo que la arquitectura inal\'ambrica fue pensada para
+permitir.
+
+\paragraph{f) Una validaci\'on invasiva al alcance de la mano.} El estudio
+\textbf{recomienda perforar un pozo de \SI{60}{\meter} exactamente en el sector del
+SEV~01}, es decir en la cancha, con perfilaje geof\'isico de pozo (resistividad, potencial
+espont\'aneo y gamma natural). Si esa perforaci\'on llega a ejecutarse, el proyecto
+tendr\'ia una \textbf{referencia invasiva directa en el mismo punto donde midi\'o},
+reproduciendo a escala de un sitio el experimento de la segunda parte de
+InterPACIFIC~\cite{Garofalo2016b}: contrastar un m\'etodo no invasivo contra perforaci\'on.
+Es el mejor escenario de validaci\'on que este trabajo podr\'ia aspirar a tener y se
+registra como l\'inea futura prioritaria (\S\ref{sec:futuros}).
+
+\nota{Falta confirmar que las coordenadas registradas en los metadatos de las capturas de
+``Canchita'' caen efectivamente dentro del entorno del SEV~01 (UTM 435595 / 7198920).
+La identificaci\'on por nombre de sector (``cancha de f\'utbol de la UC'') es inequ\'ivoca,
+pero conviene dejar asentada la distancia real entre el centro del tendido y el punto del
+SEV, porque de ella depende cu\'an literal puede ser la comparaci\'on.}
+
 \subsection{Campa\~nas de medici\'on en campo}
 
 Se realizaron campa\~nas de adquisici\'on en varios sitios, con conjuntos de datos crudos
@@ -143,11 +325,31 @@ del orden de \textbf{22\,000 archivos crudos} (aproximadamente \SI{28}{\gibi\byt
 distribuidos en tres sitios de medici\'on, m\'as los conjuntos procesados
 correspondientes.
 
-El procedimiento de campo consiste en desplegar el arreglo lineal de nodos ge\'ofono con
-espaciamiento conocido, ubicar el nodo martillo en la posici\'on de fuente, verificar por
-la interfaz web que todos los nodos est\'an presentes y calibrados, y ejecutar una serie
-de disparos por punto de fuente. Se registran m\'ultiples repeticiones por punto para
-permitir apilamiento y evaluaci\'on de repetibilidad.
+La geometr\'ia efectivamente usada fue un \textbf{arreglo virtual o apertura sint\'etica},
+no un tendido f\'isico simult\'aneo de 21 ge\'ofonos. El martillo permaneci\'o en
+$x=\SI{0}{\meter}$ y un ge\'ofono se desplaz\'o en incrementos de
+$\Delta x=\SI{2}{\meter}$; cada registro contiene dos roles
+(\texttt{n\_slaves=2}): martillo y ge\'ofono. El \emph{gather} se reconstruye alineando
+capturas de impactos distintos mediante el canal de martillo.
+
+Esta econom\'ia de hardware introduce una hip\'otesis adicional respecto del MASW
+multicanal simult\'aneo: la fuente y el acoplamiento deben ser suficientemente repetibles,
+y las condiciones del sitio deben permanecer estacionarias mientras se mueve el receptor.
+Se registraron m\'ultiples repeticiones por posici\'on para apilar y evaluar esa
+repetibilidad. En el conjunto procesado vigente, el grupo~1 cubre
+$x=\SIrange{10}{50}{\meter}$ con 21 posiciones y apertura
+$L=\SI{40}{\meter}$; el grupo~2 cubre $x=\SIrange{10}{36}{\meter}$ con 14 posiciones y
+$L=\SI{26}{\meter}$.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{captura_cruda_campo.png}
+\caption{Registro crudo real usado para ilustrar el procedimiento de campo
+($x=\SI{24}{\meter}$): canal de martillo, ge\'ofono con su nivel de continua y salida
+FIR. La marca temporal proviene del impacto; una traza individual no demuestra
+repetibilidad entre golpes ni coherencia equivalente a un arreglo simult\'aneo.}
+\label{fig:captura-cruda-metodo}
+\end{figure}
 
 \subsection{Procesamiento de los registros de campo}
 
@@ -167,8 +369,16 @@ surgieron de la propia pr\'actica:
     defectuosas, que las excluye de los promedios sin alterar su validez individual.
 \end{itemize}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{preprocesamiento_espectral.png}
+\caption{Ejemplo de preprocesamiento de un barrido: ventana temporal, espectro y
+estimaci\'on de la componente arm\'onica. Esta separaci\'on entre dato crudo y estimador es
+la base de las curvas de respuesta experimentales.}
+\label{fig:preprocesamiento-espectral}
+\end{figure}
+
 \nota{Para la versi\'on de 15 p\'aginas: conservar \S5.3 completo (es el experimento
 publicable) y \S5.4.1 resumido a los defectos F1 y F9 en un p\'arrafo. \S5.2, \S5.5 y
-\S5.6 pueden comprimirse fuertemente. Pendiente a definir con el tutor: si conviene
-incluir ya el n\'umero de puntos de fuente y la geometr\'ia exacta de las campa\~nas
-realizadas, o dejarlo para la Defensa Final.}
+\S5.6 pueden comprimirse fuertemente. La geometr\'ia debe conservarse: sin ella no se
+puede interpretar la profundidad alcanzable ni la naturaleza virtual del arreglo.}

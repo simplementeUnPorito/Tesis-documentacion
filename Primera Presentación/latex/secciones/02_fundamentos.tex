@@ -32,8 +32,10 @@ es la base f\'isica de toda la s\'ismica aplicada.
 Una observaci\'on relevante para la elecci\'on del m\'etodo: en suelos saturados la
 compresibilidad del fluido intersticial domina la respuesta volum\'etrica, haciendo que
 $V_P\to\SI{1500}{\meter\per\second}$ (la velocidad del sonido en agua) sin relaci\'on con
-la rigidez del esqueleto s\'olido. $V_S$, en cambio, refleja \'unicamente la rigidez de
-corte del esqueleto y es insensible al contenido de agua. Por eso $V_S$ ---y no
+la rigidez del esqueleto s\'olido. $V_S$, en cambio, est\'a controlada principalmente por
+la rigidez de corte del esqueleto y es mucho menos sensible que $V_P$ al fluido
+intersticial, aunque la saturaci\'on puede modificar densidad, esfuerzo efectivo y rigidez.
+Por eso $V_S$ ---y no
 $V_P$--- es el par\'ametro objetivo de la caracterizaci\'on geot\'ecnica.
 
 La disipaci\'on de energ\'ia observada incluso a deformaciones muy peque\~nas se modela
@@ -55,8 +57,10 @@ Para los m\'etodos de caracterizaci\'on desde superficie, las ondas Rayleigh son
 relevantes por dos motivos cuantitativos. Primero, la partici\'on de energ\'ia: a distancias
 de una o dos longitudes de onda de una fuente puntual vertical, las ondas superficiales
 concentran aproximadamente el \SI{67}{\percent} de la energ\'ia total radiada. Segundo,
-el decaimiento geom\'etrico: las ondas superficiales decaen como $r^{-0.5}$ frente a
-$r^{-2}$ de las ondas de cuerpo en superficie. La combinaci\'on de ambos efectos hace
+el decaimiento geom\'etrico de amplitud: las ondas superficiales decaen aproximadamente
+como $r^{-1/2}$ frente a $r^{-1}$ para ondas de cuerpo producidas por una fuente puntual
+tridimensional (sus intensidades decaen como $r^{-1}$ y $r^{-2}$, respectivamente). La
+combinaci\'on de ambos efectos hace
 que, a distancia suficiente de la fuente, el registro de un ge\'ofono vertical est\'e
 dominado por el tren Rayleigh ---el llamado \emph{ground roll}, que en s\'ismica de
 reflexi\'on se considera ruido y que aqu\'i es precisamente la se\~nal de inter\'es.
@@ -79,6 +83,16 @@ La funci\'on $V_R(f)$ ---la \textbf{curva de dispersi\'on}--- es entonces una fi
 perfil $V_S(z)$. El m\'etodo MASW consiste en medir experimentalmente esa curva y
 resolver el problema inverso para recuperar el perfil.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{fundamentos_dispersion.png}
+\caption{Esquema propio del principio de dispersi\'on. Las componentes de frecuencia
+alta concentran su movimiento cerca de la superficie; las bajas penetran m\'as. La curva
+$c(f)$ convierte cada componente en una longitud de onda $\lambda=c/f$, que determina la
+escala de profundidad que puede informar el registro.}
+\label{fig:fund-dispersion-visual}
+\end{figure}
+
 \subsection{Modos de propagaci\'on}
 
 En un medio estratificado la relaci\'on de dispersi\'on admite m\'ultiples soluciones para
@@ -93,8 +107,11 @@ que se mide es en realidad una \emph{curva aparente} o \emph{efectiva} que salta
 modos. Interpretarla como fundamental produce un perfil $V_S$ err\'oneo. La segunda es
 que, cuando los modos superiores pueden identificarse por separado, aportan informaci\'on
 adicional que reduce la no-unicidad de la inversi\'on. Por este motivo el
-\emph{pipeline} desarrollado en este proyecto implementa extracci\'on e inversi\'on
-multimodal (Secci\'on~\ref{sec:arq-pipeline}).
+\emph{pipeline} desarrollado permite extraer grupos modales separados y dispone de un
+\emph{backend} multimodal (Secci\'on~\ref{sec:arq-pipeline}). El resultado de campo
+persistido que se analiza m\'as adelante usa solamente una curva etiquetada como modo~0,
+sin identificaci\'on independiente como fundamental; capacidad y
+resultado se distinguen expl\'icitamente.
 
 \subsection{El flujo de trabajo: adquisici\'on, procesamiento e inversi\'on}
 

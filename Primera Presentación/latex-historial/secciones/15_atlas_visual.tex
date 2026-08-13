@@ -1,0 +1,277 @@
+\section{Atlas visual: todo lo que se midi\'o y se grafic\'o}
+\label{sec:atlas}
+
+Esta secci\'on existe por una raz\'on pr\'actica: el proyecto gener\'o
+\textbf{715 archivos de imagen} entre gr\'aficos, esquem\'aticos, capturas y
+diagramas. Ponerlos uno por p\'agina ser\'ian varios cientos de p\'aginas; no
+ponerlos equivaldr\'ia a perder el registro de lo que efectivamente se midi\'o.
+
+La soluci\'on adoptada son \textbf{hojas de contacto}: cada conjunto de figuras se
+compone en una grilla rotulada, generada por el \emph{script}
+\texttt{scripts/fig\_mosaico.py} directamente desde los directorios originales.
+As\'i cada barrido, cada captura y cada an\'alisis queda \emph{visible} y con su
+nombre de archivo, de modo que cualquiera de ellos puede recuperarse a tama\~no
+completo cuando haga falta. Las figuras individualmente decisivas s\'i aparecen a
+tama\~no grande, en las etapas correspondientes.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r X@{}}
+\toprule
+Conjunto & Figuras & Qu\'e contiene \\
+\midrule
+Tanda calibrada, tiempo & 65 & Barridos de osciloscopio de 4 canales, 21/07/2026 \\
+Tanda calibrada, espectral & 65 & Preprocesamiento espectral de cada una de las anteriores \\
+Campa\~na de calibraci\'on & 26 & Barridos durante el ajuste del potenci\'ometro \\
+Verificaci\'on de calibraci\'on & 13 & Barridos de comprobaci\'on posterior \\
+Tanda descartada 20/07 & 9 & La tanda con la resistencia BP incorrecta \\
+Normalizados por etapa & 5 & Identificaci\'on BP, LP, compensador y cadena \\
+C\'alculos r\'apidos (Python) & 10 & Exploraciones num\'ericas sueltas \\
+Figuras del paper URUCON & 49 & Material del art\'iculo de auto-calibraci\'on \\
+Assets de investigaci\'on & 51 & Figuras extra\'idas y diagramas de la revisi\'on bibliogr\'afica \\
+Propuesta URUCOM & 36 & Im\'agenes de la propuesta \\
+Historial (este documento) & 33 & Figuras generadas espec\'ificamente para esta ayuda-memoria \\
+\midrule
+\textbf{Total catalogado} & \textbf{362} & m\'as esquem\'aticos, PDF vectoriales y capturas sueltas \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{La campa\~na de barridos de la cadena anal\'ogica}
+
+Es el conjunto de datos experimentales m\'as grande del proyecto y el que sostiene
+todas las afirmaciones sobre la respuesta real del \emph{front-end}. El m\'etodo
+fue barrer la entrada con se\~nal de frecuencia creciente y registrar
+\textbf{simult\'aneamente los cuatro puntos de la cadena} con el osciloscopio:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}cll@{}}
+\toprule
+Canal & Punto de la cadena & Color en las figuras \\
+\midrule
+CH1 & Salida del PGA (referencia de entrada) & Amarillo \\
+CH2 & Salida del pasa-banda MFB & Azul \\
+CH3 & Salida del compensador (resta) & Rojo \\
+CH4 & Salida del pasa-bajos, entrada del ADC & Verde \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cada barrido cubre una d\'ecada o menos, y el conjunto va desde
+\SI{10}{\milli\hertz} hasta \SI{200}{\kilo\hertz}: siete \'ordenes de magnitud.
+Las transferencias se calculan por cocientes entre canales, de modo que la
+amplitud absoluta del generador no importa.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{mosaico_osciloscopio_tanda.png}
+\caption{\textbf{Las 65 capturas de la tanda calibrada del 21/07/2026}, en el
+dominio del tiempo. Cada celda son los cuatro canales de un barrido; el
+r\'otulo indica la banda y el identificador de captura. Se aprecia a simple
+vista el comportamiento cualitativo esperado: en las bandas bajas el canal rojo
+(compensador) se hunde ---la muesca de cancelaci\'on--- mientras el verde (LP)
+sigue al azul; en las bandas altas el verde cae y el azul se mantiene. Las
+celdas con la se\~nal roja recortada corresponden a las capturas con saturaci\'on
+de CH4 documentadas en el informe de la tanda.}
+\label{fig:mosaico-osc-tanda}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{mosaico_preproc_tanda.png}
+\caption{\textbf{Preprocesamiento espectral de las mismas 65 capturas}. Para cada
+barrido se estima la transferencia por ventanas, se cancelan los arm\'onicos de
+red por m\'inimos cuadrados y se calcula la coherencia. Los puntos con coherencia
+insuficiente se descartan autom\'aticamente; los intervalos lineales de las
+capturas parcialmente saturadas se recuperan como submuestras en lugar de tirar
+la captura entera (pol\'itica introducida en la versi\'on 8 de la cach\'e).}
+\label{fig:mosaico-preproc-tanda}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{mosaico_osc_cal0721.png}
+\caption{\textbf{Campa\~na de calibraci\'on del 21/07/2026} (26 capturas): los
+barridos tomados \emph{durante} el ajuste del potenci\'ometro de cancelaci\'on.
+Registran el proceso de b\'usqueda, no el resultado final.}
+\label{fig:mosaico-osc-cal}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mosaico_osc_verif0721.png}
+\caption{\textbf{Verificaci\'on posterior a la calibraci\'on} (13 capturas). Es la
+tanda que se us\'o como principal para la identificaci\'on, por tener una \'unica
+posici\'on declarada del potenci\'ometro.}
+\label{fig:mosaico-osc-verif}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.96\textwidth]{mosaico_osc_descartada0720.png}
+\caption{\textbf{La tanda descartada del 20/07/2026} (9 capturas). Se archiv\'o al
+descubrir que la rama BP ten\'ia montada una resistencia incorrecta
+(\SI{43}{\kilo\ohm}), lo que hac\'ia que el numerador del compensador realizara un
+amortiguamiento residual de $\zeta=83{,}661$ en lugar del objetivo
+$\zeta_0=0{,}25$. Se conserva deliberadamente: es la evidencia de por qu\'e el
+valor $83{,}661$ aparece en documentos intermedios y \textbf{no debe usarse} como
+par\'ametro del dise\~no.}
+\label{fig:mosaico-osc-descartada}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mosaico_normalizados.png}
+\caption{\textbf{Identificaci\'on por etapas, curvas normalizadas.} Cinco
+transferencias: BP, compensador/PGA, LP, cadena PGA$\to$ADC y cadena
+GEO$\to$ADC. Cada curva ---cruda, procesada, ajuste \texttt{tfest} y modelo
+``PSoC High''--- lleva su m\'aximo a \SI{0}{\decibel} de forma independiente, para
+comparar \emph{forma} sin que la ganancia absoluta domine el gr\'afico. Las
+figuras sin normalizar siguen siendo la referencia para ganancia y para las
+envolventes de tolerancia.}
+\label{fig:mosaico-normalizados}
+\end{figure}
+
+\subsection{Resultados num\'ericos de la identificaci\'on}
+
+El an\'alisis de la tanda calibrada produce un informe cuantitativo por etapa.
+Conviene tenerlo aqu\'i porque es el resumen m\'as compacto del estado real del
+\emph{front-end}.
+
+\begin{table}[ht]
+\centering\footnotesize
+\caption{Identificaci\'on por etapas, tanda calibrada del 21/07/2026.
+``Ajuste'' es el error RMS del modelo \texttt{tfest} contra los puntos medidos;
+``vs.\ modelo'' es la discrepancia contra el modelo te\'orico con componentes
+nominales. La distinci\'on es central: la primera columna dice si el modelo
+\emph{describe} lo medido; la segunda, si el circuito \emph{se comporta} como se
+dise\~n\'o.}
+\label{tab:identificacion}
+\begin{tabularx}{\textwidth}{@{}l r r r r X@{}}
+\toprule
+Etapa & Puntos & Coher.\ med. & Ajuste [\si{\decibel}] & vs.\ modelo [\si{\decibel}] & Estado \\
+\midrule
+BP (CH2/CH1)      & 85 & 0{,}968 & 6{,}49 & 7{,}57 & Parcial: polo inferior fuera de banda \\
+COMP (CH3/CH1)    & 71 & 0{,}964 & \textbf{0{,}38} & \textbf{11{,}64} & Modelo bueno, circuito desviado \\
+LP (CH4/CH3)      & 33 & 0{,}945 & 0{,}60 & \textbf{0{,}36} & Confiable en la banda \'util \\
+PGA$\to$ADC (CH4/CH1) & 61 & \textbf{0{,}995} & \textbf{0{,}20} & 11{,}48 & Confiable; sub-s\'onica no observable \\
+GEO$\to$ADC (calculada) & 61 & 0{,}995 & 0{,}20 & 11{,}48 & Compuesta con $H_{\text{geo}}$ nominal \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\seleccionado{\textbf{El LP funciona.} En \SI{10.2046}{\hertz} las dos capturas
+independientes dan \SI{13.192}{} y \SI{13.202}{\decibel}, frente a
+\SI{13.978}{\decibel} del modelo. En toda la banda de ajuste
+\SIrange{10.6}{984}{\hertz} el error RMS contra el modelo es de
+\SI{0.435}{\decibel}. Es la \'unica etapa que cierra contra el dise\~no nominal
+sin salvedades.}
+
+\dato{\textbf{La muesca de cancelaci\'on es reproducible pero insuficiente.} El
+modelo predice $CH3/CH1=\SI{-57.582}{\decibel}$ en \SI{10.2046}{\hertz}; la
+medici\'on da aproximadamente \SI{-31.26}{\decibel}. Son
+\textbf{\SI{26.33}{\decibel} menos de profundidad}. Dos capturas independientes
+concuerdan entre s\'i dentro de \SI{0.42}{\decibel}
+(\SI{-31.466}{} y \SI{-31.048}{\decibel}) y dos barridos distintos de
+\SIrange{10}{100}{\hertz} dan \SI{-31.28}{} y \SI{-31.40}{\decibel} alrededor de
+\SI{12}{\hertz}. Es decir: \emph{el circuito es repetible; lo que no alcanza es
+la profundidad}.}
+
+\dato{\textbf{Por qu\'e no alcanza: la resoluci\'on del ajuste.} Con componentes
+nominales, el cursor objetivo para $\zeta_0=0{,}25$ est\'a en
+\SI{634.539}{\ohm} y la cancelaci\'on exacta en \SI{632.556}{\ohm}: apenas
+\textbf{\SI{1.98}{\ohm} de separaci\'on} sobre un recorrido de
+\SI{2}{\kilo\ohm}, es decir una parte en mil del potenci\'ometro. Por la
+profundidad medida de la muesca, la posici\'on efectiva estar\'ia en torno a
+\SI{674}{\ohm}, unos \SI{39}{\ohm} por encima del objetivo. La estimaci\'on
+compleja que combina BP y CH3 \textbf{no supera el criterio de confiabilidad en
+ninguna captura}, porque errores sub-decibel en CH2 dominan el residuo cerca de
+la cancelaci\'on; el programa lo informa expl\'icitamente en vez de presentar el
+m\'inimo num\'erico como una resistencia f\'isica.}
+
+\dato{\textbf{Banda extendida a \SI{10}{\milli\hertz}.} La captura
+\texttt{XD\_ALL0017} (\SIrange{0.01}{0.05}{\hertz}) est\'a libre de saturaci\'on y
+aporta 14 puntos entre \SI{10.95}{} y \SI{45.67}{\milli\hertz}. Coherencias
+medianas: BP 0{,}995, compensador 0{,}988, LP 0{,}9998, cadena 0{,}988; errores
+RMS contra el modelo de 0{,}96 / 2{,}11 / 0{,}33 / \SI{2.34}{\decibel}. El ajuste
+global mantiene su l\'imite inferior en \SI{0.2}{\hertz} para que una \'unica
+captura sub-s\'onica no domine la identificaci\'on, pero los puntos se muestran y
+se comparan.}
+
+\pendiente{\textbf{BP no cierra entre campa\~nas.} Localmente es muy coherente
+(mediana 0{,}9996), pero las dos repeticiones nuevas difieren
+\SI{0.75}{\decibel} en ganancia absoluta en \SI{10.2046}{\hertz} (0{,}732 y
+$-0{,}022$ frente a \SI{0.772}{\decibel} nominal), y al fusionar todas las
+campa\~nas hist\'oricas el ajuste degrada a \SI{6.485}{\decibel} RMS. Eso no es
+baja coherencia dentro de cada barrido: es que \emph{las campa\~nas no coinciden
+entre s\'i}, sobre todo en alta frecuencia. Y una diferencia peque\~na en BP
+importa mucho, porque el compensador depende de una cancelaci\'on casi exacta.
+LP, en cambio, s\'i permanece consistente al fusionar (\SI{0.596}{\decibel} RMS).}
+
+\subsubsection{Higiene de datos aplicada}
+
+Vale registrarlo porque forma parte del m\'etodo y explica los n\'umeros:
+
+\begin{itemize}[itemsep=0.15em]
+    \item La tanda principal tiene 30 capturas completas; de la serie \texttt{XD}
+    se conservan 17 \'unicas (68 archivos CSV).
+    \item \texttt{XD\_ALL0006} result\'o ser una \textbf{copia SHA-256 exacta} de
+    \texttt{XD\_ALL0005} en los cuatro canales y se elimin\'o de la base. No
+    quedan CSV duplicados por contenido.
+    \item Desde la versi\'on 8 de la cach\'e, una saturaci\'on \textbf{ya no elimina
+    la captura completa}: se excluye un ciclo local alrededor de cada recorte y
+    los intervalos lineales continuos restantes se convierten en submuestras por
+    etapa. En esta corrida se recuperaron parcialmente \textbf{22 combinaciones
+    captura-etapa} de 9 capturas saturadas (5 BP, 5 compensador, 6 LP, 6 cadena).
+    S\'olo 5 combinaciones quedaron descartadas, por conservar entre
+    \SI{0.4}{} y \SI{2.3}{\percent} del barrido.
+    \item Los \'ordenes de los modelos se ampliaron sumando dos polos por cada
+    operacional comprendido en la transferencia, y el mismo incremento al
+    numerador para conservar el grado relativo: BP 4/3, compensador 5/4, LP 4/2 y
+    PGA$\to$ADC 11/8. GEO$\to$ADC se compone con $H_{\text{geo}}$ nominal y queda
+    con 13 polos.
+\end{itemize}
+
+\seleccionado{\textbf{Conclusi\'on operativa de la campa\~na}, tal como qued\'o
+asentada: las grabaciones son coherentes y suficientes para concluir que
+\emph{el circuito es repetible}; el LP est\'a bien; el problema dominante sigue
+siendo la calibraci\'on extremadamente fina de la cancelaci\'on. \textbf{No conviene
+seguir con m\'as barridos anchos}: primero hay que recalibrar alrededor de
+\SI{10.2046}{\hertz} con mayor sensibilidad vertical en CH3, y despu\'es repetir
+un barrido estrecho.}
+
+\subsection{Otros conjuntos de figuras del proyecto}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mosaico_urucom.png}
+\caption{Material gr\'afico del art\'iculo URUCON sobre auto-calibraci\'on y de la
+propuesta asociada (49 figuras): diagramas de la cadena anal\'ogica y digital,
+flujo de calibraci\'on, salidas por etapa, respuesta del SM-24 y verificaciones de
+la cadena.}
+\label{fig:mosaico-urucom}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mosaico_assets_investigacion.png}
+\caption{Assets de la revisi\'on bibliogr\'afica (51 figuras): esquemas extra\'idos
+y redibujados de los art\'iculos revisados, comparaciones de m\'etodos y diagramas
+de apoyo del \emph{vault} de investigaci\'on.}
+\label{fig:mosaico-assets}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mosaico_propuesta.png}
+\caption{Im\'agenes de la Propuesta URUCOM (36 figuras).}
+\label{fig:mosaico-propuesta}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{mosaico_calculos_rapidos.png}
+\caption{C\'alculos r\'apidos en Python (10 figuras): exploraciones num\'ericas
+sueltas hechas para decidir puntos concretos del dise\~no, conservadas porque
+documentan el razonamiento aunque no formen parte de ning\'un \emph{pipeline}.}
+\label{fig:mosaico-calculos}
+\end{figure}

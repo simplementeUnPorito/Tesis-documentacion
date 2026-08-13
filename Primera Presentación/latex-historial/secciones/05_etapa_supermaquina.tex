@@ -6,6 +6,14 @@ Etapa corta y de mucha consecuencia: el sistema deja de ser un banco de
 laboratorio y empieza a parecerse a un instrumento que se puede llevar al
 campo.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{DigitalPathFinal_trim.png}
+\caption{Camino digital consolidado en PSoC Creator: ADC, DFB, DMA y control en
+hardware. Documenta la arquitectura implementada, no el rechazo anti-\emph{alias} de
+cada factor de decimaci\'on configurable.}
+\end{figure}
+
 \subsection{Un solo firmware para dos nodos distintos}
 
 El 4 de junio se unific\'o el firmware. Hasta ese momento hab\'ia dos ramas de
@@ -51,11 +59,12 @@ web.} La \SI{50}{\hertz} cae \emph{dentro} de la banda \'util del MASW, as\'i qu
 un notch borra se\~nal junto con la interferencia, e introduce retardo de grupo
 justo donde se mide fase.}
 
-\seleccionado{\textbf{Lo que qued\'o:} la interferencia de red es determinista y
-de forma conocida (sinusoide de frecuencia conocida m\'as arm\'onicos). Se la
-\emph{estima} por ajuste no lineal de m\'inimos cuadrados y se la \emph{resta}.
-Sin retardo de grupo, sin p\'erdida de se\~nal en la banda, reversible, y
-aplicado en post-proceso ---o sea, el dato crudo se conserva intacto.}
+\seleccionado{\textbf{Lo que qued\'o:} una b\'usqueda acotada de la frecuencia
+de red, seguida por una regresi\'on lineal seno--coseno de la fundamental y sus
+arm\'onicos sobre el registro completo. La componente estimada se resta en
+post-proceso: no agrega retardo de grupo y el dato crudo se conserva. No es
+neutro frente a una componente s\'ismica exactamente coherente con las bases
+ajustadas, que tambi\'en puede atenuarse; esa limitaci\'on debe quedar visible.}
 
 En el mismo movimiento se subi\'o la tasa del ADC a \SI{3}{\kilo\hertz}.
 
@@ -71,14 +80,24 @@ estaba, y el error no aparec\'ia como falla sino como \emph{jitter} ---es decir,
 como una peque\~na incertidumbre en el instante cero de cada canal, exactamente
 la cantidad que MASW convierte en error de velocidad de fase.}
 
+La correcci\'on vigente es m\'as estricta que ``mover el ACK'': ante un
+\texttt{CMD\_START} real, el esclavo eleva primero
+\texttt{SYNC\_TO\_PSOC\_PIN} y, desde ese instante, permanece en silencio de
+radio hasta completar la captura. Los \texttt{START\_ACK} inmediatos quedan
+para sondeos o rechazos previos al muestreo, no para confirmar una captura en
+curso.
+
 El documento adem\'as plantea el \textbf{presupuesto de \emph{jitter} entre
 nodos}, que es la forma correcta de encarar el problema: en vez de perseguir
 ``que sincronice bien'', se enumeran las contribuciones (latencia ESP-NOW,
 resoluci\'on del disparo, deriva de reloj, retardo del flanco) y se acota cada
 una.
 
-\pendiente{El presupuesto est\'a planteado te\'oricamente y verificado sobre
-pocos nodos; falta la medici\'on sobre el arreglo completo desplegado.}
+\pendiente{El presupuesto est\'a planteado te\'oricamente y hubo una observaci\'on
+preliminar inferior a \SI{400}{\micro\second} sobre pocos nodos a unos
+\SI{5}{\meter}. No es una especificaci\'on: tras retirar el cable de
+sincronismo falta medir la ruta completa callback de radio$\to$flanco
+local$\to$inicio del PSoC sobre el arreglo desplegado.}
 
 \subsection{Balance de la etapa}
 

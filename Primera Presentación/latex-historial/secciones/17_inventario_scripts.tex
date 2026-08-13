@@ -1,0 +1,274 @@
+\section{Inventario de c\'odigo: todos los \emph{scripts} del proyecto}
+\label{sec:inventario-scripts}
+
+Listado exhaustivo de los archivos \texttt{.m} y \texttt{.py}
+escritos para el proyecto, con su tama\~no y la descripci\'on tomada
+\textbf{de la propia cabecera del archivo}. Cuando un archivo no tiene cabecera
+se declara as\'i, en lugar de rellenar con una descripci\'on supuesta. Se excluyen
+dependencias de terceros, entornos virtuales y c\'odigo generado por las
+herramientas.
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}l r r@{}}
+\toprule
+Grupo & Archivos & L\'ineas \\
+\midrule
+C\'alculo y modelado --- MATLAB & 28 & 9.038 \\
+C\'alculo y modelado --- Python & 16 & 7.713 \\
+Interfaces de banco --- MATLAB & 14 & 10.078 \\
+Interfaces y servidor --- Python & 63 & 25.837 \\
+Utilidades del firmware & 17 & 6.866 \\
+Automatizaci\'on del repositorio & 3 & 1.628 \\
+Generaci\'on de figuras y documentos & 21 & 10.007 \\
+\midrule
+\textbf{Total} & \textbf{162} & \textbf{71.167} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{C\'alculo y modelado --- MATLAB}
+\textit{\small src/calculos\_modelados/matlab/ --- 28 archivos, 9.038 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize AnalisisCircuito/analizar\_sweeps\_circuito.m} & 1802 & ANALIZAR\_SWEEPS\_CIRCUITO Identificación de BP, compensador, LP y cadena completa. \\
+\texttt{\scriptsize pruebas\_teoricas/p01\_ondas\_de\_cuerpo.m} & 722 & p01\_ondas\_de\_cuerpo.m PRUEBA TEÓRICA 01 ? Ondas de cuerpo en un medio elástico homogéneo OBJETIVO Desarrollar intuición visual sobre las ondas P y S propagándose en un \\
+\texttt{\scriptsize pruebas\_teoricas/p04\_inversion\_perfil\_vs.m} & 651 & p04\_inversion\_perfil\_vs.m PRUEBA TEÓRICA 04 ? Inversión de la curva de dispersión ? perfil Vs(z) OBJETIVO Entender qué significa "invertir" una curva de dispersión y cuáles son \\
+\texttt{\scriptsize pruebas\_teoricas/p02\_rayleigh\_love.m} & 647 & p02\_rayleigh\_love.m PRUEBA TEÓRICA 02 ? Ondas superficiales: Rayleigh y Love OBJETIVO Construir intuición visual sobre las ondas superficiales Rayleigh y Love. \\
+\texttt{\scriptsize pruebas\_teoricas/p05\_viscoelasticidad.m} & 644 & p05\_viscoelasticidad.m PRUEBA TEÓRICA 05 ? Viscoelasticidad lineal y amortiguamiento material OBJETIVO Cerrar el Capítulo 2 de Foti construyendo intuición sobre la sección 2.5: \\
+\texttt{\scriptsize CalculosRapidos/analizar\_barridos\_cadena\_analogica.m} & 617 & ANALIZAR\_BARRIDOS\_CADENA\_ANALOGICA Identifica BP, SUM y LP desde CSV Tektronix. \\
+\texttt{\scriptsize pruebas\_teoricas/p03\_sismograma\_imagen\_dispersion.m} & 543 & p03\_sismograma\_imagen\_dispersion.m PRUEBA TEÓRICA 03 ? Sismograma sintético + imagen de dispersión MASW OBJETIVO Conectar la teoría de ondas superficiales (p02) con lo que un equipo \\
+\texttt{\scriptsize CalculosRapidos/filtroInversoPrueba.m} & 526 & filtroInversoPrueba.m Lee: C:/Users/elias/Downloads/captures/002\_start\_2/geo1/filt.csv Flujo: 1) Lee Geo1/filt.csv 2) Discretiza model con Tustin \\
+\texttt{\scriptsize Fisica loca/construir\_martillo\_leva.m} & 331 & CONSTRUIR\_MARTILLO\_LEVA Arma el modelo Simscape Multibody del martillo de leva. \\
+\texttt{\scriptsize Fisica loca/simular\_martillo.m} & 330 & SIMULAR\_MARTILLO Corre el modelo del martillo de leva y reporta los resultados. \\
+\texttt{\scriptsize AnalisisCircuito/graficar\_geofono\_vs\_geo\_adc.m} & 310 & Normalized geophone and complete GEO-to-ADC responses The processed FRF and Monte Carlo population from the latest calibrated data set are reused here. The Monte Carlo population and measured complete \\
+\texttt{\scriptsize Fisica loca/extraer\_geometria\_cad.m} & 301 & EXTRAER\_GEOMETRIA\_CAD Mide el mecanismo leva-martillo desde el CAD de Fusion 360. \\
+\texttt{\scriptsize AnalisisCircuito/graficar\_geo\_adc\_sidebyside.m} & 263 & Wide side-by-side (magnitude | local coherence) GEO-to-ADC figure Same data pipeline as graficar\_geofono\_vs\_geo\_adc.m, but laid out as a \\
+\texttt{\scriptsize CalculosRapidos/prueba\_removeLineNoise.m} & 163 & prueba\_removeLineNoise.m Prueba removeLineNoise\_SpectrumEstimation con datos de muestra ESP32. \\
+\texttt{\scriptsize CalculosRapidos/removeLineNoise\_SpectrumEstimation.m} & 155 & [wave] = removeLineNoise\_SpectrumEstimation(wave, [fs], [opts]) removeLineNoise\_SpectrumEstimation removes line noise (50/60 Hz) from a \\
+\texttt{\scriptsize Fisica loca/contacto\_leva\_seguidor.m} & 152 & \textit{sin cabecera} \\
+\texttt{\scriptsize AnalisisCircuito/verificar\_calibracion\_potenciometro.m} & 144 & VERIFICAR\_CALIBRACION\_POTENCIOMETRO Estima el cursor por captura. \\
+\texttt{\scriptsize Fisica loca/params\_martillo.m} & 134 & PARAMS\_MARTILLO Parametros del modelo leva-martillo (CAD de Fusion 360). \\
+\texttt{\scriptsize AnalisisCircuito/cancelar\_armonicos\_linea\_ls.m} & 130 & CANCELAR\_ARMONICOS\_LINEA\_LS Resta ruido de red mediante regresión sinusoidal. \\
+\texttt{\scriptsize SM-24/compensadorPazos.m} & 116 & Optimización Máxima: Menor Frecuencia de Corte con Damping 0.707 \\
+\texttt{\scriptsize CalculosRapidos/notch.m} & 68 & \textit{sin cabecera} \\
+\texttt{\scriptsize CalculosRapidos/ComparacionFiltros.m} & 64 & SCRIPT PARA GRAFICAR FUNCIONES DE TRANSFERENCIA (CORREGIDO) \\
+\texttt{\scriptsize SM-24/compensadorKai.m} & 64 & \textit{sin cabecera} \\
+\texttt{\scriptsize SM-24/filtroFir.m} & 46 & 1. Parámetros principales (¡Cambia 'fs' por tu frecuencia real!) \\
+\texttt{\scriptsize init\_project.m} & 45 & INIT\_PROJECT Configura el path del repositorio de calculos y modelado de Tesis. \\
+\texttt{\scriptsize SM-24/Compensador.m} & 42 & Análisis de filtro Pasa-Bandas VCVS clear all close all clc 1. Definir parámetros del componente (Ajustar a tus valores reales) \\
+\texttt{\scriptsize Diagrama de Bloques/retardo.m} & 25 & 1. Definir el sistema continuo (usando tus variables) \\
+\texttt{\scriptsize Simulaciones Controladores/Desacople/PID.m} & 3 & \textit{sin cabecera} \\
+\end{longtable}
+\normalsize
+
+\subsection{C\'alculo y modelado --- Python}
+\textit{\small src/calculos\_modelados/python/ --- 16 archivos, 7.713 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize Calculos rapidos/calculoCompensadorOptimo.py} & 1008 & calculoCompensadorOptimo.py Búsqueda inteligente usando scipy differential\_evolution + paralelismo. \\
+\texttt{\scriptsize leva\_martillo/leva\_martillo.py} & 879 & Leva-martillo con suelta y caida libre. \\
+\texttt{\scriptsize Calculos rapidos/calculoCompensadorSimple.py} & 794 & \textit{sin cabecera} \\
+\texttt{\scriptsize Calculos rapidos/calculoCompensadorGPU.py} & 701 & calculoCompensadorGPU.py Versión acelerada por GPU del compensador geófono. \\
+\texttt{\scriptsize Calculos rapidos/CalculoCompensadorSimplon.py} & 615 & ?? Valores comerciales del kit ???????????????????????????????????????? \\
+\texttt{\scriptsize Calculos rapidos/calculoCompensadorFull.py} & 606 & calculoCompensadorFull.py Búsqueda exhaustiva ? GPU (CUDA) + multicore CPU. \\
+\texttt{\scriptsize Calculos rapidos/calculoCompensador.py} & 566 & ?? Valores comerciales del kit ???????????????????????????????????????? Tabla de gains del PSoC PGA (Ra/Rb fijos en hardware) \\
+\texttt{\scriptsize masw\_analysis.py} & 470 & masw\_analysis.py ? Análisis MASW desde exportaciones ZIP de Geophone Scope. \\
+\texttt{\scriptsize Calculos rapidos/graficar\_compensador\_csv.py} & 425 & graficar\_compensador\_csv.py Grafica K·|H\_compensador| vs |H\_ideal| agrupado por ? similar (grupos de 6). \\
+\texttt{\scriptsize Ordenar Obsidian/fill\_wave\_foundations.py} & 327 & \# Linear Waves \\
+\texttt{\scriptsize Calculos rapidos/calculoMFB\_LPF.py} & 307 & calculoMFB\_LPF.py Diseño de filtro MFB Lowpass con valores comerciales. \\
+\texttt{\scriptsize Ordenar Obsidian/fix\_dispersion\_layer.py} & 288 & \# Wave Dispersion \\
+\texttt{\scriptsize leva\_martillo/actualizar\_excel.py} & 242 & Agrega al xlsx las hojas de anchos/espesores, masas y dinamica de la caida. \\
+\texttt{\scriptsize Calculos rapidos/sim\_compensador\_bp.py} & 214 & sim\_compensador\_bp.py Simulacion en frecuencia del compensador geofono: etapa BP  +  sumador inversor con T-red en R2 \\
+\texttt{\scriptsize Ordenar Obsidian/reorder\_concepts.py} & 186 & ---------------------------- Mapa explícito: archivo -> subcarpeta destino ---------------------------- \\
+\texttt{\scriptsize Calculos rapidos/calculoCompensadorGemini.py} & 85 & ============================================================================== 1. PARÁMETROS DEL FILTRO OBJETIVO (IDEAL) ============================================================================== \\
+\end{longtable}
+\normalsize
+
+\subsection{Interfaces de banco --- MATLAB}
+\textit{\small src/interfaces/matlab/ --- 14 archivos, 10.078 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize InterfazESP/InterfaceESP.m} & 2567 & InterfaceESP ? GUI multi-nodo geófono ESP32 Layout: TabGroup izquierdo (columna única) + plots a la derecha Tabs: Maestro | Esclavo 1..N | Stream \& Stats | Log \\
+\texttt{\scriptsize InterfazCircuitoAnalogicoSimple/geophone\_scope\_simple.m} & 2067 & geophone\_scope\_simple ? Interfaz PSoC5, sistema de entidades y muestras Protocolo RX ? 5 bytes todos los paquetes: Data:     [0x56][0x00][b2][b1][b0]  int24 big-endian signed \\
+\texttt{\scriptsize InterfazCircuitoAnalogicoSimple/analisis\_espectral.m} & 1079 & analisis\_espectral.m Análisis espectral del geófono SM-24 + circuito compensador por entidad. \\
+\texttt{\scriptsize InterfazESP/analisis\_espectral.m} & 1079 & analisis\_espectral.m Análisis espectral del geófono SM-24 + circuito compensador por entidad. \\
+\texttt{\scriptsize InterfazCircuitoAnalogicoSimple/marcar\_secuencia.m} & 552 & marcar\_secuencia.m  (v6) Batch para marcar inicio y período de secuencias de golpes. \\
+\texttt{\scriptsize InterfazESP/marcar\_secuencia.m} & 552 & marcar\_secuencia.m  (v6) Batch para marcar inicio y período de secuencias de golpes. \\
+\texttt{\scriptsize InterfazCircuitoAnalogicoSimple/analisis\_modelo.m} & 470 & analisis\_modelo.m Estimación de la respuesta del sistema (circuito+geófono) usando el modelo físico del experimento de impacto con martillo. \\
+\texttt{\scriptsize InterfazESP/analisis\_modelo.m} & 470 & analisis\_modelo.m Estimación de la respuesta del sistema (circuito+geófono) usando el modelo físico del experimento de impacto con martillo. \\
+\texttt{\scriptsize InterfazCircuitoAnalogicoSimple/visor\_rapido.m} & 363 & visor\_rapido.m Abre un .mat, elige una medición y grafica con una sola señal. \\
+\texttt{\scriptsize InterfazESP/visor\_rapido.m} & 363 & visor\_rapido.m Abre un .mat, elige una medición y grafica con una sola señal. \\
+\texttt{\scriptsize InterfazCircuitoAnalogicoSimple/migrar\_campos.m} & 197 & migrar\_campos.m Agrega campos de metadata estructurada a todos los .mat en datos/. \\
+\texttt{\scriptsize InterfazESP/migrar\_campos.m} & 197 & migrar\_campos.m Agrega campos de metadata estructurada a todos los .mat en datos/. \\
+\texttt{\scriptsize InterfazESP/monitor\_slave.m} & 99 & MONITOR\_SLAVE  Lee y muestra el serial del esclavo ESP8266 en tiempo real. \\
+\texttt{\scriptsize init\_project.m} & 23 & INIT\_PROJECT Configura el path del repositorio de interfaces MATLAB de Tesis. \\
+\end{longtable}
+\normalsize
+
+\subsection{Interfaces y servidor --- Python}
+\textit{\small src/interfaces/python/ --- 63 archivos, 25.837 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize geophone\_scope/field\_review\_app.py} & 6619 & PyQt reviewer for field hammer/geophone picks. \\
+\texttt{\scriptsize server/smoke\_test.py} & 3201 & Gate de humo del servidor, contra los datos reales de ``data/raw``. \\
+\texttt{\scriptsize geophone\_scope/field\_review\_data.py} & 2585 & Field-review helpers for hammer/geophone captures. \\
+\texttt{\scriptsize geophone\_scope/gui/main\_window.py} & 1389 & gui/main\_window.py ? QMainWindow: wires all components together. \\
+\texttt{\scriptsize server/masw.py} & 727 & Tab MASW (§3.5), etapa 1: la imagen de dispersión. \\
+\texttt{\scriptsize server/pipeline.py} & 598 & Ingesta y preprocesado en diferido de las capturas que manda la SPA. \\
+\texttt{\scriptsize geophone\_scope/gui/slave\_tab.py} & 561 & gui/slave\_tab.py ? Per-slave PGA, VDAC, FIR, notch and debug controls. \\
+\texttt{\scriptsize geophone\_scope/masw\_backends.py} & 546 & Backends de inversion MASW y exportadores para herramientas externas. \\
+\texttt{\scriptsize server/alignment.py} & 517 & Tab Enfase (§3.2): alinear entre sí las carpetas de un mismo label. \\
+\texttt{\scriptsize server/waterfall.py} & 480 & Tab Waterfall (§3.4): el tendido entero en un solo gráfico. \\
+\texttt{\scriptsize server/deletion.py} & 463 & Cuarentena reversible con banderas y subgrupos (PORT\_PLAN §4). \\
+\texttt{\scriptsize geophone\_scope/gui/stream\_tab.py} & 451 & gui/stream\_tab.py ? Connection, ARM, START/STOP and save controls tab. \\
+\texttt{\scriptsize geophone\_scope/signal\_proc.py} & 371 & signal\_proc.py ? FIR filter, DC removal, and harmonic-notch helpers. \\
+\texttt{\scriptsize server/signal\_view.py} & 365 & Lógica pura del visor de señal (§3.1 del PORT\_PLAN): sin FastAPI, sin ``Request``. Acá vive el decimado min/max y el armado del payload que \\
+\texttt{\scriptsize server/captures.py} & 359 & Filas de la tabla de Capturas, con las mismas columnas y estados que la app. \\
+\texttt{\scriptsize geophone\_scope/masw\_inversion.py} & 344 & MASW inversion: curva de dispersion teorica y busqueda Monte Carlo. \\
+\texttt{\scriptsize server/filters.py} & 298 & Tab Filtros (§3.2 del PORT\_PLAN): pasa-banda de fase cero + vista previa. \\
+\texttt{\scriptsize server/analysis\_jobs.py} & 272 & Cola científica separada de la ingesta, aislada en procesos cancelables. \\
+\texttt{\scriptsize server/routers/dataset.py} & 256 & Rutas de lectura: catálogo, capturas, cola de trabajos. \\
+\texttt{\scriptsize sink/geoq.py} & 243 & Decodificador del formato .geoq que sube el maestro en modo ENLACE. \\
+\texttt{\scriptsize geophone\_scope/masw\_adsurf.py} & 213 & Inversion multimodo con ADsurf (automatic differentiation, PyTorch). \\
+\texttt{\scriptsize server/campaigns.py} & 213 & Campañas: qué conjuntos de datos hay bajo ``raw\_root`` y cuáles se usan. \\
+\texttt{\scriptsize geophone\_scope/gui/plot\_area.py} & 209 & gui/plot\_area.py ? pyqtgraph real-time multi-channel plot widget. \\
+\texttt{\scriptsize geophone\_scope/masw\_dispersion.py} & 206 & MASW dispersion imaging (phase-shift method, Park et al. 1998). \\
+\texttt{\scriptsize server/exports.py} & 204 & Exportaciones reproducibles ejecutadas por la cola científica. \\
+\texttt{\scriptsize geophone\_scope/protocol.py} & 203 & protocol.py ? Packet encoding and decoding for the geophone ESP32 protocol. \\
+\texttt{\scriptsize geophone\_scope/serial\_worker.py} & 202 & serial\_worker.py ? QThread that owns the serial port and emits parsed packets. \\
+\texttt{\scriptsize server/routers/masw.py} & 200 & Tab MASW (§3.5). Por ahora la etapa 1: la imagen de dispersión. \\
+\texttt{\scriptsize server/api.py} & 196 & App FastAPI: routers, estáticos y DI del Pipeline. \\
+\texttt{\scriptsize geophone\_scope/review\_field\_data.py} & 193 & Review and export field hammer/geophone captures. \\
+\texttt{\scriptsize server/overlays.py} & 185 & Superposiciones del gráfico del geófono (paridad con la app PyQt). \\
+\texttt{\scriptsize geophone\_scope/masw\_multimodal.py} & 174 & Inversion conjunta multi-modo de curvas de dispersion (Rayleigh) con evodcinv + disba. \\
+\texttt{\scriptsize server/catalog.py} & 166 & Catálogo de lo que llegó, sin exigir nada. \\
+\texttt{\scriptsize geophone\_scope/data\_store.py} & 146 & data\_store.py ? Per-node circular buffers and acquisition statistics. \\
+\texttt{\scriptsize server/picks.py} & 146 & Escritura de anotaciones (§3.1 del PORT\_PLAN). \\
+\texttt{\scriptsize server/averages.py} & 140 & Tab Promedios / arrivals (§3.3): el promedio por distancia y su arribo. \\
+\texttt{\scriptsize geophone\_scope/zip\_to\_mat.py} & 137 & Convert a Geophone Scope browser ZIP export into a MATLAB .mat file. \\
+\texttt{\scriptsize server/routers/admin.py} & 130 & Rutas heredadas de administración. \\
+\texttt{\scriptsize server/routers/waterfall.py} & 129 & Tab Waterfall (§3.4). \\
+\texttt{\scriptsize server/app.py} & 120 & Servidor de datos: recibe las capturas, las preprocesa y las sirve por web. \\
+\texttt{\scriptsize server/routers/alignment.py} & 120 & Tab Enfase (§3.2): offsets por carpeta y rechazo de carpetas. \\
+\texttt{\scriptsize geophone\_scope/config.py} & 119 & config.py ? All application-wide constants for the geophone scope. \\
+\texttt{\scriptsize server/grouping.py} & 115 & Tab Agrupamiento (§3.3): a qué grupo de dispersión pertenece cada carpeta. \\
+\texttt{\scriptsize server/state.py} & 115 & Primitivas de estado compartido: revisión, locks y publicación atómica. \\
+\texttt{\scriptsize geophone\_scope/logger.py} & 111 & logger.py ? Dual human/machine log files with session rotation. \\
+\texttt{\scriptsize geophone\_scope/debug\_port.py} & 110 & debug\_port.py ? QThread for reading slave/master debug serial ports (text lines). \\
+\texttt{\scriptsize server/datacache.py} & 104 & Cache del escaneo del árbol de datos. \\
+\texttt{\scriptsize server/routers/filters.py} & 104 & Tab Filtros (§3.2): ajustes persistidos + vista previa del pasa-banda. \\
+\texttt{\scriptsize geophone\_scope/masw\_demo.py} & 90 & Demo interactivo de la pestaña MASW con datos ya cargados. \\
+\texttt{\scriptsize server/groups.py} & 90 & Grupos de dispersión: recortar el dataset a un solo tendido. \\
+\texttt{\scriptsize server/routers/deletion.py} & 90 & Cuarentena reversible con banderas y subgrupos (PORT\_PLAN §4). \\
+\texttt{\scriptsize geophone\_scope/main.py} & 83 & main.py ? Entry point for the geophone multi-node scope application. \\
+\texttt{\scriptsize server/routers/jobs.py} & 83 & Trabajos científicos, cancelación y artefactos descargables. \\
+\texttt{\scriptsize server/routers/ingest.py} & 82 & POST /ingest ? recibe el ZIP de la SPA (lo manda el navegador, no el ESP). \\
+\texttt{\scriptsize server/routers/picks.py} & 70 & Anotaciones: escribir el pick de un disparo (§3.1 del PORT\_PLAN). \\
+\texttt{\scriptsize server/routers/averages.py} & 68 & Tab Promedios / arrivals (§3.3). \\
+\texttt{\scriptsize server/routers/grouping.py} & 54 & Tab Agrupamiento (§3.3): grupos de dispersión por carpeta. \\
+\texttt{\scriptsize server/limits.py} & 45 & Límites defensivos de ingesta, configurables sin cambiar el protocolo. \\
+\texttt{\scriptsize server/\_gs.py} & 21 & Punto único de entrada a la capa de datos compartida con la app PyQt. \\
+\texttt{\scriptsize server/\_\_main\_\_.py} & 4 & \textit{sin cabecera} \\
+\texttt{\scriptsize geophone\_scope/gui/\_\_init\_\_.py} & 1 & gui ? PyQt6 GUI package for the geophone multi-node scope. \\
+\texttt{\scriptsize server/\_\_init\_\_.py} & 1 & Servidor de datos: ingesta, preprocesado en diferido e interfaz web. \\
+\texttt{\scriptsize server/routers/\_\_init\_\_.py} & 0 & \textit{sin cabecera} \\
+\end{longtable}
+\normalsize
+
+\subsection{Utilidades del firmware}
+\textit{\small src/firmware/ --- 17 archivos, 6.866 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize esp32/Nodo comunicación/master/ws\_capture\_test.py} & 1499 & Strict end-to-end acceptance capture over the master's raw WebSocket. \\
+\texttt{\scriptsize esp32/Nodo comunicación/slave/usb\_regression\_test.py} & 919 & Regresion USB estricta para el banco GEO (ESP esclavo + PSoC + SD). \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/ws\_fault\_test.py} & 918 & Persistent E12/E13 WebSocket fault-injection runner. \\
+\texttt{\scriptsize esp32/Nodo comunicación/slave/sd\_max\_regression\_test.py} & 686 & E15: regresion USB del limite SD de 60000 lotes, sin dump por radio. \\
+\texttt{\scriptsize psoc/AcondicionamientoAnalogico.cydsn/tools/cal\_sim.py} & 562 & Simulacion en Python del lazo de auto-calibracion (PID Q12 + media movil) de calibration.c, usando las constantes reales de calibration\_tables.h. \\
+\texttt{\scriptsize esp32/Nodo comunicación/slave/psoc\_reset\_recovery\_test.py} & 381 & E17: reset fisico del PSoC (ToggleReset KitProg) + auto-cal + recovery SD. \\
+\texttt{\scriptsize esp32/Nodo comunicación/slave/adc\_decim\_transitions\_test.py} & 356 & E16: transiciones dirigidas de rango ADC (0xBA) y decimacion (0xBB) por USB. \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/start\_flow\_regression\_test.py} & 280 & F9: regresion del flujo START (WS 0xA3) via broadcastPrestart. \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/ws\_fast\_probe.py} & 213 & Probe WS rapido y tolerante a takeover: una pestania de navegador ajena (misma IP) roba el socket cada \textasciitilde{}1-2 s; este probe lo re-roba al instante, \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/reconnect\_geonetwork.py} & 204 & Reconexión automática al AP del maestro (GeoNetwork) tras reprogramarlo. \\
+\texttt{\scriptsize psoc/AcondicionamientoAnalogico.cydsn/tools/serial\_debug.py} & 192 & Monitor serie multi-puerto para depurar en vivo el lazo ESP (slave, COM8 tipico, CP210x) y/o el UART de debug directo del PSoC ("PC", componente nuevo en \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/usb\_packet\_sniffer.py} & 191 & Read the ESP32 master USB transport as binary 0x56 packets. \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/ws\_cmd\_test.py} & 188 & WS command/ACK round-trip probe: exercises the short, non-capture commands (STATUS, ARM, directed PGA/VDAC/PGAVDAC/LATENCY, STOP, STREAM) one at a time \\
+\texttt{\scriptsize esp32/Nodo comunicación/master/ws\_probe.py} & 116 & Minimal stdlib-only WS probe against the master's /ws endpoint. \\
+\texttt{\scriptsize psoc/AcondicionamientoAnalogico.cydsn/tools/\_auto\_cal\_test.py} & 62 & Reintenta abrir COM8/COM6, espera el handshake del ESP ("esperando ARM" o "DETECTADO"), manda 'cal' solo, y loguea todo lo que llegue. Pensado para \\
+\texttt{\scriptsize psoc/AcondicionamientoAnalogico.cydsn/tools/\_wait\_and\_watch.py} & 59 & Reintenta abrir COM8/COM6 hasta que estén libres, y despues va imprimiendo todo lo que llegue. Pensado para correr en background mientras el usuario \\
+\texttt{\scriptsize esp32/Nodo comunicación/simulate\_hammer\_dummy.py} & 40 & Inject a simulated Hammer HELLO into the master's web UI. \\
+\end{longtable}
+\normalsize
+
+\subsection{Automatizaci\'on del repositorio}
+\textit{\small scripts/ --- 3 archivos, 1.628 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize autonomia/port\_loop.py} & 1101 & Loop autónomo del porteo del PORT\_PLAN, con contexto limpio por fase. \\
+\texttt{\scriptsize autonomia/device\_reset.py} & 298 & Reset por comandos de cualquiera de los tres dispositivos del banco. \\
+\texttt{\scriptsize autonomia/link\_config.py} & 229 & Configura la red del enlace del maestro y verifica que la STA se asocie. \\
+\end{longtable}
+\normalsize
+
+\subsection{Generaci\'on de figuras y documentos}
+\textit{\small docs/ --- 21 archivos, 10.007 l\'ineas}
+\footnotesize
+\begin{longtable}{@{}p{5.4cm} r p{8.6cm}@{}}
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endfirsthead
+\toprule \textbf{Archivo} & \textbf{L\'in.} & \textbf{Qu\'e hace (seg\'un su cabecera)} \\ \midrule
+\endhead
+\bottomrule \endfoot
+\texttt{\scriptsize legacy/pyqt\_field\_review/field\_review\_app.py} & 6604 & PyQt reviewer for field hammer/geophone picks. \\
+\texttt{\scriptsize Propuesta Urucom/scripts/refine\_analog\_response\_figure\_alltogether.m} & 666 & Relabel and rebuild the circuit-response figure into a single dual-axis plot. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_evidencia\_visual.py} & 489 & Genera figuras visuales complementarias para los dos libros de tesis. \\
+\texttt{\scriptsize Propuesta Urucom/scripts/agressive.m} & 293 & Rebuild Fig. 4 using an optimized 128-tap FIR DC estimator. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_estado\_actual.py} & 208 & Figuras del estado vigente, trazables al JSON persistido y al firmware. \\
+\texttt{\scriptsize legacy/pyqt\_field\_review/review\_field\_data.py} & 193 & Review and export field hammer/geophone captures. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/gen\_bitacora\_commits.py} & 186 & Genera el apendice con el registro completo de commits de todos los repositorios del proyecto, agrupado por dia. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/gen\_inventario\_scripts.py} & 171 & Genera el apendice de inventario de codigo: cada script de MATLAB y de Python del proyecto, con su tamano y la primera linea util de su cabecera. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_compensador.py} & 159 & Dos figuras sobre la compensacion del geofono. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_gather.py} & 146 & Construye, DESDE LOS BINARIOS CRUDOS de campo, el gather sintetizado de la campana Canchita: una traza por posicion de receptor, alineadas por el pico \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_timeline.py} & 134 & Figura de panorama: actividad de commits por repositorio a lo largo del proyecto. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_masw.py} & 106 & Resultado MASW de la campana Canchita: curva de dispersion observada contra la teorica del modelo invertido, y perfil Vs(z) resultante. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_geometria.py} & 104 & Geometria real de adquisicion, reconstruida desde los metadata.json de campo. \\
+\texttt{\scriptsize Propuesta Urucom/scripts/generate\_calibration\_trace.m} & 101 & Rebuild Fig. 4 from the four-channel Tektronix export. \\
+\texttt{\scriptsize Primera Presentación/latex-historial/scripts/fig\_mosaico.py} & 99 & Construye hojas de contacto (mosaicos) a partir de conjuntos grandes de figuras ya generadas durante el proyecto. \\
+\texttt{\scriptsize legacy/pyqt\_field\_review/main.py} & 83 & main.py ? Entry point for the geophone multi-node scope application. \\
+\texttt{\scriptsize Propuesta Urucom/scripts/format\_agressive\_calibration\_panels.m} & 79 & Reformat the authoritative aggressive.m output for one IEEE column. \\
+\texttt{\scriptsize Propuesta Urucom/scripts/refine\_analog\_response\_sidebyside.m} & 79 & Rebuild the analog-path figure as a wide two-panel layout (magnitude | local coherence) for the paper, reusing the computed data in \\
+\texttt{\scriptsize Propuesta Urucom/scripts/plot\_waterfall\_wide.m} & 59 & Wide wiggle-trace waterfall for the field record (paper Fig. 5). \\
+\texttt{\scriptsize Propuesta Urucom/scripts/refine\_analog\_response\_figure.m} & 48 & Relabel the circuit-response figure for the paper without altering the original analysis artifact. The measured quantity is CH4/CH1, the \\
+\texttt{\scriptsize calibration\_fsm/draw\_calibration\_fsm.py} & 0 & \textit{sin cabecera} \\
+\end{longtable}
+\normalsize
+

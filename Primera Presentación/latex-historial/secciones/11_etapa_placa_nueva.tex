@@ -83,13 +83,31 @@ y es el propio esclavo el que genera el flanco hacia el PSoC por
 \seleccionado{Esto simplifica el despliegue en campo ---un cable menos por
 nodo--- \textbf{sin violar el principio de instante cero por flanco f\'isico}:
 el flanco sigue existiendo, solo que ahora lo genera el esclavo localmente al
-recibir el disparo por radio. La sincronizaci\'on entre nodos vuelve a depender
-enteramente de la calidad del PRESTART/HOT\_WAIT de la Etapa~4.}
+recibir el disparo por radio. PRESTART/HOT\_WAIT garantiza que todos est\'en
+listos; la dispersi\'on temporal entre nodos queda gobernada por la entrega y el
+despacho de \texttt{CMD\_START} m\'as el camino GPIO$\to$PSoC.}
 
 \pendiente{Consecuencia directa: \textbf{el presupuesto de \emph{jitter} hay
 que rehacerlo} para esta topolog\'ia. Con \emph{sync} por cable, una parte del
 error estaba acotada por hardware; ahora todo el error de sincronizaci\'on pasa
 por el enlace de radio. Es la verificaci\'on m\'as urgente de esta etapa.}
+
+El firmware incluye un ensayo reproducible para cerrarla:
+\texttt{SCOPE\_MULTI} ejecuta 128 arranques, separados \SI{1}{\second},
+repitiendo el PRESTART completo. Para interpretar la distribuci\'on medida se
+usa $\Delta\phi=2\pi f\Delta t$: \SI{400}{\micro\second} equivalen a
+\SI{7.2}{\degree} a \SI{50}{\hertz} y \SI{14.4}{\degree} a
+\SI{100}{\hertz}; un l\'imite de \SI{5}{\degree} exige
+\SI{278}{\micro\second} y \SI{139}{\micro\second}, respectivamente.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.86\textwidth]{sincronizacion_fase.png}
+\caption{Presupuesto de sincronizaci\'on expresado en la variable que importa
+para MASW: fase. La observaci\'on menor a \SI{400}{\micro\second} es preliminar
+y no sustituye la distribuci\'on de \texttt{SCOPE\_MULTI}.}
+\label{fig:sync-fase-hist}
+\end{figure}
 
 \textbf{Interfaz local en el nodo} (OLED por SPI $+$ botones). Cada esclavo
 puede operarse sin maestro y sin tel\'efono. Junto con los comandos USB de la

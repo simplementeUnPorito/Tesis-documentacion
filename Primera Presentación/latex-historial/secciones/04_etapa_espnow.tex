@@ -2,6 +2,14 @@
 \label{sec:et4}
 \periodo{24 de mayo --- 3 de junio de 2026 \quad$\cdot$\quad 7 d\'ias de trabajo, 18 \emph{commits}}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{sincronizacion_fase.png}
+\caption{Traducci\'on del desalineamiento temporal a error de fase. El presupuesto fija
+el criterio de medici\'on; el \emph{jitter} de extremo a extremo del arreglo vigente
+sigue pendiente de caracterizaci\'on.}
+\end{figure}
+
 \subsection{El problema que resuelve}
 
 Un sism\'ografo multicanal convencional cablea todos los ge\'ofonos a un
@@ -82,7 +90,10 @@ No se dio por buena: se instrument\'o. Se agreg\'o el comando
 todos los nodos emitan un pulso GPIO de \SI{1}{\milli\second} sin muestrear ni
 responder. Con el osciloscopio en los pines de \emph{sync} de los tres nodos
 (maestro GPIO\,15, esclavo\,1 GPIO\,32, esclavo\,2 GPIO\,22), la separaci\'on
-entre pulsos \emph{es} la latencia de sincronizaci\'on del sistema.
+entre pulsos mide la dispersi\'on de la ruta ESP-NOW$\to$callback$\to$GPIO de los
+ESP32. En esta etapa se us\'o como \emph{proxy} de sincronizaci\'on, pero no incluye
+la ruta completa hasta el inicio efectivo del ADC y no constituye una medici\'on
+de extremo a extremo del sistema.
 
 Y para no medir una sola vez, el estado \verb|SCOPE_MULTI| repite el disparo
 128 veces con \SI{1}{\second} de separaci\'on, de modo que el osciloscopio
@@ -111,7 +122,7 @@ campo sigue sin volcarse al documento. Ver \S\ref{sec:pendientes}.}
 
 La fuente de impacto necesita su propio canal, porque marca el instante cero
 de la captura. Se cre\'o el proyecto PSoC \texttt{AcondicionamientoMartillo}
-para el aceler\'ometro de impacto \textbf{PCB Piezotronics 086D20}, con cadena
+para el \textbf{martillo de impacto con sensor de fuerza PCB Piezotronics 086D20}, con cadena
 propia: \texttt{LPF\_ref} $+$ \texttt{LPF\_ADC} $+$ referencia de
 \SI{1.024}{\volt}.
 

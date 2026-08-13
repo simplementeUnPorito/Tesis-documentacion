@@ -1,0 +1,222 @@
+\section{La banda \'util real de los datos de campo}
+\label{sec:banda-util}
+
+\emph{An\'alisis nuevo del 12 de agosto de 2026.} Es la pregunta que el proyecto
+entero intenta responder y que, con datos propios, nunca se hab\'ia contestado
+directamente: \textbf{?`de qu\'e frecuencias dispone realmente la se\~nal
+registrada en campo?} Toda la cadena anal\'ogica ---la compensaci\'on, la
+ganancia agresiva, el DA-AFE que la ganancia obliga--- existe para recuperar el
+extremo bajo. Corresponde ver cu\'anto se recuper\'o.
+
+\subsection{M\'etodo}
+
+Sobre 265 golpes de la campa\~na Canchita en 15 distancias, y para cada golpe:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Ventana de se\~nal}: \SI{1}{\second} desde el instante de
+    disparo del martillo.
+    \item \textbf{Ventana de ruido}: \SI{1}{\second} \emph{anterior} al disparo.
+    Los registros arrancan aproximadamente \SI{1.24}{\second} antes del
+    \emph{trigger}, de modo que esa ventana existe en todas las capturas y
+    contiene el ruido ambiente y de instrumento en las condiciones exactas de la
+    medici\'on.
+    \item Densidad espectral de potencia de ambas por ventana de Hann, mediana
+    por distancia, y
+    $\mathrm{SNR}(f)=10\log_{10}\!\left(P_{\text{se\~nal}}/P_{\text{ruido}}\right)$.
+\end{itemize}
+
+Los datos se toman sin filtrar (el estado guardado del servidor es
+\emph{sin filtrar}, orden 4, cortes en cero), de modo que lo que se ve es lo que
+entreg\'o la cadena.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{contenido_baja_frecuencia.png}
+\caption{Arriba: densidad espectral de la se\~nal por distancia. Abajo: SNR
+contra el ruido previo al disparo. La banda sombreada es el objetivo del proyecto
+(\SIrange{1}{2.5}{\hertz}, correspondiente a \SI{50}{\meter} de profundidad); la
+vertical punteada es la frecuencia natural del SM-24.}
+\label{fig:banda-util}
+\end{figure}
+
+\subsection{El resultado}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Banda & SNR mediana & Grupos con SNR${}>\SI{10}{\decibel}$ & Veredicto \\
+\midrule
+\textbf{\SIrange{1}{2.5}{\hertz}} & \textbf{\SI{0.4}{\decibel}} & \textbf{0 de 16} & \textbf{La banda objetivo: sin se\~nal} \\
+\SIrange{2}{5}{\hertz}   & \SI{1.2}{\decibel}  & 0 de 16 & Sin se\~nal utilizable \\
+\SIrange{5}{10}{\hertz}  & \SI{1.3}{\decibel}  & 0 de 16 & Sin se\~nal utilizable \\
+\SIrange{10}{20}{\hertz} & \SI{15.2}{\decibel} & 13 de 16 & Utilizable \\
+\SIrange{20}{50}{\hertz} & \SI{25.6}{\decibel} & 14 de 16 & Utilizable \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\emph{Los grupos son combinaciones (distancia, $F_s$) con al menos tres golpes, de modo
+que no se mezclan tasas de muestreo distintas dentro de un mismo promedio.}
+
+\dato{\textbf{La banda \'util efectiva de las campa\~nas realizadas es
+aproximadamente \SIrange{10}{50}{\hertz}}. Por debajo de \SI{10}{\hertz} ---es
+decir, por debajo de la frecuencia natural del transductor--- la relaci\'on
+se\~nal--ruido es de \emph{cero decibel}: la se\~nal y el ruido previo al golpe
+tienen la misma potencia.}
+
+\dato{\textbf{El diagn\'ostico que lo confirma}: en el panel superior, la
+densidad espectral por debajo de \SI{7}{\hertz} es \emph{la misma para todas las
+distancias}, plana en torno a \SIrange{-60}{-65}{\decibel}. Una onda que se
+propaga tiene que atenuarse con la distancia; algo que no cambia entre
+\SI{10}{} y \SI{50}{\meter} \textbf{no est\'a viajando por el suelo}. Es un piso
+com\'un ---instrumental o ambiental--- y no el campo de ondas. Por encima de
+\SI{10}{\hertz}, en cambio, las curvas se separan ordenadamente por distancia,
+que es exactamente lo que debe hacer una se\~nal s\'ismica.}
+
+\subsection{Controles de robustez}
+
+El resultado es lo bastante consecuente como para exigir verificaci\'on. Se
+hicieron tres controles, y los tres lo sostienen.
+
+\paragraph{Control 1: ?`lo borr\'o el procesamiento?} No. Se repiti\'o el
+c\'alculo sobre los \textbf{CSV crudos} de \texttt{data/raw/Canchita}, que nunca
+pasaron por el \emph{pipeline}. Tres capturas independientes a
+\SI{2929}{\hertz} dan densidades espectrales de \SIrange{1.5}{6.8}{\decibel} en
+\SIrange{1}{5}{\hertz} contra \SIrange{22.7}{23.5}{\decibel} en
+\SIrange{10}{20}{\hertz}: los mismos \textasciitilde{}\SI{17}{\decibel} de
+diferencia. Las bajas frecuencias no se perdieron al procesar; no estaban.
+
+\paragraph{Control 2: ?`es un artefacto de mezclar las dos configuraciones?} No.
+Separando por configuraci\'on y por frecuencia de muestreo:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+Config. & $F_s$ & $n$ & \SIrange{1}{5}{\hertz} & \SIrange{5}{10}{\hertz} & \SIrange{10}{20}{\hertz} & \SIrange{20}{50}{\hertz} \\
+\midrule
+A & \SI{1020}{\hertz} & 12  & \SI{3.0}{\decibel} & \SI{0.8}{\decibel} & \SI{5.1}{\decibel}  & \SI{11.5}{\decibel} \\
+A & \SI{2929}{\hertz} & 20  & \SI{2.0}{\decibel} & \SI{1.3}{\decibel} & \SI{13.8}{\decibel} & \SI{26.1}{\decibel} \\
+B & \SI{1020}{\hertz} & 238 & \SI{0.4}{\decibel} & \SI{1.5}{\decibel} & \SI{21.6}{\decibel} & \SI{24.4}{\decibel} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Las tres combinaciones coinciden: \SIrange{0.4}{3.0}{\decibel} por debajo de
+\SI{10}{\hertz}, mucho m\'as arriba de \SI{10}{\hertz}.
+
+\paragraph{Control 3: ?`la ventana de \SI{1}{\second} alcanza para medir
+\SIrange{1}{2.5}{\hertz}?} Es la objeci\'on m\'as seria ---\SI{1}{\second} son
+apenas una a dos oscilaciones a esas frecuencias--- y merece respuesta directa.
+Repitiendo con ventanas de se\~nal m\'as largas:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Ventana de se\~nal & \SIrange{1}{2.5}{\hertz} & \SIrange{5}{10}{\hertz} & \SIrange{10}{20}{\hertz} & \SIrange{20}{50}{\hertz} \\
+\midrule
+\SI{1}{\second} & \SI{0.4}{\decibel}  & \SI{1.3}{\decibel}  & \SI{15.2}{\decibel} & \SI{25.6}{\decibel} \\
+\SI{2}{\second} & \SI{-0.1}{\decibel} & \SI{0.3}{\decibel}  & \SI{15.1}{\decibel} & \SI{15.2}{\decibel} \\
+\SI{4}{\second} & \SI{-0.1}{\decibel} & \SI{-0.1}{\decibel} & \SI{5.3}{\decibel}  & \SI{4.5}{\decibel} \\
+\SI{6}{\second} & \SI{-0.6}{\decibel} & \SI{-0.5}{\decibel} & \SI{1.7}{\decibel}  & \SI{1.6}{\decibel} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\seleccionado{\textbf{La conclusi\'on en baja frecuencia es independiente de la
+ventana}: \SIrange{1}{2.5}{\hertz} se queda entre \SI{-0.6}{} y
+\SI{+0.4}{\decibel} en los cuatro casos. Es la forma m\'as fuerte del hallazgo.
+
+La ca\'ida de la SNR en alta frecuencia al alargar la ventana no es un problema
+sino f\'isica esperable: el paquete s\'ismico dura una fracci\'on de segundo, de
+modo que extender la ventana agrega sobre todo silencio posterior y diluye la
+potencia de se\~nal. Confirma, de paso, que \textbf{la ventana de
+\SI{1}{\second} es la elecci\'on correcta}, porque es la que se ajusta a la
+duraci\'on del evento.}
+
+\paragraph{Control 4: ?`es propio de un solo conjunto procesado?} No. Repetido
+sobre \texttt{Canchita\_grupo1\_procesado}, un conjunto procesado independiente
+(250 golpes, 14 grupos), da el mismo cuadro: \SI{1.0}{\decibel} en
+\SIrange{1}{2.5}{\hertz} (0 de 14 grupos por encima de \SI{10}{\decibel}),
+\SI{1.7}{\decibel} en \SIrange{5}{10}{\hertz}, \SI{17.2}{\decibel} en
+\SIrange{10}{20}{\hertz} (11 de 14) y \SI{24.9}{\decibel} en
+\SIrange{20}{50}{\hertz} (12 de 14).
+
+\pendiente{\textbf{Un l\'imite que los datos imponen}: la ventana de ruido no
+puede superar \textasciitilde{}\SI{1.2}{\second}, porque es todo lo que los
+registros graban antes del disparo. No es posible, con este conjunto, comparar
+ventanas iguales m\'as largas. Para una medici\'on limpia del piso de ruido a
+muy baja frecuencia hace falta una \textbf{captura larga sin golpe}, que el
+sistema ya sabe hacer (la captura continua de 10 minutos existe) pero que nunca
+se us\'o con este fin.}
+
+\subsection{Qu\'e significa y qu\'e no significa}
+
+\seleccionado{\textbf{Lo que no significa.} No dice que la compensaci\'on sea
+in\'util ni que el enfoque sea equivocado. Dice que \emph{en las campa\~nas
+efectivamente realizadas} el extremo bajo no lleg\'o a estar por encima del
+ruido. Y eso es coherente con lo que ya se sab\'ia del banco: la muesca de
+cancelaci\'on medida qued\'o \textbf{\SI{26.33}{\decibel} menos profunda} que el
+modelo (\S\ref{sec:atlas}), es decir que la compensaci\'on realizada \emph{no
+alcanz\'o} el $\zeta_1$ nominal. Las dos mediciones ---banco y campo--- apuntan
+en el mismo sentido y se corroboran mutuamente.}
+
+\pendiente{\textbf{Lo que s\'i significa, y es incómodo pero \'util.} El rango
+\SIrange{10}{50}{\hertz} que los datos s\'i tienen es aproximadamente
+\textbf{el mismo rango en el que Park \emph{et al.} operaban sin necesidad de
+compensar}. Dicho de frente: hasta ahora, las campa\~nas de este proyecto
+midieron en el r\'egimen del MASW somero. La contribuci\'on que la
+compensaci\'on busca ---el r\'egimen por debajo de $f_n$--- \textbf{todav\'ia no
+est\'a demostrada en campo}, aunque el mecanismo est\'e implementado y medido en
+banco.}
+
+\seleccionado{\textbf{Y corrobora, desde una segunda direcci\'on independiente,
+el problema de los \emph{picks} de baja frecuencia.} Los tres puntos de la curva
+de dispersi\'on con $\lambda>\SI{40}{\meter}$ (\S\ref{sec:contraste-sev}) est\'an
+en \SIrange{5}{7}{\hertz}, es decir \textbf{en una banda con
+\SIrange{0}{2}{\decibel} de SNR}. No es s\'olo que la apertura no los resuelva:
+es que probablemente \emph{no hay se\~nal ah\'i}. Dos an\'alisis independientes
+---geometr\'ia del arreglo y relaci\'on se\~nal--ruido--- se\~nalan los mismos
+puntos. Deben excluirse de la inversi\'on.}
+
+\subsection{Consecuencia para el orden de prioridades}
+
+Este resultado reordena la lista de pendientes del proyecto. Hasta ahora el
+cuello de botella declarado era la \textbf{apertura del arreglo}
+(\SI{40}{\meter} contra el criterio $\lambda_{\max}>\SI{60}{\meter}$ de Comina).
+Sigue si\'endolo, pero \textbf{no es el primero}:
+
+\begin{enumerate}[itemsep=0.2em]
+    \item \textbf{Primero, que exista se\~nal por debajo de \SI{10}{\hertz}.}
+    Ampliar la apertura para resolver longitudes de onda largas no sirve si en
+    esas frecuencias no hay nada por encima del ruido. Las v\'ias concretas, en
+    orden de costo creciente:
+    \begin{itemize}[itemsep=0.1em]
+        \item \textbf{Punta m\'as blanda y masa de extensi\'on} en el martillo
+        (\S\ref{sec:fuente-sismica}): mueve energ\'ia de la fuente hacia abajo,
+        y no cuesta nada.
+        \item \textbf{Terminar la calibraci\'on de la cancelaci\'on}: recuperar
+        los \SI{26.33}{\decibel} de profundidad de muesca que faltan es,
+        literalmente, el objetivo de dise\~no incumplido.
+        \item \textbf{Apilar muchos m\'as golpes.} El apilado mejora la SNR con
+        $\sqrt{N}$: pasar de \textasciitilde{}20 golpes por posici\'on a 200
+        dar\'ia unos \SI{10}{\decibel}, que es la diferencia entre
+        \SI{0.5}{\decibel} y algo utilizable. Es la v\'ia m\'as barata de todas
+        y la m\'as compatible con el m\'etodo de apertura sint\'etica ya adoptado.
+        \item \textbf{Caracterizar el piso de ruido} para saber si es del
+        instrumento o del sitio ---dos problemas completamente distintos, y hoy
+        no se sabe cu\'al es. Basta una captura larga con el ge\'ofono
+        desacoplado del suelo, que se puede hacer en el laboratorio.
+    \end{itemize}
+    \item \textbf{Despu\'es, la apertura}, para que las longitudes de onda que
+    entonces s\'i existan puedan resolverse.
+    \item \textbf{Por \'ultimo, el contraste externo} contra el SEV~01 y, si se
+    ejecuta, contra la perforaci\'on de \SI{60}{\meter}.
+\end{enumerate}
+
+\pendiente{Una salvedad honesta sobre este an\'alisis: la ventana de ruido es
+\emph{previa al golpe} y por lo tanto no incluye el ruido inducido por el propio
+impacto (\emph{ground roll} tard\'io, reverberaci\'on, ruido de acoplamiento).
+La SNR real dentro de la ventana de se\~nal podr\'ia ser menor a\'un. Tambi\'en
+conviene rehacerlo separando las dos configuraciones de adquisici\'on
+identificadas en \S\ref{sec:repetibilidad-fuente}, y comprobar que el resultado
+no cambie.}

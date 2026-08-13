@@ -6,16 +6,14 @@
 El sistema es una red inal\'ambrica de nodos de adquisici\'on s\'ismica coordinada por un
 nodo maestro. La cadena completa, desde el suelo hasta el perfil $V_S$, es:
 
-\begin{center}\footnotesize
-\fbox{\parbox{0.95\textwidth}{\centering
-Ge\'ofono SM-24 $\rightarrow$ cadena anal\'ogica (PSoC~5LP) $\rightarrow$ ADC $\Delta\Sigma$
-$\rightarrow$ filtro FIR por hardware + DMA $\rightarrow$ RAM / SD \\[0.2em]
-$\downarrow$ UART \\[0.2em]
-ESP32 esclavo $\rightarrow$ ESP-NOW $\rightarrow$ ESP32 maestro (AP WiFi + SPA web + WebSocket) \\[0.2em]
-$\downarrow$ \\[0.2em]
-Servidor Python (FastAPI) $\rightarrow$ revisi\'on de campo $\rightarrow$ MASW $\rightarrow$ inversi\'on $\rightarrow$ $V_S(z)$
-}}
-\end{center}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{arquitectura_vigente.png}
+\caption{Arquitectura vigente. La ruta temporalmente cr\'itica permanece en ADC, DFB,
+UDB y DMA; calibraci\'on, radio, almacenamiento y an\'alisis tienen responsabilidades
+separadas.}
+\label{fig:arquitectura-vigente}
+\end{figure}
 
 Existen dos tipos de nodo, que comparten firmware: el \textbf{nodo GEO} (ge\'ofono) y el
 \textbf{nodo HAMMER} (martillo instrumentado, que provee el instante de disparo y la
@@ -39,6 +37,14 @@ cascada:
     \item \textbf{LP} --- filtro pasa-bajos de segundo orden, que act\'ua como
     \emph{anti-aliasing} y alimenta directamente el ADC.
 \end{enumerate}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{AnalogPathFinal_FLECHAS_trim.png}
+\caption{Cadena anal\'ogica implementada en el PSoC~5LP: PGA, pasa-banda MFB, sumador,
+pasa-bajos, referencias ajustables, multiplexor de observaci\'on y ADC compartido.}
+\label{fig:cadena-analogica-real}
+\end{figure}
 
 Cada etapa dispone de un \textbf{VDAC dedicado} que fija su punto de operaci\'on. Cada
 nodo de referencia se desacopla mediante una red \SI{1}{\micro\farad}\,$\|$\,\SI{100}{\nano\farad}
@@ -146,6 +152,15 @@ ganancia} almacena la m\'ascara de etapas v\'alidas, los cuatro c\'odigos de DAC
 y un CRC; las calibraciones fallidas conservan sus mejores c\'odigos acotados sin
 sobrescribir un registro v\'alido.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\textwidth]{calibration_fsm_simplified.png}
+\caption{Secuencia funcional de la auto-calibraci\'on \emph{foreground}. El lazo digital
+se habilita antes de adquirir, recorre las etapas en orden, persiste los c\'odigos
+aceptados y se desconecta del camino de se\~nal durante la captura.}
+\label{fig:fsm-calibracion-main}
+\end{figure}
+
 \subsection{Adquisici\'on digital en el PSoC~5LP}
 
 \subsubsection{Cadena ADC--DMA--Filtro}
@@ -155,33 +170,97 @@ gobernada por DMA en la que el procesador ARM Cortex-M3 no interviene en el cami
 datos. El bloque de filtro digital programable (DFB) aplica el FIR de adquisici\'on, y un
 conjunto de canales DMA transporta las muestras del ADC al filtro y del filtro a memoria.
 
-La \textbf{frecuencia de muestreo nativa del sistema es \SI{2929}{\hertz}}. Este valor no
+La \textbf{frecuencia de muestreo nativa del firmware vigente es \SI{2604}{\hertz}}. Este valor no
 es arbitrario: es la tasa real que resulta de la configuraci\'on de reloj del PSoC operando
-el ADC $\Delta\Sigma$ a su \textbf{resoluci\'on m\'axima de 18~bits}. Es decir, la
+el ADC $\Delta\Sigma$ en la \textbf{configuraci\'on vigente de 18~bits}. Es decir, la
 arquitectura prioriza resoluci\'on sobre tasa de muestreo, y la frecuencia efectiva es
 consecuencia de esa elecci\'on y no un par\'ametro fijado libremente.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.96\textwidth]{DigitalPathFinal_trim.png}
+\caption{Camino digital implementado en PSoC Creator: conversi\'on $\Delta\Sigma$,
+filtrado/decimaci\'on programable, transferencia por DMA y control determinista en UDB.
+La imagen documenta la implementaci\'on, no una certificaci\'on independiente del rechazo
+anti-\emph{alias} para toda configuraci\'on de decimaci\'on.}
+\label{fig:camino-digital-psoc}
+\end{figure}
 
 A partir de esa tasa nativa se submuestrea por decimaci\'on con promediado, con factor $N$
 configurable de 1 a 100:
 
 \begin{equation}
-F_s=\frac{\SI{2929}{\hertz}}{N}.
+F_s=\frac{\SI{2604}{\hertz}}{N},\qquad N\in\{1,\ldots,100\}.
 \end{equation}
 
 El promediado de $N$ muestras consecutivas aporta, adem\'as de la reducci\'on de tasa, una
-mejora de la relaci\'on se\~nal--ruido para el ruido incorrelado. El par\'ametro $N$ permite
-intercambiar ancho de banda por duraci\'on de captura y por relaci\'on se\~nal--ruido, y se
-configura desde la interfaz web. El ADC ofrece adem\'as cuatro configuraciones de rango de
-entrada seleccionables, todas validadas en hardware.
+mejora de la relaci\'on se\~nal--ruido para el ruido incorrelado. Es un filtro peine de
+respuesta sinc, no un anti-alias ideal; por eso el intervalo $N=1,\ldots,100$ describe la
+capacidad de configuraci\'on y no certifica que cada valor sea adecuado para MASW. La
+banda y el rechazo de alias deben verificarse para las configuraciones de campo. El
+par\'ametro $N$ se configura desde la interfaz web.
 
-\nota{\textbf{Punto a unificar}: los par\'ametros de calibraci\'on de la
-Tabla~\ref{tab:cal_params} y los tiempos reportados en la Secci\'on~\ref{sec:resultados}
-est\'an referidos a \SI{2604}{\hertz}, que es la tasa con la que se realiz\'o la campa\~na de
-medici\'on del art\'iculo URUCON. La configuraci\'on vigente es \SI{2929}{\hertz}. Hay que
-decidir si se re-expresan esos tiempos a la tasa actual (cambiar\'ian los valores ya
-publicados) o si se aclara expl\'icitamente que corresponden a la configuraci\'on de aquel
-experimento. Mi sugerencia es lo segundo: no tocar n\'umeros ya sometidos a revisi\'on
-externa, y declarar la tasa junto a ellos.}
+\paragraph{Rangos de entrada del ADC.} El conversor $\Delta\Sigma$ del PSoC no tiene un
+fondo de escala fijo: admite \textbf{cuatro configuraciones de rango de entrada}
+seleccionables en tiempo de ejecuci\'on, todas validadas en hardware y todas conservando
+la tasa nativa de \SI{2604}{\hertz} y la resoluci\'on nominal de 18~bits. Se seleccionan
+por nodo desde la interfaz web mediante el subcomando \texttt{0xBA}, que se propaga por
+ESP-NOW al PSoC correspondiente.
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}clrrl@{}}
+\toprule
+C\'odigo & Rango & Fondo de escala [\si{\volt}] & LSB nominal [\si{\micro\volt}] & Uso t\'ipico \\
+\midrule
+1 & $\pm\SI{2.5}{\volt}$    & 5{,}000 & 19{,}1 & Diagn\'ostico, se\~nales grandes, martillo \\
+3 & $\pm\SI{1.024}{\volt}$  & 2{,}048 & 7{,}81 & Intermedio \\
+4 & $\pm\SI{0.625}{\volt}$  & 1{,}250 & 4{,}77 & Intermedio \\
+2 & $\pm\SI{0.512}{\volt}$  & 1{,}024 & 3{,}91 & M\'axima resoluci\'on; ge\'ofono compensado \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Por qu\'e importa, y por qu\'e no es un par\'ametro cosm\'etico.} El rango de
+entrada fija simult\'aneamente dos cosas en direcciones opuestas:
+
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{El piso de cuantizaci\'on.} Con 18~bits, el escal\'on de cuantizaci\'on
+    es el fondo de escala dividido por $2^{18}=\num{262144}$. Pasar de
+    $\pm\SI{2.5}{\volt}$ a $\pm\SI{0.512}{\volt}$ reduce el LSB casi un factor 5
+    ---equivalente a ganar del orden de \SI{13.7}{\decibel} de rango din\'amico \'util
+    sobre la se\~nal peque\~na--- \emph{sin agregar una sola etapa de amplificaci\'on} y
+    por lo tanto sin agregar ruido ni \emph{offset} de amplificador. Es la forma m\'as
+    barata de ganancia disponible en la cadena.
+    \item \textbf{El margen antes del recorte.} El mismo cambio divide por cinco la
+    tensi\'on que satura el conversor. Y aqu\'i el compromiso deja de ser abstracto: la
+    Secci\'on~\ref{sec:costo-ganancia} muestra que la compensaci\'on obliga a operar con
+    ganancias agresivas, de modo que el sistema trabaja \emph{deliberadamente} cerca del
+    fondo de escala. Un rango demasiado estrecho recorta el primer arribo ---justamente
+    la parte del registro que porta la informaci\'on de tiempo de llegada--- y el recorte
+    es irreversible.
+\end{itemize}
+
+La existencia de cuatro rangos es, entonces, la contraparte digital del PGA: dos
+mecanismos independientes para colocar la se\~nal dentro del conversor, uno anal\'ogico
+(con costo en ruido y \emph{offset}) y uno digital (sin costo, pero cuantizado en cuatro
+saltos). La combinaci\'on correcta depende del sitio, del acoplamiento y del rol del nodo,
+y por eso ambos son configurables en campo y no fijados en compilaci\'on.
+
+Un detalle de implementaci\'on que conviene registrar: el cambio de rango
+\textbf{invalida la calibraci\'on de \emph{offset} vigente}, porque el punto de operaci\'on
+\'optimo depende del fondo de escala. Por eso la persistencia en EEPROM del DA-AFE se
+indexa por c\'odigo de ganancia y de rango, y no como un \'unico valor global
+(\S\ref{sec:arq-daafe}). La verificaci\'on de que la conmutaci\'on entre rangos preserva
+la coherencia del sistema fue parte de la auditor\'ia pre-campo, con
+\textbf{49 de 49 transiciones correctas} (\S\ref{sec:resultados}).
+
+Hist\'oricamente el sistema ofreci\'o s\'olo dos configuraciones; las cuatro actuales se
+consolidaron en julio, junto con la propagaci\'on del ajuste por nodo desde la interfaz.
+
+Las capturas de campo ya almacenadas incluyen configuraciones hist\'oricas a
+\SI{2929}{\hertz} y \SI{1020}{\hertz}. Esas tasas se conservan en el metadato y no se
+presentan como configuraci\'on vigente. Del mismo modo, los tiempos del art\'iculo URUCON
+se mantienen referidos a la campa\~na de \SI{2604}{\hertz} con la que fueron medidos.
 
 \subsubsection{\emph{superMaquina}: la m\'aquina de estados en hardware}
 
@@ -189,7 +268,57 @@ La l\'ogica de captura se migr\'o de C puro (ISRs sobre un registro de selecci\'
 componente descrito en \textbf{Verilog} e instanciado en los bloques UDB del PSoC,
 denominado \emph{superMaquina}. Este bloque decide en hardware qu\'e solicitud de DMA se
 deja pasar, cu\'ando arranca y termina una captura, y qu\'e interrupciones llegan al
-procesador.
+procesador, \textbf{migrando adem\'as parte de la cadena de control de la calibraci\'on y
+de la adquisici\'on desde el software hacia el hardware}.
+
+\paragraph{Reparto expl\'icito entre hardware y software.} Conviene enumerarlo uno a uno,
+porque el criterio de reparto ---y no la lista en s\'i--- es el aporte de dise\~no:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\multicolumn{2}{@{}l}{\textbf{En hardware} --- UDB/Verilog, DMA y bloques anal\'ogicos configurables} \\
+\midrule
+Enrutamiento de DMA & Decide qu\'e solicitud de DMA se deja pasar y cu\'al se bloquea, seg\'un el estado de la m\'aquina \\
+Arranque de captura & El flanco de \texttt{SYNC\_IN} inicia el muestreo directamente, sin intervenci\'on del procesador \\
+Fin de captura & Conteo de lotes de 30 muestras en hardware; el software recibe un \'unico evento de fin \\
+Enmascarado de interrupciones & Determina qu\'e eventos llegan al Cortex-M3 en cada estado; en \texttt{SAMPLING}, s\'olo el DMA de muestra \\
+Temporizaci\'on de muestreo & Temporizadores fijos cuyo \emph{Terminal Count} \textbf{no} genera interrupci\'on: queda retenido en el registro de estado \\
+Filtrado digital & Bloque DFB alimentado por DMA de tres canales; el FIR corre sin ciclos de CPU \\
+Mantenimiento del historial FIR & En \texttt{ARMED} el filtro sigue alimentado para llegar caliente al disparo \\
+Cadena anal\'ogica & PGA, PGAout, VDAC/IDAC, multiplexor de observaci\'on y ADC $\Delta\Sigma$ como bloques configurables \\
+Re-armado encadenado & Al superar los 512 lotes, la m\'aquina se re-arma sola sin reiniciar la captura \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{En software} --- firmware C sobre el Cortex-M3} \\
+\midrule
+Lazo PI de calibraci\'on & Ley de control de \emph{offset}, antiwindup direccional, banda muerta y criterio de convergencia \\
+Secuenciamiento de calibraci\'on & Orden PGA$\to$BP$\to$SUM$\to$LP, reinicio de filtro y establecimiento entre etapas \\
+Persistencia & Registro en EEPROM con CRC, indexado por c\'odigo de ganancia y rango \\
+M\'aquina de estados de alto nivel & Recepci\'on de comandos, transiciones de sesi\'on, reporte de estado \\
+Jerarqu\'ia de memoria & Pol\'itica RAM $\to$ encadenado $\to$ SD, y el sistema de archivos FatFs \\
+\emph{Polling} de \texttt{STATUS\_TC} & Consumo de los eventos de temporizador retenidos por el hardware \\
+Supervisi\'on & \emph{Watchdog}, l\'imites de conteo y cortacircuitos anti-tormenta de interrupciones \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{En el ESP32}} \\
+\midrule
+Coordinaci\'on & Protocolo ESP-NOW, secuencia de disparo, SPA web, WebSocket, exportaci\'on \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{El criterio.} La regla que gobierna el reparto se puede enunciar en una
+frase: \textbf{va a hardware toda decisi\'on cuyo \emph{timing} entre en el presupuesto de
+\emph{jitter}, y queda en software toda decisi\'on que sea lenta pero compleja}. El
+disparo, el conteo de muestras y el enmascarado de interrupciones son simples pero deben
+ocurrir en un instante determinado; el lazo de calibraci\'on es todo lo contrario ---es
+un problema de control con saturaci\'on, memoria y persistencia, pero cuasi-est\'atico, de
+modo que una latencia de interrupci\'on de decenas de microsegundos le resulta
+irrelevante. Migrarlo a hardware habr\'ia sido caro y no habr\'ia mejorado nada medible.
+
+Puesto de otro modo: el hardware define \emph{cu\'ando} ocurren las cosas y el software
+define \emph{qu\'e} valores toman. Esa separaci\'on es la que permite afirmar que el error
+temporal residual del sistema no depende del c\'odigo C ---y por lo tanto no cambia si
+ma\~nana se agrega una funci\'on al firmware.
 
 La motivaci\'on es el determinismo: en un sistema multicanal el \emph{jitter} temporal se
 traduce directamente en error de velocidad de fase. Al sacar la decisi\'on de captura del
@@ -198,6 +327,15 @@ pol\'itica de eventos asociada establece que los \emph{Terminal Count} de los te
 fijos no generan interrupci\'on ---quedan retenidos en su registro de estado y los consume
 el \emph{polling} del bucle de servicio---, y que durante el muestreo el nodo no atiende
 RX/TX ni parpadeo de LED.
+
+La m\'aquina tiene cinco estados (\texttt{IDLE}, \texttt{ARMED},
+\texttt{SAMPLING}, \texttt{DONE} y \texttt{ERROR}) y cuenta lotes de 30 muestras en
+hardware. En \texttt{ARMED} el FIR contin\'ua alimentado para mantener caliente su
+historia; despu\'es del flanco, el ARM s\'olo descarta el retardo de grupo necesario para
+alinear las rutas cruda y filtrada. Durante \texttt{SAMPLING}, las solicitudes DMA de
+muestra son la \'unica fuente normal de interrupci\'on; los eventos de temporizadores se
+retienen y se atienden por \emph{polling}. Esta partici\'on separa el camino temporalmente
+cr\'itico, implementado en UDB/DMA, de la pol\'itica de servicio y almacenamiento en C.
 
 \subsubsection{Jerarqu\'ia de memoria y almacenamiento en SD}
 
@@ -211,7 +349,7 @@ Para soportar capturas largas se implement\'o una jerarqu\'ia de tres niveles:
     terminar.
     \item \textbf{Tarjeta SD en el PSoC}: sistema de archivos FatFs sobre el SPI maestro
     del TopDesign, con hasta 60\,000 lotes ($\approx\SI{11.5}{\minute}$ a
-    \SI{2929}{\hertz}). Comandos UART dedicados para estado, autotest, captura a SD y
+    \SI{2604}{\hertz}). Comandos dedicados para estado, autotest, captura a SD y
     lectura de lote.
 \end{enumerate}
 
@@ -222,8 +360,10 @@ mantiene el almacenamiento del lado determinista de la cadena.
 
 \subsubsection{Topolog\'ia}
 
-Cada nodo de adquisici\'on integra un ESP32 conectado al PSoC por UART m\'as una l\'inea
-dedicada de sincronismo. Los esclavos se comunican con el maestro por \textbf{ESP-NOW};
+Cada nodo de adquisici\'on integra un ESP32 conectado al PSoC mediante un enlace
+asim\'etrico: UART para comandos ESP$\to$PSoC, I\textsuperscript{2}C para muestras
+PSoC$\to$ESP, y una l\'inea local \texttt{SYNC\_TO\_PSOC\_PIN}. Los esclavos se
+comunican con el maestro por \textbf{ESP-NOW};
 el maestro levanta simult\'aneamente un punto de acceso WiFi (\texttt{GeoNetwork},
 \texttt{192.168.4.1}) operando en modo \texttt{WIFI\_AP\_STA}.
 
@@ -237,21 +377,156 @@ alineaci\'on temporal entre canales:
     esclavo la transfiere al PSoC y lo deja armado.
     \item \textbf{HOT\_WAIT}: el maestro consulta a cada nodo si su PSoC confirm\'o el
     armado.
-    \item \textbf{START\_NOW}: con todos los nodos armados, el maestro emite el disparo;
-    la captura arranca por \textbf{flanco de una l\'inea f\'isica de sincronismo}, no por
-    comando de software.
+    \item \textbf{CMD\_START}: con todos los nodos armados, el maestro marca primero un
+    GPIO local de diagn\'ostico y difunde el comando por ESP-NOW. Al recibirlo, cada
+    esclavo eleva inmediatamente su \texttt{SYNC\_TO\_PSOC\_PIN}; ese flanco local inicia
+    la \emph{superMaquina}.
     \item \textbf{Dump}: finalizada la captura, los datos se transfieren mediante un
     esquema \emph{stop-and-wait} de solicitud de lotes, con pausa y reanudaci\'on seg\'un
     la presencia del cliente WebSocket.
 \end{enumerate}
 
-El arranque por flanco f\'isico es la decisi\'on de dise\~no que hace viable la
-sincronizaci\'on multicanal: elimina de la ruta cr\'itica la latencia variable del
-\emph{stack} de radio y del software.
+El flanco local da al PSoC un instante inequ\'ivoco y evita que el protocolo UART gobierne
+la captura, pero \textbf{no elimina la variabilidad entre nodos}: desde que se retir\'o el
+cable de sincronismo maestro--esclavo, la diferencia de llegada y despacho de ESP-NOW
+forma parte del error temporal. Durante el muestreo el esclavo no emite
+\texttt{START\_ACK}; permanece en silencio de radio hasta completar el almac\'en. El modo
+\texttt{SCOPE\_MULTI} automatiza 128 disparos separados \SI{1}{\second} para medir esa
+distribuci\'on con osciloscopio.
+
+\subsubsection{Por qu\'e \emph{broadcast} y no unicast}
+\label{sec:arq-broadcast}
+
+El comando de disparo se emite en \textbf{difusi\'on} (\emph{broadcast}) a la direcci\'on
+\texttt{FF:FF:FF:FF:FF:FF} y no como env\'ios unicast dirigidos a cada esclavo. La
+decisi\'on parece menor y no lo es: en las pruebas, cualquier variante distinta del
+\emph{broadcast} desincronizaba a los esclavos de forma apreciable. La explicaci\'on
+tiene tres partes.
+
+\paragraph{1) El unicast activa ACK y retransmisi\'on autom\'atica.} Un env\'io unicast en
+ESP-NOW ---como todo tr\'afico dirigido en 802.11--- espera confirmaci\'on de capa de
+enlace y \textbf{retransmite si no la recibe}. Esa retransmisi\'on es la fuente dominante
+de varianza de latencia, y es la peor posible para este sistema porque es
+\textbf{distinta en cada nodo}: el esclavo cuyo primer paquete se perdi\'o arranca uno o
+varios intervalos de reintento despu\'es que el resto. El \emph{broadcast} no tiene ACK ni
+retransmisi\'on: se emite una sola vez, o no llega. Se cambia fiabilidad por
+determinismo, que en este problema es exactamente el canje deseable ---una captura que no
+dispara se repite; una captura que dispara desalineada produce un perfil err\'oneo sin
+avisar.
+
+\paragraph{2) Una emisi\'on simult\'anea en vez de $N$ secuenciales.} Con unicast el
+maestro debe transmitir $N$ veces, una por esclavo, y esas transmisiones son
+necesariamente sucesivas: el \'ultimo nodo recibe su orden despu\'es de que el primero ya
+recibi\'o la suya. El \emph{broadcast} emite \textbf{una sola trama que todos los
+receptores demodulan del mismo evento f\'isico en el aire}. El error deja de crecer con
+el n\'umero de nodos.
+
+\paragraph{3) La latencia c\'odigo$\to$antena es intr\'insecamente variable, pero
+com\'un.} El intervalo entre que el firmware llama a la funci\'on de env\'io y que la
+antena efectivamente emite no es determinista: depende del planificador de la tarea WiFi,
+del estado del ahorro de energ\'ia y de la disponibilidad del medio (CSMA/CA). Esa
+variabilidad existe siempre. La diferencia decisiva es que, en \emph{broadcast},
+\textbf{ocurre una sola vez y del lado del emisor}: cualquiera sea el retardo, es
+\emph{el mismo} para todos los receptores y por lo tanto se cancela en la diferencia
+entre canales. Con unicast, en cambio, esa incertidumbre se paga $N$ veces y de forma
+independiente. Y lo que degrada el MASW no es el \emph{jitter} absoluto sino el
+\textbf{\emph{jitter} relativo entre canales}: un retardo com\'un desplaza el origen de
+tiempos, que la propia detecci\'on del primer arribo del canal de martillo reabsorbe.
+
+A esto se suma una condici\'on de operaci\'on deliberada: entre el armado y el disparo,
+los esclavos quedan \textbf{completamente ociosos y en silencio de radio}, sin muestrear,
+sin responder y sin parpadeo de LED. No compiten por el medio ni por CPU, de modo que la
+incertidumbre del lado receptor colapsa esencialmente al tiempo de propagaci\'on y
+demodulaci\'on. La literatura sobre difusi\'on ESP-NOW sin encaminador reporta, en esas
+condiciones, dispersiones del orden de \SIrange{60}{80}{\micro\second} entre receptores.
+
+\subsubsection{Medici\'on del \emph{jitter}: m\'etodo, resultado y l\'imites}
+
+\paragraph{M\'etodo.} La medici\'on usa un \textbf{disparo falso}: el comando
+\texttt{CMD\_SCOPE\_START} (\texttt{0x60}) hace que cada nodo emita un pulso de
+\SI{1}{\milli\second} por un GPIO dedicado \emph{sin} iniciar muestreo ni responder por
+radio. Las puntas del osciloscopio se conectan al GPIO de diagn\'ostico del maestro y a
+los de los esclavos, y \textbf{la separaci\'on entre los flancos es, directamente, la
+latencia de sincronizaci\'on}. El estado \texttt{SCOPE\_MULTI} repite el disparo
+\textbf{128 veces con \SI{1}{\second} de separaci\'on}, de modo que la estad\'istica se
+acumula sin operador. El criterio declarado es que todos los pulsos caigan dentro de
+\SI{1}{\milli\second}.
+
+\paragraph{Resultado.} La observaci\'on de banco disponible fue un desfasaje inferior a
+aproximadamente \SI{400}{\micro\second}, con el maestro separado del orden de
+\SI{5}{\meter} de los esclavos. Se ensayaron \textbf{distintas distribuciones f\'isicas
+relativas} entre maestro y esclavos y \textbf{no se encontr\'o relaci\'on entre la
+posici\'on relativa y los retardos observados}, lo que es consistente con la explicaci\'on
+anterior: a estas distancias el tiempo de vuelo (nanosegundos) es despreciable frente a
+la latencia de despacho, de modo que la geometr\'ia no deber\'ia importar ---y no
+import\'o.
+
+\paragraph{Limitaciones que deben declararse.} Este resultado es preliminar y no se
+adopta como especificaci\'on garantizada, por cuatro razones concretas:
+
+\begin{enumerate}[itemsep=0.2em]
+    \item \textbf{Los esclavos debieron quedar cerca entre s\'i}, porque las puntas del
+    osciloscopio tienen alcance f\'isico limitado. La medici\'on caracteriza la
+    sincronizaci\'on \emph{del sistema}, no la del arreglo desplegado con nodos separados
+    decenas de metros. Caracterizar esa condici\'on ---por ejemplo con un disparo \'optico
+    o de radio de referencia comprobado--- queda pendiente.
+    \item El valor corresponde a \textbf{una versi\'on anterior del flujo} y mide la
+    llegada a nivel de radio; el tramo \emph{despacho de la tarea WiFi $\to$ GPIO local}
+    no est\'a medido de forma independiente sobre la topolog\'ia vigente.
+    \item \textbf{El reinicio del \emph{pipeline} del $\Delta\Sigma$.} Al entrar en
+    muestreo se ejecuta \texttt{ADC\_StopConvert()} seguido de
+    \texttt{ADC\_StartConvert()}, lo que reinicia el modulador e introduce un retardo de
+    grupo. Ese retardo es \textbf{fijo e igual en todos los nodos}, de modo que no agrega
+    \emph{jitter} relativo ---pero \textbf{nunca fue calibrado}, y por lo tanto desplaza
+    el instante $t=0$ real respecto del flanco de \texttt{SYNC}. Es un sesgo com\'un, no
+    un error aleatorio, y como tal es corregible en cuanto se lo mida.
+    \item \textbf{Faltan m\'as experimentos}: repetibilidad entre encendidos, dependencia
+    con el n\'umero de nodos, con la temperatura y con la ocupaci\'on del canal WiFi.
+\end{enumerate}
+
+\paragraph{Un defecto encontrado y corregido en el camino cr\'itico.} La auditor\'ia del
+c\'odigo de disparo revel\'o que, en la rutina de recepci\'on del esclavo, la llamada
+\texttt{sendStartAck()} se ejecutaba \textbf{antes} de
+\texttt{digitalWrite(SYNC\_TO\_PSOC\_PIN, HIGH)}. Es decir: se colocaba una
+\emph{transmisi\'on de radio de latencia variable} dentro del camino cr\'itico entre la
+llegada del comando y el flanco que dispara al PSoC ---y, peor, una latencia
+\emph{distinta por nodo}, que es exactamente la clase de error que todo el dise\~no de
+\emph{broadcast} intenta evitar. La correcci\'on consisti\'o en invertir el orden: primero
+el flanco, despu\'es cualquier comunicaci\'on. Vale registrarlo porque ilustra que en este
+sistema el orden de dos l\'ineas de c\'odigo tiene consecuencia f\'isica medible.
+
+\paragraph{Una an\'ecdota metodol\'ogica que vale la pena conservar.} Los pulsos de
+depuraci\'on se implementaron inicialmente con \texttt{delayMicroseconds()}, que bloquea
+la CPU durante el milisegundo del pulso. El efecto fue que el nodo \textbf{perd\'ia los
+\emph{callbacks} de ESP-NOW mientras generaba el pulso}: \emph{el instrumento de
+medici\'on estaba destruyendo el evento que se quer\'ia diagnosticar}. Se reescribi\'o con
+marcas de tiempo y verificaci\'on no bloqueante en el bucle principal. Es un recordatorio
+de que en sistemas embebidos la instrumentaci\'on forma parte del sistema medido.
+
+La sensibilidad en fase permite fijar el criterio de la prueba pendiente:
+
+\begin{equation}
+\Delta\phi=2\pi f\,\Delta t.
+\end{equation}
+
+Un error de \SI{400}{\micro\second} equivale a \SI{7.2}{\degree} a
+\SI{50}{\hertz} y \SI{14.4}{\degree} a \SI{100}{\hertz}. Para limitar el error a
+\SI{5}{\degree}, el presupuesto es \SI{278}{\micro\second} y
+\SI{139}{\micro\second}, respectivamente. La aceptaci\'on debe evaluarse contra la banda
+efectivamente usada, no con un umbral temporal aislado.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.86\textwidth]{sincronizacion_fase.png}
+\caption{Conversi\'on exacta entre desfasaje temporal y error de fase. La marca de
+\SI{400}{\micro\second} corresponde a una observaci\'on preliminar, no a una cota
+garantizada de la topolog\'ia actual.}
+\label{fig:jitter-fase}
+\end{figure}
 
 \subsection{Nodo martillo (fuente s\'ismica)}
 
-El nodo HAMMER acondiciona un martillo instrumentado con aceler\'ometro
+El nodo HAMMER acondiciona un martillo instrumentado con \textbf{sensor de fuerza piezoel\'ectrico}
 PCB~Piezotronics~086D20 y provee el instante de disparo y la referencia de la se\~nal de
 la fuente. Comparte el \emph{mismo archivo de firmware} que el nodo GEO: el c\'odigo
 detecta autom\'aticamente en tiempo de compilaci\'on qu\'e tipo de hardware tiene debajo
@@ -261,14 +536,141 @@ firmware embebido y garantiza que el protocolo y la l\'ogica de captura sean id\
 ambos tipos de nodo. La clase de hardware se propaga desde el PSoC hasta la interfaz web.
 
 \subsection{Interfaz de operador en campo}
+\label{sec:arq-interfaces}
 
-El maestro sirve una aplicaci\'on web de p\'agina \'unica desde su propio sistema de archivos
-LittleFS sobre su AP WiFi. Esto elimina la necesidad de llevar una computadora al campo:
-el operador se conecta con el tel\'efono. La interfaz permite configurar decimaci\'on,
-duraci\'on por tipo de nodo, l\'imites de RAM y SD, y rango de ADC; muestra el estado de
-cada nodo con indicador de intensidad de se\~nal (RSSI) del enlace ESP-NOW; refleja las
-capturas en vivo por WebSocket; y permite exportar la sesi\'on como archivo comprimido
-armado \'integramente en el navegador.
+Una parte sustancial del esfuerzo del proyecto ---y probablemente la menos visible en un
+documento centrado en electr\'onica--- est\'a en las interfaces de operaci\'on y an\'alisis.
+Son cuatro, desarrolladas en momentos distintos y con prop\'ositos distintos, y en
+conjunto suman del orden de \textbf{\num{30000} l\'ineas de c\'odigo}. Se describen aqu\'i
+porque cada una resuelve un problema que el hardware por s\'i solo no resuelve.
+
+\subsubsection{La p\'agina web embebida en el maestro}
+\label{sec:arq-spa-esp}
+
+Es la interfaz principal de campo y la pieza que hace utilizable al sistema. El maestro
+sirve una \textbf{aplicaci\'on web de p\'agina \'unica} (SPA) desde su propio sistema de
+archivos LittleFS, sobre el punto de acceso WiFi que \'el mismo levanta
+(\texttt{GeoNetwork}, \texttt{192.168.4.1}). Son unas \textbf{\num{8250} l\'ineas} entre
+JavaScript modular, CSS y HTML, sin ning\'un marco de trabajo externo ni dependencia de
+CDN ---requisito no negociable, porque en campo no hay Internet.
+
+\paragraph{La decisi\'on de arquitectura que la define.} El ESP32 \textbf{nunca sale a
+Internet}. Sirve archivos est\'aticos y reenv\'ia mensajes WebSocket, y nada m\'as. Es el
+\emph{navegador} del operador el que arma el archivo comprimido de la sesi\'on y el que
+lo sube al servidor de an\'alisis cuando hay conectividad. Esto tiene tres consecuencias
+que justifican la elecci\'on: el firmware del maestro no necesita pila TLS ni cliente
+HTTP saliente (memoria y superficie de ataque que no se pagan); el sistema funciona
+completo y sin degradaci\'on en un sitio sin cobertura; y la subida puede reintentarse
+desde cualquier lugar sin volver a tocar el equipo.
+
+\paragraph{Elementos transversales.} Una \textbf{barra de estado persistente} muestra en
+todo momento el estado del WebSocket, el estado de la m\'aquina de estados del maestro, un
+indicador de la frecuencia de muestreo global vigente, el RSSI del enlace ---congelado
+durante la captura, para no inducir tr\'afico--- y controles de reconexi\'on y de tema
+claro/oscuro. El \textbf{panel de gr\'aficas} ofrece ventana de \SIrange{1}{10}{\second},
+\emph{zoom}, dos cursores de medici\'on (tiempo y amplitud), y curvas conmutables entre
+se\~nal cruda, se\~nal filtrada ---con lectura de velocidad de onda en l\'inea a partir de
+los cursores---, envolvente cruda y envolvente filtrada, m\'as remoci\'on de continua y
+vista de espectro.
+
+\paragraph{Las cinco pesta\~nas.}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Pesta\~na & Contenido \\
+\midrule
+\textbf{Captura} & Armado con $N$ esclavos; factor de decimaci\'on con vista previa de la $F_s$ efectiva, propagado a todos los nodos con ACK y bloqueo hasta confirmaci\'on; duraciones separadas para nodos GEO y HAMMER; atajos ``M\'ax RAM 512'' y ``M\'ax SD 60\,000''; START, STOP y descarte; ``Calibrar todos''; exportaci\'on CSV/ZIP armada en el navegador y subida al servidor \\
+\textbf{Esclavos} & Por nodo: MAC, RSSI, \emph{offset} en metros, inversi\'on de polaridad, PGA y PGAout con indicador de ACK y lectura del valor vigente, rango de ADC, habilitaci\'on de SD, configuraci\'on del FIR con conmutador de FIR por hardware, \emph{notch} de \SI{50}{\hertz} con n\'umero de arm\'onicos, y escalera de calibraci\'on del VDAC con etiquetas distintas seg\'un el nodo sea de martillo o de ge\'ofono \\
+\textbf{Preservados} & Capturas retenidas en memoria a la espera de exportaci\'on \\
+\textbf{Enlace} & Aprovisionamiento de la red del cliente con escaneo de redes de \SI{2.4}{\giga\hertz}, y URL del servidor de datos persistida \emph{en el maestro}, de modo que cada navegador nuevo la hereda sin reconfigurar \\
+\textbf{Log} & Registro de eventos del sistema \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{Detalles de ingenier\'ia que conviene registrar} porque no son evidentes y
+costaron trabajo:
+
+\begin{itemize}[itemsep=0.2em]
+    \item Durante la captura, el intervalo de \emph{beacon} del punto de acceso sube a
+    unos \SI{61}{\second}. La consecuencia visible es que la computadora del operador
+    puede ``caerse'' del AP mientras la captura corre; la consecuencia real es que
+    \textbf{los datos siguen a salvo en el ESP} y se recuperan al reconectar. Priorizar
+    el determinismo de la captura sobre la comodidad de la interfaz fue una decisi\'on
+    consciente.
+    \item Si se solicitan m\'as de 512 lotes sin haber habilitado la SD en el PSoC, la
+    interfaz \textbf{avisa antes de armar}: sin ese aviso el sistema truncar\'ia
+    silenciosamente en el l\'imite de RAM, que es el peor modo de falla posible ---una
+    captura que parece exitosa y est\'a incompleta.
+    \item Las preferencias de $F_s$ se versionan en \texttt{localStorage} para que un
+    mensaje \texttt{HELLO} de arranque no pise la elecci\'on del operador.
+    \item Una guarda de \texttt{beforeunload} avisa al cerrar la pesta\~na, pero
+    \emph{s\'olo} si hay capturas sin exportar.
+\end{itemize}
+
+\subsubsection{Servidor FastAPI y su aplicaci\'on de an\'alisis}
+
+Del lado del gabinete, un servidor \textbf{FastAPI} (del orden de \num{9200} l\'ineas de
+Python) recibe los ZIP subidos desde el navegador y expone una segunda aplicaci\'on web
+con el flujo completo de an\'alisis, organizado en ocho pesta\~nas:
+\textbf{Capturas}, \textbf{Filtros}, \textbf{Agrupamiento}, \textbf{Enfase},
+\textbf{Promedios}, \textbf{Waterfall}, \textbf{MASW} ---con tres subpesta\~nas:
+1.~Dispersi\'on, 2.~Inversi\'on, 3.~Perfil $V_S$--- y \textbf{Borrado}.
+
+Rasgos de dise\~no relevantes: la ingesta valida el ZIP contra un contrato explícito y
+versionado (\texttt{geophone\_scope\_web\_zip\_v4}) con verificaci\'on estricta del
+\texttt{metadata.json} y l\'imites contra descompresi\'on maliciosa; el borrado es
+\textbf{reversible por cuarentena} en lugar de destructivo; existe un modo
+\texttt{--read-only} de auditor\'ia en el que todo POST responde 405, pensado para
+mostrar resultados sin riesgo de alterarlos; y el despliegue est\'a contenerizado con
+Docker. El servidor comparte los directorios \texttt{data/raw} y \texttt{data/processed}
+\textbf{byte a byte} con la aplicaci\'on de escritorio, de modo que ambas herramientas ven
+exactamente el mismo estado y no existe una copia autoritativa distinta de la otra.
+
+\subsubsection{Aplicaci\'on de escritorio (PyQt)}
+
+Anterior al servidor web y todav\'ia en uso, la aplicaci\'on de revisi\'on de datos de
+campo en PyQt (del orden de \num{9200} l\'ineas entre l\'ogica de interfaz y capa de
+datos) implementa el mismo conjunto de pesta\~nas; el servidor web es, de hecho, su
+portaci\'on de julio, hecha para unificar el acceso. Conserva sin embargo funciones
+propias que vale enumerar: ordenamiento de trazas por amplitud pico a pico, compuerta
+expl\'icita \texttt{reviewed} por se\~nal, inversi\'on de polaridad por se\~nal y por
+carpeta, filtro $f$--$k$ direccional contra retrodispersi\'on, restricci\'on
+anti-\emph{aliasing} $c\ge 2\,\Delta x\,f$ aplicada durante el marcado de la curva de
+dispersi\'on, y autoguardado con restauraci\'on de sesi\'on.
+
+\subsubsection{Interfaces MATLAB de banco}
+
+Dos aplicaciones de MATLAB cubren el trabajo de laboratorio, donde el nodo se conecta por
+USB directamente y no hay red de por medio:
+
+\begin{itemize}[itemsep=0.2em]
+    \item \texttt{geophone\_scope\_simple.m} (\num{2067} l\'ineas, \texttt{uifigure}):
+    osciloscopio y banco de caracterizaci\'on contra el PSoC por USB. Incluye un sistema
+    de \textbf{entidades persistidas} en \texttt{scope\_config.mat} que conserva las
+    configuraciones de ensayo entre sesiones, control de \texttt{PGAgain} y
+    \texttt{PGAvdac} (0--8) y del VDAC (0--255), conmutaci\'on entre modo crudo y filtro
+    en el chip, definici\'on del FIR mediante una expresi\'on MATLAB arbitraria, y
+    selecci\'on de la punta de martillo empleada (gris, roja, marr\'on, negra o mezclado)
+    ---dato que despu\'es explica diferencias de contenido espectral entre campa\~nas.
+    \item \texttt{InterfaceESP.m} (\num{2567} l\'ineas): pesta\~nas Maestro, Esclavo~1 a~3,
+    \emph{Stream \& Stats} y Log. Un detalle deliberado: \textbf{lee los par\'ametros
+    \texttt{HOTWAIT\_*} y \texttt{SCOPE\_MULTI\_*} directamente del
+    \texttt{platformio.ini} del firmware}, de modo que la interfaz no puede
+    desincronizarse de lo que el firmware realmente hace. Incorpora adem\'as sondas de
+    latencia de START (RTT) para estimar el \emph{jitter}
+    (\S\ref{sec:arq-broadcast}).
+\end{itemize}
+
+\paragraph{Por qu\'e cuatro interfaces y no una.} La respuesta corta es que responden a
+tres contextos f\'isicos incompatibles: el banco (USB, un nodo, MATLAB ya presente por el
+trabajo de modelado), el campo (sin Internet, sin computadora, un tel\'efono contra un AP
+local) y el gabinete (todo el conjunto de datos, herramientas cient\'ificas de Python).
+Intentar cubrir los tres con una sola herramienta habr\'ia significado, en la pr\'actica,
+no cubrir bien ninguno. La convergencia s\'i ocurri\'o donde ten\'ia sentido: la
+aplicaci\'on de escritorio y la web de an\'alisis comparten formato de datos y estado en
+disco, y la portaci\'on de julio elimin\'o la duplicaci\'on de l\'ogica entre ambas.
 
 \subsection{\emph{Pipeline} de procesamiento MASW}
 \label{sec:arq-pipeline}
@@ -288,14 +690,19 @@ Sus componentes son:
     frecuencia--velocidad de fase, visualizaci\'on tipo \emph{waterfall} y $f$--$k$, y
     definici\'on de \textbf{regiones-pol\'igono} que permiten extraer varias curvas
     simult\'aneas, una por modo.
-    \item \textbf{Inversi\'on}: inversi\'on multimodal usando \texttt{evodcinv} sobre el
-    motor de modelado directo \texttt{disba}, con la curva editable antes de invertir y
-    persistencia de los resultados intermedios.
+    \item \textbf{Inversi\'on}: arquitectura de \emph{backends} seleccionables:
+    \texttt{evodcinv}/\texttt{disba} multimodal, Monte Carlo con \texttt{disba},
+    MASWavesPy de un modo, ADsurf y exportaci\'on a Geopsy. La curva es editable antes de
+    invertir y los resultados intermedios se persisten.
     \item \textbf{Infraestructura}: cola de trabajos de an\'alisis persistente, borrado
     por cuarentena reversible en lugar de eliminaci\'on f\'isica, exportaciones
     reproducibles y un \emph{gate} automatizado de 58 verificaciones como condici\'on de
     avance.
 \end{itemize}
+
+La disponibilidad de estos motores no implica que todos hayan sido validados con los
+datos de campo. El estado guardado que se reporta en la Secci\'on~\ref{sec:resultados}
+usa el \emph{port} num\'erico de MASWavesPy y una sola curva, identificada como modo~0.
 
 \subsection{Organizaci\'on del repositorio}
 
@@ -326,7 +733,8 @@ estructura.
 \nota{En la versi\'on de 15 p\'aginas esta secci\'on es la principal candidata a recorte
 agresivo: el Art.~19 pide un documento de \emph{Estado del Arte}, no una memoria de
 implementaci\'on. Sugerencia: reducir a ~2,5 p\'aginas conservando \S4.1 (diagrama),
-\S4.2, \S4.3 (que es el aporte metodol\'ogico y ya tiene revisi\'on externa), \S4.5.2
+\S4.2, \S4.3 (que es el aporte metodol\'ogico documentado en el manuscrito sometido a
+URUCON, todav\'ia pendiente de dictamen), \S4.5.2
 (sincronizaci\'on, que es el problema t\'ecnico distintivo) y \S4.8. Las secciones
 \S4.4.3, \S4.6, \S4.7 y \S4.9 pueden resumirse en un p\'arrafo cada una o pasar a la
 Defensa Final.}

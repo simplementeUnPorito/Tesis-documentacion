@@ -1,0 +1,165 @@
+\section{Las dos inversiones del mismo sitio: la no unicidad, con datos propios}
+\label{sec:dos-inversiones}
+
+\emph{An\'alisis nuevo del 12 de agosto de 2026.} El proyecto conserva
+\textbf{dos estados de inversi\'on distintos del mismo sitio}, hechos en momentos
+distintos y nunca comparados entre s\'i. Ponerlos lado a lado resulta ser el
+resultado m\'as instructivo del conjunto de datos, por una raz\'on incómoda: dan
+respuestas muy diferentes.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r r X@{}}
+\toprule
+& \textbf{Export de julio} & \textbf{Estado actual} & \\
+\midrule
+Puntos de la curva & 51 & \textbf{112} & \\
+Rango de frecuencia & --- & \SIrange{5.94}{18.68}{\hertz} & \\
+$\lambda$ & hasta \SI{130.6}{\meter} & \SIrange{4.00}{20.70}{\meter} & \\
+\textbf{Puntos con $\lambda>L=\SI{40}{\meter}$} & \textbf{3} & \textbf{0} & la apertura se respeta \\
+Capas & 9 $+$ semiespacio & 8 & \\
+Profundidad modelada & \SI{82.6}{\meter} & \textbf{\SI{9.73}{\meter}} & \\
+Desajuste & \SI{2.554}{\percent} & \SI{7.11}{\percent} & \\
+\textbf{$V_{S,30}$ resultante} & \textbf{\SI{286.7}{\meter\per\second}} & \textbf{\SI{151.9}{\meter\per\second}} & \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{dos_inversiones.png}
+\caption{Izquierda: los dos perfiles $V_S$ superpuestos, con las interfaces del
+SEV~01 en rojo, el nivel fre\'atico en azul claro y la banda de profundidad que
+$\lambda_{\max}$ del estado actual realmente sostiene. Derecha: la curva de
+dispersi\'on del estado actual; la franja roja marca la zona por debajo de
+\SI{10}{\hertz} donde la SNR medida es de \SIrange{0}{2}{\decibel}.}
+\label{fig:dos-inversiones}
+\end{figure}
+
+\subsection{Resultado 1: el an\'alisis se volvi\'o m\'as disciplinado}
+
+\seleccionado{\textbf{El estado actual es claramente el mejor trabajo}, y conviene
+reconocerlo aunque su desajuste sea peor:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Respeta la apertura}. \emph{Ninguno} de sus 112 puntos supera
+    $\lambda=\SI{40}{\meter}$, frente a los 3 del export de julio que llegaban
+    hasta \SI{130.6}{\meter} ---longitudes de onda que un tendido de
+    \SI{40}{\meter} sencillamente no puede resolver.
+    \item \textbf{Modela s\'olo hasta donde los datos alcanzan}:
+    \SI{9.73}{\meter}, coherente con $\lambda_{\max}/2\ldots\lambda_{\max}/3$
+    $=$ \SIrange{6.9}{10.4}{\meter}. El de julio modela hasta
+    \SI{82.6}{\meter} con los mismos \SI{40}{\meter} de tendido.
+    \item \textbf{Acepta un ajuste peor} (\SI{7.11}{\percent} contra
+    \SI{2.554}{\percent}) a cambio de no forzar el modelo. Es la decisi\'on
+    correcta: un desajuste bajo obtenido usando puntos no resolubles no es un
+    mejor resultado, es un mejor \emph{sobreajuste}.
+    \item Usa m\'as del doble de puntos (112 contra 51), todos en una banda
+    m\'as estrecha y mejor sostenida.
+\end{itemize}}
+
+\subsection{Resultado 2: el mismo sitio da dos $V_{S,30}$ que difieren en un
+factor 1,9}
+
+\dato{$V_{S,30}=\SI{286.7}{\meter\per\second}$ en el export de julio contra
+$\SI{151.9}{\meter\per\second}$ en el estado actual. \textbf{Los mismos datos de
+campo, el mismo sitio, y un factor de \num{1.89} de diferencia.}
+
+Y no es una diferencia acad\'emica: en la clasificaci\'on s\'ismica de sitio
+habitual, \SI{286.7}{\meter\per\second} cae en la clase de suelo r\'igido
+(\SIrange{180}{360}{\meter\per\second}) y \SI{151.9}{\meter\per\second} cae en la
+clase inmediatamente inferior, la de suelo blando
+($<\SI{180}{\meter\per\second}$). \textbf{Las dos inversiones asignan al terreno
+\emph{clases s\'ismicas distintas}}, que es exactamente el par\'ametro que un
+c\'odigo de dise\~no usar\'ia.}
+
+\seleccionado{\textbf{Esto reproduce, a escala de un solo proyecto, el hallazgo
+central de InterPACIFIC.} Ese ejercicio ---14 equipos, tres sitios--- concluye
+que la variabilidad de la \emph{curva de dispersi\'on experimental} es baja, y
+que la dispersi\'on de los \emph{perfiles $V_S$} proviene de la parametrizaci\'on
+y de la no unicidad, no de la medici\'on.
+
+Aqu\'i ocurre lo mismo con un solo operador y un solo conjunto de datos: la
+medici\'on es la misma, y sin embargo dos parametrizaciones ---nueve capas hasta
+\SI{82}{\meter} contra ocho hasta \SI{10}{\meter}--- producen $V_{S,30}$ que
+cruzan una frontera normativa. \textbf{El cuello de botella de la exactitud no
+est\'a en el instrumento que este proyecto construye}, y ahora hay evidencia
+propia de ello, no s\'olo una cita.}
+
+\subsection{Resultado 3: incluso la inversi\'on disciplinada usa puntos sin
+se\~nal}
+
+\pendiente{\textbf{31 de los 112 puntos ---el \SI{28}{\percent}--- est\'an por
+debajo de \SI{10}{\hertz}}, es decir en la banda donde el an\'alisis de
+\S\ref{sec:banda-util} mide \SIrange{0}{2}{\decibel} de SNR y donde
+\S\ref{sec:atenuacion} encuentra exponente de decaimiento \emph{cero}.
+
+Se ve en la propia figura: en la franja roja del panel derecho, los puntos
+observados est\'an visiblemente m\'as dispersos que en el resto de la curva
+---saltan entre \SI{57}{} y \SI{127}{\meter\per\second} en unos pocos hertz---
+mientras que por encima de \SI{10}{\hertz} forman una nube ordenada y
+descendente. Esa dispersi\'on es la firma del ruido.
+
+\emph{Acci\'on sugerida}: repetir la inversi\'on restringiendo la curva a
+$f\ge\SI{10}{\hertz}$ y ver cu\'anto cambia el perfil y el $V_{S,30}$. Si cambia
+poco, los puntos bajos no estaban aportando y el resultado se vuelve m\'as
+defendible sin perder nada. Si cambia mucho, entonces buena parte del perfil
+estaba sostenida por ruido, lo que ser\'ia importante saber. \textbf{Es un
+experimento de unos minutos con la herramienta que ya existe.}}
+
+\subsubsection{Cu\'anto ensucian, medido}
+
+Sin rehacer la inversi\'on se puede acotar el problema examinando los residuos
+del modelo ya ajustado, separados por banda:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Banda & $n$ & RMS & Error relativo & Sesgo del residuo \\
+\midrule
+$f<\SI{10}{\hertz}$   & 31 & \SI{9.67}{\meter\per\second} & \SI{9.98}{\percent} & $\mathbf{-4{,}57}$ \si{\meter\per\second} \\
+$f\ge\SI{10}{\hertz}$ & 81 & \SI{9.86}{\meter\per\second} & \SI{6.01}{\percent} & $\mathbf{+4{,}71}$ \si{\meter\per\second} \\
+\midrule
+Todos                 & 112 & \SI{9.81}{\meter\per\second} & \SI{7.11}{\percent} & $+2{,}14$ \si{\meter\per\second} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\dato{\textbf{Dos se\~nales claras, y ninguna es buena para los puntos bajos.}
+
+\textbf{(a) Son mucho m\'as ruidosos.} Midiendo la ``rugosidad'' de la curva
+observada ---cu\'anto se desv\'ia cada punto de una media m\'ovil de siete
+puntos, que es una medida de dispersi\'on independiente del modelo--- da
+\SI{3.94}{\meter\per\second} de mediana por debajo de \SI{10}{\hertz} contra
+\SI{0.90}{\meter\per\second} por encima. \textbf{La curva es \num{4.4} veces
+m\'as rugosa en la banda sin se\~nal.} Una curva de dispersi\'on f\'isica es
+suave por construcci\'on; la rugosidad es ruido.
+
+\textbf{(b) Tiran del modelo en direcciones opuestas.} El sesgo del residuo es
+$-4{,}57$ \si{\meter\per\second} por debajo de \SI{10}{\hertz} y
+$+4{,}71$ \si{\meter\per\second} por encima: el modelo pasa \emph{por encima} de
+los puntos bajos y \emph{por debajo} de los altos. Es la firma cl\'asica de un
+ajuste tironeado por dos grupos de datos mutuamente incompatibles, y el sesgo
+global de $+2{,}14$ lo esconde por cancelaci\'on.
+
+\textbf{Conclusi\'on}: los 31 puntos por debajo de \SI{10}{\hertz} no s\'olo no
+aportan informaci\'on ---est\'an degradando activamente el ajuste a los 81 que
+s\'i la tienen. Excluirlos deber\'ia \emph{mejorar} el perfil, no empeorarlo.}
+
+\subsection{Qu\'e conviene reportar}
+
+\seleccionado{Para la presentaci\'on y para cualquier uso posterior, la
+recomendaci\'on que sale de este an\'alisis es:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{Reportar el estado actual, no el export de julio}, y decir por
+    qu\'e: respeta la apertura y no extrapola.
+    \item \textbf{Declarar la profundidad sostenida}
+    (\SIrange{7}{10}{\meter}), no la profundidad modelada. Es una fracci\'on del
+    objetivo de \SI{50}{\meter}, y decirlo es m\'as fuerte que no decirlo.
+    \item \textbf{Mostrar los dos $V_{S,30}$ juntos} como evidencia de la no
+    unicidad, en lugar de elegir uno. Es un resultado en s\'i mismo y encuadra
+    correctamente el aporte del trabajo: el instrumento mide; la inversi\'on es
+    donde est\'a la incertidumbre.
+    \item Conservar el export de julio como \textbf{hito hist\'orico}, tal como
+    ya hace la presentaci\'on, y no como resultado geot\'ecnico.
+\end{enumerate}}

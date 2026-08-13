@@ -1,0 +1,176 @@
+\section{Hallazgos de la revisi\'on del 12 de agosto de 2026}
+\label{sec:hallazgos-revision}
+
+Este documento tiene m\'as de ciento cincuenta p\'aginas. Esta secci\'on est\'a al
+frente para que lo importante no quede sepultado: son los hallazgos de la
+revisi\'on hecha al escribirlo, ordenados por consecuencia. Cinco de ellos son
+\textbf{an\'alisis nuevos sobre datos que ya exist\'ian} y nunca se hab\'ian
+calculado; dos son \textbf{correcciones de errores} en la documentaci\'on previa.
+
+\subsection{Lo que cambia decisiones}
+
+\dato{\textbf{1. La banda \'util real de los datos de campo es
+\SIrange{10}{50}{\hertz}, no la banda objetivo del proyecto.}
+(\S\ref{sec:banda-util})
+
+Midiendo se\~nal contra ruido previo al golpe sobre 257 golpes: SNR mediana de
+\SI{0.4}{\decibel} en \SIrange{1}{2.5}{\hertz} ---la banda que corresponde al
+objetivo de \SI{50}{\meter}--- con \textbf{0 de 16} grupos por encima de
+\SI{10}{\decibel}; contra \SI{15.2}{\decibel} en \SIrange{10}{20}{\hertz} y
+\SI{25.6}{\decibel} en \SIrange{20}{50}{\hertz}.
+
+El diagn\'ostico que lo confirma: por debajo de \SI{7}{\hertz} la densidad
+espectral \emph{no cambia con la distancia}. Algo que no se aten\'ua entre
+\SI{10}{} y \SI{50}{\meter} no est\'a viajando por el suelo: es piso de ruido.
+
+Verificado con cuatro controles ---contra los CSV crudos, separando las
+configuraciones de adquisici\'on, con cuatro longitudes de ventana, y sobre un
+segundo conjunto procesado--- y los cuatro lo sostienen. \textbf{Es coherente con
+el banco}, donde la muesca de cancelaci\'on qued\'o \SI{26.33}{\decibel} menos
+profunda que el modelo.
+
+\emph{Consecuencia}: antes de ampliar la apertura del arreglo hay que conseguir
+que exista se\~nal por debajo de \SI{10}{\hertz}.}
+
+\seleccionado{\textbf{2. Existe verdad de terreno independiente del sitio, y
+nadie la hab\'ia mirado.} (\S\ref{sec:contraste-sev})
+
+El SEV~01 de un estudio hidrogeol\'ogico encargado por la Facultad en julio de
+2023 se ejecut\'o \textbf{en la misma cancha}, con otro m\'etodo geof\'isico y
+antes del proyecto. Sus interfaces caen en \SI{1.0}{}, \SI{2.06}{},
+\SI{4.15}{}, \SI{24.0}{} y \SI{71.8}{\meter}; las del perfil $V_S$ invertido, en
+\SI{1.69}{}, \SI{2.95}{}, \SI{6.50}{}\ldots{} y \textbf{\SI{26.77}{\meter}}.
+Las someras coinciden dentro de \SI{1}{\meter} y la base del suelo dentro del
+\SI{11.5}{\percent}.
+
+Es la primera evidencia de que el sistema mide algo real. Y el mismo informe
+\textbf{recomienda perforar \SI{60}{\meter} en ese punto}: si se ejecuta, ser\'ia
+la validaci\'on invasiva que el proyecto no tiene.}
+
+\dato{\textbf{3. En el \SI{46}{\percent} de los golpes el canal de martillo est\'a
+saturado, y el conjunto procesado mezcla dos configuraciones.}
+(\S\ref{sec:repetibilidad-fuente})
+
+La distribuci\'on de amplitudes es bimodal con un hueco absolutamente vac\'io
+entre \SI{3.08}{} y \SI{3.22}{\volt}. En la poblaci\'on alta el pico repite con
+CV del \SI{0.4}{\percent} ---y sesiones enteras al \SI{0.13}{\percent}---, lo que
+es imposible para un martillo balanceado a mano: es el techo de la cadena.
+
+En la poblaci\'on sin saturar, la repetibilidad real de la fuente resulta ser
+\SI{8.7}{\percent} en amplitud y \textbf{\SI{4.2}{\percent} en centroide
+espectral}. Y esa es \emph{buena noticia}: el contenido en frecuencia ---lo que
+el MASW realmente usa--- es el doble de repetible que la energ\'ia.}
+
+\seleccionado{\textbf{4. La punta del martillo es el control de ancho de banda de
+la fuente, y no se estaba usando.} (\S\ref{sec:fuente-sismica})
+
+Las curvas del manual del 086D20 muestran que la punta fija el contenido
+espectral del golpe: \SI{-20}{\decibel} en \SI{600}{\hertz} con la m\'as blanda
+frente a \SI{1300}{\hertz} con la m\'as dura. Cuanto m\'as blanda, m\'as energ\'ia
+en baja frecuencia ---exactamente donde el proyecto pelea por llegar. El manual
+menciona adem\'as una \emph{masa de extensi\'on} que empuja en la misma
+direcci\'on.
+
+\textbf{Es la mejora de relaci\'on se\~nal--ruido m\'as barata disponible}: no
+cuesta un componente ni una l\'inea de c\'odigo. Y explica retroactivamente por
+qu\'e la interfaz de MATLAB registra el color de punta en cada ensayo.}
+
+\dato{\textbf{5. Tres \emph{picks} de la curva de dispersi\'on deben excluirse, y
+dos criterios independientes lo dicen.} (\S\ref{sec:contraste-sev})
+
+Tres de los 51 puntos tienen $\lambda>\SI{40}{\meter}$ ---hasta
+\SI{130.6}{\meter} con una apertura de \SI{40}{\meter}--- \emph{y} caen en la
+banda de \SIrange{0}{2}{\decibel} de SNR. La geometr\'ia dice que no se pueden
+resolver; la relaci\'on se\~nal--ruido dice que probablemente no hay nada ah\'i.
+La propia interfaz ya dibujaba el techo $\lambda\le L$ y los puntos quedaron
+fuera.}
+
+\seleccionado{\textbf{5-bis. El decaimiento con la distancia confirma todo lo
+anterior por un camino independiente, y aporta una magnitud nueva.}
+(\S\ref{sec:atenuacion})
+
+Ajustando $A\propto r^{-n}$ sobre 637 golpes en 21 posiciones: las bandas
+\SIrange{1}{5}{} y \SIrange{5}{10}{\hertz} dan $n=-0{,}01$ y $0{,}05$ con
+$R^2=0{,}00$ y $0{,}01$ ---\textbf{no decaen ni correlacionan con la
+distancia}, que es exactamente la firma de un piso de ruido. Las bandas con
+se\~nal dan $n=1{,}27$--$1{,}47$ con $R^2\ge0{,}90$.
+
+Y el exceso sobre el $0{,}5$ de Rayleigh puro, atribuido a atenuaci\'on
+material, permite estimar por primera vez el \textbf{factor de calidad del
+sitio: $Q$ entre 12 y 33}, es decir $D_S$ del orden del
+\SIrange{1.5}{4}{\percent} ---valores plenamente coherentes con suelo blando a
+intermedio, obtenidos \'integramente de los datos propios.}
+
+\dato{\textbf{5-ter. Las dos inversiones del mismo sitio dan $V_{S,30}$ que
+difieren en un factor 1,9, y cruzan una frontera normativa.}
+(\S\ref{sec:dos-inversiones})
+
+El proyecto conserva dos estados de inversi\'on de Canchita que nunca se hab\'ian
+comparado. El export de julio da $V_{S,30}=\SI{286.7}{\meter\per\second}$; el
+estado actual, \SI{151.9}{\meter\per\second}. Mismos datos, mismo sitio.
+El primero cae en la clase de suelo r\'igido, el segundo en la de suelo blando:
+\textbf{clases s\'ismicas distintas}, que es el par\'ametro que usar\'ia un
+c\'odigo de dise\~no.
+
+Es el hallazgo de InterPACIFIC reproducido con datos propios: la medici\'on es la
+misma, y la dispersi\'on viene de la \textbf{parametrizaci\'on}. Y hay una buena
+noticia dentro: \textbf{el estado actual es claramente mejor trabajo}
+---respeta la apertura (0 puntos con $\lambda>\SI{40}{\meter}$, frente a 3),
+modela s\'olo los \SI{9.7}{\meter} que los datos sostienen, y acepta peor
+desajuste antes que forzar el modelo. El an\'alisis se volvi\'o m\'as
+disciplinado con el tiempo.}
+
+\subsection{Correcciones a la documentaci\'on previa}
+
+\pendiente{\textbf{6. El PCB 086D20 no es un aceler\'ometro.} Es un martillo de
+impacto con \textbf{sensor de fuerza} de cuarzo. La bit\'acora del 5 de mayo lo
+registr\'o bien; el error entr\'o despu\'es, al redactar, y se propag\'o a cinco
+archivos. Corregido. Importa porque el canal de martillo mide \emph{fuerza
+aplicada al suelo}, lo que lo hace directamente interpretable como funci\'on de
+fuente. (\S\ref{sec:fuente-sismica})}
+
+\pendiente{\textbf{7. La frecuencia de muestreo nativa vigente es
+\SI{2604}{\hertz}}, verificado contra el firmware de la rama actual
+(\texttt{config.js}: \texttt{DEFAULT\_SAMPLE\_RATE\_HZ = 2604}, y las cuatro
+configuraciones de rango de ADC lo declaran). \SI{2929}{} y \SI{1020}{\hertz}
+son hist\'oricas de capturas ya almacenadas; el conjunto ``Estacionamiento'' usa
+adem\'as \SI{3000}{\hertz}, una cuarta tasa que no estaba registrada en ning\'un
+documento.}
+
+\subsection{Evidencia recuperada que ya exist\'ia}
+
+\seleccionado{\textbf{8. La correcci\'on del fallo F1 tiene evidencia
+cuantificada guardada.} (\S\ref{sec:evidencia-auditoria}) Los archivos de la
+corrida fallida y la que pasa est\'an ambos conservados: \textbf{0} muestras
+contra \textbf{\num{1562400}}, \textbf{15} desconexiones contra \textbf{0}. La
+aritm\'etica cierra exacta. Haber guardado el archivo del fallo ---en lugar de
+borrarlo al conseguir el PASS--- es lo que permite reconstruirlo hoy.}
+
+\dato{\textbf{9. El volcado de datos tarda cuatro veces m\'as que la captura.}
+Capturar \SI{600}{\second} llev\'o \SI{2626}{\second} de reloj. La captura es
+tiempo real; el cuello de botella es la transferencia por WebSocket con esquema
+\emph{stop-and-wait}. Para planificar una jornada de campo, esto define cu\'antos
+puntos se alcanzan a medir por d\'ia.}
+
+\subsection{Los \emph{scripts} que produjeron estos hallazgos}
+
+Todos est\'an en \texttt{docs/Primera Presentaci\'on/latex-historial/scripts/} y
+se pueden volver a correr:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\texttt{fig\_contenido\_baja\_frecuencia.py} & Hallazgo 1: SNR por bandas contra el ruido previo al golpe \\
+\texttt{fig\_vs\_vs\_sev.py} & Hallazgo 2: perfil $V_S$ contra las interfaces del SEV~01 \\
+\texttt{fig\_repetibilidad\_fuente.py} & Hallazgos 3 y 5: repetibilidad y saturaci\'on del martillo \\
+\texttt{fig\_atenuacion\_geometrica.py} & Hallazgo 5-bis: decaimiento con la distancia y estimaci\'on de $Q$ \\
+\texttt{fig\_dos\_inversiones.py} & Hallazgo 5-ter: las dos inversiones y sus $V_{S,30}$ \\
+\texttt{fig\_mosaico.py} & Hojas de contacto de los conjuntos grandes de figuras \\
+\texttt{gen\_bitacora\_commits.py} & El registro completo de \emph{commits} por d\'ia \\
+\texttt{gen\_inventario\_scripts.py} & Inventario de c\'odigo con descripci\'on por cabecera \\
+\texttt{gen\_inventario\_datos.py} & Inventario de campa\~nas desde los \texttt{metadata.json} \\
+\texttt{gen\_digesto\_bitacora.py} & Digesto cronol\'ogico de la bit\'acora \\
+\texttt{gen\_base\_bibliografica.py} & Volcado de la base de 65 art\'iculos \\
+\bottomrule
+\end{tabularx}
+\end{center}

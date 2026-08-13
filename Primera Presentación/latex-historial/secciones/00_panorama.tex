@@ -19,14 +19,83 @@ restricciones autoimpuestas:
 SM-24 de \SI{10}{\hertz} disponibles en la Facultad. Para llegar a las
 profundidades de inter\'es hace falta informaci\'on por debajo de su frecuencia
 natural, de modo que \emph{extender la banda hacia abajo por v\'ia electr\'onica
-deja de ser un refinamiento y pasa a ser la condici\'on que hace viable el
-objetivo}.
+deja de ser un refinamiento y pasa a ser una condici\'on de dise\~no}. La
+extensi\'on efectiva todav\'ia debe medirse de extremo a extremo.
 \item \textbf{Nodos inal\'ambricos e independientes}, no un cable de decenas de
 metros con un digitalizador central. Eso convierte la sincronizaci\'on entre
 canales en un problema de dise\~no de primer orden.
-\item \textbf{Todo el procesamiento en herramientas propias}, desde la
-adquisici\'on hasta la inversi\'on multimodal.
+\item \textbf{Orquestaci\'on y revisi\'on en herramientas propias}, desde la
+adquisici\'on hasta una fachada de inversi\'on con motores propios y de terceros.
+La capacidad multimodal existe, pero el estado persistido usa s\'olo una curva
+etiquetada como modo~0, sin identificaci\'on independiente como fundamental.
 \end{itemize}
+
+\subsection{Resumen autoritativo al 12 de agosto de 2026}
+
+Esta tabla es el punto de entrada para resumir el proyecto. Ante una diferencia
+con un relato cronol\'ogico posterior, prevalecen los archivos de resultados, el
+firmware vigente y los metadatos indicados aqu\'i.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\textbf{Eje} & \textbf{Estado que puede afirmarse} \\
+\midrule
+Transductor & SM-24 disponible en la Facultad: $f_n=\SI{10}{\hertz}$,
+sensibilidad nominal \SI{28.8}{\volt\second\per\meter}, $\zeta_0=0{,}25$,
+bobina \SI{375}{\ohm} y masa m\'ovil \SI{11}{\gram}; la hoja de datos no
+especifica inductancia. \\
+\addlinespace[2pt]
+Compensaci\'on & En la tanda calibrada, $\zeta_0=0{,}25$ es el objetivo del
+numerador y $\zeta_1=937{,}396$ el denominador BP. $83{,}661$ pertenece a la
+tanda descartada. El polo inferior ideal es \SI{5.44}{\milli\hertz}, pero la
+muesca medida qued\'o \SI{26.33}{\decibel} menos profunda que la de dise\~no. \\
+\addlinespace[2pt]
+Modelo del operacional & Los scripts combinaron $A_0=\SI{90}{\decibel}$ con
+\SI{8}{\mega\hertz} como polo dominante. Si este valor es GBW, el polo monopolo
+es aproximadamente \SI{253}{\hertz}. La relaci\'on ya se corrigi\'o en los scripts;
+la s\'intesis y el contraste deben repetirse y el ajuste previo no se usa como validaci\'on. \\
+\addlinespace[2pt]
+DA-AFE & Sobre dos placas y ocho configuraciones, la salida LP pas\'o de
+\SIrange{2.9}{45.8}{\percent} a \SIrange{0.4}{3.9}{\percent} del fondo de
+escala, con 10 reinicios apareados por configuraci\'on y un \'unico PI. \\
+\addlinespace[2pt]
+ADC y adquisici\'on & Firmware actual: \SI{2604}{\hertz} nativos, 18 bits,
+$F_s=2604/N$ con $N=1,\ldots,100$ y cuatro rangos. Las tasas 2929 y
+\SI{1020}{\hertz} son hist\'oricas de campo. La ruta cr\'itica usa DFB, DMA y
+\texttt{superMaquina} en UDB. \\
+\addlinespace[2pt]
+Sincronizaci\'on & PRESTART/HOT\_WAIT asegura disponibilidad; el
+\texttt{CMD\_START} llega por ESP-NOW y cada esclavo genera el flanco local al
+PSoC. La observaci\'on $<\SI{400}{\micro\second}$ a unos \SI{5}{\meter} es
+preliminar y anterior a la medici\'on completa de la topolog\'ia vigente. \\
+\addlinespace[2pt]
+Campo & Apertura sint\'etica: martillo fijo en $x=0$ y un ge\'ofono m\'ovil. El
+grupo principal tiene 21 posiciones entre \SI{10}{} y \SI{50}{\meter},
+$\Delta x=\SI{2}{\meter}$ y $L=\SI{40}{\meter}$. El orden de profundidad con
+soporte conservador es \SI{20}{\meter}, no \SI{50}{\meter}. \\
+\addlinespace[2pt]
+MASW & El exportado de julio tiene 51 puntos y desajuste declarado de
+\SI{2.554}{\percent}, pero llega a $\lambda=\SI{130.6}{\meter}$ y queda fuera de
+la evidencia. El estado posterior persistido usa $\lambda=\SIrange{4.001}{26.732}{\meter}$,
+\texttt{maswavespy(port)}, modo~0, siete capas y desajuste \SI{7.1063}{\percent}. No hay
+validaci\'on SPT ni resultado multimodal comparado. \\
+\addlinespace[2pt]
+Pendientes de cierre & Modelo no ideal del operacional, banda compensada medida, \emph{jitter} extremo a
+extremo, apareamiento entre canales, mayor apertura y energ\'ia de fuente,
+ruido referido a entrada y contraste geot\'ecnico externo. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{arquitectura_vigente.png}
+\caption{Arquitectura vigente y frontera entre el camino determinista de
+muestra y las funciones de calibraci\'on, comunicaci\'on, almacenamiento y
+procesamiento.}
+\label{fig:arquitectura-vigente-hist}
+\end{figure}
 
 \subsection{Escala del trabajo}
 
@@ -50,7 +119,7 @@ anterior.}
 \textbf{Dimensi\'on} & \textbf{Detalle} & \textbf{Cantidad} \\
 \midrule
 Per\'iodo activo & 25 feb 2026 --- 12 ago 2026 & 25 semanas \\
-\emph{Commits} & suma de los diez repositorios & 1261 \\
+\emph{Commits} & suma reconstruida de los diez repositorios & \textasciitilde{}1261 \\
 D\'ias con actividad & registrados en la bit\'acora & 66 \\
 Bit\'acora & entradas diarias con an\'alisis de \emph{diff} & \textasciitilde{}1{,}3~MB \\
 Bibliograf\'ia & base curada con DOI y relevancia & 65 papers \\

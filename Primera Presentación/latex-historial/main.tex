@@ -27,6 +27,7 @@
 \usepackage{microtype}
 \usepackage{siunitx}
 \usepackage{caption}
+\usepackage[section]{placeins}
 \usepackage[hidelinks]{hyperref}
 
 \sisetup{output-decimal-marker={,},per-mode=symbol}
@@ -47,6 +48,10 @@
 \sloppy
 \makeatletter
 \renewcommand{\ttdefault}{lmtt}
+% El ancho est\'andar del n\'umero en el \~indice no alcanza desde la etapa 10.
+\renewcommand*\l@section{\@dottedtocline{1}{1.5em}{3.0em}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{4.5em}{3.8em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{8.3em}{4.5em}}
 \makeatother
 
 % --- Encabezado manual (fancyhdr NO está instalado en este MiKTeX) ---
@@ -131,6 +136,7 @@ Dentro de cada etapa se distingue con color lo que se
 \newpage
 
 \input{secciones/00_panorama}
+\input{secciones/00b_hallazgos_revision}
 \input{secciones/01_etapa_marco_teorico}
 \input{secciones/02_etapa_investigacion_ia}
 \input{secciones/03_etapa_analogica}
@@ -142,8 +148,22 @@ Dentro de cada etapa se distingue con color lo que se
 \input{secciones/09_etapa_paper_caracterizacion}
 \input{secciones/10_etapa_reorganizacion_web}
 \input{secciones/11_etapa_placa_nueva}
+\input{secciones/19_anatomia_firmware}
+\input{secciones/28_sev_guiada}
+\input{secciones/27_dos_inversiones}
+\input{secciones/26_atenuacion}
+\input{secciones/25_evidencia_auditoria}
+\input{secciones/24_banda_util_real}
+\input{secciones/23_interfaces_capturas}
+\input{secciones/22_fuente_sismica}
+\input{secciones/15_atlas_visual}
 \input{secciones/12_inventario}
 \input{secciones/13_descartes}
 \input{secciones/14_pendientes}
+\input{secciones/18_inventario_datos}
+\input{secciones/17_inventario_scripts}
+\input{secciones/21_base_bibliografica}
+\input{secciones/20_digesto_bitacora}
+\input{secciones/16_commits}
 
 \end{document}

@@ -61,15 +61,26 @@ $^{\ddagger}$\'Unica media calibrada superior a su l\'inea base.
     \SIrange{0.1}{5.2}{\percent}.
     \item Una \textbf{prueba de signos de una cola}~\cite{Conover1999} sobre las
     mediciones apareadas de la etapa LP rechaz\'o la hip\'otesis nula de ausencia de
-    reducci\'on en \textbf{las ocho configuraciones} (10 de 10 reinicios apareados, con
-    $p\approx10^{-3}$ exacto), resultado que sobrevive a la correcci\'on de Bonferroni
-    por comparaciones m\'ultiples.
+    reducci\'on en \textbf{las ocho configuraciones} (10 de 10 reinicios apareados;
+    proporci\'on de mejora $1{,}00$, IC binomial exacto bilateral del \SI{95}{\percent}
+    $[0{,}692;1]$). Para cada configuraci\'on, $p=0{,}0009766$; con ocho comparaciones,
+    $p_{\mathrm{Bonf}}=0{,}0078125<\alpha=0{,}05$.
     \item El resultado se obtuvo con una \textbf{\'unica configuraci\'on de controlador}
     para todas las placas y ganancias, sin reajuste espec\'ifico por placa ni por
     ganancia, lo que respalda la robustez del m\'etodo.
     \item Las etapas cuyo residuo de l\'inea base ya se ubica dentro de su banda muerta
     quedan sin modificar por dise\~no, comportamiento visible en la fila BP de la Placa~B.
 \end{itemize}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth]{autocalibration_stage_outputs_5_to_20s.png}
+\caption{Ejemplo de trayectorias medidas durante la calibraci\'on \emph{foreground}. Las
+cuatro salidas convergen secuencialmente mientras el controlador recorre PGA, BP, SUM y
+LP; la figura ilustra din\'amica, no reemplaza la estad\'istica de la
+Tabla~\ref{tab:results}.}
+\label{fig:autocal-trayectorias}
+\end{figure}
 
 \subsubsection{Temporizaci\'on}
 
@@ -93,7 +104,9 @@ reportadas en la comunicaci\'on cient\'ifica:
 
 \begin{itemize}[itemsep=0.15em]
     \item El estudio se limit\'o a \textbf{dos placas ensambladas independientemente} y a
-    un orden de calibraci\'on fijo; no establece desempe\~no estad\'istico poblacional.
+    un orden de calibraci\'on fijo; no establece desempe\~no estad\'istico poblacional. La
+    referencia se midi\'o siempre antes de calibrar, de modo que una deriva temporal no
+    queda separada experimentalmente del efecto del controlador.
     \item No se caracteriz\'o la \textbf{deriva de largo plazo} ni el apareamiento entre
     canales a lo largo de un arreglo completo.
     \item La evidencia concierne al \textbf{punto de operaci\'on} de la cadena de
@@ -145,26 +158,157 @@ registra del orden de \textbf{22\,000 archivos crudos} (aproximadamente
 Sobre esos registros el \emph{pipeline} produce:
 
 \begin{itemize}[itemsep=0.15em]
-    \item Registros multicanal coherentes visualizables en formato \emph{waterfall} y de
-    trazas, con correcci\'on de polaridad y alineaci\'on entre tandas.
+    \item \emph{Gathers} reconstruidos por apertura sint\'etica y alineados mediante el
+    canal de martillo, visualizables en formato \emph{waterfall} y de trazas. La
+    coherencia equivalente a un arreglo simult\'aneo no est\'a validada.
     \item Im\'agenes de dispersi\'on en el dominio frecuencia--velocidad de fase, con
     combinaci\'on ponderada de m\'ultiples disparos.
     \item Curvas de dispersi\'on extra\'idas por modo mediante regiones-pol\'igono, editables
     antes de la inversi\'on.
-    \item Perfiles $V_S(z)$ obtenidos por inversi\'on multimodal.
+    \item Perfiles $V_S(z)$ mediante motores seleccionables. El estado persistido actual
+    usa una curva etiquetada como modo~0 con el \emph{port} de MASWavesPy; su
+    identificaci\'on como modo fundamental no est\'a demostrada y la capacidad
+    multimodal todav\'ia no constituye un resultado comparado.
 \end{itemize}
 
-\nota{\textbf{Pendiente importante a conversar.} Los perfiles $V_S$ obtenidos a\'un no
-est\'an contrastados contra un ensayo de referencia (SPT o similar), por lo que en este
-documento se reportan como resultado del \emph{pipeline} y no como caracterizaci\'on
-geot\'ecnica validada del sitio. Hay que decidir si conviene: (a) presentar un perfil
-$V_S$ concreto ya en la Primera Presentaci\'on aclarando expl\'icitamente que la validaci\'on
-externa est\'a pendiente, o (b) reportar \'unicamente la capacidad del \emph{pipeline} y
-dejar los perfiles para la Defensa Final. Mi sugerencia es (a) con la aclaraci\'on, porque
-demuestra que la cadena completa cierra.}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{adquisiciones_por_distancia.png}
+\caption{Selecci\'on de adquisiciones crudas reales a cuatro distancias. Cada fila
+muestra la forma temporal alineada por martillo y su espectro normalizado. Se observa
+la degradaci\'on con la distancia, pero estas trazas provienen de impactos distintos y no
+constituyen por s\'i solas un \emph{gather} multicanal simult\'aneo validado.}
+\label{fig:adquisiciones-distancia}
+\end{figure}
 
-\nota{Faltan por incorporar a este documento las \textbf{figuras}: cadena anal\'ogica,
-diagrama de hardware digital, trayectorias de calibraci\'on, \emph{waterfall} de campo e
-imagen de dispersi\'on. Todas existen ya en \texttt{docs/Urucom\_2026\_compact/imagenes/}
-y en las salidas del \emph{pipeline}; falta elegir cu\'ales entran seg\'un el recorte que
-definamos.}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mapa_tiempo_distancia.png}
+\caption{Mapa tiempo--distancia construido con la primera captura v\'alida a
+\SI{1020}{\hertz} de cada una de las 21 posiciones. Cada traza se normaliza por
+separado para hacer visible la propagaci\'on; por ello el color no conserva amplitud
+relativa y la figura se interpreta como apertura sint\'etica exploratoria.}
+\label{fig:mapa-tiempo-distancia}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Geometr\'ia, muestreo espacial y alcance}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{geometria_campanas.png}
+\caption{Grupos guardados en el estado de procesamiento. El grupo~1 activo cubre 21
+posiciones virtuales y \SI{40}{\meter} de apertura; el grupo~2 conserva peso nulo en el
+estado actual.}
+\label{fig:geometria-actual}
+\end{figure}
+
+El grupo principal contiene 21 posiciones virtuales entre \SI{10}{} y
+\SI{50}{\meter}, con $\Delta x=\SI{2}{\meter}$, \emph{offset} m\'inimo de
+\SI{10}{\meter} y apertura $L=\SI{40}{\meter}$. Por muestreo espacial, la longitud de
+onda m\'inima sin \emph{aliasing} es $\lambda_{\min}=2\Delta x=\SI{4}{\meter}$; los
+puntos por debajo de ese valor no deben incorporarse a una inversi\'on defendible. El
+estado vigente de 113 puntos abarca $\lambda=\SIrange{4.001}{26.732}{\meter}$, dentro del
+intervalo conservador $2\Delta x\leq\lambda\leq L$. En cambio, el exportado hist\'orico
+de julio llega a aproximadamente \SI{130.6}{\meter}, m\'as de tres veces la apertura;
+por eso se conserva como hito del \emph{pipeline}, pero se excluye de la evidencia
+geot\'ecnica y no se usa para interpretar ni siquiera el tramo somero.
+
+Como lectura conservadora de dise\~no, $L/2\approx\SI{20}{\meter}$ se usa aqu\'i como
+orden de magnitud de profundidad con soporte geom\'etrico, no como ley universal. En
+consecuencia, las capas de un perfil que se extiende hasta \SI{82.6}{\meter} no quedan
+respaldadas por esta geometr\'ia por debajo de aproximadamente \SI{20}{\meter}. El
+objetivo de \SI{50}{\meter} requiere mayor apertura y suficiente energ\'ia de fuente; no
+queda demostrado por la sola extensi\'on de banda del \emph{front-end}.
+
+La inspecci\'on exploratoria del \emph{gather} muestra adem\'as una ca\'ida de SNR aparente
+sobre la primera captura v\'alida por posici\'on: mediana de
+\SI{18.9}{\decibel} entre \SI{10}{} y \SI{26}{\meter}, frente a
+\SI{4.9}{\decibel} entre \SI{30}{} y \SI{50}{\meter}. Por tanto, alargar el arreglo sin
+aumentar y controlar la energ\'ia del impacto no resuelve el alcance.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{waterfall_promedios.png}
+\caption{Vista \emph{waterfall} del conjunto procesado de la campa\~na Canchita. La
+representaci\'on facilita inspeccionar alineaci\'on, polaridad y trenes de onda antes de
+la transformaci\'on de dispersi\'on; no reemplaza las pruebas cuantitativas de
+repetibilidad de fuente y acoplamiento.}
+\label{fig:waterfall-canchita}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{gather_sintetizado.png}
+\caption{\emph{Gather} reconstruido desde binarios crudos y alineado por el canal de
+martillo. Las trazas cercanas muestran el tren dispersivo; el panel derecho evidencia la
+p\'erdida de SNR en la mitad lejana. Esta versi\'on contiene 20 posiciones con registros
+a \SI{1020}{\hertz}; la geometr\'ia persistida completa contiene 21.}
+\label{fig:gather-main}
+\end{figure}
+
+\FloatBarrier
+
+\subsubsection{Dos estados de inversi\'on que no deben mezclarse}
+
+El exportado de julio contiene 51 puntos entre \SI{5.11}{} y \SI{29.75}{\hertz},
+velocidades de fase entre \SI{60}{} y \SI{668}{\meter\per\second}, un perfil de nueve
+capas m\'as semiespacio y un desajuste declarado de \SI{2.554}{\percent}; su intervalo
+de longitudes de onda no satisface el criterio geom\'etrico adoptado y el perfil queda
+fuera de la evidencia. Un estado
+exploratorio posterior, actualmente persistido, usa 113 puntos,
+\texttt{maswavespy(port)}, modo~0, siete capas configuradas y desajuste
+$E=\SI{7.1063}{\percent}$, definido como error relativo absoluto medio de velocidad de
+fase. Son hitos cronol\'ogicos distintos, no
+dos validaciones equivalentes.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{masw_resultado.png}
+\caption{Exportado hist\'orico de julio: 51 puntos, perfil de nueve capas m\'as
+semiespacio y desajuste declarado de \SI{2.554}{\percent}. Sus longitudes de onda llegan
+a \SI{130.6}{\meter} para $L=\SI{40}{\meter}$; se conserva como hito hist\'orico, no como
+resultado geot\'ecnico interpretable.}
+\label{fig:masw-julio-main}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{masw_estado_actual.png}
+\caption{Estado exploratorio persistido posteriormente: 113 puntos etiquetados como
+modo~0, con $\lambda=\SIrange{4.001}{26.732}{\meter}$, y perfil
+editado con \texttt{maswavespy(port)}. No se superpone una curva te\'orica porque el JSON
+guardado no contiene esa serie; se evita reconstruirla por inferencia.}
+\label{fig:masw-actual-main}
+\end{figure}
+
+\nota{Los perfiles $V_S$ no est\'an contrastados contra un ensayo de referencia (SPT o
+similar). Se presentan como demostraci\'on de cierre del flujo de procesamiento, no como
+caracterizaci\'on geot\'ecnica validada ni como evidencia de alcance a
+\SI{50}{\meter}.}
+
+\nota{\textbf{Evidencia adicional incorporada el 12/08/2026, a conversar con el tutor.}
+Un an\'alisis de relaci\'on se\~nal--ruido por bandas sobre 257 golpes de la campa\~na
+---comparando \SI{1}{\second} de se\~nal contra \SI{1}{\second} de ruido previo al
+disparo, en los mismos registros--- arroja que la \textbf{banda \'util efectiva de los
+datos de campo es aproximadamente \SIrange{10}{50}{\hertz}}:
+\SI{0.4}{\decibel} de SNR mediana en \SIrange{1}{2.5}{\hertz} (0 de 16 grupos por encima
+de \SI{10}{\decibel}) frente a \SI{15.2}{\decibel} en \SIrange{10}{20}{\hertz} y
+\SI{25.6}{\decibel} en \SIrange{20}{50}{\hertz}. El resultado se verific\'o contra los
+CSV crudos, separando las configuraciones de adquisici\'on, y es independiente de la
+longitud de la ventana de an\'alisis. Adem\'as, por debajo de \SI{7}{\hertz} la densidad
+espectral \textbf{no var\'ia con la distancia}, lo que indica piso de ruido y no campo de
+ondas propag\'andose.
+
+Dos consecuencias para la lectura de estas figuras: \textbf{(a)} los puntos de menor
+frecuencia de la curva ---los mismos que exceden $\lambda\le L$--- caen en una banda con
+\SIrange{0}{2}{\decibel} de SNR, de modo que dos criterios independientes (geometr\'ia y
+relaci\'on se\~nal--ruido) coinciden en que deben excluirse antes de invertir;
+\textbf{(b)} el resultado es coherente con la caracterizaci\'on de banco, donde la muesca
+de cancelaci\'on medida qued\'o \SI{26.33}{\decibel} menos profunda que el modelo, es
+decir que la compensaci\'on realizada no alcanz\'o el $\zeta_1$ nominal. Banco y campo se
+corroboran. El desarrollo completo est\'a en el historial t\'ecnico
+(\texttt{latex-historial}, \S24).}
+
+\clearpage

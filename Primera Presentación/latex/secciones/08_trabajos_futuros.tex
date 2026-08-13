@@ -64,6 +64,14 @@ una red con salida a internet mientras mantiene su punto de acceso. Quedan pendi
 \subsection{Ampliaci\'on del arreglo y campa\~na de validaci\'on}
 
 \begin{itemize}[itemsep=0.15em]
+    \item Dise\~nar una geometr\'ia que sostenga el objetivo de \SI{50}{\meter}: aumentar
+    la apertura muy por encima de los \SI{40}{\meter} actuales, mantener
+    $\lambda_{\min}\geq2\Delta x$, revisar el \emph{offset} contra campo cercano y
+    documentar el intervalo de longitudes de onda realmente confiable.
+    \item Repetir la campa\~na con una fuente de energ\'ia caracterizada. La SNR aparente
+    actual cae de una mediana de \SI{18.9}{\decibel} en \SIrange{10}{26}{\meter} a
+    \SI{4.9}{\decibel} en \SIrange{30}{50}{\meter}; ampliar la apertura sin resolver la
+    fuente s\'olo desplaza el l\'imite.
     \item Escalar el arreglo desde la configuraci\'on actual hasta el n\'umero de canales
     objetivo, y caracterizar experimentalmente el \textbf{apareamiento entre canales} y
     el \emph{jitter} de sincronizaci\'on real sobre el arreglo completo ---magnitud que
@@ -72,10 +80,85 @@ una red con salida a internet mientras mantiene su punto de acceso. Quedan pendi
     previstas en la propuesta, m\'as all\'a del arreglo lineal.
     \item Ejecutar una campa\~na de medici\'on en un sitio con \textbf{informaci\'on
     geot\'ecnica de referencia disponible} (SPT o equivalente).
+    \item \textbf{Prioritario y al alcance de la mano:} contrastar el perfil $V_S$
+    invertido contra el modelo geoel\'ectrico del \textbf{SEV~01}, que fue medido en la
+    misma cancha por terceros, con otro m\'etodo y antes del proyecto
+    (\S\ref{sec:sitio-sev}). No requiere ninguna campa\~na nueva: los datos ya existen.
+    Los contrastes esperables est\'an en \SI{24}{\meter} (base del suelo) y
+    \SI{71.8}{\meter}, y el nivel fre\'atico entre \SI{10}{} y \SI{30}{\meter} da un
+    rango con fuente para parametrizar la raz\'on de Poisson de las capas saturadas en la
+    inversi\'on.
+    \item \textbf{La validaci\'on definitiva}: el mismo estudio recomienda perforar un
+    pozo de \SI{60}{\meter} con perfilaje geof\'isico \emph{exactamente en el sector del
+    SEV~01}. Si esa perforaci\'on se ejecuta, el proyecto tendr\'ia una referencia
+    invasiva directa en el punto donde midi\'o, reproduciendo a escala de un sitio el
+    experimento de la segunda parte de InterPACIFIC~\cite{Garofalo2016b}. Conviene
+    gestionar el acceso a esa informaci\'on con la Facultad antes de que la obra, si
+    ocurre, se ejecute sin registro geof\'isico.
+    \item Verificar la geometr\'ia real contra el criterio $\lambda_{\max}>\SI{60}{\meter}$
+    de Comina \emph{et al.}~\cite{Comina2011}: con la apertura actual de
+    \SI{40}{\meter} el criterio \textbf{no se cumple}, lo que acota expl\'icitamente la
+    confiabilidad alcanzable de $V_{S,30}$ hasta que el arreglo se ample\'e.
     \item \textbf{Contrastar cuantitativamente} los perfiles $V_S$ obtenidos por MASW
     contra esa referencia. Este es el criterio de \'exito \'ultimo del proyecto y la
     validaci\'on que a\'un no se realiz\'o.
+    \item Comparar sobre el mismo conjunto los \emph{backends} MASWavesPy,
+    \texttt{evodcinv}/\texttt{disba}, Monte Carlo, ADsurf y Geopsy, primero con modo
+    fundamental y luego con modos superiores identificados. Reportar sensibilidad a la
+    parametrizaci\'on y no s\'olo el modelo de menor desajuste.
+    \item Evaluar adquisici\'on pasiva (ReMi o SPAC) como complemento para extender la
+    curva hacia bajas frecuencias, sin presentarla como sustituto de la apertura ni de la
+    validaci\'on externa.
 \end{itemize}
+
+\subsection{Sincronizaci\'on: cerrar ESP-NOW y evaluar UWB}
+
+La prioridad inmediata es ejecutar \texttt{SCOPE\_MULTI} sobre la topolog\'ia vigente y
+medir el camino callback$\to$GPIO$\to$PSoC en varios nodos, distancias, orientaciones,
+cargas WiFi y estados de canal. Deben reportarse distribuci\'on, percentiles y peor caso,
+no s\'olo el promedio, y contrastarse con los presupuestos de fase de
+\SI{278}{\micro\second} a \SI{50}{\hertz} y \SI{139}{\micro\second} a
+\SI{100}{\hertz} para un error m\'aximo de \SI{5}{\degree}.
+
+Si ESP-NOW no satisface ese criterio, UWB es un candidato fundado, no una prestaci\'on ya
+disponible. Wicsync reporta sincronizaci\'on instant\'anea menor a \SI{3}{\nano\second}
+para diez nodos hasta al menos \SI{75}{\meter}, pero usa DW1000, FPGA, DAC y VC-TCXO,
+una arquitectura mucho m\'as especializada que este prototipo~\cite{Xue2021Wicsync}. En
+hardware comercial m\'as cercano a una WSN, P\'erez-Solano \emph{et al.} obtuvieron
+\SI{0.14}{\nano\second} usando marcas internas del transceptor y alrededor de
+\SI{31}{\nano\second} al trasladar la referencia al temporizador del microcontrolador,
+mostrando que la interfaz entre dominios de reloj puede dominar el error
+~\cite{PerezSolano2022UWB}. Una migraci\'on deber\'a medirse de extremo a extremo hasta el
+inicio del ADC, no evaluarse s\'olo por la resoluci\'on nominal del radio.
+
+Un antecedente reciente refuerza la viabilidad con hardware accesible: Korsimaa
+\emph{et al.}~\cite{Korsimaa2025} publican en \emph{HardwareX} un distribuidor
+inal\'ambrico de disparo basado en m\'odulos \textbf{DWM1000} de bajo costo que alcanza un
+\emph{jitter} de \textbf{$\pm\SI{4}{\nano\second}$} con intervalo de confianza del
+\SI{95}{\percent} sobre un mill\'on de transmisiones, con mediana de retardo de
+\SI{7.360}{\micro\second} y probado hasta \SI{25}{\meter}. Frente a los
+\SI{400}{\micro\second} actuales, eso son \textbf{cinco \'ordenes de magnitud} de mejora,
+y llevar\'ia el error de fase a valores despreciables en toda la banda s\'ismica.
+
+\paragraph{El argumento decisivo no es el \emph{jitter}, es que resuelve dos problemas
+con una sola tecnolog\'ia.} UWB no s\'olo distribuye un disparo preciso: su capacidad
+nativa de \textbf{\emph{ranging}} mide la distancia entre nodos. Y la posici\'on de cada
+ge\'ofono ---hoy medida a cinta m\'etrica, anotada a mano y cargada manualmente en la
+interfaz--- es un dato del que depende directamente la curva de dispersi\'on: un error de
+posici\'on entra en el c\'alculo de velocidad de fase con el mismo peso que un error de
+tiempo. Una sola tecnolog\'ia atacar\'ia entonces simult\'aneamente:
+
+\begin{enumerate}[itemsep=0.1em]
+    \item la sincronizaci\'on de disparo entre nodos,
+    \item el registro autom\'atico de la geometr\'ia del arreglo, eliminando el error
+    humano de transcripci\'on,
+    \item la posibilidad de geometr\'ias no lineales ---las configuraciones matriciales
+    mencionadas arriba--- donde medir posiciones a cinta se vuelve impracticable, y
+    \item la verificaci\'on independiente de que un nodo est\'a donde el operador cree.
+\end{enumerate}
+
+Es, con diferencia, la l\'inea futura con mejor relaci\'on entre problemas resueltos y
+componentes agregados.
 
 \subsection{Caracterizaci\'on complementaria de la instrumentaci\'on}
 
@@ -105,6 +188,15 @@ prelectura de bloque en el PSoC para acelerar la descarga aproximadamente al dob
 posibilidad de reintentar la descarga desde la interfaz tras una detenci\'on (los datos
 permanecen en la SD); y correcci\'on de dos detalles cosm\'eticos en la presentaci\'on de
 confirmaciones de comando y de la vista previa de decimaci\'on.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{roadmap_validacion.png}
+\caption{Priorizaci\'on cualitativa del trabajo restante por dependencia y valor de
+evidencia. Es una hoja de ruta de ingenier\'ia, no un cronograma contractual: las fechas
+y recursos deben acordarse con la tutor\'ia.}
+\label{fig:roadmap-validacion}
+\end{figure}
 
 \nota{Este es el bloque que la mesa evaluadora suele mirar con m\'as atenci\'on en una
 Primera Presentaci\'on, porque define el alcance restante. Para la versi\'on de 15 p\'aginas

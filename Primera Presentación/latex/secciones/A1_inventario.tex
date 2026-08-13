@@ -13,7 +13,7 @@ para el libro de tesis de la Defensa Final.
 \textbf{Artefacto} & \textbf{Descripci\'on} \\
 \midrule
 \texttt{AcondicionamientoAnalogico} & Proyecto PSoC principal: cadena anal\'ogica de 4 etapas, ADC $\Delta\Sigma$, DFB, DMA, SD, calibraci\'on \\
-\texttt{AcondicionamientoMartillo} & Proyecto PSoC del nodo martillo (aceler\'ometro 086D20) \\
+\texttt{AcondicionamientoMartillo} & Proyecto PSoC del nodo martillo (sensor de fuerza 086D20) \\
 \emph{superMaquina} & Componente Verilog en UDB: m\'aquina de estados de captura \\
 M\'odulo de calibraci\'on & Controlador PI por etapa, anti-windup direccional, banda muerta configurable, persistencia EEPROM+CRC \\
 Firmware ESP32 esclavo & UART al PSoC, ESP-NOW, arena RAM paginada, comandos de banco por USB \\
@@ -47,7 +47,7 @@ Protocolo de barridos & Caracterizaci\'on de la cadena anal\'ogica con \emph{scr
 \begin{tabularx}{\textwidth}{@{}l X@{}}
 \toprule
 \texttt{masw\_dispersion.py} & An\'alisis de dispersi\'on, imagen MASW \\
-\texttt{masw\_inversion.py} & Inversi\'on multimodal (\texttt{evodcinv} sobre \texttt{disba}) \\
+\texttt{masw\_inversion.py} & Fachada de inversi\'on con \emph{backends} seleccionables: \texttt{evodcinv}/\texttt{disba}, Monte Carlo, MASWavesPy, ADsurf y Geopsy \\
 \texttt{review\_field\_data.py} & Revisi\'on de campo: filtros, enfase, polaridad, \emph{waterfall}, picks \\
 Servidor FastAPI & Interfaz web de procesamiento, cola de trabajos, exportaci\'on \\
 \texttt{smoke\_test.py} & \emph{Gate} de 58 verificaciones \\
@@ -66,7 +66,7 @@ Herramientas de regresi\'on & \texttt{usb\_regression\_test.py}, \texttt{sd\_max
 \emph{Vault} Obsidian & 8 cap\'itulos resumidos, $>$140 conceptos at\'omicos interconectados \\
 Base bibliogr\'afica & 65 art\'iculos con an\'alisis estructurado individual \\
 Bit\'acora & 66 jornadas documentadas con an\'alisis t\'ecnico por \emph{commit} \\
-Art\'iculo URUCON~2026 & Comunicaci\'on cient\'ifica sobre el DA-AFE, con revisi\'on \\
+Art\'iculo URUCON~2026 & Comunicaci\'on cient\'ifica sobre el DA-AFE, sometida y pendiente de dictamen \\
 Planes de prueba & Matriz de auditor\'ia pre-campo, documentos de traspaso t\'ecnico \\
 \texttt{TOPDESIGN\_TO\_KICAD.md} & Recuperaci\'on de valores del esquem\'atico con nivel de confianza \\
 \texttt{BUILD\_PROGRAM\_PSOC.md} & Procedimiento de compilaci\'on, conexionado y advertencias el\'ectricas \\

@@ -1,0 +1,234 @@
+\section{Las interfaces, en funcionamiento}
+\label{sec:interfaces-capturas}
+
+Las capturas de esta secci\'on se tomaron el \textbf{12 de agosto de 2026}
+levantando el servidor localmente contra el conjunto de datos real
+(\texttt{python -m server}, sin ning\'un hardware conectado). Muestran el estado
+efectivo de la herramienta, no una maqueta.
+
+\subsection{Pesta\~na Capturas: el visor de validaci\'on}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{ui_server_capturas.jpg}
+\caption{Pesta\~na \textbf{Capturas}. Izquierda: la tabla de estado por captura
+---\texttt{Sin validar}, \texttt{OK}, \texttt{Duplicada}--- con distancia,
+\emph{trigger}, campa\~na, carpeta y \emph{hash}. Derecha: el canal de martillo
+arriba (con la marca autom\'atica del \emph{trigger}) y el ge\'ofono alineado a
+\'el abajo. Abajo a la izquierda, los controles de marca por muestra.}
+\label{fig:ui-capturas}
+\end{figure}
+
+\dato{\textbf{Los n\'umeros que muestra la propia herramienta} al abrir el
+conjunto: \textbf{2098 capturas} visibles sobre 4 campa\~nas, \textbf{199
+carpetas duplicadas ignoradas} y \textbf{606 validadas}. La deduplicaci\'on por
+\emph{hash} no es cosm\'etica: casi una de cada diez carpetas del conjunto es
+una copia.}
+
+Vale registrar los controles porque cada uno responde a un problema encontrado en
+campo: \emph{Invertir esta se\~nal} e \emph{Invertir geo de carpeta} (polaridad,
+que difiere entre ge\'ofono y martillo y a veces entre puntos),
+\emph{Marcar zona auto} y \emph{Limpiar zona} (selecci\'on de la ventana \'util),
+\emph{Aplicar dist.\ a carpeta} (correcci\'on masiva cuando la distancia se
+anot\'o mal), y el ordenamiento \emph{Pico a pico (mayor primero)}, que pone
+arriba las capturas con m\'as se\~nal para revisarlas primero.
+
+\subsection{Pesta\~na Waterfall: el \emph{gather} reconstruido}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{ui_server_waterfall.jpg}
+\caption{Pesta\~na \textbf{Waterfall}, campa\~na Canchita, grupo 1: 21 promedios
+m\'as el martillo global, escala normalizada por traza. El \emph{moveout} ---el
+retardo creciente del arribo con la distancia--- es visible de forma inequ\'ivoca
+entre \SI{10}{} y \SI{50}{\meter}. La traza azul de abajo es el promedio del
+canal de martillo sobre 473 golpes.}
+\label{fig:ui-waterfall}
+\end{figure}
+
+\seleccionado{\textbf{Esta figura es la evidencia m\'as directa de que el sistema
+funciona.} No hace falta invertir nada ni calcular una curva de dispersi\'on: el
+retardo creciente del paquete de ondas con la distancia se ve a simple vista, y
+se ve el ensanchamiento del paquete ---que es la dispersi\'on misma--- a medida
+que se aleja. Un sistema que no estuviera sincronizado, o cuyas trazas no
+estuvieran bien alineadas al martillo, no producir\'ia esta imagen.}
+
+Los controles registran decisiones metodol\'ogicas: \emph{Amplitud real (ver
+atenuaci\'on)} frente a normalizado por traza; \emph{Wiggle / \'area variable
+positiva} (la convenci\'on cl\'asica de s\'ismica); \emph{Filtro K} para el
+filtrado direccional $f$--$k$ contra retrodispersi\'on; y los botones
+\emph{Invertir traza} y \emph{Auto polaridad}, con la advertencia expl\'icita de
+que ``no son de vista: tocan \texttt{geo\_flip} en las anotaciones, as\'i que
+persisten y llegan a promedios, MASW y \emph{export}''.
+
+\subsection{Pesta\~na MASW: dispersi\'on y \emph{picking}}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{ui_server_masw.jpg}
+\caption{Pesta\~na \textbf{MASW}, subpesta\~na 1.~Dispersi\'on. Los puntos rojos
+son los \emph{picks} del operador; las l\'ineas punteadas son las cotas de
+validez que la herramienta dibuja: \textbf{piso anti-\emph{aliasing}
+$c\ge2\,\Delta x\,f$ y techo $\lambda\le L$}.}
+\label{fig:ui-masw}
+\end{figure}
+
+\pendiente{\textbf{La herramienta ya avisaba, y los \emph{picks} igual se
+tomaron fuera.} La leyenda del panel lo dice sin ambig\"uedad: las l\'ineas
+punteadas son el piso anti-\emph{alias} y el techo $\lambda\le L$. Se ve que
+los dos o tres puntos de menor frecuencia ---en torno a
+\SIrange{5}{7}{\hertz} y \SIrange{128}{130}{\meter\per\second}--- caen
+\textbf{fuera de la regi\'on delimitada}. Es exactamente el hallazgo
+cuantificado en \S\ref{sec:contraste-sev}: 3 de los 51 puntos tienen
+$\lambda>\SI{40}{\meter}$, hasta \SI{130.6}{\meter}. La herramienta hizo su
+trabajo; falta que el criterio se aplique al descartar puntos antes de invertir.}
+
+Par\'ametros del an\'alisis persistido, visibles en la captura: $c$ entre
+\SI{50}{} y \SI{170}{\meter\per\second} con $\Delta c=\SI{0.1}{}$, $f$ entre
+\SI{0.1}{} y \SI{35}{\hertz}, \emph{picking} restringido a
+\SIrange{1}{35}{\hertz}, pesos por grupo (grupo~1 con peso~1, grupo~2 con
+peso~0, es decir el grupo~2 excluido), y normalizaci\'on por frecuencia activada.
+El estado se restaura de
+\texttt{data/processed/Canchita/field\_review\_masw\_state.json}. El selector de
+modo (\texttt{M0}, con bot\'on \emph{+ modo}) y los botones \emph{Dibujar
+regi\'on} / \emph{Cerrar regi\'on} son la implementaci\'on del \emph{picking}
+multimodal por regiones-pol\'igono.
+
+\subsection{Pesta\~na Filtros: donde est\'a documentada la mezcla de $F_s$}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{ui_server_filtros.jpg}
+\caption{Pesta\~na \textbf{Filtros}. Butterworth con \texttt{sosfiltfilt}, es
+decir \textbf{fase cero}. El texto de la propia interfaz documenta la pol\'itica
+de mezcla de frecuencias de muestreo.}
+\label{fig:ui-filtros}
+\end{figure}
+
+\seleccionado{\textbf{La restricci\'on de dise\~no est\'a escrita en la
+interfaz}, no escondida en el c\'odigo: ``Butterworth $+$
+\texttt{sosfiltfilt}: \emph{fase cero}, o sea que no corre los tiempos de
+arribo. \textbf{Es la condici\'on que no se puede romper ac\'a}''. Un filtro de
+fase no lineal desplazar\'ia los arribos de forma distinta seg\'un la frecuencia
+y corromper\'ia justamente la magnitud que el MASW mide.}
+
+\dato{\textbf{C\'omo se combinan las $F_s$ distintas}, seg\'un el texto de la
+interfaz: dentro de cada grupo (misma distancia) las capturas se
+\textbf{remuestrean a la $F_s$ com\'un} ---por defecto la m\'inima del grupo, de
+modo que \SI{2929}{\hertz} baja a \SI{1020}{\hertz}--- y se alinean por su
+\emph{trigger}. Las capturas viejas de \SI{3}{\second} aportan al promedio
+s\'olo hasta donde llegan; la cola larga la definen las de
+\SI{10.59}{\second}, con \texttt{NaN} donde no hay dato: \textbf{``no se inventa
+se\~nal''}. Esto explica por qu\'e el an\'alisis de repetibilidad de
+\S\ref{sec:repetibilidad-fuente} encuentra todo a \SI{1020}{\hertz} en una de
+las dos poblaciones.}
+
+El supresor de l\'inea tambi\'en est\'a descrito en la interfaz y coincide con lo
+documentado en el dise\~no: ``no es un \emph{notch} IIR: estima la frecuencia
+real de l\'inea y resta el modelo arm\'onico ajustado sobre la captura completa.
+Hilbert es exclusivamente visual''. Frecuencia nominal \SI{50}{\hertz},
+3 arm\'onicos, b\'usqueda $\pm\SI{2}{\hertz}$.
+
+\subsection{La SPA del ESP32, reconstruida desde su c\'odigo fuente}
+\label{sec:spa-esp-detalle}
+
+Los archivos de la SPA se sirvieron est\'aticamente
+(\texttt{python -m http.server} sobre \texttt{master/data/}) y la p\'agina carga
+correctamente: responde HTTP 200 y solicita \texttt{/enlace/status} y
+\texttt{/ws}, que sin el maestro devuelven 404 ---exactamente lo esperable. La
+extensi\'on del navegador bloque\'o la captura de pantalla en ese puerto, as\'i
+que en lugar de insistir se extrajo la estructura \textbf{del propio c\'odigo
+fuente}, que para documentar es igual de fiable y m\'as preciso.
+
+Versi\'on de los \emph{assets}: \texttt{field-study-19} (aparece como
+\texttt{?v=} en todas las referencias a CSS y JS, de modo que un cambio de
+versi\'on invalida la cach\'e del navegador de golpe).
+
+\subsubsection{Controles globales y panel de gr\'aficas}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\texttt{disp-secs} & Ventana de visualizaci\'on en segundos \\
+\texttt{chk-show-raw} / \texttt{chk-show-filt} & Curvas cruda y filtrada, conmutables \\
+\texttt{chk-show-env-raw} / \texttt{chk-show-env-filt} & Envolventes de ambas \\
+\texttt{chk-dc-remove} & Remoci\'on de continua para visualizaci\'on \\
+\texttt{chk-spectrum} & Vista de espectro \\
+\emph{Cursor 1} / \emph{Cursor 2} / \emph{Reset} & Los dos cursores de medici\'on \\
+\emph{Reconectar} / \emph{Modo claro} & Estado del enlace y tema \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsubsection{Pesta\~na Captura}
+
+Botones y campos, verbatim del HTML: \emph{ARM} (con \texttt{arm-n}, el n\'umero
+de esclavos), \emph{Aplicar N} (con \texttt{capture-decim-n}, el factor de
+decimaci\'on), los atajos \textbf{\emph{M\'ax RAM (512)}} y \textbf{\emph{M\'ax
+SD (60000)}}, duraciones separadas \texttt{capture-secs} y
+\texttt{capture-secs-hammer}, \emph{START}, \emph{Descontar}, \emph{STOP},
+\emph{Calibrar todos}, y la exportaci\'on con \texttt{export-name},
+\emph{Guardar CSV/ZIP} y \emph{Subir al server}.
+
+\dato{\textbf{Los dos atajos de l\'imite son la interfaz de la jerarqu\'ia de
+memoria}: 512 lotes es el techo de la arena en RAM del ESP32 y 60\,000 el de la
+tarjeta SD en el PSoC. Que est\'en como botones de un toque, y no como un
+n\'umero a escribir, dice que en campo se usaban seguido.}
+
+\subsubsection{Pesta\~na Esclavos: el panel por nodo}
+
+El panel se construye din\'amicamente en \texttt{slave\_panel.js} (581 l\'ineas).
+Sus r\'otulos, extra\'idos del c\'odigo, muestran la profundidad del control por
+nodo:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Identificaci\'on & \texttt{MAC}, \texttt{RSSI: \{\} dBm}, \texttt{Latency}, \emph{Probe latency}, \texttt{Batches}/\texttt{Samples}, \texttt{Last: \{\} V} \\
+Estado del PSoC & \texttt{PSoC: DETECTED} / \texttt{not detected}; \emph{Hardware PSoC} \\
+Ganancia & PGA y \textbf{PGAout} con \texttt{Current: \{nombre de ganancia\}} \\
+Conversor & \emph{Rango ADC} con lectura del valor vigente \\
+Geometr\'ia y signo & \emph{Offset m}; \emph{Invertir se\~nal ($\times-1$) para display y export} \\
+Filtro & \emph{FIR Filter} con \emph{FIR hardware}, \emph{N\'umero de taps}, \emph{No filter}, \emph{Cutoff 1, Hz} y \emph{Cutoff 2, Hz} \\
+\emph{Notch} & \emph{F1 Hz}, \emph{F2 Hz}, \emph{Cantidad de arm\'onicos $50\times N$ a cancelar} \\
+Almacenamiento & \emph{SD: detectada} / \emph{SD no detectada} \\
+Calibraci\'on & \emph{Calibrar PSoC}, \emph{Guardar EEPROM} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{El patr\'on de confirmaci\'on es sistem\'atico y merece
+destacarse.} Cada par\'ametro cr\'itico tiene \emph{tres} estados de r\'otulo, no
+dos: por ejemplo \texttt{PGA confirmado por PSoC}, \texttt{PGA pendiente o sin
+confirmacion} y \texttt{PGA sin confirmar}. Lo mismo para PGAout, rango de ADC,
+decimaci\'on, SD y calibraci\'on. Es decir: la interfaz \textbf{nunca afirma que
+un par\'ametro est\'a aplicado hasta que el PSoC lo confirma}, y distingue
+``todav\'ia no lleg\'o la respuesta'' de ``nunca se intent\'o''. En un sistema
+donde un ajuste silenciosamente no aplicado arruina una jornada de campo, esa
+distinci\'on es la diferencia entre confiar y no confiar en lo que se ve.}
+
+\dato{Un detalle de expectativa de uso: el mensaje de calibraci\'on advierte
+\emph{``Calibrando... (puede tardar hasta \textasciitilde{}4 min)''}. Cuatro
+minutos por nodo es un costo real de la jornada, y explica por qu\'e existe la
+persistencia en EEPROM: se calibra una vez y se guarda.}
+
+\subsubsection{Pesta\~na Enlace}
+
+Campos \texttt{enlace-ssid}, \texttt{enlace-pass} (tipo \texttt{password}) y
+\texttt{enlace-server}, con botones \emph{Buscar} (escaneo de redes),
+\emph{Guardar} y \emph{Conectar}. Hay adem\'as un \texttt{auth-password}
+independiente. Es el modo ENLACE de julio: el maestro se une a la red del
+cliente ---t\'ipicamente el punto de acceso de un tel\'efono--- conservando su
+propio AP, y la URL del servidor de datos queda persistida \emph{en el maestro},
+de modo que cualquier navegador que se conecte despu\'es la hereda.
+
+\subsection{Lo que no se pudo capturar}
+
+\pendiente{Faltan \emph{capturas de pantalla} de la \textbf{SPA del ESP32} y de
+las \textbf{interfaces MATLAB}. MATLAB necesita el PSoC por USB, de modo que ah\'i
+la limitaci\'on es real. La SPA del ESP32 \textbf{s\'i} se logr\'o servir sin
+hardware (\S\ref{sec:spa-esp-detalle}) y carga correctamente; lo que fall\'o fue
+la captura de pantalla, bloqueada por permisos del navegador en ese puerto. Su
+contenido qued\'o documentado desde el c\'odigo fuente, que para este prop\'osito
+es incluso m\'as preciso que una imagen. Queda pendiente \'unicamente el registro
+visual.}

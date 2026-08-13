@@ -1,0 +1,266 @@
+\section{La fuente s\'ismica: el martillo, sus puntas y el martinete de leva}
+\label{sec:fuente-sismica}
+
+La fuente es la mitad del experimento y es, con diferencia, la parte menos
+controlada del sistema. Esta secci\'on re\'une lo que se sabe de ella, incluyendo
+un dato del manual del instrumento que estuvo seis meses sin explotarse y que
+resulta directamente accionable.
+
+\subsection{El instrumento: PCB Piezotronics 086D20}
+
+\pendiente{\textbf{Correcci\'on de terminolog\'ia.} Durante meses los documentos
+del proyecto describieron el 086D20 como un ``aceler\'ometro''. \textbf{No lo
+es}: seg\'un su propio manual es un \emph{Short-sledge Impulse Hammer with force
+sensor \& tips}, es decir un martillo con \textbf{sensor de fuerza} de cuarzo
+ICP\textsuperscript{\textregistered} montado en la cara de impacto. La bit\'acora
+del 5 de mayo lo registr\'o correctamente como ``sensor de fuerza
+piezoel\'ectrico''; el error se introdujo despu\'es, al redactar. Corregido el 12
+de agosto en los cinco lugares donde aparec\'ia.
+
+La distinci\'on importa: el canal de martillo mide \textbf{fuerza aplicada al
+suelo en newtons}, no aceleraci\'on de la maza. Eso hace que el canal sea
+directamente interpretable como la funci\'on de fuente del experimento ---y, en
+principio, utilizable para deconvoluci\'on--- cosa que un aceler\'ometro sobre la
+maza no permitir\'ia sin un modelo de la masa efectiva.}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+Par\'ametro & Valor \\
+\midrule
+Tipo & \emph{Short-sledge impulse hammer} con sensor de fuerza integrado \\
+Rango de fuerza & 0 a \num{5000}~lbf \\
+Sensibilidad & \SI{1}{\milli\volt}/lbf $=$ \SI{0.23}{\milli\volt\per\newton} \\
+Masa de la cabeza & \num{2.4}~lb ($\approx\SI{1.09}{\kilo\gram}$) \\
+Tipo de sensor & Cuarzo ICP\textsuperscript{\textregistered}, amplificador de ganancia unitaria integrado \\
+Alimentaci\'on & Dos hilos, corriente constante; salida acoplada en alterna \\
+Construcci\'on & Unidad integral soldada por l\'aser; \textbf{no se desarma fuera de f\'abrica} \\
+Cable & Cinta reparable, dise\~nada a prop\'osito como el eslab\'on d\'ebil ante un golpe fallido \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Las puntas: el control de ancho de banda de la fuente}
+
+\dato{\textbf{El hallazgo}. El manual incluye las curvas de respuesta en
+frecuencia de la familia 086D20 para cada punta de impacto, todas a
+\num{1000}~lbf nominales. La punta \emph{no} es un accesorio de
+protecci\'on: \textbf{es el \'unico control de ancho de banda de la fuente que
+tiene el operador}. Valores le\'idos de las curvas (ca\'ida de
+\SI{-20}{\decibel}):
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Punta & \SI{-20}{\decibel} aproximadamente en \\
+\midrule
+Super blanda & \SI{600}{\hertz} \\
+Blanda & \SI{700}{\hertz} \\
+Media & \SI{900}{\hertz} \\
+Media/dura & \SI{1300}{\hertz} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cuanto m\'as blanda la punta, m\'as largo el pulso de fuerza, m\'as estrecho su
+espectro y \textbf{m\'as concentrada la energ\'ia en baja frecuencia}. El manual
+lo dice sin rodeos: ``las puntas de distinta rigidez permiten variar el ancho del
+pulso y el contenido en frecuencia de la fuerza''.}
+
+\seleccionado{\textbf{Consecuencia directa para este proyecto, y es fuerte.}
+Todo el trabajo de electr\'onica persigue el extremo inferior de la banda porque
+ah\'i est\'a la informaci\'on de profundidad (\S\ref{sec:atlas} y el argumento
+$\lambda$--$f$). Pero la fuente tiene su propio control de banda, gratuito y del
+lado correcto: \textbf{usar la punta m\'as blanda posible concentra la energ\'ia
+del golpe exactamente en la banda que el sistema quiere medir}. Es la mejora de
+relaci\'on se\~nal--ruido de menor costo disponible ---no cuesta un componente ni
+una l\'inea de c\'odigo, s\'olo enroscar otra punta.
+
+El manual agrega un segundo recurso en la misma direcci\'on: la \emph{masa de
+extensi\'on} que se provee con la mayor\'ia de los martillos ``permite un ajuste
+adicional concentrando m\'as energ\'ia en frecuencias bajas''. Ambos recursos
+apuntan al mismo lado y ninguno de los dos se explot\'o de forma sistem\'atica en
+las campa\~nas realizadas.}
+
+\pendiente{\textbf{Esto explica retroactivamente una decisi\'on de interfaz.} La
+aplicaci\'on \texttt{geophone\_scope\_simple.m} tiene un selector de punta de
+martillo con las opciones \emph{gris}, \emph{roja}, \emph{marr\'on}, \emph{negra}
+y \emph{mezclado}, y ese dato se guarda con cada ensayo. En su momento parec\'ia
+mera prolijidad de registro. A la luz de las curvas del manual es otra cosa:
+\textbf{es el registro de la banda de la fuente en cada captura}. Queda
+pendiente mapear cada color a su dureza y contrastar el contenido espectral
+medido de las capturas con las curvas del fabricante ---un experimento que se
+puede hacer \'integramente con datos ya adquiridos.}
+
+\subsection{El martinete de leva: hacia una fuente repetible}
+
+El problema del martillo manual no es su banda sino su \textbf{repetibilidad}:
+la energ\'ia, el \'angulo y el punto exacto del golpe cambian entre repeticiones,
+y el m\'etodo de apertura sint\'etica adoptado (mover un ge\'ofono y apilar golpes
+sucesivos) \emph{depende} de que la fuente sea repetible ---es su hip\'otesis
+m\'as fuerte y la menos verificada.
+
+De ah\'i el dise\~no de un \textbf{martinete de leva}: un mecanismo que eleva una
+maza siguiendo un perfil de leva y la libera siempre desde la misma altura, con
+la misma energ\'ia. Se model\'o en Simscape Multibody a partir de un CAD de
+Fusion~360.
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lr@{}}
+\toprule
+Cota (del CAD, \texttt{lista\_cotas\_herrero.csv}) & Valor \\
+\midrule
+Pivote a rodillo & \SI{215}{\milli\meter} \\
+\'Angulo de palanca & \SI{127.5}{\degree} \\
+Palanca: longitud $\times$ ancho $\times$ espesor & $195\times24\times\SI{24}{\milli\meter}$ \\
+Eje del rodillo: di\'ametro / longitud & \SI{16}{} / \SI{72}{\milli\meter} \\
+Leva: radio m\'inimo / m\'aximo & \SI{5.329}{\centi\meter} / \SI{17.760}{\centi\meter} \\
+Separaci\'on entre planos & \SI{60}{\milli\meter} \\
+Holgura axial leva--palanca & \SI{39}{\milli\meter} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mosaico_martillo_leva.png}
+\caption{Modelado del martinete de leva: perfil de leva a \SI{32}{\degree},
+plano de taller en A3, y los resultados de simulaci\'on multibody ---caso
+nominal, subida, multivuelta contra el piso y la transici\'on de toma C2.}
+\label{fig:mosaico-martillo}
+\end{figure}
+
+La cadena de herramientas qued\'o completa y trazable:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X@{}}
+\toprule
+\texttt{extraer\_geometria\_cad.m} & Mide el mecanismo directamente del CAD de Fusion 360 y lo cachea en \texttt{geometria\_cad.mat} \\
+\texttt{params\_martillo.m} & Separa lo medido de lo decidido: material (PLA, PETG, ABS, acero), rpm de la leva, rigideces de contacto y el factor de escala \\
+\texttt{construir\_martillo\_leva.m} & Arma el modelo Simscape Multibody \\
+\texttt{contacto\_leva\_seguidor.m} & Modelo de contacto entre leva y seguidor \\
+\texttt{simular\_martillo.m} & Corre la simulaci\'on y reporta resultados \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\dato{\textbf{El factor de escala es una decisi\'on de dise\~no expl\'icita.} El
+CAD est\'a dibujado para \textbf{imprimir en 3D}: las formas son las definitivas
+pero el tama\~no es de maqueta. El par\'ametro \texttt{escala}${}=10$ recupera el
+dise\~no de campo, con $C=(250,400)$~mm, que es exactamente diez veces el
+$(25,40)$~mm del CAD. Es decir: se valida la cinem\'atica en una maqueta
+imprimible y barata, y el mismo modelo escala al mecanismo real sin rehacer nada.
+Los par\'ametros por defecto son \SI{40}{rpm} y PLA
+($\rho=\SI{1240}{\kilo\gram\per\meter\cubed}$).}
+
+\seleccionado{Existe un \textbf{plano de taller en A3} listo para entregar a un
+herrero (\texttt{plano\_herrero\_martinete\_A3.pdf/.svg/.png}), con la lista de
+cotas en CSV y el perfil de leva exportado en DXF a escala 1:1
+(\texttt{perfil\_leva\_1a1\_mm.dxf}) y en STL para impresi\'on
+(\texttt{leva\_balistica\_12lb.stl}). El trabajo lleg\'o hasta el punto en que
+\emph{s\'olo falta fabricarlo}.}
+
+\pendiente{El martinete no se construy\'o ni se ensay\'o. Mientras tanto, la
+hip\'otesis de repetibilidad de la fuente ---sobre la que descansa toda la
+apertura sint\'etica--- segu\'ia sin verificarse. La secci\'on siguiente la
+verifica con datos que ya exist\'ian.}
+
+\subsection{Repetibilidad medida de la fuente (an\'alisis del 12/08/2026)}
+\label{sec:repetibilidad-fuente}
+
+Este an\'alisis es nuevo: se hizo al escribir este historial, sobre los
+\textbf{646 golpes} del conjunto procesado \texttt{Canchita}, repartidos en
+\textbf{22 posiciones}. Para cada golpe se midi\'o, en la ventana del impacto del
+canal de martillo, la amplitud pico, el ancho del pulso a media altura y el
+centroide espectral. Los datos estaban desde julio; el c\'alculo nunca se hab\'ia
+hecho.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{repetibilidad_fuente.png}
+\caption{Repetibilidad del golpe medida sobre el canal de martillo. Puntos
+claros: cada golpe individual. L\'ineas: mediana por posici\'on. La banda gris
+del panel superior marca el hueco vac\'io que separa las dos configuraciones.}
+\label{fig:repetibilidad-fuente}
+\end{figure}
+
+\dato{\textbf{Hallazgo 1: el conjunto procesado mezcla dos configuraciones de
+adquisici\'on.} La distribuci\'on de amplitudes es netamente \textbf{bimodal},
+con un \textbf{hueco absolutamente vac\'io entre \SI{3.08}{} y
+\SI{3.22}{\volt}} ---ni un solo golpe de los 646 cae ah\'i. Los
+\textbf{191 golpes tomados a \SI{2929}{\hertz} caen todos} del lado alto. La
+nomenclatura de las carpetas confirma que son sesiones distintas
+(\texttt{muestra20} frente a \texttt{muestras10},
+\texttt{muestra18metrosCapaz}, \texttt{muestra16metroslegit}: los sufijos
+``legit'' y ``Capaz'' delatan decisiones tomadas sobre la marcha en el campo).
+\textbf{Promediar las dos poblaciones juntas fabrica una dispersi\'on que no
+existe}: hacerlo daba un CV de amplitud del \SI{20}{\percent}, que es un
+artefacto de la mezcla y no una propiedad del martillo.}
+
+\dato{\textbf{Hallazgo 2: en la configuraci\'on A el canal de martillo est\'a
+saturado.} Separadas las poblaciones, la configuraci\'on A da un CV de amplitud
+de \textbf{\SI{0.4}{\percent}} mediano. Eso es f\'isicamente imposible para un
+martillo balanceado a mano. Desglosado por sesi\'on, el cuadro es inequ\'ivoco:
+
+\begin{center}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Sesi\'on & $n$ & Pico mediano [\si{\volt}] & CV [\si{\percent}] \\
+\midrule
+\texttt{muestras26metros} & 20 & 3{,}529 & \textbf{0{,}13} \\
+\texttt{muestras34metros} & 21 & 3{,}484 & \textbf{0{,}18} \\
+\texttt{muestra18metroslegit} & 8 & 3{,}478 & 0{,}14 \\
+\texttt{muestra32} & 21 & 3{,}605 & 0{,}33 \\
+\texttt{muestra34} & 33 & 3{,}626 & 1{,}27 \\
+\texttt{muestra48} & 24 & 3{,}555 & 2{,}55 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Veintiuna sesiones se agolpan entre \SI{3.43}{} y \SI{3.63}{\volt}. No es que el
+operador golpeara con precisi\'on de una parte en mil: \textbf{es el techo de la
+cadena de adquisici\'on}. La amplitud de esos 297 golpes ---el \SI{46}{\percent}
+del conjunto--- \textbf{no es dato}, es un l\'imite del instrumento.}
+
+\seleccionado{\textbf{Hallazgo 3: la repetibilidad real de la fuente, por fin
+medida.} La configuraci\'on B (349 golpes, sin saturar, pico mediano
+\SI{2.01}{\volt}) da los n\'umeros v\'alidos:
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+M\'etrica & CV mediano & Rango entre posiciones \\
+\midrule
+Amplitud pico & \SI{8.7}{\percent} & \SIrange{3.8}{14.9}{\percent} \\
+Ancho del pulso & \SI{13.7}{\percent} & \SIrange{9.5}{102}{\percent} \\
+\textbf{Centroide espectral} & \textbf{\SI{4.2}{\percent}} & \SIrange{3.0}{10.9}{\percent} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Y el resultado es una buena noticia.} El contenido en frecuencia de la
+fuente es \emph{el doble de repetible} que su energ\'ia: \SI{4.2}{\percent}
+contra \SI{8.7}{\percent}. Eso importa porque el MASW estima velocidad de fase a
+partir de \emph{diferencias de fase entre trazas}, que dependen del contenido
+espectral de la fuente, no de su amplitud absoluta ---y la amplitud, adem\'as, se
+normaliza al apilar. \textbf{La hip\'otesis que sostiene la apertura sint\'etica
+resulta ser m\'as s\'olida en la variable que importa que en la que se ve.} El
+centroide se mantiene adem\'as estable en torno a \SIrange{100}{110}{\hertz} en
+todo el tendido, sin deriva sistem\'atica con la distancia.}
+
+\pendiente{Tres consecuencias accionables:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{Rehacer el an\'alisis MASW separando las dos configuraciones},
+    o al menos verificar que mezclarlas no sesg\'o la curva de dispersi\'on. Hoy
+    el conjunto procesado las trata como homog\'eneas.
+    \item \textbf{Bajar la ganancia o cambiar el rango del ADC del nodo martillo}
+    ---justamente lo que las cuatro configuraciones de rango existen para
+    permitir. El nodo HAMMER no necesita la ganancia agresiva que s\'i necesita el
+    ge\'ofono, y aqu\'i se ve el costo de no haberlo ajustado.
+    \item El ancho del pulso se dispara a \SI{46}{} y \SI{50}{\meter}
+    (CV hasta \SI{313}{\percent}): ah\'i la se\~nal es tan d\'ebil que la medida
+    de ancho a media altura pasa a estar dominada por ruido. Es un indicador \'util
+    de d\'onde termina el alcance \'util del arreglo, y coincide con la ca\'ida de
+    SNR ya reportada m\'as all\'a de los \SI{30}{\meter}.
+\end{enumerate}}

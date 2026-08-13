@@ -1,0 +1,363 @@
+\section{Usar el SEV para guiar la inversi\'on: qu\'e se puede y qu\'e no}
+\label{sec:sev-guiada}
+
+\emph{An\'alisis del 13 de agosto de 2026.} La pregunta es directa: si existe un
+sondeo el\'ectrico co-localizado (\S\ref{sec:contraste-sev}),
+\textbf{?`se puede transformar resistividad en velocidad de onda de corte, o al
+menos usarlo para elegir mejor las curvas de dispersi\'on?}
+
+Existe un trabajo previo en esa direcci\'on
+(\texttt{data/Moldeo Hidro/}) que construye un modelo de velocidades a partir de
+la interpretaci\'on hidrogeol\'ogica y lo usa como gu\'ia para el \emph{picking}.
+Esta secci\'on lo verifica y separa lo que se sostiene de lo que no.
+
+\subsection{Respuesta corta: la geometr\'ia s\'i, los valores no}
+
+\dato{\textbf{Se prob\'o si existe una relaci\'on monot\'ona entre resistividad y
+$V_S$ en este sitio, y la respuesta es que no: la correlaci\'on es
+\emph{negativa}.} Comparando las capas del SEV~01 contra el $V_S$ promedio del
+perfil invertido en el mismo tramo de profundidad:
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Tramo & $\rho$ [\si{\ohm\meter}] & $V_S$ invertido [\si{\meter\per\second}] \\
+\midrule
+\SIrange{0.00}{1.00}{\meter} & \textbf{1186} & \textbf{62{,}2} \\
+\SIrange{1.00}{2.06}{\meter} & 15 & 88{,}5 \\
+\SIrange{2.06}{4.15}{\meter} & 105 & 90{,}8 \\
+\SIrange{4.15}{24.0}{\meter} & 24{,}2 & 120{,}1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Correlaci\'on de Pearson $\rho$ frente a $V_S$: $\mathbf{-0{,}807}$; con
+$\log_{10}\rho$: $-0{,}776$; de rangos (Spearman): $-0{,}400$.
+
+\textbf{Una transformaci\'on monot\'ona resistividad$\to V_S$ se equivocar\'ia de
+signo en la primera capa}, que es adem\'as la m\'as extrema del sondeo.}
+
+\seleccionado{\textbf{Y la raz\'on f\'isica es clara, no es un accidente
+estad\'istico.} La capa superficial es \emph{seca y compactada}: su resistividad
+es alt\'isima (\SI{1186}{\ohm\meter}) \emph{precisamente porque no tiene agua de
+poro que conduzca}. Pero mec\'anicamente es suelta y est\'a bajo presi\'on de
+confinamiento casi nula, de modo que su $V_S$ es la m\'as baja de todo el perfil.
+
+Es decir: \textbf{la resistividad sube por falta de agua y la velocidad baja por
+falta de confinamiento}. Las dos magnitudes est\'an gobernadas por causas
+distintas y, en la superficie, opuestas. Por eso no hay ---ni puede haber--- una
+ley universal que las relacione, y por eso el uso leg\'itimo del SEV es
+\textbf{decir \emph{d\'onde} est\'an los contrastes, no cu\'anto valen}.}
+
+\subsection{Lo que el SEV s\'i aporta: la parametrizaci\'on}
+
+Y eso no es poco: es exactamente la variable que domina la no unicidad.
+La Secci\'on~\ref{sec:dos-inversiones} muestra que dos parametrizaciones del
+mismo dato dan $V_{S,30}$ que difieren en un factor \num{1.9}. Cox y
+Teague (2016) plantean el problema de elegir n\'umero y espesor de capas
+\emph{en ausencia de informaci\'on a priori}; aqu\'i esa informaci\'on
+\textbf{existe y es independiente}.
+
+El procedimiento defendible es entonces: \textbf{fijar las profundidades de
+interfaz a las del SEV e invertir solamente las velocidades.}
+
+\subsection{Verificaci\'on del trabajo previo (\texttt{Moldeo Hidro})}
+
+Tres comprobaciones, dos favorables y dos con reparos.
+
+\paragraph{a) La curva elegida es la mejor condicionada de las tres disponibles.}
+Y esto es un m\'erito real:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Curva & Puntos & $\lambda$ [\si{\meter}] & $\lambda>L=\SI{40}{\meter}$ & $f<\SI{10}{\hertz}$ \\
+\midrule
+\textbf{Moldeo Hidro} & 132 & \SIrange{2.4}{11.8}{} & \textbf{0} & \textbf{12 (\SI{9}{\percent})} \\
+Estado actual (npz) & 112 & \SIrange{4.0}{20.7}{} & 0 & 31 (\SI{28}{\percent}) \\
+Export de julio & 51 & hasta \num{130.6} & 3 & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Respeta la apertura y es la que \emph{menos} se mete en la banda de
+\SIrange{0}{2}{\decibel} de SNR (\S\ref{sec:banda-util}): s\'olo el
+\SI{9}{\percent} de sus puntos, contra el \SI{28}{\percent} del estado actual.
+Est\'a mayormente en \SIrange{10}{30}{\hertz}, que es donde el an\'alisis
+independiente de SNR y de atenuaci\'on dice que hay se\~nal.
+
+\paragraph{b) Las cotas del modelo coinciden con el SEV\ldots\ salvo dos.}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}rrl@{}}
+\toprule
+Modelo previo & SEV~01 & \\
+\midrule
+\SI{1.0}{\meter} & \SI{1.00}{\meter} & coincide \\
+\SI{2.1}{\meter} & \SI{2.06}{\meter} & coincide \\
+\SI{4.2}{\meter} & \SI{4.15}{\meter} & coincide \\
+\textbf{\SI{8.0}{\meter}} & --- & \textbf{no existe en el SEV} \\
+\SI{24.0}{\meter} & \SI{24.0}{\meter} & coincide \\
+\textbf{\SI{50.0}{\meter}} & \SI{71.8}{\meter} & \textbf{difiere en \SI{21.8}{\meter}} \\
+--- & \SI{71.8}{\meter} & interfaz real no usada \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Tres de las seis cotas reproducen el SEV con exactitud. La de \SI{8}{\meter} es
+un agregado sin respaldo en el sondeo, y la de \SI{50}{\meter} reemplaza a la
+interfaz real de \SI{71.8}{\meter}. Conviene corregirlo si el modelo se reutiliza.
+
+\paragraph{c) La curva ``prior'' no es un modelo directo de Rayleigh.}
+
+\pendiente{Se verific\'o la columna \texttt{cR\_hydro\_prior\_ms} contra el
+modelo directo real (\texttt{surf96}, matriz de propagaci\'on, modo fundamental)
+sobre el mismo perfil de velocidades. \textbf{No coinciden}: surf96 entrega
+\SIrange{102.8}{205.2}{\meter\per\second} donde la columna dice
+\SIrange{87.4}{123.3}{\meter\per\second}, con \SI{28.8}{\percent} de discrepancia
+relativa.
+
+Reconstruyendo la f\'ormula, la columna resulta ser
+$0{,}92\times \overline{V_S}(0\ldots\lambda/2{,}5)$ ---el promedio de $V_S$
+ponderado por espesor hasta un tercio o un medio de la longitud de onda,
+escalado por la relaci\'on de semiespacio homog\'eneo $V_R\approx0{,}92\,V_S$.
+El ajuste a esa hip\'otesis es del \SI{0.9}{\percent}, o sea que es exactamente
+eso.
+
+Es una \textbf{heur\'istica de promediado razonable para una gu\'ia visual}, y
+como tal no est\'a mal usada; pero \textbf{no debe presentarse como curva
+te\'orica} ni usarse para evaluar desajuste, porque ignora la ponderaci\'on por
+la autofunci\'on de Rayleigh, que es justamente lo que hace no trivial el
+problema.}
+
+\paragraph{d) La imagen de dispersi\'on tiene un problema propio, anterior a
+cualquier gu\'ia.}
+
+\pendiente{Al mirar la imagen de energ\'ia sobre la que se hizo el
+\emph{picking} (\texttt{grupo1\_dispersion\_hidro\_guiada.png}) aparece algo que
+conviene registrar porque condiciona todo lo dem\'as: \textbf{no hay una cresta
+de dispersi\'on \'unica y continua}, que es lo que una imagen MASW bien
+condicionada debe mostrar. En su lugar se ven:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Franjas verticales} de energ\'ia que cruzan todo el eje de
+    velocidad a frecuencia casi constante, especialmente por debajo de
+    \SI{15}{\hertz}. Una franja vertical significa energ\'ia presente en esa
+    frecuencia \emph{sin velocidad de fase definida}: es exactamente lo que
+    produce ruido incoherente entre trazas.
+    \item Varias \textbf{crestas inclinadas} brillantes por encima de
+    \SI{15}{\hertz}, ascendentes hacia la derecha, que el \emph{pick} no sigue.
+    Pueden ser modos superiores o r\'eplicas de \emph{aliasing} espacial; sin
+    identificaci\'on modal no se puede decidir cu\'al.
+    \item El \emph{pick} adoptado recorre una zona de energ\'ia
+    \emph{intermedia} en torno a \SIrange{70}{90}{\meter\per\second}, con un
+    salto brusco entre \SI{17}{} y \SI{19}{\hertz} (baja a
+    \SI{67}{} y sube a \SI{100}{\meter\per\second}) que no corresponde a una
+    curva de dispersi\'on f\'isica, que debe ser suave.
+\end{itemize}
+
+\textbf{Hip\'otesis sobre la causa, y encaja con lo que el propio documento ya
+advierte}: el arreglo es \emph{sint\'etico}. Cada traza proviene de un golpe
+distinto, con el mismo ge\'ofono reubicado. La transformada de desplazamiento de
+fase supone que todas las trazas registran \emph{el mismo evento}; si cada una
+viene de un golpe distinto, lo que no sea perfectamente repetible entre golpes
+---y se midi\'o que la amplitud var\'ia \SI{8.7}{\percent} y el centroide
+espectral \SI{4.2}{\percent}, \S\ref{sec:repetibilidad-fuente}--- entra como
+incoherencia y se manifiesta \textbf{precisamente como estriado vertical}.
+
+Es decir: la calidad de la imagen de dispersi\'on es hoy el l\'imite, y su causa
+probable es metodol\'ogica (apertura sint\'etica) antes que instrumental.
+\emph{Verificarlo es directo}: recalcular la imagen con un subconjunto de golpes
+muy repetibles y ver si el estriado disminuye. Y el remedio ---apilar muchos m\'as
+golpes por posici\'on--- es el mismo que \S\ref{sec:banda-util} propone por la
+SNR.}
+
+\subsection{El l\'imite duro: el SEV s\'olo puede guiar los primeros metros}
+
+\dato{\textbf{Este es el hallazgo m\'as importante de la secci\'on y limita cu\'anto
+puede aportar el SEV hoy.} La profundidad de investigaci\'on est\'a acotada por
+$\lambda_{\max}$:
+
+\begin{center}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Curva & $\lambda_{\max}$ & Interfaces del SEV a su alcance \\
+\midrule
+Moldeo Hidro & \SI{11.8}{\meter} & \SI{1.00}{}, \SI{2.06}{}, \SI{4.15}{\meter} \\
+Estado actual & \SI{20.7}{\meter} & \SI{1.00}{}, \SI{2.06}{}, \SI{4.15}{\meter} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Ninguna de las dos curvas bien condicionadas alcanza la interfaz de
+\SI{24}{\meter}}, que es justamente la m\'as valiosa del sondeo ---la base del
+suelo. Para usarla har\'ian falta longitudes de onda de
+\SIrange{48}{72}{\meter}, lo que exige \emph{simult\'aneamente} un tendido m\'as
+largo \textbf{y} se\~nal en \SIrange{1.5}{3}{\hertz}, que es precisamente lo que
+\S\ref{sec:banda-util} muestra que hoy no existe.
+
+Dicho de otro modo: \textbf{el SEV puede fijar la parametrizaci\'on de los
+primeros \SIrange{4}{5}{\meter} y nada m\'as}, hasta que se resuelva el problema
+de banda. Las capas de 8, 24 y \SI{50}{\meter} del modelo previo no intervienen
+en el c\'alculo ---la propia heur\'istica del \emph{prior} s\'olo ``ve'' hasta
+\SI{3.9}{\meter}.}
+
+\subsection{Qu\'e dice la curva medida, le\'ida de la forma m\'as simple posible}
+
+Antes de invertir conviene preguntarle a la curva lo m\'as elemental: leer cada
+punto como si el terreno fuera un semiespacio homog\'eneo
+($V_S\approx c_R/0{,}92$) y ubicarlo a la profundidad $\lambda/3$.
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Banda & $c_R$ medio & $V_S$ equivalente & $\lambda$ medio & $z\approx\lambda/3$ \\
+\midrule
+\SIrange{8}{12}{\hertz}  & \SI{87.2}{\meter\per\second} & \SI{94.7}{\meter\per\second} & \SI{8.9}{\meter} & \SI{3.0}{\meter} \\
+\SIrange{12}{18}{\hertz} & \SI{78.1}{\meter\per\second} & \SI{84.9}{\meter\per\second} & \SI{5.4}{\meter} & \SI{1.8}{\meter} \\
+\SIrange{18}{24}{\hertz} & \SI{85.1}{\meter\per\second} & \SI{92.5}{\meter\per\second} & \SI{4.1}{\meter} & \SI{1.4}{\meter} \\
+\SIrange{24}{30}{\hertz} & \SI{74.4}{\meter\per\second} & \SI{80.9}{\meter\per\second} & \SI{2.8}{\meter} & \SI{0.9}{\meter} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\dato{\textbf{La curva es pr\'acticamente no dispersiva en
+\SIrange{8}{30}{\hertz}}: el $V_S$ equivalente se mueve entre \SI{81}{} y
+\SI{95}{\meter\per\second} en todo el rango, sin tendencia clara con la
+profundidad. Lo m\'as honesto que se puede afirmar con este dato es
+\textbf{``los primeros \SI{3}{\meter} tienen $V_S\approx\SI{85}{\meter\per\second}$,
+aproximadamente uniforme''}.
+
+Y adem\'as la variaci\'on que hay \emph{no es monot\'ona} con la profundidad
+(94,7 a \SI{3.0}{\meter}; 84,9 a \SI{1.8}{\meter}; 92,5 a \SI{1.4}{\meter};
+80,9 a \SI{0.9}{\meter}). Un suelo que se compacta con la profundidad no hace
+eso: esa alternancia es la rugosidad de la curva, es decir ruido.}
+
+\pendiente{\textbf{Esto explica por qu\'e el modelo hidrogeol\'ogico previo ajusta
+mal} (\SI{68}{\percent} de desajuste evaluado con \texttt{surf96}): ese modelo
+sube de \SI{95}{} a \SI{145}{\meter\per\second} entre 0 y \SI{4}{\meter},
+mientras la curva medida dice que ah\'i no hay pr\'acticamente gradiente. El
+modelo no es descabellado en s\'i ---sus valores son razonables para esas
+litolog\'ias--- pero \textbf{es m\'as r\'apido y m\'as dispersivo que lo que estos
+datos muestran}.
+
+Dos lecturas posibles, y no se pueden separar con lo disponible: o el sitio es
+efectivamente m\'as blando y m\'as uniforme de lo que sugiere la litolog\'ia, o la
+curva est\'a sesgada hacia abajo por el estriado de la imagen de dispersi\'on.}
+
+\subsection{Un intento de inversi\'on, y la lecci\'on metodol\'ogica que dej\'o}
+
+Se intent\'o la inversi\'on propuesta ---interfaces fijas del SEV, velocidades
+libres, motor \texttt{surf96}--- y el primer resultado fue \textbf{inservible}:
+perfiles con $V_S$ oscilando (380, 53, 185, \SI{50}{\meter\per\second}), pegados
+a los l\'imites de b\'usqueda y con $V_{S,30}$ absurdos. Vale registrar el
+diagn\'ostico porque es una trampa reutilizable.
+
+\dato{\textbf{La causa no eran los datos sino el optimizador explorando modelos
+que el motor no puede evaluar.} Se midi\'o directamente:
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Familia de perfiles ensayada & Evaluables & Fallan \\
+\midrule
+$V_S$ \textbf{mon\'otonamente creciente} & \textbf{300 de 300} & \SI{0}{\percent} \\
+$V_S$ libre (con inversiones de velocidad) & 254 de 300 & \SI{15}{\percent} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Cuando \texttt{surf96} no encuentra la ra\'iz del modo fundamental devuelve
+error, el desajuste se penaliza con un valor enorme, y el optimizador
+\textbf{aprende a evitar la regi\'on donde el motor falla en lugar de buscar la
+regi\'on donde el modelo ajusta}. El resultado converge a modelos que
+\emph{eval\'uan}, no a modelos que \emph{ajustan}.
+
+Imponer $V_S$ creciente con la profundidad resuelve el problema y adem\'as es lo
+f\'isicamente esperable en un suelo que se compacta. \textbf{La verificaci\'on
+previa del motor fue lo que permiti\'o ver esto}: \texttt{surf96} reproduce
+exactamente $V_R/V_S=0{,}919$ para un semiespacio con $\nu=0{,}25$ y
+$0{,}954$ con $\nu=0{,}49$, o sea que el motor y las unidades estaban bien; el
+problema era el espacio de b\'usqueda.}
+
+\subsubsection{El resultado, ya con la restricci\'on puesta}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{inversion_guiada_sev.png}
+\caption{Izquierda: tres parametrizaciones sobre la misma curva. Las l\'ineas
+punteadas azules son las interfaces del SEV~01. Derecha: ajuste a la curva
+medida con \texttt{surf96}.}
+\label{fig:inversion-guiada}
+\end{figure}
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l l r r X@{}}
+\toprule
+& Interfaces & Desajuste & $V_{S,30}$ & $V_S$ por capa [\si{\meter\per\second}] \\
+\midrule
+A) libre & 1{,}5 / 3 / \SI{6}{\meter} & \SI{8.62}{\percent} & \SI{115.6}{} & 77, 86, 94, 126 \\
+\textbf{B) guiada por SEV} & \textbf{1{,}00 / 2{,}06 / 4{,}15} & \textbf{\SI{8.53}{\percent}} & \SI{106.0}{} & 72, 86, 86, 111 \\
+C) hidro previo & 1 / 2{,}1 / 4{,}2 / 8 / 24 / 50 & \SI{68.01}{\percent} & \SI{213.0}{} & 95, 105, 145, 185, \ldots \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\seleccionado{\textbf{Resultado principal: fijar las interfaces en el SEV no
+cuesta nada.} La parametrizaci\'on guiada ajusta \emph{igual o levemente mejor}
+que la libre (\SI{8.53}{} contra \SI{8.62}{\percent}), pese a tener sus
+profundidades \textbf{congeladas} en valores que provienen de otra medici\'on y
+no de estos datos.
+
+Eso es exactamente lo que se quer\'ia demostrar: la informaci\'on del sondeo
+el\'ectrico es \textbf{gratuita en t\'erminos de ajuste} y a cambio elimina los
+grados de libertad que causan la no unicidad. Es la manera correcta de usar el
+SEV.}
+
+\dato{\textbf{Y un detalle que la inversi\'on revela por su cuenta}: en la
+soluci\'on guiada, las capas 2 y 3 convergen \emph{al mismo valor}
+(\SI{86}{\meter\per\second} ambas). Es decir, \textbf{los datos no requieren la
+interfaz de \SI{2.06}{\meter}}: el SEV la ve porque hay un contraste de
+resistividad (un nivel conductivo delgado, $\rho=\SI{15}{\ohm\meter}$), pero
+ese contraste \emph{no es un contraste de rigidez}. Es una confirmaci\'on
+independiente ---y desde el lado s\'ismico--- de lo que dice la correlaci\'on
+negativa: resistividad y $V_S$ no marcan las mismas fronteras.}
+
+\pendiente{\textbf{El modelo hidrogeol\'ogico previo ajusta muy mal
+(\SI{68}{\percent})} y en la figura se ve por qu\'e: predice velocidades de fase
+de \SIrange{105}{190}{\meter\per\second} donde los datos est\'an en
+\SIrange{70}{100}{\meter\per\second}. Es \emph{sistem\'aticamente m\'as r\'apido},
+no ruidoso. Sus valores de $V_S$ son razonables para las litolog\'ias
+declaradas ---no est\'an mal elegidos--- pero el sitio, seg\'un estos datos, es
+notablemente m\'as blando de lo que la litolog\'ia sugerir\'ia.
+
+Los $V_{S,30}$ de la tabla \textbf{no deben reportarse}: con una curva que s\'olo
+ve \SIrange{3}{5}{\meter}, los \SI{30}{\meter} son extrapolaci\'on pura del
+semiespacio. Se incluyen \'unicamente para mostrar hasta qu\'e punto un mismo dato
+admite valores dispares (106, 116 y 213 \si{\meter\per\second}).}
+
+\seleccionado{\textbf{Recomendaci\'on de herramienta}: para la inversi\'on
+definitiva conviene usar el \emph{stack} que el proyecto ya tiene
+---\texttt{evodcinv} sobre \texttt{disba}--- en lugar de un optimizador
+improvisado. Est\'a dise\~nado para este problema, maneja las restricciones de
+monotonía y entrega una \emph{poblaci\'on} de modelos en vez de uno solo, que es
+justamente lo que hace falta para reportar la incertidumbre que
+\S\ref{sec:dos-inversiones} muestra que domina el resultado.}
+
+\subsection{Recomendaci\'on operativa}
+
+\seleccionado{\begin{enumerate}[itemsep=0.2em]
+    \item \textbf{Adoptar la curva de \texttt{Moldeo Hidro}} como curva de
+    trabajo: es la mejor condicionada de las tres (respeta la apertura y evita
+    casi toda la banda sin se\~nal).
+    \item \textbf{Fijar las interfaces en \SI{1.00}{}, \SI{2.06}{} y
+    \SI{4.15}{\meter}} ---los valores exactos del SEV, no los redondeados---
+    m\'as un semiespacio, e \textbf{invertir s\'olo las velocidades} con un
+    motor real de matriz de propagaci\'on.
+    \item \textbf{No usar} las cotas de 8 y \SI{50}{\meter}: la primera no
+    existe en el sondeo y la segunda contradice la de \SI{71.8}{\meter}.
+    \item \textbf{No convertir resistividad en $V_S$}: en este sitio la relaci\'on
+    es de signo contrario.
+    \item \textbf{Declarar la profundidad sostenida} (\SIrange{4}{6}{\meter} con
+    esta curva) y no extrapolar $V_{S,30}$ como si estuviera medido.
+\end{enumerate}}

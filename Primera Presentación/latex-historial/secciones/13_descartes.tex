@@ -5,6 +5,13 @@ Todo lo que se prob\'o y no qued\'o, con el motivo y qu\'e lo reemplaz\'o. Es la
 secci\'on m\'as \'util para recordar \emph{por qu\'e} el sistema es como es ---y para
 no volver a probar algo que ya se descart\'o con raz\'on.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.96\textwidth]{comparacion_metodos.png}
+\caption{Contexto visual para las decisiones metodol\'ogicas: qu\'e entrega cada familia
+y qu\'e costo operativo introduce.}
+\end{figure}
+
 \subsection{Cadena anal\'ogica}
 
 \begin{center}\footnotesize
@@ -34,7 +41,7 @@ Cancelaci\'on polo-cero como estrategia
 \addlinespace[2pt]
 Amplificador operacional ideal en el modelo
 & El dise\~no ``andaba en el papel'' pero no contemplaba $A_0$ ni GBW finitos
-& Modelo con $A_0=\SI{90}{\decibel}$, GBW $=\SI{8}{\mega\hertz}$, $R_{in}$, $R_{out}$, $C_{in}$
+& Modelo no ideal con $R_{in}$, $R_{out}$ y $C_{in}$; la relaci\'on $f_p=f_t/A_0$ ya se corrigi\'o, pero la s\'intesis y la medici\'on deben repetirse antes de reutilizar el ajuste
 & 17/05 \\
 \addlinespace[2pt]
 Discretizar a valores comerciales antes de optimizar
@@ -74,12 +81,12 @@ Filtro adaptativo LMS para \SI{50}{\hertz}
 \addlinespace[2pt]
 Notch de \SI{50}{\hertz} (FIR y notch arm\'onico en el cliente)
 & La \SI{50}{\hertz} cae \emph{dentro} de la banda \'util del MASW: el notch borra se\~nal e introduce retardo de grupo justo donde se mide fase
-& Ajuste no lineal de m\'inimos cuadrados en post-proceso: sin retardo, reversible, conserva el crudo
+& B\'usqueda acotada de frecuencia $+$ regresi\'on arm\'onica lineal en post-proceso: sin retardo y con el crudo preservado; puede atenuar contenido coherente con las bases ajustadas
 & 09/06 \\
 \addlinespace[2pt]
 $F_s$ \'unica fija
 & Distintos compromisos entre resoluci\'on temporal y volumen por captura
-& $F_s$ conmutable ($2929$ y \SI{1020}{\hertz} usadas en campo); mezcla posterior por \texttt{resample\_poly}
+& En las campa\~nas hist\'oricas se usaron $2929$ y \SI{1020}{\hertz}, con mezcla posterior por \texttt{resample\_poly}. El firmware actual usa \SI{2604}{\hertz} nativos a 18 bits y entrega $F_s=2604/N$
 & 07/07 \\
 \addlinespace[2pt]
 Rango de ADC \'unico
@@ -169,7 +176,7 @@ Enlace SPI PSoC$\leftrightarrow$ESP
 \addlinespace[2pt]
 ACK emitido antes del flanco f\'isico
 & El maestro cre\'ia sincronizado un arreglo que a\'un no lo estaba; se manifestaba como \emph{jitter}, no como falla
-& ACK despu\'es del flanco
+& Flanco local inmediato y silencio de radio durante el muestreo; ACK s\'olo para sondeo, rechazo o finalizaci\'on
 & 10/06 \\
 \addlinespace[2pt]
 UART de \SI{115200}{} como subida de muestras

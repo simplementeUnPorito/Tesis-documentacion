@@ -4,6 +4,13 @@
 Qu\'e existe hoy y d\'onde est\'a. Sirve para reencontrar una pieza sin tener que
 recorrer los diez repositorios.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{tablero_evidencia.png}
+\caption{Inventario visual de lo demostrado y de sus l\'imites. Complementa el
+inventario de archivos con el nivel de evidencia disponible.}
+\end{figure}
+
 \subsection{Firmware}
 
 \begin{center}\small
@@ -40,7 +47,7 @@ Instrumentaci\'on & \texttt{CMD\_SCOPE\_START} y \texttt{SCOPE\_MULTI} para medi
 Servidor & FastAPI con est\'aticos, pesta\~nas, tema, visor de se\~nal con decimado min/max \\
 \texttt{review\_field\_data.py} & Revisi\'on de campo: orden por pico a pico, filtros, \'enfasis, alineaci\'on entre tandas, \emph{waterfall}, $f$--$k$, \emph{picking} de dispersi\'on, polaridad, dedup, mezcla de $F_s$ \\
 \texttt{masw\_dispersion.py} & \emph{Gather} $\to$ imagen de dispersi\'on por \emph{phase-shift}; grupos de dispersi\'on multimodo con combinaci\'on ponderada \\
-\texttt{masw\_inversion.py} & Inversi\'on a $V_S(z)$ con \texttt{evodcinv} sobre \texttt{disba} \\
+\texttt{masw\_inversion.py} & Fachada de inversi\'on a $V_S(z)$ con \emph{backends} seleccionables: \texttt{evodcinv}/\texttt{disba}, Monte Carlo, MASWavesPy, ADsurf y exportaci\'on a Geopsy \\
 \texttt{deletion.py} & Cuarentena reversible de registros \\
 \texttt{AnalysisJobs} & Cola persistente de an\'alisis \\
 \texttt{smoke\_test.py} & \emph{Gate} de 58 verificaciones \\
@@ -51,7 +58,7 @@ C\'alculo de compensadores & Siete variantes de \texttt{calculoCompensador*}, \t
 \midrule
 \texttt{geophone\_scope.m} / \texttt{\_simple.m} & Osciloscopio virtual sobre puerto serie (657 l\'ineas la versi\'on completa) \\
 \texttt{analisis\_espectral.m} & PSD, SNR por sesi\'on y espectrogramas por entidad (264 l\'ineas) \\
-\texttt{AnalisisCircuito/} & \texttt{analizar\_barridos\_cadena\_analogica.m}, \texttt{cancelar\_armonicos\_linea\_ls.m}, \texttt{verificar\_calibracion\_potenciometro.m}, gr\'aficos GEO$\to$ADC \\
+\texttt{AnalisisCircuito/} & \path{analizar_barridos_cadena_analogica.m}, \path{cancelar_armonicos_linea_ls.m}, \path{verificar_calibracion_potenciometro.m}, gr\'aficos GEO$\to$ADC \\
 \texttt{SM-24/} & \texttt{Compensador.m}, \texttt{compensadorKai.m}, \texttt{compensadorPazos.m}, \texttt{filtroFir.m} \\
 \texttt{CalculosRapidos/} & \texttt{ComparacionFiltros.m} (el gr\'afico del pivote), \texttt{notch.m}, \texttt{removeLineNoise\_SpectrumEstimation.m} \\
 \texttt{pruebas\_teoricas/} & \texttt{p01}--\texttt{p05}: validaci\'on num\'erica de la teor\'ia \\
@@ -106,7 +113,7 @@ Legado & \texttt{docs/legacy/pyqt\_field\_review/} --- \emph{snapshot} congelado
 Generador Agilent 33220A & Barridos logar\'itmicos con \texttt{SYNC} hacia el trigger externo \\
 Osciloscopio Tektronix TDS2004B & 4 canales, uno por etapa anal\'ogica; sondas en $10\times$ obligatorio \\
 Ge\'ofono SM-24 & \SI{10}{\hertz}, $\zeta_0 = 0{,}25$ \\
-Aceler\'ometro de impacto PCB Piezotronics 086D20 & Canal de martillo \\
+Martillo de impacto con sensor de fuerza PCB Piezotronics 086D20 & Canal de martillo \\
 CY8CKIT-059 $+$ ESP32 DevKitC & \emph{Carrier} intermedia, previa a la placa propia \\
 pyOCD & Depuraci\'on en placa (con \'el se vio la tormenta de IRQ) \\
 \bottomrule

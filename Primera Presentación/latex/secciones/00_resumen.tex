@@ -28,12 +28,15 @@ de \emph{offset} de continua, validado experimentalmente sobre dos placas
 independientes en ocho configuraciones placa--ganancia, que redujo el \emph{offset}
 residual a la entrada del ADC de \SIrange{2.9}{45.8}{\percent} a
 \SIrange{0.4}{3.9}{\percent} del fondo de escala; (iv) la implementaci\'on de la red
-inal\'ambrica multi-nodo con sincronizaci\'on de disparo y jerarqu\'ia de memoria de tres
-niveles (RAM del ESP32, encadenado en RAM del PSoC y tarjeta SD), validada en
-capturas continuas de hasta 10 minutos; (v) una auditor\'ia pre-campo sistem\'atica que
+inal\'ambrica multi-nodo con disparo coordinado y jerarqu\'ia de memoria de tres
+niveles (RAM del ESP32, encadenado en RAM del PSoC y tarjeta SD), cuya
+\textbf{integridad de captura y transferencia} se valid\'o durante 10 minutos; la
+sincronizaci\'on de extremo a extremo de la topolog\'ia vigente a\'un debe medirse; (v) una auditor\'ia pre-campo sistem\'atica que
 detect\'o y corrigi\'o varios defectos cr\'iticos de sincronizaci\'on; y (vi) campa\~nas de
-medici\'on en campo con el procesamiento MASW e inversi\'on multimodal de las curvas
-de dispersi\'on obtenidas.
+medici\'on en campo mediante apertura sint\'etica con un ge\'ofono m\'ovil, procesamiento
+MASW y una arquitectura de inversi\'on con motores seleccionables. El estado persistido
+que se reporta usa una curva etiquetada como modo~0 mediante un
+\emph{port} num\'erico de MASWavesPy; la validaci\'on multimodal comparativa queda abierta.
 
 Los trabajos futuros comprenden la migraci\'on del prototipo desde placas de
 desarrollo cableadas hacia una PCB propia, el dise\~no y construcci\'on de una fuente

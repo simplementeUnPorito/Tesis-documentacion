@@ -1,0 +1,1650 @@
+\section{La base bibliogr\'afica, art\'iculo por art\'iculo}
+\label{sec:base-biblio}
+
+Durante la revisi\'on se construy\'o una base de datos estructurada
+de \textbf{65 art\'iculos}, con \textbf{34 campos por entrada}: m\'etodo
+principal y secundario, tipo de sensor y de fuente, geometr\'ia del arreglo, tipo
+de sitio, procesamiento e inversi\'on empleados, variables estimadas,
+limitaciones reportadas, conclusiones clave y ---el campo que m\'as se us\'o---
+\emph{utilidad para la tesis}.
+
+Ese trabajo est\'a hoy en un CSV
+(\texttt{docs/investigacion/sources/research/tables/}) que nadie va a volver a
+abrir. Se vuelca aqu\'i para que quede legible: primero el \'indice, despu\'es
+una ficha por art\'iculo con los campos sustantivos.
+
+\subsection{\'Indice}
+\footnotesize
+\begin{longtable}{@{}p{0.9cm} p{3.5cm} p{0.9cm} p{3.4cm} p{6.4cm}@{}}
+\toprule \textbf{Id} & \textbf{Primer autor} & \textbf{A\~no} & \textbf{M\'etodo} & \textbf{Relevancia declarada} \\ \midrule
+\endfirsthead
+\toprule \textbf{Id} & \textbf{Primer autor} & \textbf{A\~no} & \textbf{M\'etodo} & \textbf{Relevancia declarada} \\ \midrule
+\endhead
+\bottomrule \endfoot
+001 & Park CB & 1999 & MASW & alta \\
+002 & Xia J & 1999 & MASW inversión & alta \\
+003 & Nazarian S & 1984 & SASW & alta \\
+004 & Louie JN & 2001 & ReMi (Refraction... & alta \\
+005 & Aki K & 1957 & SPAC (Spatial Autocorrelat... & alta \\
+006 & Foti S & 2018 & múltiples métodos de... & alta \\
+007 & Garofalo F & 2016 & múltiples métodos de... & alta \\
+008 & Socco LV & 2004 & métodos de ondas... & alta \\
+009 & Xia J & 2002 & MASW (validación contra... & 10.1016/S0267-7261(02)00008-8 \\
+010 & Park CB & 2007 & MASW activo y pasivo & alta \\
+011 & Xia J & 2004 & MASW (inversión 2D para... & media \\
+012 & Ayele A & 2022 & MASW activo (estimación... & alta \\
+013 & Olafsdottir EA & 2020 & Inversión Monte Carlo de... & alta \\
+014 & Wathelet M & 2020 & Procesamiento de... & alta \\
+015 & Moffat R & 2016 & MASW activo (validación... & alta \\
+016 & Alhuay-León CG & 2021 & MASW activo (correlación... & alta \\
+017 & Nakamura Y & 1989 & HVSR --- razón espectral... & alta \\
+018 & Lermo J & 1993 & HVSR --- razón espectral... & alta \\
+019 & SESAME European Research... & 2004 & HVSR --- pautas prácticas... & alta \\
+020 & Moya-Gutiérrez AJ & 2020 & MASW 1D y 2D (ondas... & alta \\
+021 & Uma Maheswari R & 2010 & MASW activo (correlación... & alta \\
+022 & Ólafsdóttir EÁ & 2018 & MASW activo (herramienta... & alta \\
+023 & Park CB & 1998 & Phase-shift method ---... & alta \\
+024 & Yoon S & 2009 & análisis numérico de... & alta \\
+025 & Xia J & 2003 & MASW --- inversión de curva... & alta \\
+026 & Park CB & 2002 & MASW activo --- análisis... & alta \\
+027 & Strobbia C & 2006 & MOPA (Multi-Offset Phase... & media \\
+028 & Lima Júnior SB & 2012 & MASW activo 1D (modo... & alta \\
+029 & Parolai S & 2005 & Inversión conjunta (joint... & alta --- el método pasivo (ruido sísmico) no requiere fuente activa ni generación de ondas. Solo... \\
+030 & Miller RD & 1999 & MASW & alta \\
+031 & Tokimatsu K & 1992 & SASW & alta \\
+032 & Eikmeier CN & 2018 & MASW & alta \\
+033 & Socco LV & 2010 & revision --- ondas... & alta \\
+034 & Maraschini M & 2010 & inversion multimodal... & alta \\
+035 & Long MM & 2007 & MASW & alta \\
+036 & Stephenson WJ & 2005 & MASW; ReMi & alta \\
+037 & Bergamo P & 2011 & inversion multimodal... & alta \\
+038 & Shapiro N M & 2004 & interferometria sismica... & media \\
+039 & Luo Y & 2009 & separacion de modos de... & alta \\
+040 & Hayashi K & 2004 & CMP cross-correlation de... & alta \\
+041 & Arai H & 2005 & inversion conjunta de... & alta \\
+042 & Wathelet M & 2004 & inversion de curva de... & alta \\
+043 & Forbriger T & 2003 & inversion de campo de... & media \\
+044 & Boore D.M. & 2004 & Vs30 estimation & alta \\
+045 & Dal Moro G. & 2011 & joint inversion Rayleigh+L... & media \\
+046 & Garofalo F. & 2016 & comparacion MASW vs... & alta \\
+047 & Griffiths S.C. & 2016 & incertidumbre en perfiles... & alta \\
+048 & Park C.B. & 2008 & MASW pasivo lineal... & alta \\
+049 & Bonnefoy-Claudet S. & 2009 & HVSR (H/V espectral ratio) & alta \\
+050 & Wald D.J. & 2007 & proxy de Vs30 desde... & alta \\
+051 & Cox B.R. & 2016 & parametrizacion de modelo... & alta \\
+052 & Kafadar O. & 2020 & sistema de adquisicion de... & alta \\
+053 & Xu Y & 2006 & MASW & alta \\
+054 & Xia J & 2006 & MASW & alta \\
+055 & Dikmen Ü & 2009 & correlaciones Vs-N (SPT) & alta \\
+056 & Bonnefoy-Claudet S & 2006 & ruido sísmico ambiental... & alta \\
+057 & Neducza B & 2007 & SSW (Stacking of Surface... & media \\
+058 & Foti S & 2009 & MASW / inversión ondas... & alta \\
+059 & Park C.B. & 2005 & MASW activo + pasivo... & alta \\
+060 & Asten M.W. & 1984 & array pasivo (f-k) para... & media \\
+061 & Andrus R.D. & 2000 & evaluación de licuación... & alta \\
+062 & Comina C & 2011 & MASW / ondas superficiales & alta \\
+063 & Borcherdt R.D. & 1994 & clasificación de sitio... & alta \\
+064 & Castellaro S & 2008 & clasificación de sitio /... & alta \\
+065 & Scherbaum F & 2003 & array pasivo (f-k) + HVSR... & alta \\
+\end{longtable}
+\normalsize
+
+\subsection{Fichas}
+
+\paragraph{[001] Multichannel analysis of surface waves} \emph{Park CB; Miller RD; Xia J} (1999).
+{\scriptsize DOI: \texttt{10.1190/1.1444590}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW \\
+M\'etodo secundario & f-k analysis \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & campo (múltiples sitios) \\
+Profundidad & \textasciitilde{}30 m (depende de arreglo) \\
+Procesamiento & f-k spectral analysis; picking de máximos; curva de dispersión experimental \\
+Inversi\'on & inversión 1D iterativa (modo fundamental); forward problem por matrix propagation \\
+Variables estimadas & Vs(z) perfil de velocidad de corte por capas \\
+Limitaciones reportadas & Asume modo fundamental dominante (puede fallar en perfiles inversamente dispersivos); resolución decrece en profundidad; offset mínimo no sistematizado en este paper \\
+Conclusiones clave & MASW es significativamente más eficiente que SASW: arreglo lineal multicanal con análisis f-k permite obtener curva de dispersión robusta en una sola adquisición; tasa de producción de campo muy superior a SASW; el análisis f-k separa modos y reduce ruido coherente \\
+Utilidad para la tesis & Paper fundacional del método MASW --- lectura obligatoria. Define el flujo de trabajo estándar (adquisición $\rightarrow$ f-k $\rightarrow$ inversión) que se usa hasta hoy. Útil para justificar el método elegido en la tesis. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[002] Estimation of near-surface shear-wave velocity by inversion of Rayleigh waves} \emph{Xia J; Miller RD; Park CB} (1999).
+{\scriptsize DOI: \texttt{10.1190/1.1444578}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW inversión \\
+M\'etodo secundario & Rayleigh wave inversion \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & campo + sintético \\
+Profundidad & \textasciitilde{}30 m \\
+Procesamiento & Curva de dispersión experimental desde f-k (referencia a Park 1999); datos sintéticos para validación \\
+Inversi\'on & Inversión iterativa 1D con Jacobiano (derivadas parciales de velocidad de fase respecto a Vs por capa); método del gradiente conjugado; modelo inicial empírico Vs \textasciitilde{} 0.9... \\
+Variables estimadas & Vs(z) perfil por capas \\
+Limitaciones reportadas & Sensible al modelo inicial; puede converger a mínimo local; supone estratificación horizontal; Vp y densidad fijados a priori (introduce sesgo si son incorrectos) \\
+Conclusiones clave & La inversión de ondas de Rayleigh es un problema no lineal que puede linealizarse iterativamente; el Jacobiano puede calcularse eficientemente; la convergencia es rápida (típicamente <10 iteraciones); Vs estimado concuerda bien con borehole en sitios de prueba \\
+Utilidad para la tesis & Define el algoritmo de inversión estándar implementado en SurfSeis y usado como referencia en casi todos los papers de MASW posteriores. Las ecuaciones del Jacobiano son la base de la mayoría de implementaciones de inversión local. Lectura obligatoria. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[003] In situ shear wave velocities from spectral analysis of surface waves} \emph{Nazarian S; Stokoe KH} (1984).
+{\scriptsize DOI: \texttt{(sin DOI)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & SASW \\
+M\'etodo secundario & análisis espectral de ondas superficiales \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & dos receptores (configuración SASW) \\
+Sitio & campo \\
+Profundidad & variable (función de longitud de onda y separación entre receptores) \\
+Procesamiento & Análisis espectral cruzado (cross-power spectrum); función de coherencia; curva de velocidad de fase vs. frecuencia \\
+Inversi\'on & Inversión iterativa de curva de dispersión de Rayleigh; forward modeling con perfil en capas \\
+Variables estimadas & Vs(z) perfil de velocidad de corte \\
+Limitaciones reportadas & Requiere múltiples configuraciones de receptores con disparos separados; proceso tedioso y lento; operador intensivo; asume modo fundamental \\
+Conclusiones clave & Paper fundacional del SASW --- primer uso sistemático del análisis espectral de ondas superficiales para obtención de curvas de dispersión in situ. Demostró viabilidad del método para caracterización geotécnica. Antecedente directo del MASW (Park 1999) que supera sus limitaciones operativas. \\
+Utilidad para la tesis & Referencia histórica obligatoria para contextualizar MASW como mejora operativa sobre SASW. Permite al lector de la tesis entender la motivación del desarrollo MASW. No se usa directamente en el diseño experimental. \\
+Economicidad y factibilidad & media \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[004] Faster, Better: Shear-Wave Velocity to 100 Meters Depth from Refraction Microtremor Arrays} \emph{Louie JN} (2001).
+{\scriptsize DOI: \texttt{10.1785/0120000098}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & ReMi (Refraction Microtremor) \\
+M\'etodo secundario & análisis f-k pasivo; ondas de Rayleigh \\
+Sensor & geófonos (arrays de refracción sísmica estándar) \\
+Fuente & ruido sísmico ambiental (sin fuente activa) \\
+Arreglo & lineal (arrays de refracción estándar) \\
+Sitio & campo (múltiples sitios) \\
+Profundidad & hasta 100 m \\
+Procesamiento & Análisis slowness-frequency (p-f) de microtremores; transformada de Radon; picking de curva de dispersión en dominio p-f \\
+Inversi\'on & Inversión 1D de curva de dispersión de Rayleigh (compatible con SurfSeis) \\
+Variables estimadas & Vs(z) perfil de velocidad de corte; Vs30 \\
+Limitaciones reportadas & Requiere ruido ambiental con suficiente energía en banda de frecuencias de interés; el análisis p-f puede ser más complejo de interpretar que f-k activo; menor control sobre la fuente de energía \\
+Conclusiones clave & ReMi permite obtener Vs hasta 100 m con arrays de refracción sísmica estándar sin fuente activa; validado contra borehole y SCPT; tiempo de adquisición muy corto; compatible con equipamiento de geófonos económico estándar \\
+Utilidad para la tesis & Método pasivo complementario al MASW activo. Muy relevante para sitios con restricciones de uso de fuente activa. Mismo equipamiento básico que MASW. Útil para comparación y validación cruzada en la tesis. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[005] Space and Time Spectra of Stationary Stochastic Waves, with Special Reference to Microtremors} \emph{Aki K} (1957).
+{\scriptsize DOI: \texttt{10.15083/0000033938}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & SPAC (Spatial Autocorrelation) \\
+M\'etodo secundario & análisis espectral de ruido ambiental; ondas de Rayleigh \\
+Sensor & sismómetros / geófonos (arreglo circular o lineal) \\
+Fuente & ruido sísmico ambiental \\
+Arreglo & arreglo circular (formulación original) / adaptable a lineal \\
+Sitio & campo (Japón) \\
+Profundidad & variable (función de longitud de onda y geometría del arreglo) \\
+Procesamiento & Autocorrelación espacial de microtremores; función de coherencia espacial; relación (r,$\omega$) = J0($\omega$$\cdot$r/c) para obtener velocidad de fase c desde función de Bessel \\
+Inversi\'on & Inversión de curva de dispersión de ondas de Rayleigh para obtener Vs(z) (no desarrollada en este paper --- la inversión es posterior) \\
+Variables estimadas & Velocidad de fase de ondas de Rayleigh vs. frecuencia; Vs(z) indirectamente \\
+Limitaciones reportadas & Requiere geometría de arreglo específica para muestrear correctamente la función de coherencia espacial; supone campo ondas planas y isotropía del ruido; sensible a condiciones de isototropía del campo de ruido \\
+Conclusiones clave & Establece la base teórica completa del SPAC: la autocorrelación espacial de microtremores en un arreglo circular está relacionada con la función de Bessel J0($\omega$r/c), permitiendo extraer la velocidad de fase de ondas de Rayleigh sin fuente activa. Paper fundacional --- toda la familia de métodos SPAC/ESAC/MSPAC deriva directamente de este trabajo. \\
+Utilidad para la tesis & Paper fundacional de todos los métodos basados en autocorrelación espacial (SPAC, ESAC, MSPAC). Comprenderlo es esencial para la revisión del estado del arte y para justificar la comparación con MASW/ReMi. Base teórica de un método pasivo económico alternativo. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[006] Guidelines for the good practice of surface wave analysis: a product of the InterPACIFIC project} \emph{Foti S; Hollender F; Garofalo F; Albarello D; Asten M; Bard PY; Comina C; Cornou C; Cox B; Di Giulio G; Forbriger T; Hayashi K; Lunedei E; Martin A; Mercerat D...} (2018).
+{\scriptsize DOI: \texttt{10.1007/s10518-017-0206-7}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & múltiples métodos de ondas superficiales (MASW; SPAC; ReMi; f-k) \\
+M\'etodo secundario & análisis de ruido ambiental; inversión de ondas de Rayleigh y Love \\
+Sensor & geófonos / acelerómetros / velocímetros \\
+Fuente & activa impulsiva + ruido ambiental \\
+Arreglo & múltiples geometrías (lineal; circular; 2D) \\
+Sitio & campo (múltiples sitios) \\
+Profundidad & 5--50 m (sitios de referencia) \\
+Procesamiento & Múltiples técnicas: f-k, SPAC, ESAC, beamforming, ReMi; análisis de curvas de dispersión y elipticidad (H/V) \\
+Inversi\'on & Inversión local (LSM) y global (Monte Carlo, SA); joint inversion; análisis de incertidumbre \\
+Variables estimadas & Vs(z) perfil de velocidad de corte; Vs30; incertidumbre en inversión \\
+Limitaciones reportadas & La incertidumbre está dominada por decisiones del operador (picking, parametrización) más que por ruido instrumental; la no-unicidad de la inversión 1D es una limitación inherente; diferencias entre laboratorios evidencian subjetividad del análisis \\
+Conclusiones clave & Las guías muestran que comparar métodos activos y pasivos mejora la confianza en los resultados. Recomiendan múltiples inversiones y análisis de sensibilidad. La validación cruzada entre métodos es la práctica más robusta. \\
+Utilidad para la tesis & Referencia metodológica clave para la tesis: justifica el protocolo de adquisición, procesamiento e inversión. Provee criterios de calidad aplicables al diseño experimental. Esencial para la sección de metodología. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[007] InterPACIFIC project: Comparison of invasive and non-invasive methods for seismic site characterization. Part I: Intra-comparison of surface wave...} \emph{Garofalo F; Foti S; Hollender F; Bard PY; Cornou C; Cox BR; Ohrnberger M; Sicilia D; Asten M; Di Giulio G; Forbriger T; Guillier B; Hayashi K; Martin A; Matsushima S...} (2016).
+{\scriptsize DOI: \texttt{10.1016/j.soildyn.2015.12.010}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & múltiples métodos de ondas superficiales (MASW; SPAC; ESAC; ReMi; f-k beamforming) \\
+M\'etodo secundario & comparación inter-laboratorios; análisis de incertidumbre \\
+Sensor & geófonos / acelerómetros / velocímetros \\
+Fuente & activa impulsiva + ruido ambiental \\
+Arreglo & múltiples geometrías \\
+Sitio & campo (sitios de referencia con borehole) \\
+Profundidad & 30--100 m (sitios de referencia) \\
+Procesamiento & f-k, SPAC, ESAC, MSPAC, beamforming, ReMi; picking de curvas de dispersión en múltiples laboratorios \\
+Inversi\'on & Inversión 1D local y global; comparación entre resultados de 14 laboratorios \\
+Variables estimadas & Vs(z) perfil; Vs30; variabilidad inter-laboratorio en curvas de dispersión e inversión \\
+Limitaciones reportadas & Variabilidad inter-laboratorio significativa en inversión; resultados dependen de decisiones del operador; mayor dispersión en inversión que en procesamiento \\
+Conclusiones clave & Los métodos de ondas superficiales convergen bien cuando se aplican correctamente. La variabilidad en inversiones revela impacto significativo del operador. MASW activo y métodos pasivos dan resultados comparables en sitios simples. \\
+Utilidad para la tesis & Permite fundamentar la comparabilidad entre métodos y cuantificar fuentes de incertidumbre. Justifica por qué validar con borehole cuando sea posible. Companion de Foti 2018. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[008] Surface-wave method for near-surface characterization: a tutorial} \emph{Socco LV; Strobbia C} (2004).
+{\scriptsize DOI: \texttt{10.3997/1873-0604.2004015}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & métodos de ondas superficiales (MASW; SASW; SPAC) --- tutorial \\
+M\'etodo secundario & análisis de dispersión de ondas superficiales; inversión 1D \\
+Sensor & geófonos / velocímetros \\
+Fuente & activa impulsiva + ruido ambiental \\
+Arreglo & múltiples (lineal; circular) \\
+Sitio & sintético + campo \\
+Profundidad & variable (función de arreglo y método) \\
+Procesamiento & f-k, SPAC, análisis espectral de ondas superficiales; picking de curva de dispersión; función de coherencia \\
+Inversi\'on & Inversión 1D local y global; análisis de sensibilidad del modelo; parametrización por capas \\
+Variables estimadas & Vs(z) perfil de velocidad de corte \\
+Limitaciones reportadas & Asunción de estratificación horizontal 1D; no-unicidad de la inversión; dependencia del modelo inicial; dificultades con perfiles inversamente dispersivos \\
+Conclusiones clave & Tutorial sistemático del estado del arte de métodos de ondas superficiales (2004). Cubre diseño de arreglo, efectos near-field/far-field, procesamiento e inversión con criterio práctico. Referencia fundamental para entender el marco conceptual completo del método. \\
+Utilidad para la tesis & Tutorial de referencia para metodología completa. Citable para justificar decisiones de diseño experimental y procesamiento. Complementa y precede a Foti 2018. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[009] Comparing shear-wave velocity profiles inverted from multichannel surface wave with borehole measurements} \emph{Xia J; Miller RD; Park CB; Hunter JA; Harris JB; Ivanov J} (2002).
+{\scriptsize DOI: \texttt{10.1016/S0267-7261(02)00008-8}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW (validación contra borehole) \\
+M\'etodo secundario & Rayleigh wave inversion; comparación con medición invasiva \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & campo (múltiples sitios) \\
+Profundidad & \textasciitilde{}30 m (depende de arreglo y sitio) \\
+Procesamiento & f-k spectral analysis; picking de curva de dispersión experimental (metodología Park 1999 / Xia 1999) \\
+Inversi\'on & Inversión iterativa 1D con Jacobiano (metodología Xia 1999) \\
+Variables estimadas & Vs(z) perfil de velocidad de corte; error relativo vs. borehole (009,Comparing shear-wave velocity profiles inverted from multichannel surface wave with borehole... \\
+Limitaciones reportadas & Xia J; Miller RD; Park CB; Hunter JA; Harris JB; Ivanov J \\
+Conclusiones clave & 2002 \\
+Utilidad para la tesis & en \\
+Economicidad y factibilidad & https://linkinghub.elsevier.com/retrieve/pii/S0267726102000088 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[010] Multichannel analysis of surface waves (MASW)---active and passive methods} \emph{Park CB; Miller RD; Xia J; Ivanov J} (2007).
+{\scriptsize DOI: \texttt{10.1190/1.2431832}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo y pasivo \\
+M\'etodo secundario & análisis f-k activo; análisis p-f pasivo; ondas de Rayleigh \\
+Sensor & geófonos verticales estándar \\
+Fuente & martillo (activo) + ruido ambiental (pasivo) \\
+Arreglo & lineal multicanal \\
+Sitio & campo (múltiples sitios) \\
+Profundidad & activo: \textasciitilde{}30 m; pasivo: \textasciitilde{}100+ m (depende de frecuencias de ruido) \\
+Procesamiento & f-k (activo); p-f o f-k pasivo (ruido ambiental); picking de curva de dispersión en ambos dominios \\
+Inversi\'on & Inversión 1D iterativa (modo fundamental); compatible con SurfSeis \\
+Variables estimadas & Vs(z) perfil de velocidad de corte; Vs30 \\
+Limitaciones reportadas & Modo pasivo depende de calidad y fuentes del ruido ambiental; modo activo limitado en profundidad por longitud de onda máxima generada por fuente impulsiva; aliasing espacial en arreglos cortos \\
+Conclusiones clave & MASW activo y pasivo pueden combinarse en el mismo arreglo: activo para alta resolución superficial, pasivo para mayor profundidad. El mismo equipamiento (geófonos + sismógrafo) sirve para ambos modos. La combinación activo+pasivo maximiza la información con mínimo costo adicional. \\
+Utilidad para la tesis & Review práctico del KGS group. Define claramente las diferencias entre modos activo y pasivo. Directamente aplicable al diseño experimental de la tesis: justifica usar ambos modos con el mismo equipamiento básico. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[011] Increasing horizontal resolution of geophysical models by generalized inversion} \emph{Xia J; Miller RD; Chen C; Ivanov J} (2004).
+{\scriptsize DOI: \texttt{10.1190/1.1845123}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW (inversión 2D para aumentar resolución horizontal) \\
+M\'etodo secundario & inversión generalizada; análisis de Rayleigh waves \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & sintético + campo \\
+Profundidad & \textasciitilde{}30 m \\
+Procesamiento & f-k spectral analysis; picking de curva de dispersión experimental \\
+Inversi\'on & Inversión generalizada 2D lateralmente consistente (derivada de metodología Xia 1999); stacking de múltiples disparos \\
+Variables estimadas & Vs(z;x) --- perfil 2D lateral de velocidad de corte; resolución horizontal del modelo de subsuperficie \\
+Limitaciones reportadas & Abstract corto --- sin validación sistemática vs. borehole; mayor complejidad computacional que inversión 1D estándar; requiere mayor densidad de disparos para resolución óptima \\
+Conclusiones clave & La inversión generalizada mejora la resolución horizontal del modelo de Vs en subsuperficie sin cambiar el equipamiento de adquisición. El mismo arreglo MASW estándar produce datos suficientes para inversión 2D más detallada que la estándar 1D. \\
+Utilidad para la tesis & Referencia para discutir extensiones metodológicas del MASW. Muestra que el equipamiento básico permite avanzar hacia caracterización 2D si se mejora el algoritmo de inversión. Útil en sección de perspectivas. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[012] Multichannel Analysis of Surface Waves (MASW) to Estimate the Shear Wave Velocity for Engineering Characterization of Soils at Hawassa Town, Southern...} \emph{Ayele A; Woldearegay K; Meten M} (2022).
+{\scriptsize DOI: \texttt{10.1155/2022/7588306}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo (estimación de Vs30 para clasificación sísmica de sitio) \\
+M\'etodo secundario & VES (Vertical Electrical Sounding); SPT --- joint characterization \\
+Sensor & geófonos verticales estándar \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & campo (múltiples perfiles en zona urbana) \\
+Profundidad & \textasciitilde{}30 m (Vs30) \\
+Procesamiento & Análisis multicanal de ondas superficiales; picking de curva de dispersión; análisis f-k estándar (metodología Park 1999) \\
+Inversi\'on & Inversión 1D de curvas de dispersión para obtener Vs(z); cálculo de Vs30 integrado \\
+Variables estimadas & Vs30 (248.9--371.3 m/s); clasificación sísmica de sitio (clase C y D); perfil Vs(z) \\
+Limitaciones reportadas & Estudio de campo sin validación directa vs. borehole profundo; asume estratificación horizontal 1D; especificaciones de instrumentación no detalladas en abstract --- ver paper completo \\
+Conclusiones clave & MASW es aplicable y efectivo en contexto de país en desarrollo (Etiopía). Vs30 obtenidos clasifican sitios como C y D. Zonas de baja velocidad superficial requieren consideración especial en diseño de fundaciones. El método joint MASW+VES+SPT es reproducible con equipamiento estándar y presupuesto limitado. \\
+Utilidad para la tesis & Caso de aplicación directamente análogo al contexto Paraguay: campo en país en desarrollo, MASW activo con equipamiento estándar, objetivo Vs30 y clasificación sísmica. Justifica la viabilidad del enfoque de la tesis en contextos de recursos limitados. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[013] Open-Source MASW Inversion Tool Aimed at Shear Wave Velocity Profiling for Soil Site Explorations} \emph{Olafsdottir EA; Erlingsson S; Bessason B} (2020).
+{\scriptsize DOI: \texttt{10.3390/geosciences10080322}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & Inversión Monte Carlo de curvas de dispersión MASW (herramienta open-source MASWaves) \\
+M\'etodo secundario & MASWaves suite (MATLAB); validación con datos sintéticos y de campo \\
+Sensor & geófonos verticales (campo); datos sintéticos \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & sintético + campo (sitio geotécnico de referencia en Islandia) \\
+Profundidad & variable (\textasciitilde{}30 m para datos de campo en ejemplo) \\
+Procesamiento & Análisis de curvas de dispersión de ondas Rayleigh (dominio f-k); extracción de modo fundamental y superiores \\
+Inversi\'on & Inversión Monte Carlo global: búsqueda aleatoria eficiente sobre espacio de parámetros; ajuste de curvas de dispersión teóricas vs. observadas; compatible con inversión... \\
+Variables estimadas & Vs(z) --- perfil de velocidad de corte por capas; estimación de incertidumbre vía muestreo Monte Carlo \\
+Limitaciones reportadas & El método Monte Carlo puede ser computacionalmente intensivo para espacios de búsqueda grandes; requiere parametrización inicial del modelo (número de capas; rangos de Vs); no aborda directamente efectos laterales (modelo 1D) \\
+Conclusiones clave & La herramienta open-source MASWaves proporciona un pipeline completo para inversión MASW: libre descarga; implementada en MATLAB; validada con datos sintéticos y de campo; permite cuantificar incertidumbre en el perfil de Vs vía muestreo Monte Carlo. El código es accesible y modificable. \\
+Utilidad para la tesis & Herramienta directamente utilizable en la tesis para procesamiento e inversión de datos MASW. Open source en MATLAB (compatible con el entorno de la tesis). Permite tratar la no-unicidad de la inversión. Citable como software de referencia. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[014] Geopsy: A User-Friendly Open-Source Tool Set for Ambient Vibration Processing} \emph{Wathelet M; Chatelain J-L; Cornou C; Di Giulio G; Guillier B; Ohrnberger M; Savvaidis A} (2020).
+{\scriptsize DOI: \texttt{10.1785/0220190360}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & Procesamiento de vibraciones ambientales para caracterización de sitio (HVSR; arrays; ondas superficiales) --- software... \\
+M\'etodo secundario & SPAC; ESAC; f-k beamforming; curvas de dispersión; HVSR; inversión de ondas superficiales \\
+Sensor & velocímetros / geófonos / acelerómetros 3C (un sensor único o arrays) \\
+Fuente & ruido sísmico ambiental (sin fuente activa) \\
+Arreglo & estación única (HVSR) o arrays (circular; lineal; 2D) \\
+Sitio & sintético + campo (múltiples sitios de referencia) \\
+Profundidad & variable: superficial (HVSR) hasta profunda (arrays de largo período) \\
+Procesamiento & HVSR (H/V spectral ratio); SPAC; ESAC; f-k beamforming; extracción de curvas de dispersión de Rayleigh y Love \\
+Inversi\'on & Inversión de curvas de dispersión (algoritmo de vecindad --- neighbourhood algorithm); análisis de incertidumbre \\
+Variables estimadas & Vs(z) perfil de velocidad de corte; f0 de resonancia de sitio (HVSR); Vs30; curvas de dispersión de Rayleigh/Love \\
+Limitaciones reportadas & Requiere arrays para obtener curvas de dispersión (no aplica a estación única en ese caso); calidad del resultado depende de la calidad del ruido ambiental en el sitio; más enfocado en procesamiento pasivo que activo \\
+Conclusiones clave & Geopsy es el software estándar de referencia para procesamiento de vibraciones ambientales en caracterización de sitio. Open source (GPL v3); multiplataforma; cubre el workflow completo de campo a publicación. Complementa MASWaves en métodos pasivos. Incluyendo HVSR y SPAC para sitios sin fuente activa. \\
+Utilidad para la tesis & Software directamente utilizable en la tesis para procesamiento pasivo. Relevante si se combina MASW activo con métodos pasivos (ReMi; HVSR; SPAC). 343 citas --- referencia obligatoria para citar software de análisis. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[015] Comparison of mean shear wave velocity of the top 30 m using downhole, MASW and bender elements methods} \emph{Moffat R; Correia N; Pastén C} (2016).
+{\scriptsize DOI: \texttt{10.4067/S0718-28132016000200001}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo (validación de Vs30 contra ensayo downhole) \\
+M\'etodo secundario & bender elements; análisis f-k; Geopsy; inversión de curva de dispersión \\
+Sensor & 12 geófonos verticales de 4.5 Hz (frecuencia estándar) \\
+Fuente & martillo / golpe \\
+Arreglo & lineal multicanal (12 geófonos; 5 ensayos por sitio) \\
+Sitio & campo --- estaciones sísmicas con datos de sondaje existentes \\
+Profundidad & \textasciitilde{}30 m (objetivo: Vs30) \\
+Procesamiento & f-k analysis con software Geopsy; picking de curva de dispersión; 5 repeticiones por sitio \\
+Inversi\'on & Inversión de curvas de dispersión $\rightarrow$ perfil Vs(z); cálculo de Vs30 según NCh2745 \\
+Variables estimadas & Vs30; perfil de velocidad de corte Vs(z); clasificación sísmica según NCh (norma chilena) y NEHRP \\
+Limitaciones reportadas & Mayor discrepancia donde existe alto contraste de impedancia entre capas (Melipilla --- 2 capas con fuerte contraste); no se especifica el número de capas en inversión; bender elements mide solo en laboratorio \\
+Conclusiones clave & Los perfiles Vs de MASW y downhole son similares hasta 30 m. Con metodología adecuada MASW da la misma clasificación sísmica que downhole. Mayor diferencia en Melipilla (alto contraste de impedancia). Ejemplo: Llolleo Vs30 \textasciitilde{} 265 m/s (MASW) vs. 227 m/s (downhole) --- diferencia \textasciitilde{}17\%; misma clasificación. \\
+Utilidad para la tesis & Validación directa MASW vs. downhole en Chile (Sudamérica). Especifica 12 geófonos 4.5 Hz --- dato de diseño experimental para la tesis. Usa Geopsy (paper 014). Directamente citable como precedente regional y como justificación del equipamiento. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[016] The empirical correlation between shear wave velocity and penetration resistance for the eolian sand deposits in the city of Olmos-Peru} \emph{Alhuay-León CG; Trejo-Noreña PC} (2021).
+{\scriptsize DOI: \texttt{10.15446/dyna.v88n217.93317}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo (correlación Vs-SPT en campo) \\
+M\'etodo secundario & SPT (Standard Penetration Test); correlación empírica Vs-N60 \\
+Sensor & 24 geófonos verticales 4.5 Hz (Geometrics Geode 24-channel) \\
+Fuente & martillo 25 lb (11.3 kg) sobre placa metálica \\
+Arreglo & lineal multicanal (24 geófonos) \\
+Sitio & campo --- depósitos de arenas eólicas cuaternarias secas \\
+Profundidad & 7-12 m (según SPT); Vs30 calculado (180-360 m/s) \\
+Procesamiento & Phase-shift method (Park et al. 1998) para construcción de imagen de dispersión y extracción de curva de dispersión fundamental \\
+Inversi\'on & Ajuste de curva potencial Vs=A*N\textasciicircum{}B mediante regresión lineal múltiple; modelos N-Vs y N60-Vs con y sin corrección de sobrecarga efectiva \\
+Variables estimadas & Vs(z); Vs30; N60; clasificación sísmica NEHRP (Tipo D); correlaciones empíricas específicas para arenas eólicas \\
+Limitaciones reportadas & Correlación válida solo para arenas eólicas cuaternarias secas del área de Olmos; limitada extrapolación a otros tipos de suelo o condiciones; muestra representativa de un solo sitio geológicamente homogéneo; no se reporta análisis de incertidumbre en inversión MASW \\
+Conclusiones clave & MASW con 24 geófonos 4.5 Hz entrega perfiles Vs de alta calidad en arenas eólicas secas con bajo ruido externo. Correlaciones propuestas: Vs = 65.5*N60\textasciicircum{}0.33 y Vs = 21.6*N60\textasciicircum{}0.38*($\sigma$'v)\textasciicircum{}0.24. Vs30 en rango 180-360 m/s = suelo Tipo D (NEHRP). MASW es alternativa económica viable al SPT para caracterización sísmica preliminar en depósitos similares. \\
+Utilidad para la tesis & Precedente sudamericano (Perú) de MASW con 24 geófonos 4.5 Hz --- mismo hardware candidato para la tesis. Demuestra viabilidad en contexto de bajo presupuesto y recursos limitados. Correlación Vs-SPT útil para validación cruzada si existen perforaciones previas en el sitio de estudio. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[017] A method for dynamic characteristics estimation of subsurface using microtremor on the ground surface} \emph{Nakamura Y} (1989).
+{\scriptsize DOI: \texttt{(sin DOI --- reporte técnico pre-digital)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & HVSR --- razón espectral H/V (técnica de Nakamura) \\
+M\'etodo secundario & caracterización pasiva de sitio mediante microtremores; estimación de f0 \\
+Sensor & sensor triaxial / sismógrafo 3C (estación única) \\
+Fuente & ruido ambiental (microtremores --- sin fuente activa) \\
+Arreglo & estación única (1 sensor 3-componentes) \\
+Sitio & campo (superficie libre) \\
+Profundidad & variable (hasta contraste de impedancia principal --- roca basal o cambio litológico) \\
+Procesamiento & Cálculo de espectros de Fourier componentes H y V; razón H/V; identificación del pico de resonancia fundamental \\
+Inversi\'on & No inversión directa en el paper original; estimación empírica de f0 y factor de amplificación relativo mediante el pico del cociente H/V \\
+Variables estimadas & f0 (frecuencia fundamental del sitio); factor de amplificación relativo H/V; estimación cualitativa de profundidad a contraste de impedancia \\
+Limitaciones reportadas & La interpretación física del pico H/V es debatida (no siempre corresponde directamente a amplificación real); no entrega perfil Vs sin inversión adicional; requiere condiciones de campo relativamente estacionarias; sensible a fuentes de ruido polarizadas \\
+Conclusiones clave & El cociente H/V del ruido ambiental tiene un pico claro en la frecuencia fundamental del sitio. Este pico permite estimar f0 y la amplificación relativa de manera económica con un solo sensor 3C. Método fundacional del análisis de microtremores para caracterización de sitio. \\
+Utilidad para la tesis & Método complementario muy económico al MASW: con un solo sensor 3C se obtiene f0 del sitio, comparable con la profundidad del contraste de impedancia del perfil Vs MASW. Combinación MASW+HVSR permite mejor resolución de modelos 1D de subsuelo. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[018] Site effect evaluation using spectral ratios with only one station} \emph{Lermo J; Chávez-García FJ} (1993).
+{\scriptsize DOI: \texttt{10.1785/bssa0830051574}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & HVSR --- razón espectral H/V con una sola estación (validación con registros de terremoto) \\
+M\'etodo secundario & evaluación de efecto de sitio; análisis de registros de S-waves; comparación con función de transferencia empírica de... \\
+Sensor & sismógrafo triaxial / sensor 3C (estación única) \\
+Fuente & terremotos regionales (S-wave coda) \\
+Arreglo & estación única (1 sensor 3-componentes) \\
+Sitio & campo --- ciudades sobre suelos blandos con contraste de impedancia fuerte \\
+Profundidad & variable (depende del contraste de impedancia del sitio; Ciudad de México --- varias decenas de metros) \\
+Procesamiento & Cálculo de espectros de Fourier de registros triaxiales; razón H/V del período dominante de la onda S; comparación con función de transferencia empírica estándar (SSR -... \\
+Inversi\'on & No inversión directa; estimación empírica de f0 y amplificación relativa vía pico H/V \\
+Variables estimadas & f0 (frecuencia fundamental); amplificación relativa H/V; curva de razón espectral H/V por bandas de frecuencia \\
+Limitaciones reportadas & La razón H/V tiende a subestimar la amplificación real en algunos casos; método más preciso cuando existe fuerte contraste de impedancia superficial; requiere terremotos con buena relación señal/ruido; no aplica en sitios con ruido industrial fuerte \\
+Conclusiones clave & La razón H/V del movimiento S de terremotos reproduce razonablemente bien la función de transferencia empírica del sitio. Elimina la necesidad de una estación de referencia. Validado en Oaxaca, Acapulco y Ciudad de México con resultados consistentes. Establece la validez científica de la técnica de Nakamura para evaluación de efecto de sitio. \\
+Utilidad para la tesis & Valida la técnica de Nakamura (paper 017) con datos reales de terremoto. Proporciona base científica para usar HVSR en sitios donde no se dispone de estación de referencia --- muy relevante en contextos de recursos limitados. Referencia obligatoria junto con Nakamura 1989 para justificar uso de HVSR en la tesis. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[019] Guidelines for the Implementation of the H/V Spectral Ratio Technique on Ambient Vibrations Measurements, Processing and Interpretation} \emph{SESAME European Research Project WP12 (coord. Bard P-Y et al.)} (2004).
+{\scriptsize DOI: \texttt{(sin DOI --- entregable de proyecto europeo)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & HVSR --- pautas prácticas cuantitativas para implementación de la técnica H/V en vibraciones ambientales \\
+M\'etodo secundario & evaluación de efecto de sitio; microzonificación; criterios de confiabilidad y claridad de picos H/V \\
+Sensor & cualquier sensor 3C (1-componentes z + 2-componentes h); velocímetro de banda ancha preferible; mínimo 0.2 Hz \\
+Fuente & ruido ambiental (sin fuente activa) \\
+Arreglo & estación única (1 sensor 3C) \\
+Sitio & campo --- cualquier tipo de sitio (suelos blandos principalmente) \\
+Profundidad & variable (hasta contraste de impedancia principal; usualmente la frecuencia f0 permite estimar profundidad al... \\
+Procesamiento & Cálculo de espectros de Fourier por ventanas de tiempo seleccionadas; suavizado; cálculo del cociente H/V; promedio de múltiples ventanas; criterios estadísticos de... \\
+Inversi\'on & No inversión directa; estimación de f0 e indicación de amplificación relativa. Interpretación cualitativa de tipo de pico y relación con contraste de impedancia \\
+Variables estimadas & f0 (frecuencia fundamental del sitio); A0 (amplificación relativa en f0); $\sigma$f y $\sigma$A (indicadores de confiabilidad estadística); estimación de profundidad a bedrock si Vs... \\
+Limitaciones reportadas & H/V solo no es suficiente para caracterizar la complejidad del efecto de sitio ni los valores absolutos de amplificación; requiere interpretación con apoyo geológico/geotécnico; sensible a ruentes de ruido polarizadas (viento >5 m/s, maquinaria, edificios); no reemplaza métodos de referencia en sitios críticos \\
+Conclusiones clave & El método H/V es efectivo para estimar f0 en sitios con fuerte contraste de impedancia. Duración mínima de registro: 30 min para f0 < 0.2 Hz hasta 3 min para f0 > 5 Hz. Criterio de pico claro: al menos 5 de 6 condiciones cuantitativas. El método es especialmente recomendado en zonas de sismicidad baja y moderada. Combinar con MASW y otros métodos para mejor interpretación. \\
+Utilidad para la tesis & Guía estándar de referencia obligatoria si la tesis incluye HVSR. Provee los criterios cuantitativos de confiabilidad (f0 > 10/lw, nc > 200, $\sigma$A < 2) directamente aplicables para evaluar la calidad de mediciones H/V. Recomendaciones de instrumentación específicas. Especialmente relevante para sitios de sismicidad moderada como Paraguay. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[020] Site characterization using geophysical and geotechnical Prospecting. Case study main road North Central Trunk (National Route 55) at Km 68+500 in...} \emph{Moya-Gutiérrez AJ; Torres-Peña JA; Contreras-Martínez M} (2020).
+{\scriptsize DOI: \texttt{10.15446/rbct.n48.85411}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW 1D y 2D (ondas Rayleigh) + Tomografía de Refracción Sísmica (TRS) \\
+M\'etodo secundario & SEV (sondeo eléctrico vertical); SPT (ensayo de penetración estándar); determinación de parámetros dinámicos del suelo \\
+Sensor & 24 geófonos de 14 Hz (Geometrics Geode 24-channel) \\
+Fuente & martillo de 12 lb sobre placa metálica \\
+Arreglo & lineal multicanal (24 geófonos; 2 líneas de 80.5 m; espaciamiento 3.5 m) \\
+Sitio & campo --- depósitos cuaternarios fluvio-lacustres sobre metamorfitas (gneis) \\
+Profundidad & \textasciitilde{}25-30 m (limitado por frecuencia de geófonos 14 Hz y longitud de arreglo) \\
+Procesamiento & SeisImager/SW y Seismic Unix (CWP) para MASW 1D y 2D; SeisImager/TRS para refracción sísmica; IPI2Win para resistividad \\
+Inversi\'on & Inversión de curva de dispersión MASW con SeisImager/SW; perfiles 1D y 2D de Vs \\
+Variables estimadas & Vp = 499-1714 m/s; Vs = 210-466 m/s; resistividades 6.06-581.05 -m; parámetros dinámicos ( Poisson, E Young, G módulo de corte, densidad); clasificación de perfil de... \\
+Limitaciones reportadas & Geófonos de 14 Hz limitan profundidad máxima de investigación (\textasciitilde{}20-30 m); adecuado para suelos superficiales pero no óptimo para MASW profundo (4.5 Hz sería mejor); metodología no discute incertidumbre de inversión; correlación geofísica-geotécnica cualitativa \\
+Conclusiones clave & Combinación MASW+TRS+SEV+SPT permite caracterización integral del subsuelo. Vs = 210-466 m/s, suelo Tipo D según NSR-10. Los datos geofísicos se correlacionan coherentemente con SPT. El enfoque multi-método es práctico y reproducible con equipamiento estándar (Geometrics Geode) en proyectos de ingeniería civil de bajo presupuesto. \\
+Utilidad para la tesis & Ejemplo de workflow multi-método en contexto colombiano similar al paraguayo (recursos limitados, suelos sedimentarios poco consolidados). Muestra que MASW + TRS + SEV + SPT se puede ejecutar con equipo básico Geometrics Geode. Proporciona parámetros dinámicos adicionales útiles para caracterización de sitio completa. \\
+Economicidad y factibilidad & media \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[021] Use of Surface Waves in Statistical Correlations of Shear Wave Velocity and Penetration Resistance of Chennai Soils} \emph{Uma Maheswari R; Boominathan A; Dodagoudar GR} (2010).
+{\scriptsize DOI: \texttt{10.1007/s10706-009-9285-9}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo (correlación Vs-SPT en contexto urbano) \\
+M\'etodo secundario & SPT (Standard Penetration Test); crosshole sísmico (validación); bender element (laboratorio) \\
+Sensor & 24 geófonos verticales 4.5 Hz (Geometrics Geode 24-channel) \\
+Fuente & martillo 8 kg sobre placa \\
+Arreglo & lineal multicanal (24 geófonos; espaciamiento 1 m; apertura 23 m; offset fuente 5-15 m) \\
+Sitio & campo --- suelos urbanos variados (arcilla marina blanda y rígida; arenas fluviales sueltas; sedimentos... \\
+Profundidad & 30 m (Vs30); suelos hasta 50 m de espesor en zona norte \\
+Procesamiento & Software SurfSeis; transformación f-k para extracción de curva de dispersión; análisis de modo fundamental de ondas Rayleigh \\
+Inversi\'on & Inversión de curva de dispersión Rayleigh a perfil Vs(z); regresión power-law ortogonal Vs = A$\cdot$N\textasciicircum{}B por tipo de suelo (todos, arcilla, arena) \\
+Variables estimadas & Vs(z); Vs30; clasificación NEHRP; período fundamental T0; correlaciones Vs-N (todos los suelos: Vs = 95.64$\cdot$N\textasciicircum{}0.301, r$^2$=0.83; arcilla y arena por separado con corrección... \\
+Limitaciones reportadas & Correlaciones válidas para suelos de Chennai (arcilla marina + arena fluvial litoral sur de India); extrapolación a otros contextos requiere cautela; sin análisis de incertidumbre en inversión MASW \\
+Conclusiones clave & MASW validado contra crosshole sísmico y ensayos bender element. 200 pares (Vs, N) en 30 sitios urbanos. Correlación global: Vs = 95.64$\cdot$N\textasciicircum{}0.301 (r$^2$ = 0.83); comparable con Ohba \& Toriumi (1970) e Imai \& Tonouchi (1982). MASW detecta inversiones de velocidad. Parte significativa de Chennai en Clase D (Vs30 = 180-360 m/s). Período fundamental 0.03-0.6 s (amenaza edificaciones <6 pisos). \\
+Utilidad para la tesis & Protocolo completo Vs-SPT con Geometrics Geode + geófonos 4.5 Hz en ciudad de país en desarrollo. Directamente replicable para validar perfiles MASW con SPT preexistentes. Ecuación empírica Vs = f(N) útil para estimación sin MASW donde existen datos SPT. Mapeo NEHRP ciudad completa como objetivo alcanzable. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[022] Tool for analysis of multichannel analysis of surface waves (MASW) field data and evaluation of shear wave velocity profiles of soils} \emph{Ólafsdóttir EÁ; Erlingsson S; Bessason B} (2018).
+{\scriptsize DOI: \texttt{10.1139/cgj-2016-0302}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo (herramienta open-source MASWaves para análisis completo: dispersión + inversión) \\
+M\'etodo secundario & comparación con Geopsy (dispersión) y WinSASW (inversión); SASW histórico en un sitio \\
+Sensor & 24 geófonos verticales GS-11D (Geospace Technologies) 4.5 Hz \\
+Fuente & sledgehammer (martillo de golpe) \\
+Arreglo & lineal multicanal (24 geófonos; dx=1 m en Arnarbæli y Hella, dx=2 m en Bakkafjara; offset fuente x1=10-15 m) \\
+Sitio & campo --- 3 sitios en Islandia sur: arena glaciofluvial (Arnarbæli), arena litoral moderna (Bakkafjara), arena... \\
+Profundidad & variable --- típicamente 15-30 m con geófonos 4.5 Hz + fuente de martillo en arenas \\
+Procesamiento & Método phase-shift (Park et al. 1998) para imagen de dispersión; extracción de curva de dispersión fundamental y modos superiores; imagen 2D/3D de dispersión; bandas de... \\
+Inversi\'on & Backcálculo iterativo de curva de dispersión experimental; modelo de capas horizontales; ajuste por mínimos cuadrados (misfit); perfil Vs(z) 1D \\
+Variables estimadas & Vs(z); curvas de dispersión experimental con incertidumbre; validación contra Geopsy y WinSASW \\
+Limitaciones reportadas & Inversión básica (sin análisis probabilístico de incertidumbre --- esto se añade en la versión MC de 2020, paper 013). Software limitado al modo fundamental en la versión 2018. Soils son Islandeses (suelos granulares volcánicos --- diferente de suelos aluviales/arcillosos de Paraguay). \\
+Conclusiones clave & MASWaves es software libre descargable en masw.hi.is (ahora uni.hi.is/eao4/) con guía de usuario y datos de muestra. Módulos: MASWaves Dispersion (phase-shift) + MASWaves Inversion (backcálculo). Resultados consistentes con Geopsy en todos los sitios de prueba. 3 sitios de campo Islandia: Vs variando desde \textasciitilde{}100 m/s (arena suelta saturada) hasta \textasciitilde{}300+ m/s (arena cementada). Herramienta completamente operativa y reproducible para procesamiento de datos MASW en contextos académicos con presupuesto limitado. \\
+Utilidad para la tesis & La referencia fundacional del toolbox MASWaves --- herramienta libre MATLAB para el flujo de trabajo completo MASW (dispersión + inversión). Usar junto con paper 013 (versión Monte Carlo) para implementación práctica en la tesis. Permite procesar datos MASW sin software comercial. Guía de usuario incluida. Complementa Geopsy (paper 014 = Wathelet 2020). \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[023] Imaging dispersion curves of surface waves on multi-channel record} \emph{Park CB; Miller RD; Xia J} (1998).
+{\scriptsize DOI: \texttt{10.1190/1.1820161}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & Phase-shift method --- transformación del campo de ondas de registro multicanal a imagen de curvas de dispersión... \\
+M\'etodo secundario & análisis multi-modo (fundamental + modos superiores); comparación con f-k y slowness-frequency (p-$\omega$) \\
+Sensor & receptor multicanal (geophones) --- no especificado; datos reales y sintéticos \\
+Fuente & fuente impulsiva activa \\
+Arreglo & multicanal lineal (near-source offsets --- optimizado para apertura limitada) \\
+Sitio & campo real + modelo sintético (verificación) \\
+Profundidad & variable (depende de apertura y frecuencia de análisis) \\
+Procesamiento & Phase-shift wavefield transformation: suma de trazas ponderadas con corrección de fase en función de velocidad de prueba cT; imagen de amplitud en espacio (f, cT)... \\
+Inversi\'on & No presenta inversión --- se enfoca en el paso de procesamiento (extracción de curva de dispersión). La inversión se trata en Xia et al. 1999. \\
+Variables estimadas & Imagen de dispersión multimodal (amplitud vs. frecuencia y velocidad de fase); curvas de dispersión fundamental y modos superiores; imágenes de alta resolución con pocas... \\
+Limitaciones reportadas & El método asume propagación 1D horizontal; sensible a ruido coherente (ondas de cuerpo) en offsets cercanos; resolución modal limitada por apertura del arreglo; puede confundir modos cuando la separación en velocidad es pequeña \\
+Conclusiones clave & El método phase-shift genera imágenes de alta resolución de curvas de dispersión multi-modo con número reducido de trazas, siendo apto para offsets cercanos a la fuente. Supera f-k y p-$\omega$ en condiciones de apertura limitada. Fundamento del procesamiento MASW estándar (usado en Park 1999, MASWaves, Geopsy, SurfSeis, SeisImager). \\
+Utilidad para la tesis & Referencia obligatoria como fundamento algorítmico del procesamiento MASW. Todos los papers de la base de datos que usan MASW implementan implícitamente este método. Necesario para justificar el procesamiento en la tesis y entender la etapa de extracción de curva de dispersión. \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[024] Near-Field Effects on Array-Based Surface Wave Methods with Active Sources} \emph{Yoon S; Rix GJ} (2009).
+{\scriptsize DOI: \texttt{10.1061/(ASCE)1090-0241(2009)135:3(399)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & análisis numérico de efectos near-field en MASW activo (simulaciones 2D) \\
+M\'etodo secundario & criterios de diseño de adquisición MASW; validación con datos sintéticos FEM/BEM \\
+Sensor & array multicanal de geófonos (simulado) \\
+Fuente & fuente activa impulsiva (simulada numéricamente) \\
+Arreglo & lineal multicanal (variación sistemática de offset fuente-primer receptor y espaciamiento) \\
+Sitio & modelo numérico 2D (medio homogéneo y multicapa) \\
+Profundidad & variable --- función de longitud de onda analizada (\textasciitilde{}10--50 m con configuraciones típicas de campo) \\
+Procesamiento & transformación wavefield (phase-shift) para extracción de curvas de dispersión a partir de sismogramas sintéticos 2D; simulaciones paramétricas x1/$\lambda$ \\
+Inversi\'on & no aplica --- estudio de efectos numérico; sin inversión de perfiles de campo \\
+Variables estimadas & velocidad de fase aparente vs. verdadera; razón offset/longitud de onda (x1/$\lambda$); criterio de offset mínimo para adquisición MASW confiable \\
+Limitaciones reportadas & análisis principalmente numérico --- condiciones de campo reales pueden variar; sensibilidad a contraste de velocidad en modelos multicapa no completamente generalizable \\
+Conclusiones clave & Los efectos near-field subestiman sistemáticamente la velocidad de fase aparente cuando el offset fuente-primer receptor es insuficiente respecto de la longitud de onda (x1/$\lambda$ < umbral). El criterio mínimo recomendado es x1 $\geq$ 0.5$\cdot$$\lambda$max para obtener curvas de dispersión sin sesgo significativo. Los efectos son más severos en bajas frecuencias (= profundidades mayores). Es posible mitigar aumentando el offset, a costo de mayor atenuación de la señal. \\
+Utilidad para la tesis & Referencia estándar para justificar la elección del offset mínimo fuente-primer receptor en cualquier diseño de campo MASW. El criterio x1/$\lambda$ $\geq$ 0.5 es el estándar de facto referenciado en revisiones MASW (Foti et al. 2018, paper 012). Esencial para evaluar la confiabilidad de las curvas de dispersión a bajas frecuencias y la calidad del perfil Vs en profundidad. \\
+Economicidad y factibilidad & alta --- el criterio aplica a cualquier configuración de campo y equipamiento; no requiere instrumentación adicional especial; solo afecta el diseño del arreglo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[025] Inversion of high frequency surface waves with fundamental and higher modes} \emph{Xia J; Miller RD; Park CB; Tian G} (2003).
+{\scriptsize DOI: \texttt{10.1016/s0926-9851(02)00239-2}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW --- inversión de curva de dispersión con modo fundamental y modos superiores de ondas Rayleigh \\
+M\'etodo secundario & análisis de sensibilidad de modos superiores; inversión por mínimos cuadrados; datos sintéticos y de campo \\
+Sensor & array multicanal de geófonos verticales \\
+Fuente & fuente activa impulsiva (datos sintéticos y de campo) \\
+Arreglo & lineal multicanal (múltiples arreglos de campo para validación) \\
+Sitio & modelo sintético (medio multicapa) + campo real (Kansas, EE.UU.) \\
+Profundidad & \textasciitilde{}30 m con modo fundamental; potencialmente mayor con modos superiores (hasta \textasciitilde{}50 m dependiendo de la... \\
+Procesamiento & Extracción de curvas de dispersión para modo fundamental y modos superiores (1$^{\circ}$, 2$^{\circ}$...); identificación de modos en imagen f-k o phase-shift; análisis de sensibilidad... \\
+Inversi\'on & Inversión iterativa por mínimos cuadrados (extensión de Xia et al. 1999): minimización de misfit entre curvas de dispersión observadas (fundamental + modos superiores) y... \\
+Variables estimadas & Perfil Vs(z); curvas de dispersión multi-modal (fundamental + modos superiores); kernels de sensibilidad por modo \\
+Limitaciones reportadas & La identificación y separación correcta de modos en datos de campo es más compleja que con datos sintéticos; puede haber confusión modal (mode misidentification) si la imagen de dispersión no tiene suficiente resolución; requiere mayor densidad de geófonos o mayor apertura para resolver modos superiores confiablemente \\
+Conclusiones clave & La inversión multi-modal (fundamental + modos superiores) produce perfiles Vs(z) con mayor resolución en profundidad y mejor detección de inversiones de velocidad que la inversión solo de modo fundamental. Los modos superiores tienen mayor sensibilidad a capas profundas (kernels de sensibilidad más distribuidos en profundidad). La inversión conjunta reduce la no-unicidad del problema inverso. Validado con datos sintéticos multicapa y datos de campo en Kansas. \\
+Utilidad para la tesis & Extensión directa del paper 002 (Xia et al. 1999) para modos superiores. Relevante para la tesis si se trabaja con datos MASW donde el modo fundamental no resuelve bien la estructura en profundidad o cuando existen inversiones de velocidad. Proporciona el marco teórico para el uso de modos superiores en MASWaves y otros softwares. Justifica el análisis multimodal cuando la geología local lo requiere. \\
+Economicidad y factibilidad & media --- el método requiere buena relación señal-ruido para identificar modos superiores en campo; más demandante instrumentalmente que solo modo fundamental; geófonos de baja frecuencia (4.5 Hz) y buena fuente (sledgehammer pesado) ayudan; implementado en MASWaves, Geopsy y SurfSeis \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[026] Optimum Field Parameters of an MASW Survey} \emph{Park CB; Miller RD; Miura H} (2002).
+{\scriptsize DOI: \texttt{(sin DOI --- conference expanded abstract SEG-J)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo --- análisis empírico de parámetros óptimos de adquisición de campo (offset, fuente, geófonos) \\
+M\'etodo secundario & comparación de frecuencias de geófonos (4.5, 10, 40 Hz); comparación de fuentes (10-lb, 20-lb, RAWD); swept-frequency... \\
+Sensor & geófonos verticales de 4.5 Hz, 10 Hz y 40 Hz (Geospace; comparación experimental) \\
+Fuente & sledgehammer 10-lb y 20-lb; RAWD (rubber-band-aided weight drop) --- comparación experimental \\
+Arreglo & lineal multicanal; múltiples configuraciones de offset y espaciamiento (30 m vs 110 m de apertura; dx=1 m) \\
+Sitio & campo --- dos sitios reales: suelo suelto húmedo (KGS Lawrence, Kansas) y suelo seco duro (Yuma, Arizona) \\
+Profundidad & \textasciitilde{}30 m con geófonos 10 Hz (offset 10-100 m); \textasciitilde{}50 m con geófonos 4.5 Hz; \textasciitilde{}15 m con geófonos 40 Hz \\
+Procesamiento & Swept-Frequency Record (SFR) para identificar estabilidad de onda plana en función del offset; análisis visual de imágenes de dispersión de curvas de fase; comparación... \\
+Inversi\'on & no aplica --- estudio de adquisición (no se presenta inversión de perfiles) \\
+Variables estimadas & criterios de offset mínimo (10 m) y máximo (100 m); tabla de parámetros óptimos según frecuencia de geófono; frecuencias mínimas registrables por tipo de geófono... \\
+Limitaciones reportadas & Criterios establecidos empíricamente para dos tipos de suelo; no representan necesariamente todas las condiciones geológicas; no se proporciona análisis estadístico; mayor offset puede ser necesario en terrenos duros o con mayor contraste de impedancia \\
+Conclusiones clave & Los parámetros de campo óptimos para la mayoría de sitios de suelo son: offset mínimo 10 m (más tolerante que el criterio de media longitud de onda del SASW), offset máximo 100 m, espaciamiento 1 m, geófonos 4.5-10 Hz para \textasciitilde{}30-50 m de profundidad. Tabla 1 resume configuración recomendada según frecuencia de geófono. Geófonos de 10 Hz registran hasta 5 Hz (misma profundidad que 4.5 Hz para la mayoría de sitios). MASW es el método sísmico más tolerante a variaciones de parámetros de campo entre todos los métodos... \\
+Utilidad para la tesis & Guía práctica definitiva de los inventores del MASW para el diseño de campo. La Tabla 1 es directamente aplicable para decidir configuración de arreglo en la tesis (offset 10-100 m, dx=1 m, geófonos 4.5 Hz para máxima profundidad). Justifica el uso de sledgehammer $\geq$ 10-lb como fuente estándar. Relevante para decisiones instrumentales (¿4.5 Hz vs 10 Hz?) con respaldo del grupo KGS. \\
+Economicidad y factibilidad & alta --- guía directamente aplicable a cualquier campo con equipo básico. La Tabla 1 resume todo el diseño de adquisición MASW en una sola página. Geófonos 4.5 Hz + sledgehammer 20-lb + offset 10-100 m = configuración estándar accesible y económica. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[027] Multi-offset phase analysis of surface wave data (MOPA)} \emph{Strobbia C; Foti S} (2006).
+{\scriptsize DOI: \texttt{10.1016/j.jappgeo.2005.10.009}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MOPA (Multi-Offset Phase Analysis) --- método de ondas superficiales activo alternativo al MASW basado en análisis de... \\
+M\'etodo secundario & comparación con MASW y SASW; análisis de estabilidad de fase; criterios de selección de offsets válidos \\
+Sensor & geófonos (número reducido posible --- mínimo 2 receptores por par); compatible con configuraciones de campo... \\
+Fuente & fuente activa impulsiva (típicamente sledgehammer) \\
+Arreglo & lineal con variación sistemática de offset fuente-receptor; análisis por pares de receptores adyacentes \\
+Sitio & campo real + análisis sintético (validación del método) \\
+Profundidad & similar a MASW estándar (\textasciitilde{}10-30 m según configuración) \\
+Procesamiento & Cálculo de diferencia de fase entre pares de receptores adyacentes en función del offset; análisis estadístico de coherencia de fase para selección de datos válidos... \\
+Inversi\'on & Inversión de la curva de dispersión resultante (puede usarse con algoritmos estándar: mínimos cuadrados, monte carlo, etc.); la innovación está en la etapa de extracción... \\
+Variables estimadas & Curva de dispersión experimental con incertidumbre estadística; criterios de validez por offset; estimación de Vs(z) post-inversión \\
+Limitaciones reportadas & Requiere análisis cuidadoso de coherencia de fase para identificar rangos de offset válidos; más complejo en su implementación que la simple transformación wavefield del MASW; puede necesitar mayor número de tiros para cubrir suficientes offsets \\
+Conclusiones clave & El método MOPA extrae curvas de dispersión robustas mediante análisis estadístico de diferencias de fase a múltiples offsets, permitiendo identificar automáticamente los offsets contaminados por near-field o interferencia de ondas de cuerpo. Ventaja frente a MASW: no requiere un array denso (puede usar pares de receptores móviles). Proporciona estimaciones de incertidumbre de la curva de dispersión de forma natural. 127 citas confirma adopción en la comunidad. \\
+Utilidad para la tesis & Método alternativo al MASW estándar que puede ser útil cuando el equipo disponible es limitado (pocos geófonos) o cuando se quiere un análisis más robusto frente a near-field y ondas de cuerpo. Proporciona incertidumbre estadística de la curva de dispersión, lo que es valioso para la inversión probabilística. Contexto: complementa papers 008 (Socco \& Strobbia 2004) y 013 (Olafsdottir 2020). \\
+Economicidad y factibilidad & media-alta --- la adquisición puede realizarse con pocos geófonos pero requiere más esfuerzo de procesamiento que el MASW estándar; el método MOPA no está implementado en softwares gratuitos estándar (MASWaves, Geopsy) de la misma forma que el phase-shift; puede requerir código propio o software... \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[028] Application of Multichannel Analysis of Surface Waves Method (MASW) in an Area Susceptible to Landslide at Ubatuba City, Brazil} \emph{Lima Júnior SB; Prado RL; Mendes RM} (2012).
+{\scriptsize DOI: \texttt{10.22564/rbgf.v30i2.109}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo 1D (modo fundamental Rayleigh) para caracterización de perfil Vs en suelos tropicales residuales no... \\
+M\'etodo secundario & comparación de frecuencias de geófonos (4.5, 14, 28 Hz); variación estacional Vs (seco vs lluvioso); correlaciones... \\
+Sensor & 3 grupos de 24 geófonos Geometrics Geode simultáneos: 4.5 Hz, 14 Hz y 28 Hz (comparación experimental) \\
+Fuente & martillo \textasciitilde{}8 kg sobre placa metálica (diámetro 25 cm) \\
+Arreglo & lineal multicanal (3 grupos paralelos 24 geófonos; espaciamiento 1 m; offsets mínimos 1-15 m evaluados) \\
+Sitio & campo real --- ladera de colina con suelos residuales tropicales no saturados (regolito granítico-gnéisico) \\
+Profundidad & \textasciitilde{}10-15 m con geófonos 28 Hz; \textasciitilde{}20-25 m con 14 Hz; \textasciitilde{}30 m con 4.5 Hz (apertura array 24 m) \\
+Procesamiento & Transformación wavefield con SurfSeis (método Park et al. 1999 --- phase-shift); comparación de imágenes de dispersión con distintos geófonos y offsets; extracción de... \\
+Inversi\'on & Inversión 1D de curva de dispersión con SurfSeis (mínimos cuadrados); modelo de capas horizontales; perfil Vs(z) \\
+Variables estimadas & Vs(z) en temporada seca vs lluviosa; profundidad de investigación según frecuencia de geófono; módulo de corte dinámico G; correlaciones empíricas Vs--resistencia del... \\
+Limitaciones reportadas & Suelos tropicales no saturados presentan mayor variabilidad de Vs que suelos saturados; correlaciones empíricas son sitio-dependientes; la profundidad de investigación (\textasciitilde{}30 m con 4.5 Hz) puede ser insuficiente para caracterizar completamente el perfil; 13 citas confirma adopción limitada en la comunidad \\
+Conclusiones clave & Los valores de Vs en temporada seca son mayores que en lluviosa (atribuido a mayor cohesión por succión capilar). Geófonos 4.5 Hz dan mejor desempeño a bajas frecuencias (mayor profundidad). Offset mínimo óptimo \textasciitilde{}10 m, consistente con Park et al. 2002. Los resultados MASW son coherentes con otros estudios geotécnicos del sitio. El método es aplicable para monitoreo estacional de taludes en zonas tropicales. \\
+Utilidad para la tesis & Referencia directa para aplicación de MASW en contexto tropical sudamericano. Demuestra que suelos tropicales residuales (similar a algunos suelos paraguayos) son caracterizables con MASW usando geófonos 4.5 Hz + Geometrics Geode + martillo 8 kg. La variación estacional Vs (seco vs lluvioso) es relevante para zonas con precipitación marcada. Confirmación experimental del criterio de offset mínimo Park 2002 en suelos tropicales. \\
+Economicidad y factibilidad & alta --- equipamiento estándar: Geometrics Geode 24-ch + geófonos 4.5 Hz + martillo 8 kg. Configuración idéntica a papers 016 (Alhuay 2021) y 021 (Uma Maheswari 2010). PDF gratuito en RBGf (OA). Brasil es el país más cercano a Paraguay con producción científica MASW documentada. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[029] Joint inversion of phase velocity dispersion and H/V ratio curves from seismic noise recordings using a genetic algorithm, considering higher modes} \emph{Parolai S; Picozzi M; Richwalski SM; Milkereit C} (2005).
+{\scriptsize DOI: \texttt{10.1029/2004gl021115}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & Inversión conjunta (joint inversion) de curvas de dispersión de velocidad de fase (ruido sísmico pasivo --- ondas... \\
+M\'etodo secundario & análisis de ruido sísmico pasivo (microtremores); H/V spectral ratio; modos superiores de ondas Rayleigh; algoritmo... \\
+Sensor & sismómetros o geófonos de velocidad de banda ancha (al menos 3-componentes para H/V); arreglo de receptores... \\
+Fuente & sin fuente activa --- ruido sísmico ambiental (microtremores) \\
+Arreglo & estación única para H/V + array de receptores para dispersión (pasivo) \\
+Sitio & datos sintéticos + caso de campo real (Alemania) \\
+Profundidad & variable (depende de frecuencias analizables en el ruido sísmico --- típicamente 1-50 Hz; \textasciitilde{}5-50 m para ruido de... \\
+Procesamiento & Extracción de curva de dispersión pasiva (f-k/beamforming del ruido sísmico); cálculo de razón espectral H/V (método Nakamura); modelado de H/V sintético para modelo de... \\
+Inversi\'on & Inversión conjunta simultánea: función objetivo combina misfit de curva de dispersión + misfit de razón H/V; algoritmo genético (exploración global --- evita mínimos... \\
+Variables estimadas & Perfil Vs(z) con mayor resolución y menor no-unicidad que la inversión individual de H/V o dispersión; curvas sintéticas de H/V y dispersión; incertidumbre del modelo \\
+Limitaciones reportadas & Método pasivo --- requiere buena calidad del ruido sísmico y que la fuente de ruido sea isótropa; la razón H/V no es directamente una función de dispersión (su modelado es más complejo); algoritmo genético puede ser computacionalmente costoso; aplicabilidad mejor en sitios sin fuente activa disponible \\
+Conclusiones clave & La inversión conjunta H/V + dispersión reduce significativamente la no-unicidad respecto a la inversión individual de cada observable. Incluir modos superiores mejora la resolución del perfil Vs en profundidad. El algoritmo genético permite exploración global evitando mínimos locales. La combinación de datos pasivos (sin fuente activa) hace el método económico y aplicable en zonas urbanas o donde el acceso es limitado. 239 citas confirma adopción amplia. \\
+Utilidad para la tesis & Relevante para la tesis si se combina MASW (activo) con HVSR (pasivo) en un esquema de joint inversion. Reduce la no-unicidad del problema inverso usando dos tipos de observables complementarios. Justifica la inclusión de H/V en el workflow de caracterización del sitio, especialmente cuando el MASW no puede resolver bien la estructura en profundidad. \\
+Economicidad y factibilidad & DOI verificado CrossRef: 10.1029/2004gl021115. Geophysical Research Letters Vol.32 No.1 (2005). AGU/Wiley paywalled. Sin OA (GFZ repository: acceso bloqueado). 239 citas (Semantic Scholar). Autores: GFZ Potsdam (Parolai S., Picozzi M., Richwalski SM., Milkereit C.). Relacionado con papers 017... \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[030] Multichannel analysis of surface waves to map bedrock} \emph{Miller RD; Xia J; Park CB; Ivanov JM} (1999).
+{\scriptsize DOI: \texttt{10.1190/1.1438226}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW \\
+M\'etodo secundario & CMP roll-along MASW; 2D Vs section \\
+Sensor & geofono 4.5 Hz \\
+Fuente & impacto --- martillo 12 lb sobre placa 1 ft$^2$ apilamiento 4 golpes \\
+Arreglo & lineal --- CMP roll-along 48 canales espaciado 2 ft entre geófonos registros cada 4 ft \\
+Sitio & sitio contaminado --- parking sobre sustrato rocoso \\
+Profundidad & 0.6--10.7 m (2--35 ft) \\
+Procesamiento & fase-velocidad phase-shift estilo CMP-MASW; SurfSeis (KGS) \\
+Inversi\'on & inversión 1D Vs por CMP con continuidad lateral $\rightarrow$ sección 2D \\
+Variables estimadas & Vs; profundidad a bedrock; zonas de fractura \\
+Limitaciones reportadas & resolución lateral limitada a escala de sub-CMP; profundidad máxima \textasciitilde{}10 m con geófonos 4.5 Hz y martillo \\
+Conclusiones clave & MASW con adquisición CMP produce sección 2D de Vs con resolución lateral < 1 ft en profundidad a bedrock; insensible a inversiones de velocidad; ventaja sobre exploración con ondas de cuerpo para este tipo de sitio \\
+Utilidad para la tesis & introduce el concepto de 2D-MASW via CMP roll-along con geófonos 4.5 Hz y sismógrafo Geometrics StrataView 60 canales; directamente citado en Park 2002 (paper 026); muestra factibilidad de mapeo de bedrock con equipamiento estándar bajo costo \\
+Economicidad y factibilidad & alta --- geófonos 4.5 Hz estándar + sismógrafo 60 canales + martillo; setup completamente reproducible en contexto académico con recursos limitados \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[031] Effects of Multiple Modes on Rayleigh Wave Dispersion Characteristics} \emph{Tokimatsu K; Tamura S; Kojima H} (1992).
+{\scriptsize DOI: \texttt{10.1061/(ASCE)0733-9410(1992)118:10(1529)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & SASW \\
+M\'etodo secundario & analisis modal Rayleigh multimodal \\
+Sensor & no especificado (estudio teorico) \\
+Fuente & no especificado \\
+Arreglo & no especificado \\
+Sitio & teorico --- perfiles estratificados sinteticos \\
+Profundidad & variable --- perfiles sinteticos hasta \textasciitilde{}30 m \\
+Procesamiento & calculo de curvas de dispersion multimodal por metodo de matriz de transferencia \\
+Inversi\'on & comparacion de modos calculados con curva de dispersion aparente observada \\
+Variables estimadas & Vs; estructura modal de dispersion; contribucion de modos superiores \\
+Limitaciones reportadas & no aborda inversion directamente; no proporciona protocolo experimental; analisis limitado a perfiles 1D horizontalmente homogeneos \\
+Conclusiones clave & modos superiores pueden dominar la curva de dispersion aparente en perfiles con inversion de velocidad o capa rigida superficial; curva aparente puede seguir modos superiores a bajas frecuencias causando subestimacion de Vs en profundidad; propone simulacion multimodal para interpretacion correcta \\
+Utilidad para la tesis & paper teorico fundamental sobre modos superiores en ondas Rayleigh; explica por que la inversion en modo fundamental puede dar resultados erroneos en ciertos perfiles; motivacion directa para el uso de inversiones multimodales (ver paper 025 --- Xia 2003); 352 citas \\
+Economicidad y factibilidad & alta --- paper teorico puro; no requiere equipamiento especial; los resultados son validos para cualquier setup MASW/SASW con geófonos estandar; esencial para interpretar correctamente curvas de dispersion en sitios con inversiones de velocidad \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[032] Analise Multicanal de Ondas de Superficie (MASW): um estudo comparativo com fontes ativas e passivas, ondas Rayleigh e Love e diferentes modos de...} \emph{Eikmeier CN} (2018).
+{\scriptsize DOI: \texttt{10.11606/d.14.2018.tde-09042018-164758}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW \\
+M\'etodo secundario & f-k beamforming; Passive Roadside MASW; inversao conjunta multimodal; Love waves \\
+Sensor & geofone 10 Hz triaxial (arreglo 2D) + geofone 4.5 Hz vertical (arreglo lineal) \\
+Fuente & compactador de suelo + marreta + ruido ambiental + trafico vehicular \\
+Arreglo & 2D bidimensional (geofones triaxiales) + lineal (4.5 Hz vertical) \\
+Sitio & campus universitario urbano --- USP IAG Butanta Sao Paulo \\
+Profundidad & \textasciitilde{}10-30 m (tipico MASW con geofones 4.5-10 Hz) \\
+Procesamiento & f-k transform; f-k beamforming; phase-shift \\
+Inversi\'on & inversion modo fundamental + 1er modo superior (conjunta); inversion Love waves \\
+Variables estimadas & Vs; validado contra SPT \\
+Limitaciones reportadas & ruido ambiental (180s) insuficiente --- necesita horas de adquisicion; Passive Roadside mejora identificacion de modos superiores pero no mejora significativamente perfiles Vs; componente Love no mejoro inversiones conjuntas respecto a solo Rayleigh; metodo aun dependiente del operador \\
+Conclusiones clave & compactador es mejor fuente activa que marreta (mas energia, mayor banda de frecuencia, mejores espectros f-k); inversion conjunta fundamental + 1er modo superior da mejores resultados que solo modo fundamental; Passive Roadside MASW ayuda a identificar modos superiores en datos activos; todos los resultados convergentes validados contra SPT \\
+Utilidad para la tesis & disertacion de maestria IAG-USP (orientador: Renato Prado --- mismo grupo que Lima Jr 2012, paper 028); compara sistematicamente fuentes activas/pasivas y modos de propagacion con geofones 4.5 Hz y 10 Hz; muestra que inversion multimodal mejora profundidad y calidad de perfil; contexto Sudamerica tropical \\
+Economicidad y factibilidad & alta --- geofones 4.5 Hz (lineal) y 10 Hz triaxial; fuentes: compactador de bajo costo + marreta; metodos pasivos evaluados; todo replicable con equipamiento academico limitado \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[033] Surface-wave analysis for building near-surface velocity models --- Established approaches and new perspectives} \emph{Socco LV; Foti S; Boiero D} (2010).
+{\scriptsize DOI: \texttt{10.1190/1.3479491}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & revision --- ondas superficiales metodos activos y pasivos \\
+M\'etodo secundario & MASW; SASW; f-k; beamforming; crosscorrelacion; SPAC; modos superiores; variaciones laterales \\
+Sensor & no especificado (revision de literatura multiples tipos de equipamiento) \\
+Fuente & multiple (revision general) \\
+Arreglo & multiple (revision general) \\
+Sitio & multiple (revision general) \\
+Profundidad & variable (revision de toda la literatura --- m a km de profundidad segun aplicacion) \\
+Procesamiento & phase-shift; f-k; beamforming; crosscorrelacion; SPAC; ESAC; MASW; SASW \\
+Inversi\'on & inversiones modo fundamental; inversiones multimodales; enfoques de variaciones laterales; algoritmos globales y locales \\
+Variables estimadas & Vs (perfil 1D y variaciones laterales); Vp en algunos casos \\
+Limitaciones reportadas & modos superiores experimentalmente dificiles de recuperar; \textasciitilde{}67\% de publicaciones solo usan modo fundamental; inclusion de variaciones laterales en inversiones aun es area abierta; no-unicidad clasica de la inversion \\
+Conclusiones clave & modos superiores juegan rol significativo en muchos sitios pero solo \textasciitilde{}33\% de publicaciones los incluye; la curva de dispersion aparente puede estar dominada por modos superiores en perfiles con inversiones de velocidad; variaciones laterales son el proximo frontier del metodo; se propone guia de buenas practicas (adquisicion $\rightarrow$ procesamiento $\rightarrow$ inversion) \\
+Utilidad para la tesis & review de referencia de Socco, Foti y Boiero (Politecnico di Torino) --- cubre toda la cadena metodologica del analisis de ondas superficiales; discusion en profundidad de modos superiores (prioridad 2 para la tesis); best-practices guidelines para adquisicion y procesamiento (prioridad 3); companion a Socco \& Strobbia 2004 (paper 008) \\
+Economicidad y factibilidad & alta --- paper de revision; aplica a cualquier setup; los principios de adquisicion y procesamiento son validos para geófonos estandar de bajo costo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[034] A Monte Carlo multimodal inversion of surface waves} \emph{Maraschini M; Foti S} (2010).
+{\scriptsize DOI: \texttt{10.1111/j.1365-246x.2010.04703.x}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & inversion multimodal Monte Carlo \\
+M\'etodo secundario & ondas Rayleigh multimodal; modos superiores \\
+Sensor & no especificado (estudio metodologico numericos + campo) \\
+Fuente & no especificado \\
+Arreglo & no especificado \\
+Sitio & sintetico + campo \\
+Profundidad & variable (sintetico \textasciitilde{}10-30 m; campo no especificado) \\
+Procesamiento & espectro f-v multimodal; extraccion de curvas de dispersion modales \\
+Inversi\'on & Monte Carlo global --- muestra espacio de modelos sin gradientes; minimiza funcion de ajuste que pondera contribucion de todos los modos simultaneamente \\
+Variables estimadas & Vs (perfil 1D); incertidumbre de parametros \\
+Limitaciones reportadas & costo computacional elevado del Monte Carlo; requiere identificacion previa de modos en el espectro experimental; aplicacion limitada a perfiles 1D \\
+Conclusiones clave & inversion Monte Carlo usando todos los modos simultaneamente mejora significativamente la estimacion de Vs respecto a inversiones de modo fundamental; el enfoque reduce la no-unicidad de la inversion y permite cuantificar incertidumbre de parametros; la funcion de ajuste multimodal es mas robusta que los enfoques monomodales \\
+Utilidad para la tesis & paper metodologico de Maraschini + Foti (Politecnico di Torino) --- mismo grupo que papers 008 (Socco \& Strobbia 2004) y 033 (Socco 2010); introduce inversion Monte Carlo multimodal que mejora profundidad de investigacion y calidad del perfil Vs; directamente aplicable con Geopsy (paper 014); cubre prioridades 2 (modos superiores) y 5 (inversion global) \\
+Economicidad y factibilidad & media --- Monte Carlo computacionalmente costoso; pero el enfoque se implementa en software libre (Geopsy/Dinver); geófonos estandar son suficientes para adquisicion; el costo es computacional no instrumental \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[035] In situ shear wave velocity from multichannel analysis of surface waves (MASW) tests at eight Norwegian research sites} \emph{Long MM; Donohue S} (2007).
+{\scriptsize DOI: \texttt{10.1139/t07-013}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW \\
+M\'etodo secundario & SCPT; crosshole; correlacion CPT-Vs \\
+Sensor & geofono 4.5 Hz y 10 Hz --- 12 geófonos a 1 m de separacion \\
+Fuente & martillo de mano (sledgehammer) \\
+Arreglo & lineal --- 12 geófonos a 1 m de separacion \\
+Sitio & sitios de investigacion geotecnica --- arcillas blandas a firmes; limos; arenas \\
+Profundidad & \textasciitilde{}5-20 m (dependiendo de sitio y frecuencia de geofono) \\
+Procesamiento & phase-shift; SurfSeis (KGS) \\
+Inversi\'on & inversion iterativa least-squares (SurfSeis --- Xia et al. 1999) \\
+Variables estimadas & Vs; Gmax (via Gmax=rho*Vs\textasciicircum{}2); correlacion con SCPT, crosshole, CPT \\
+Limitaciones reportadas & MASW sobreestima Vs \textasciitilde{}10\% respecto a SCPT o crosshole; en arenas sueltas puede sobreestimar mas (condiciones locales del sitio); fundamento modo solo; uso de SurfSeis limita flexibilidad de inversion \\
+Conclusiones clave & MASW es facil, rapido, consistente y repetible; perfiles Vs en arcillas coinciden bien con SCPT y crosshole (diferencia tipica \textasciitilde{}10\%); buena correlacion entre Gmax normalizado y contenido de agua o indice de vacios en arcillas noruegas; en limos resultados razonables; en arenas sueltas tend a sobreestimar Vs \\
+Utilidad para la tesis & primer estudio comparativo sistematico de MASW en multiples sitios de suelos blandos con validacion rigurosa contra metodos independientes (SCPT, crosshole, CPT); usa geófonos 4.5 Hz y 10 Hz con RAS-24 (Seistronix); bajo costo; muestra limites del MASW en arenas sueltas; relevante para suelos aluviales/blandos tipicos de Sudamerica \\
+Economicidad y factibilidad & alta --- geofono 4.5 Hz + sismografo RAS-24 Seistronix + martillo; setup de bajo costo reproducible en contexto academico con recursos limitados; SurfSeis disponible via KGS \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[036] Blind Shear-Wave Velocity Comparison of ReMi and MASW Results with Boreholes to 200 m in Santa Clara Valley: Implications for Earthquake...} \emph{Stephenson WJ} (2005).
+{\scriptsize DOI: \texttt{10.1785/0120040240}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW; ReMi \\
+M\'etodo secundario & comparacion ciega contra sondeos (boreholes) a 200 m \\
+Sensor & no especificado (varios sitios --- tipico MASW/ReMi con geofonos estandar) \\
+Fuente & MASW: impacto activo; ReMi: ruido ambiental pasivo \\
+Arreglo & lineal \\
+Sitio & urbano --- Valle de Santa Clara California USA \\
+Profundidad & hasta 200 m (excepcional para MASW/ReMi con configuraciones optimizadas) \\
+Procesamiento & MASW: phase-shift; ReMi: analisis p-f pasivo \\
+Inversi\'on & inversion separada de cada metodo; comparacion post-hoc con logs de velocidad de sondeos \\
+Variables estimadas & Vs (perfil 1D); Vs30 \\
+Limitaciones reportadas & profundidad de 200 m requiere configuraciones especiales (offset grande, fuentes energeticas); metodos pasivos limitados por ruido de fondo; blind comparison no permite optimizar parametros para maximizar acuerdo \\
+Conclusiones clave & ReMi y MASW muestran buena concordancia con sondeos hasta 200 m en sitios apropiados; diferencias existentes se atribuyen principalmente a variabilidad lateral del sitio y no a limitaciones inherentes de los metodos; ambos metodos son herramientas utiles para evaluacion rapida de Vs30 en contexto de peligro sismico \\
+Utilidad para la tesis & paper de validacion ciega de alta relevancia --- compara ReMi (paper 004) y MASW (paper 001) con sondeos independientes a profundidades excepcionales para metodos de superficie; 141 citas; BSSA alta calidad; USGS autores \\
+Economicidad y factibilidad & media --- validacion en profundidades de 200 m requiere configuraciones especiales costosas; para Vs30 (30 m) los metodos son completamente accesibles con geofono estandar y martillo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[037] Seismic characterization of shallow bedrock sites with multimodal Monte Carlo inversion of surface wave data} \emph{Bergamo P; Comina C; Foti S; Maraschini M} (2011).
+{\scriptsize DOI: \texttt{10.1016/j.soildyn.2010.10.006}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & inversion multimodal Monte Carlo ondas superficiales \\
+M\'etodo secundario & analisis fk SWAT \\
+Sensor & geofono (tipo no especificado) \\
+Fuente & fuente activa (no especificada) \\
+Arreglo & lineal \\
+Sitio & roca superficial / sitios de red acelerometrica \\
+Profundidad & superficial (\textasciitilde{}5-20 m) \\
+Procesamiento & analisis fk (paquete SWAT MATLAB) \\
+Inversi\'on & Monte Carlo multimodal (funcion de desajuste multimodal) \\
+Variables estimadas & perfil Vs; profundidad basamento; amplificacion sismica \\
+Limitaciones reportadas & metodo requiere curvas multimodales; sensible a ruido en curvas de dispersion \\
+Conclusiones clave & inversion Monte Carlo multimodal robusta para sitios con basamento poco profundo; maneja inversiones de velocidad y no-unicidad; validada con razones espectrales \\
+Utilidad para la tesis & metodo de inversion directamente aplicable cuando hay modos superiores presentes; muestra como incluir todos los modos sin asignarlos a priori \\
+Economicidad y factibilidad & alta \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[038] Emergence of broadband Rayleigh waves from correlations of the ambient seismic noise} \emph{Shapiro N M; Campillo M} (2004).
+{\scriptsize DOI: \texttt{10.1029/2004gl019491}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & interferometria sismica pasiva: extraccion de ondas Rayleigh broadband por correlacion cruzada de ruido ambiental \\
+M\'etodo secundario & tomografia de ondas superficiales (grupo y fase) \\
+Sensor & sismometros de red regional (no geófonos) \\
+Fuente & ruido sismico ambiental \\
+Arreglo & pares de estaciones (arreglo regional, 100-2000 km) \\
+Sitio & campo (red sismica regional, USARRAY precursor) \\
+Profundidad & corteza y manto superior (profundidades kilometricas) \\
+Procesamiento & correlacion cruzada de registros de ruido; analisis de dispersion de velocidad de grupo \\
+Inversi\'on & no aplica (estudio de extraccion, no inversion 1D de suelo superficial) \\
+Variables estimadas & velocidad de grupo de ondas Rayleigh broadband; mapas tomograficos \\
+Limitaciones reportadas & escala regional (100-2000 km); no directamente aplicable a escala de sitio con geófonos de 4.5 Hz \\
+Conclusiones clave & ondas Rayleigh broadband emergen de correlaciones de dias de ruido ambiental; velocidades de grupo consistentes con tomografia balistica; abre camino a mediciones pasivas sin fuente activa \\
+Utilidad para la tesis & paper fundacional de interferometria sismica para ondas superficiales; base teorica de ReMi y metodos pasivos; escala diferente pero justifica el uso de ruido ambiental para extraer Vs \\
+Economicidad y factibilidad & no aplica directamente (requiere red de estaciones, no geófonos en campo unico); relevante como fundamento teorico \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[039] Rayleigh-wave mode separation by high-resolution linear Radon transform} \emph{Luo Y; Xia J; Miller R D; Xu Y; Liu J; Liu Q} (2009).
+{\scriptsize DOI: \texttt{10.1111/j.1365-246x.2009.04277.x}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & separacion de modos de ondas Rayleigh por transformada de Radon lineal de alta resolucion \\
+M\'etodo secundario & MASW; analisis de dispersion multimodal; inversion esparsidad \\
+Sensor & geofono vertical 4.5 Hz (espaciado 0.5 m) \\
+Fuente & martillo (fuente activa) \\
+Arreglo & lineal multicanal \\
+Sitio & sintetico y campo \\
+Profundidad & variable (mayor con modos superiores) \\
+Procesamiento & transformada de Radon lineal de alta resolucion por inversion de esparsidad; dominio frecuencia-lentitud convertido a f-v \\
+Inversi\'on & inversion 1D de perfil Vs con curvas multimodales separadas \\
+Variables estimadas & perfil Vs; curvas de dispersion multimodales individualizadas; frecuencias de corte \\
+Limitaciones reportadas & resolucion limitada en LRT estandar (mejora parcial con inversion de esparsidad); no reporta limitaciones por ruido o heterogeneidad lateral \\
+Conclusiones clave & LRT alta resolucion mejora resolucion de imagenes de dispersion >50\% vs slant stacking; separa modos exitosamente; amplia rango usable en frecuencia y profundidad; reduce numero de disparos necesarios \\
+Utilidad para la tesis & directamente aplicable a datos MASW con modos superiores visibles; geófonos 4.5 Hz son los usados en el paper; mejora calidad de inversion multimodal \\
+Economicidad y factibilidad & alta (sin equipo adicional; mejora de procesamiento de datos existentes) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[040] CMP cross-correlation analysis of multi-channel surface-wave data} \emph{Hayashi K; Suzuki H} (2004).
+{\scriptsize DOI: \texttt{10.1071/eg04007}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & CMP cross-correlation de datos de ondas superficiales multicanal y multidisparo para perfil 2D de Vs \\
+M\'etodo secundario & inversion no lineal de minimos cuadrados para reconstruccion 2D Vs; analisis MASW en gathers CMP \\
+Sensor & geofono (arreglo multicanal, tipo no especificado) \\
+Fuente & fuente activa (tipo no especificado) \\
+Arreglo & lineal multicanal multishot (roll-along estilo sismica de reflexion 2D) \\
+Sitio & sintetico (modelado de forma de onda) y campo \\
+Profundidad & variable (perfil 2D continuo) \\
+Procesamiento & correlacion cruzada de trazas; apilamiento de trazas CMP; analisis multicanal de ondas superficiales en gathers CMP \\
+Inversi\'on & inversion no lineal de minimos cuadrados 1D por punto CMP; reconstruccion 2D de perfil Vs \\
+Variables estimadas & perfil 2D de Vs; curvas de velocidad de fase por punto CMP \\
+Limitaciones reportadas & requiere multiple shots y cobertura CMP (como reflexion 2D); mayor costo de adquisicion que MASW simple \\
+Conclusiones clave & CMP cross-correlation mejora precision y resolucion respecto a metodos estandar; adquisicion similar a reflexion 2D; procesamiento en 4 pasos bien definidos \\
+Utilidad para la tesis & directamente aplicable a reconocimientos 2D con geófonos estandar; permite detectar variaciones laterales; compatible con equipamiento tipico de tesis si se dispone de suficientes canales \\
+Economicidad y factibilidad & media (requiere multiple disparos y configuracion tipo 2D reflexion, mas canales que MASW simple) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[041] S-Wave Velocity Profiling by Joint Inversion of Microtremor Dispersion Curve and Horizontal-to-Vertical (H/V) Spectrum} \emph{Arai H; Tokimatsu K} (2005).
+{\scriptsize DOI: \texttt{10.1785/0120040243}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & inversion conjunta de curva de dispersion de microtremores y espectro H/V para perfil Vs \\
+M\'etodo secundario & analisis de modos fundamentales y superiores de ondas Rayleigh y Love en H/V \\
+Sensor & sismometro de microtremores (no geofonos --- metodo pasivo) \\
+Fuente & ruido sismico ambiental (microtremores) \\
+Arreglo & punto unico (H/V) + arreglo para dispersion \\
+Sitio & campo (4 sitios con perfil de pozo de referencia) \\
+Profundidad & hasta bedrock de ingenieria (\textasciitilde{}30-100 m) \\
+Procesamiento & curva de dispersion de microtremores; espectro H/V; metodo de inversion no especificado \\
+Inversi\'on & inversion conjunta (dispersion + H/V) considerando modos multiples de Rayleigh y Love \\
+Variables estimadas & perfil Vs; Vs de bedrock; profundidad de bedrock \\
+Limitaciones reportadas & requiere medicion de H/V y dispersion en mismo sitio; sensible a numero de modos considerados \\
+Conclusiones clave & inversion conjunta mas consistente con perfiles de pozo que inversion solo de dispersion; H/V es mas sensible a Vs de bedrock que velocidad de fase; mejora significativa en estimacion de Vs de basamento \\
+Utilidad para la tesis & marco teorico para joint inversion dispersion + H/V; directamente relevante si se combina MASW con H/V Nakamura en mismos sitios; extiende Tokimatsu 1992 (031) al caso pasivo + H/V \\
+Economicidad y factibilidad & alta (H/V solo requiere un sismometro; inversion conjunta no requiere equipo adicional) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[042] Surface-wave inversion using a direct search algorithm and its application to ambient vibration measurements} \emph{Wathelet M; Jongmans D; Ohrnberger M} (2004).
+{\scriptsize DOI: \texttt{10.3997/1873-0604.2004018}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & inversion de curva de dispersion de ondas superficiales por algoritmo de vecindad (neighbourhood algorithm) \\
+M\'etodo secundario & dispersion de ondas Rayleigh por vibración ambiental (pasivo) y fuente activa; complementariedad activo-pasivo \\
+Sensor & arreglo de sismometros (datos pasivos y activos) \\
+Fuente & vibración ambiental (pasivo) + fuente activa (complementario) \\
+Arreglo & arreglo (no especificado --- datos reales en Bruselas) \\
+Sitio & sintetico + campo (sitio en Bruselas, Belgica) \\
+Profundidad & \textasciitilde{}115 m hasta basamento (caso Bruselas: arenas/arcillas sobre Paleozoico) \\
+Procesamiento & extraccion de curva de dispersion de vibraciones ambientales; neighbourhood algorithm (busqueda estocastica global) \\
+Inversi\'on & inversion 1D de perfil Vs por neighbourhood algorithm; permite insertar informacion a priori \\
+Variables estimadas & perfil Vs 1D; incertidumbre de inversion; rango de modelos aceptables \\
+Limitaciones reportadas & solucion no unica (inherente a inversión no lineal); requiere parametrizacion cuidadosa \\
+Conclusiones clave & neighbourhood algorithm mas eficiente que metodos linearizados para este problema; activo+pasivo complementarios; validado con datos de pozo en Bruselas \\
+Utilidad para la tesis & paper fundacional del algoritmo de inversion implementado en Geopsy/Dinver (tool paper 014); directamente relevante para uso de Geopsy en tesis; precede y motiva Wathelet 2020 (014) \\
+Economicidad y factibilidad & alta (software Geopsy libre; sin equipo adicional para la inversion) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[043] Inversion of shallow-seismic wavefields: I. Wavefield transformation} \emph{Forbriger T} (2003).
+{\scriptsize DOI: \texttt{10.1046/j.1365-246x.2003.01929.x}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & inversion de campo de onda completo de sismica superficial: transformacion de Bessel para expansion de campo de onda \\
+M\'etodo secundario & inversion 1D de modelo de subsuelo por ajuste de coeficientes sinteticos (companion paper Part II) \\
+Sensor & geofono (arreglo sismica superficial) \\
+Fuente & fuente activa (sismica superficial, marteau sismique) \\
+Arreglo & lineal (arreglo sismica superficial) \\
+Sitio & sintetico + campo \\
+Profundidad & superficial (sismica superficial de ingenieria) \\
+Procesamiento & transformada de Bessel discreta del registro sismico; representacion completa del campo de onda sin separacion de modos \\
+Inversi\'on & inversion 1D por ajuste de coeficientes sinteticos (incluye modos superiores, modos fugitivos y amplitudes reales) \\
+Variables estimadas & perfil Vs 1D; velocidades P; coeficientes de campo de onda \\
+Limitaciones reportadas & computacionalmente mas intensivo que metodos de dispersion estandar; requiere implementacion especializada \\
+Conclusiones clave & metodo evita separacion de modos que son inseparables en dominio temporal; robusto sin a priori; aplicable en campo cercano; mas eficiente que inversion directa de sismogramas \\
+Utilidad para la tesis & fundamento teorico de inversion de campo de onda completo para ondas superficiales; contextualiza por que metodos basados en modos pueden fallar; relevante para discusion de limitaciones del MASW \\
+Economicidad y factibilidad & baja (inversion completa requiere software especializado; no trivialmente aplicable con geófonos estandar y software libre) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[044] Estimating Vs(30) (or NEHRP Site Classes) from Shallow Velocity Models (Depths < 30 m)} \emph{Boore D.M.} (2004).
+{\scriptsize DOI: \texttt{10.1785/0120030105}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & Vs30 estimation \\
+M\'etodo secundario & velocity extrapolation \\
+Sensor & borehole \\
+Sitio & varied (135 California boreholes) \\
+Profundidad & 30 \\
+Procesamiento & velocity correlation extrapolation \\
+Inversi\'on & statistical regression and correlation \\
+Variables estimadas & Vs30 NEHRP site class \\
+Limitaciones reportadas & Extrapolation uncertainty increases for very shallow profiles; method-dependent bias \\
+Conclusiones clave & Correlation-based extrapolation methods reduce bias significantly vs. simple constant-velocity assumption; applicable when profiles < 30 m \\
+Utilidad para la tesis & Fundamental reference for Vs30 estimation from incomplete profiles; directly relevant to thesis inversion output evaluation \\
+Economicidad y factibilidad & alta (borehole data only; no field acquisition cost) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[045] Joint analysis of Rayleigh- and Love-wave dispersion: Issues, criteria and improvements} \emph{Dal Moro G.; Ferigo F.} (2011).
+{\scriptsize DOI: \texttt{10.1016/j.jappgeo.2011.09.008}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & joint inversion Rayleigh+Love \\
+M\'etodo secundario & multi-objective evolutionary algorithm (MOEA) \\
+Sensor & geofonos verticales y horizontales (triaxial 4.5 Hz) \\
+Fuente & golpe vertical + lateral (placa horizontal) \\
+Arreglo & arreglo lineal (2 sitios de campo + datos sinteticos) \\
+Sitio & varied (synthetic + 2 real field sites) \\
+Profundidad & no especificada \\
+Procesamiento & extraccion de curvas de dispersion Rayleigh y Love por separado \\
+Inversi\'on & MOEA Pareto-optimal joint inversion \\
+Variables estimadas & perfil Vs \\
+Limitaciones reportadas & Requiere geofonos multicomponente y dos tipos de fuente sismica; mayor complejidad de adquisicion que MASW estandar \\
+Conclusiones clave & La inversion conjunta Rayleigh+Love reduce significativamente la ambiguedad; propone procedimiento de adquisicion eficiente en campo \\
+Utilidad para la tesis & Referencia clave para justificar o contextualizar enfoques multionda; util si se dispone de geofonos triaxiales para mejorar unicidad de inversion \\
+Economicidad y factibilidad & media (requiere geofonos horizontales adicionales, mayor logistica de campo) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[046] InterPACIFIC project: Comparison of invasive and non-invasive methods for seismic site characterization. Part II: Inter-comparison between...} \emph{Garofalo F.; Foti S.; Hollender F.; Bard P.Y.; Cornou C.; Cox B.R.; Dechamp A.; Ohrnberger M.; Perron V.; Sicilia D.; Teague D.; Vergniault C.} (2016).
+{\scriptsize DOI: \texttt{10.1016/j.soildyn.2015.12.009}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & comparacion MASW vs borehole \\
+M\'etodo secundario & MASW Rayleigh y Love; downhole; crosshole \\
+Sensor & geofonos (arreglos superficiales) + borehole \\
+Fuente & activa e invasiva \\
+Arreglo & lineal + borehole \\
+Sitio & suelo blando (Mirandola IT), suelo rigido (Grenoble FR), roca (Cadarache FR) \\
+Profundidad & 30-100 \\
+Procesamiento & MASW; SPAC; f-k; ondas Love y Rayleigh \\
+Inversi\'on & inversion de curvas de dispersion por equipos independientes (ejercicio ciego) \\
+Variables estimadas & perfil Vs; Vs30; clasificacion sismica de sitio \\
+Limitaciones reportadas & Metodos superficiales tienen menor resolucion para capas delgadas y contrastes abruptos de velocidad vs borehole \\
+Conclusiones clave & Vs30 comparable entre metodos invasivos y no-invasivos; diferencias mayores en resolucion de capas delgadas; MASW valido para estimacion de Vs30 en ingenieria sismica \\
+Utilidad para la tesis & Benchmark clave para validar confiabilidad de MASW vs referencia de borehole; apoya uso de MASW en tesis como alternativa economica valida para Vs30 \\
+Economicidad y factibilidad & alta (MASW es la alternativa de bajo costo validada por este benchmark multi-equipo) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[047] Mapping Dispersion Misfit and Uncertainty in Vs Profiles to Variability in Site Response Estimates} \emph{Griffiths S.C.; Cox B.R.; Rathje E.M.; Teague D.P.} (2016).
+{\scriptsize DOI: \texttt{10.1061/(asce)gt.1943-5606.0001553}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & incertidumbre en perfiles Vs por inversion de ondas superficiales \\
+M\'etodo secundario & MASW; site response analysis \\
+Sensor & geofonos (datos MASW preexistentes) \\
+Fuente & activa \\
+Arreglo & lineal \\
+Sitio & sitios de estudio ciego internacional (2 sitios) \\
+Profundidad & hasta \textasciitilde{}30 m \\
+Procesamiento & inversion de curvas de dispersion \\
+Inversi\'on & multiple enfoques estadisticos para perfiles Vs: bounding, percentiles, aleatorios \\
+Variables estimadas & perfil Vs; variabilidad en respuesta sismica de sitio \\
+Limitaciones reportadas & La incertidumbre en Vs impacta fuertemente la respuesta sismica calculada; perfiles simples derivados estadisticamente pueden subestimar o sobreestimar la variabilidad \\
+Conclusiones clave & Los perfiles Vs directos de inversion de ondas superficiales producen variabilidad realista en respuesta de sitio; metodos estadisticos indirectos tienen limitaciones; companion paper detalla desarrollo de perfiles Vs \\
+Utilidad para la tesis & Cuantifica como la incertidumbre de la inversion MASW se traduce en incertidumbre de la respuesta sismica; util para discutir implicaciones practicas de la no-unicidad de la inversion en la tesis \\
+Economicidad y factibilidad & media (requiere correr analisis de respuesta de sitio, pero conceptualmente accesible) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[048] Roadside Passive Multichannel Analysis of Surface Waves (MASW)} \emph{Park C.B.; Miller R.D.} (2008).
+{\scriptsize DOI: \texttt{10.2113/jeeg13.1.1}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW pasivo lineal (roadside) \\
+M\'etodo secundario & escaneo azimutal 180 grados para separacion de ondas \\
+Sensor & geofonos en arreglo lineal estandar \\
+Fuente & ruido ambiental (trafico vehicular) \\
+Arreglo & arreglo lineal 1D \\
+Sitio & urbano (borde de carretera) \\
+Profundidad & hasta \textasciitilde{}15-20 m (tipico passive MASW con trafico) \\
+Procesamiento & escaneo azimutal de wavefield; f-k pasivo; suma por azimut \\
+Inversi\'on & inversion de curva de dispersion para perfil Vs \\
+Variables estimadas & perfil Vs; curva de dispersion \\
+Limitaciones reportadas & Requiere trafico vehicular activo como fuente; limitado a frecuencias bajas; arreglo lineal introduce sesgo azimutal vs arreglo 2D \\
+Conclusiones clave & El arreglo lineal roadside es practica viables en zonas urbanas donde no se puede desplegar arreglo 2D; escaneo azimutal compensa la limitacion geometrica \\
+Utilidad para la tesis & Extiende MASW a entornos urbanos con equipamiento estandar y sin necesidad de fuente activa ni arreglo 2D; directamente reproducible con geofonos estandar \\
+Economicidad y factibilidad & alta (usa arreglo lineal estandar + ruido ambiental; minima logistica) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[049] Site effect evaluation in the basin of Santiago de Chile using ambient noise measurements} \emph{Bonnefoy-Claudet S.; Baize S.; Bonilla L.F.; Berge-Thierry C.; Pasten C.; Campos J.; Volant P.; Verdugo R.} (2009).
+{\scriptsize DOI: \texttt{10.1111/j.1365-246x.2008.04020.x}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & HVSR (H/V espectral ratio) \\
+M\'etodo secundario & mediciones de vibración ambiental (microtremores) \\
+Sensor & acelerometros y geofonos (vibración ambiental) \\
+Fuente & ruido ambiental (pasivo) \\
+Arreglo & puntos dispersos en cuenca (no arreglo lineal) \\
+Sitio & cuenca sedimentaria urbana (Santiago de Chile) \\
+Profundidad & no especificada (cuenca profunda \textasciitilde{}500 m+) \\
+Procesamiento & HVSR segun criterios SESAME; espectros H/V \\
+Inversi\'on & interpretacion directa de picos H/V para frecuencia fundamental \\
+Variables estimadas & frecuencia fundamental de resonancia del suelo; amplitud H/V \\
+Limitaciones reportadas & H/V tiene limitaciones para cuantificar amplificacion exacta; variaciones laterales de estructura complican interpretacion directa \\
+Conclusiones clave & HVSR identifica tres patrones en cuenca de Santiago: contraste fuerte (pico claro), contraste debil (curva plana) y variaciones laterales (pico ancho); frecuencias de suelo no siempre coinciden con resonancia de edificios \\
+Utilidad para la tesis & Estudio HVSR en ciudad sudamericana (Santiago); util para contextualizar aplicacion de métodos pasivos en cuencas sedimentarias urbanas latinoamericanas; complementa perfiles MASW para caracterizacion de sitio \\
+Economicidad y factibilidad & alta (solo vibración ambiental; sin fuente activa; equipamiento minimo) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[050] Topographic Slope as a Proxy for Seismic Site Conditions and Amplification} \emph{Wald D.J.; Allen T.I.} (2007).
+{\scriptsize DOI: \texttt{10.1785/0120060267}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & proxy de Vs30 desde pendiente topografica \\
+M\'etodo secundario & correlacion topografia-Vs30; regresion estadistica \\
+Sensor & N/A (datos de topografia + base de datos Vs30 existentes) \\
+Fuente & N/A (sin fuente sismica activa) \\
+Sitio & varied (USA, Taiwan, Italia, Australia) \\
+Profundidad & 30 \\
+Procesamiento & gradiente topografico (topographic slope); correlacion con Vs30 medido \\
+Inversi\'on & regresion estadistica pendiente-Vs30 para regiones activas y escudos estables \\
+Variables estimadas & Vs30; clase de sitio NEHRP \\
+Limitaciones reportadas & Aproximacion de primer orden solamente; correlaciones tienen alta dispersion; no reemplaza mediciones directas en sitios criticos \\
+Conclusiones clave & Pendiente topografica correlaciona con Vs30 de forma estadisticamente significativa; desarrolla dos conjuntos de parametros (tectonica activa vs escudo estable); util para mapas de sitio a escala regional donde no hay datos directos \\
+Utilidad para la tesis & Permite estimar Vs30 aproximado cuando no hay mediciones de campo; util para contextualizar resultados de MASW o HVSR; herramienta de escala regional para evaluacion sismica \\
+Economicidad y factibilidad & alta (no requiere equipamiento de campo; usa datos topograficos publicos globales) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[051] Layering ratios: a systematic approach to the inversion of surface wave data in the absence of a priori information} \emph{Cox B.R.; Teague D.P.} (2016).
+{\scriptsize DOI: \texttt{10.1093/gji/ggw282}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & parametrizacion de modelo de capas para inversion de ondas superficiales \\
+M\'etodo secundario & layering ratios; inversion de curva de dispersion sin a priori \\
+Sensor & geofonos (datos MASW/SASW existentes) \\
+Fuente & activa \\
+Arreglo & lineal \\
+Sitio & varied (validacion sintetica y datos reales) \\
+Profundidad & variable segun sitio \\
+Procesamiento & inversion de curva de dispersion \\
+Inversi\'on & layering ratio approach: numero de capas y rangos de espesor basados en relacion sistematica entre profundidades \\
+Variables estimadas & perfil Vs; modelo de capas \\
+Limitaciones reportadas & Sin informacion a priori los layering ratios pueden no capturar heterogeneidad real; la eleccion de layering ratio influye en el resultado \\
+Conclusiones clave & Los 'layering ratios' proporcionan un enfoque reproducible para definir parametros del modelo de inversion sin a priori; reduce subjetividad del analista; valido para analisis ciego \\
+Utilidad para la tesis & Directamente aplicable para definir el modelo de capas en la inversion MASW de la tesis cuando no hay datos de borehole disponibles; reduce la subjetividad en la parametrizacion \\
+Economicidad y factibilidad & alta (no requiere a priori; directamente aplicable con cualquier dato MASW) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[052] A geophone-based and low-cost data acquisition and analysis system designed for microtremor measurements} \emph{Kafadar O.} (2020).
+{\scriptsize DOI: \texttt{10.5194/gi-9-365-2020}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & sistema de adquisicion de bajo costo basado en geofonos para microtremores + HVSR \\
+M\'etodo secundario & HVSR (H/V espectral ratio) integrado en el sistema \\
+Sensor & geofonos de tres componentes (horizontal + vertical) \\
+Fuente & ruido ambiental (pasivo) \\
+Arreglo & punto de medicion triaxial \\
+Sitio & sitios urbanos (validacion con sistema comercial) \\
+Profundidad & hasta \textasciitilde{}30 m (determinado por frecuencia fundamental H/V) \\
+Procesamiento & HVSR integrado en el sistema; calculo automatico de pico H/V \\
+Inversi\'on & lectura directa de frecuencia fundamental H/V \\
+Variables estimadas & frecuencia fundamental del suelo (f0); amplitud H/V \\
+Limitaciones reportadas & Solo mide microtremores punto a punto (no arreglo para dispersion); limitado a HVSR, no genera curvas de dispersion completas \\
+Conclusiones clave & Sistema de bajo costo funcional para HVSR con geofonos; comparable a equipos comerciales; incluye software integrado de analisis H/V; factible de replicar en contextos academicos \\
+Utilidad para la tesis & Referencia directa para construccion o uso de sistemas de bajo costo con geofonos para HVSR; demuestra factibilidad tecnica y economica; util para justificar enfoque hardware de la tesis \\
+Economicidad y factibilidad & alta (sistema de bajo costo replicable con geofonos estandar; hardware asequible) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[053] Quantitative estimation of minimum offset for multichannel surface-wave survey with actively exciting source} \emph{Xu Y; Xia J; Miller R.D.} (2006).
+{\scriptsize DOI: \texttt{10.1016/j.jappgeo.2005.08.002}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW \\
+M\'etodo secundario & análisis teórico de offset mínimo / near-field \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & sintético + campo \\
+Profundidad & no específica (depende del modelo de capas) \\
+Procesamiento & modelado analítico en modelo elástico estratificado homogéneo; comparación con datos experimentales \\
+Inversi\'on & no aplica (paper teórico de diseño de adquisición) \\
+Variables estimadas & offset mínimo recomendado en función de frecuencia y Vs del sitio \\
+Limitaciones reportadas & fórmula derivada para modelo estratificado homogéneo; generalización a modelos complejos requiere validación adicional \\
+Conclusiones clave & Propone fórmula analítica para estimar el offset mínimo fuente-receptor en MASW activo. Valida con datos sintéticos y experimentales. Supera criterios puramente empíricos previos. El offset mínimo depende de la longitud de onda máxima y las propiedades del sitio. \\
+Utilidad para la tesis & Fórmula directamente aplicable para diseño de campo MASW en la tesis; complementa Yoon \& Rix 2009 (paper 024) sobre efectos near-field; permite calcular offset mínimo a priori para el sitio de estudio \\
+Economicidad y factibilidad & alta (análisis teórico aplicable con cualquier equipamiento MASW estándar; no añade costo de adquisición) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[054] Simple equations guide high-frequency surface-wave investigation techniques} \emph{Xia J; Xu Y; Chen C; Kaufmann R.D.; Luo Y} (2006).
+{\scriptsize DOI: \texttt{10.1016/j.soildyn.2005.11.001}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW \\
+M\'etodo secundario & análisis de resolución de imagen de dispersión; cut-off de modos superiores \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & sintético + campo \\
+Profundidad & no específica (depende del arreglo) \\
+Procesamiento & análisis teórico en modelo de tierra estratificado; verificación con datos de campo \\
+Inversi\'on & no aplica (paper de guía de adquisición) \\
+Variables estimadas & offset óptimo; resolución de imagen f-v; frecuencia de corte de modos superiores \\
+Limitaciones reportadas & ecuaciones derivadas de modelos simples; generalización a modelos complejos implica velocidad promedio \\
+Conclusiones clave & 5 ecuaciones clave: (1) fuentes superficiales son las más eficientes; (2-3) offset óptimo más cercano en función de velocidades observadas y longitud de onda máxima; (4) resolución de imagen  longitud del arreglo $\times$ frecuencia; (5) frecuencia de corte de modo superior de Love/Rayleigh permite estimar profundidad al half-space \\
+Utilidad para la tesis & Referencia directa para diseño de campo MASW: proporciona criterios cuantitativos para offset mínimo, longitud del arreglo y resolución esperada. Las 5 ecuaciones son aplicables sin software especializado. \\
+Economicidad y factibilidad & alta (guía práctica de diseño de campo; no añade costo de adquisición) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[055] Statistical correlations of shear wave velocity and penetration resistance for soils} \emph{Dikmen Ü} (2009).
+{\scriptsize DOI: \texttt{10.1088/1742-2132/6/1/007}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & correlaciones Vs-N (SPT) \\
+M\'etodo secundario & MASW activo + pasivo (para obtención de Vs) \\
+Sensor & geófonos verticales \\
+Fuente & fuente impulsiva + ruido ambiental \\
+Arreglo & no específica (datos sísmicos de sitio) \\
+Sitio & campo urbano (Eskisehir, Turquía) \\
+Profundidad & \textasciitilde{}30 m (profundidad típica SPT) \\
+Procesamiento & experimentos sísmicos activos y pasivos para medición de Vs; SPT convencional para N \\
+Inversi\'on & correlación estadística empírica (regresión) \\
+Variables estimadas & Vs en función de SPT-N para diferentes tipos de suelo (todos, arena, limo, arcilla) \\
+Limitaciones reportadas & correlaciones empíricas específicas al sitio de Eskisehir; uso con precaución fuera del contexto de derivación; N sin corregir como variable principal \\
+Conclusiones clave & Las correlaciones Vs-SPT mejoran cuando se usa N sin corrección; el tipo de suelo tiene influencia secundaria; el rechazo de golpes es el parámetro principal. Las fórmulas son prácticas pero deben verificarse con Vs medido. \\
+Utilidad para la tesis & Referencia clave para validar inversión MASW contra SPT en la tesis; proporciona ecuaciones empíricas para estimación de Vs desde N; referenciado en Alhuay 2021 (paper 016) \\
+Economicidad y factibilidad & alta (solo requiere correlacionar datos SPT con resultados MASW --- sin costo adicional de equipamiento) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[056] The nature of noise wavefield and its applications for site effects studies: A literature review} \emph{Bonnefoy-Claudet S; Cotton F; Bard P-Y} (2006).
+{\scriptsize DOI: \texttt{10.1016/j.earscirev.2006.07.004}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & ruido sísmico ambiental (revisión) \\
+M\'etodo secundario & HVSR; MASW pasivo; SPAC \\
+Sensor & cualquier sensor de velocidad \\
+Fuente & ruido ambiental \\
+Arreglo & no específica (revisión bibliográfica) \\
+Sitio & revisión bibliográfica global \\
+Profundidad & no específica (revisión) \\
+Procesamiento & revisión bibliográfica de procesamiento de ruido sísmico \\
+Inversi\'on & no aplica (revisión) \\
+Variables estimadas & composición del campo de ondas de ruido: proporción ondas superficiales/cuerpo, Love/Rayleigh, modo fundamental/superiores \\
+Limitaciones reportadas & la asunción de que el ruido consiste íntegramente en ondas de Rayleigh de modo fundamental no está soportada por los datos disponibles; variabilidad significativa según condiciones del sitio \\
+Conclusiones clave & El ruido sísmico >1 Hz refleja actividad humana (variaciones diarias/semanales); <0.3 Hz refleja fuentes naturales (oceánicas, meteorológicas). El origen superficial soporta interpretación como ondas superficiales, pero la proporción entre modos y tipos de onda es muy variable entre sitios. \\
+Utilidad para la tesis & Base teórica esencial para HVSR y MASW pasivo; justifica y también advierte sobre las limitaciones de los métodos pasivos; 525+ citas; directamente citable para fundamentar la elección de métodos pasivos en la tesis \\
+Economicidad y factibilidad & alta (no añade costo; es revisión teórica para fundamentar metodología) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[057] Stacking of surface waves} \emph{Neducza B} (2007).
+{\scriptsize DOI: \texttt{10.1190/1.2431635}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & SSW (Stacking of Surface Waves) \\
+M\'etodo secundario & MASW; SASW \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva \\
+Arreglo & lineal multicanal \\
+Sitio & sintético + campo \\
+Profundidad & no específica \\
+Procesamiento & apilado de espectros de amplitud f-k con ventaneo; mejora de curva de dispersión experimental \\
+Inversi\'on & no aplica (paper de procesamiento/adquisición) \\
+Variables estimadas & curva de dispersión experimental mejorada mediante apilado \\
+Limitaciones reportadas & el apilado requiere múltiples disparos en el mismo punto (mayor tiempo de adquisición); efecto del ventaneo en resolución horizontal \\
+Conclusiones clave & SSW combina ventajas de SASW (múltiples disparos) y MASW (análisis multicanal f-k) mediante apilado del espectro de amplitud; mejora relación señal/ruido y resolución horizontal. Compromiso práctico entre ambos métodos. \\
+Utilidad para la tesis & Técnica práctica para mejorar SNR en adquisición MASW con recursos limitados; permite obtener mejor imagen de dispersión con menor número de geófonos; directamente aplicable en la tesis para justificar protocolo de adquisición \\
+Economicidad y factibilidad & alta (no añade costo de equipamiento; solo requiere múltiples disparos en campo) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[058] Non-uniqueness in surface-wave inversion and consequences on seismic site response analyses} \emph{Foti S; Comina C; Boiero D; Socco L.V.} (2009).
+{\scriptsize DOI: \texttt{10.1016/j.soildyn.2008.11.004}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW / inversión ondas superficiales \\
+M\'etodo secundario & Monte Carlo; análisis de respuesta sísmica 1D \\
+Sensor & cualquier sensor (paper numérico-experimental) \\
+Fuente & no específica \\
+Arreglo & lineal multicanal \\
+Sitio & campo + numérico \\
+Profundidad & \textasciitilde{}30 m (profundidad típica MASW para Vs30) \\
+Procesamiento & inversión Monte Carlo para obtener conjunto de perfiles Vs equivalentes; análisis estadístico de incertidumbre \\
+Inversi\'on & Monte Carlo global sobre espacio de modelos \\
+Variables estimadas & conjunto de perfiles Vs equivalentes; amplificación sísmica 1D para cada perfil \\
+Limitaciones reportadas & la no-unicidad existe y es inherente al problema inverso; el conjunto de soluciones equivalentes depende de la parametrización del modelo \\
+Conclusiones clave & Los perfiles equivalentes con respecto a inversión de ondas superficiales son también equivalentes con respecto a la amplificación de sitio --- contraargumento directo a la crítica sobre la no-unicidad para uso ingenieril de métodos de ondas superficiales \\
+Utilidad para la tesis & Argumento clave para defender la metodología MASW en la tesis; demuestra que la no-unicidad no invalida la aplicación ingenieril; 150+ citas; grupo Polito (Foti, Socco) \\
+Economicidad y factibilidad & alta (no añade costo; argumento teórico para validar resultados de inversión MASW) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[059] Combined Use of Active and Passive Surface Waves} \emph{Park C.B.; Miller R.D.; Ryden N; Xia J; Ivanov J} (2005).
+{\scriptsize DOI: \texttt{10.2113/JEEG10.3.323}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW activo + pasivo combinado \\
+M\'etodo secundario & identificación modal; análisis de imagen de dispersión \\
+Sensor & geófonos verticales \\
+Fuente & martillo / fuente impulsiva + ruido ambiental \\
+Arreglo & lineal multicanal \\
+Sitio & campo (dos campañas en el mismo sitio) \\
+Profundidad & \textasciitilde{}30 m activo; >30 m con combinación pasiva \\
+Procesamiento & dispersion imaging (phase-shift); combinación de imágenes f-k activo+pasivo; identificación modal \\
+Inversi\'on & inversión 1D del perfil Vs combinado activo+pasivo \\
+Variables estimadas & perfil Vs de profundidad extendida; identificación de modos en curva pasiva \\
+Limitaciones reportadas & la identificación modal de la curva pasiva es crítica y no trivial; asunción de modo fundamental puede ser incorrecta; requiere dato activo con pequeño espaciado para validar identificación modal \\
+Conclusiones clave & La combinación activa+pasiva extiende el rango de profundidad de Vs. La identificación modal de la curva pasiva debe validarse con datos activos de pequeño espaciado receptor --- la asunción de modo fundamental puede ser incorrecta y llevar a errores de inversión. \\
+Utilidad para la tesis & Directamente aplicable al diseño experimental de la tesis: justifica protocolo activo+pasivo y advierte sobre la necesidad de validar la identificación modal del componente pasivo \\
+Economicidad y factibilidad & alta (mismo equipamiento estándar; solo añade adquisición pasiva sin fuente activa) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[060] Array estimators and the use of microseisms for reconnaissance of sedimentary basins} \emph{Asten M.W.; Henstridge J.D.} (1984).
+{\scriptsize DOI: \texttt{10.1190/1.1441596}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & array pasivo (f-k) para microtremores \\
+M\'etodo secundario & análisis de ondas Rayleigh modo fundamental \\
+Sensor & sismómetros en array \\
+Fuente & ruido ambiental \\
+Arreglo & array de 5-7 sismómetros en cruz expandible \\
+Sitio & reconocimiento de cuenca sedimentaria \\
+Profundidad & hasta profundidad del basamento sedimentario (escala de reconocimiento) \\
+Procesamiento & análisis frecuencia-número de onda (f-k) de registros de array pasivo \\
+Inversi\'on & no aplica directamente (paper de reconocimiento, no inversión cuantitativa de Vs) \\
+Variables estimadas & velocidades de fase de ondas Rayleigh; profundidad estimada del basamento \\
+Limitaciones reportadas & precisión de profundidad $\pm$30\%; supone modo fundamental dominante (no siempre válido según Bonnefoy-Claudet 2006) \\
+Conclusiones clave & Arrays de microtremores con análisis f-k miden velocidades de fase de ondas Rayleigh sin fuente activa. Modo fundamental predomina en los ejemplos. La profundidad del basamento se estima con precisión de $\pm$30\%. \\
+Utilidad para la tesis & Precursor fundacional de los métodos modernos de array pasivo (SPAC, passive MASW, beamforming); conecta con papers 004 (ReMi), 005 (SPAC), 059 (activo+pasivo); establece el concepto de recoger dispersión de ruido ambiental con arrays \\
+Economicidad y factibilidad & alta (no requiere fuente activa; solo microtremores naturales y sismómetros en array) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[061] Liquefaction Resistance of Soils from Shear-Wave Velocity} \emph{Andrus R.D.; Stokoe K.H. II} (2000).
+{\scriptsize DOI: \texttt{10.1061/(ASCE)1090-0241(2000)126:11(1015)}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & evaluación de licuación mediante Vs \\
+M\'etodo secundario & MASW / métodos de ondas superficiales (para obtener Vs) \\
+Sensor & cualquier sensor para Vs in situ (crosshole, downhole, MASW) \\
+Fuente & no específica \\
+Arreglo & no específica \\
+Sitio & campo (casos históricos de 26 terremotos) \\
+Profundidad & \textasciitilde{}20-30 m (profundidad típica de suelos licuables) \\
+Procesamiento & medición de Vs in situ (crosshole, downhole, MASW, SASW) \\
+Inversi\'on & no aplica (paper de aplicación ingenieril de Vs medido) \\
+Variables estimadas & resistencia a licuación (CRR) como función de Vs1 normalizado; curvas de resistencia cíclica \\
+Limitaciones reportadas & necesidad de más datos para depósitos densos y movimientos sísmicos intensos; correlaciones empíricas \\
+Conclusiones clave & El procedimiento simplificado basado en Vs predice correctamente el potencial de licuación moderado-alto en >95\% de los casos históricos. Consistente con métodos SPT/CPT existentes. Validado con 26 terremotos y múltiples tipos de suelo. \\
+Utilidad para la tesis & Referencia estándar para usar Vs (obtenido por MASW) en evaluación de licuación --- aplicación ingenieril directa del perfil Vs de la tesis; 867 citas; conecta el método sísmico con la práctica geotécnica \\
+Economicidad y factibilidad & alta (la evaluación usa el perfil Vs ya obtenido por MASW; no añade costo de campo) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[062] Reliability of VS,30 Evaluation from Surface-Wave Tests} \emph{Comina C; Foti S; Boiero D; Socco L.V.} (2011).
+{\scriptsize DOI: \texttt{10.1061/(ASCE)GT.1943-5606.0000452}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & MASW / ondas superficiales \\
+M\'etodo secundario & Monte Carlo; inversión de curva de dispersión \\
+Sensor & cualquier sensor (paper numérico-experimental) \\
+Fuente & no específica \\
+Arreglo & lineal multicanal \\
+Sitio & campo + numérico \\
+Profundidad & \textasciitilde{}30 m (Vs30 requiere cobertura hasta 30 m) \\
+Procesamiento & inversión Monte Carlo de curva de dispersión experimental; selección de perfiles Vs equivalentes por test estadístico \\
+Inversi\'on & Monte Carlo global; conjunto de perfiles equivalentes \\
+Variables estimadas & Vs30 con incertidumbre cuantificada; comparación con técnicas invasivas \\
+Limitaciones reportadas & la precisión requiere profundidad de investigación adecuada; no-unicidad inherente al problema inverso \\
+Conclusiones clave & Con profundidad de investigación adecuada, los métodos de ondas superficiales proporcionan estimaciones de Vs30 con precisión comparable a técnicas invasivas (crosshole, downhole). La incertidumbre puede cuantificarse mediante Monte Carlo. \\
+Utilidad para la tesis & Argumento directo para validar los resultados de Vs30 obtenidos por MASW en la tesis: comparable a técnicas invasivas; companion del paper 058 (Foti 2009 no-unicidad) \\
+Economicidad y factibilidad & alta (no añade costo; argumento metodológico para validar resultados de MASW frente a métodos invasivos) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[063] Estimates of Site-Dependent Response Spectra for Design (Methodology and Justification)} \emph{Borcherdt R.D.} (1994).
+{\scriptsize DOI: \texttt{10.1193/1.1585791}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & clasificación de sitio sísmica basada en Vs30 \\
+M\'etodo secundario & MASW / cualquier método in situ de Vs; sismología de sitio \\
+Sensor & cualquier sensor para Vs in situ \\
+Fuente & no específica \\
+Arreglo & no específica \\
+Sitio & campo (Loma Prieta 1989 + sondeos geotécnicos) \\
+Profundidad & \textasciitilde{}30 m (Vs30) \\
+Procesamiento & medición de Vs30 in situ; análisis de movimiento sísmico fuerte (Loma Prieta) \\
+Inversi\'on & no aplica (correlación empírica Vs30 $\rightarrow$ amplificación) \\
+Variables estimadas & factores de amplificación de sitio (Fa, Fv) como función de Vs30; clases de sitio A-E \\
+Limitaciones reportadas & correlaciones empíricas de un solo terremoto; limitadas a condiciones de California; extrapolación a otras regiones requiere precaución \\
+Conclusiones clave & Establece las clases de sitio NEHRP A-E basadas en Vs30 y los factores de amplificación empíricos. Fundamento del uso de Vs30 en códigos sísmicos (NEHRP, IBC). El Vs30 medido por MASW se usa directamente para clasificar el sitio. \\
+Utilidad para la tesis & Justifica por qué el Vs30 obtenido por MASW es el parámetro clave para la clasificación sísmica de sitios en los códigos de construcción modernos; hace explícita la conexión entre el output del MASW y la práctica ingenieril de peligro sísmico \\
+Economicidad y factibilidad & alta (no añade costo; es el marco normativo que justifica el uso de MASW para clasificación sísmica) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[064] Vs30: Proxy for Seismic Amplification?} \emph{Castellaro S; Mulargia F; Rossi P.L.} (2008).
+{\scriptsize DOI: \texttt{10.1785/gssrl.79.4.540}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & clasificación de sitio / Vs30 \\
+M\'etodo secundario & crítica metodológica al uso de Vs30 como proxy \\
+Sensor & cualquier sensor de Vs in situ \\
+Fuente & no específica \\
+Arreglo & no específica \\
+Sitio & análisis de datos bibliográficos y empíricos \\
+Profundidad & primeros 30 m (definición de Vs30) \\
+Procesamiento & análisis estadístico de datos de sitio y amplificación \\
+Inversi\'on & no aplica (análisis crítico conceptual) \\
+Variables estimadas & limitaciones de Vs30 como proxy de amplificación sísmica \\
+Limitaciones reportadas & no existe consenso universal sobre la validez de Vs30 como clasificador de sitio; correlación Vs30-amplificación es débil en muchos casos \\
+Conclusiones clave & Vs30 es un proxy de conveniencia, no de rigor físico. La amplificación sísmica depende de toda la columna de suelo, no solo de los primeros 30 m. Un perfil Vs completo (obtenido por MASW) es más informativo que un solo valor Vs30. \\
+Utilidad para la tesis & Contraargumento crítico al uso exclusivo de Vs30: una tesis rigurosa debe reconocer las limitaciones de este parámetro. Refuerza el valor del perfil Vs completo sobre el valor escalar Vs30. Companion crítico de Borcherdt 1994 (paper 063). \\
+Economicidad y factibilidad & alta (no añade costo; es análisis crítico que fortalece el rigor científico de la tesis) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\paragraph{[065] Determination of shallow shear wave velocity profiles in the Cologne, Germany area using ambient vibrations} \emph{Scherbaum F; Hinzen K-G; Ohrnberger M} (2003).
+{\scriptsize DOI: \texttt{10.1046/j.1365-246x.2003.01856.x}}
+
+\begin{center}\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{3.3cm} X@{}}
+\toprule
+M\'etodo principal & array pasivo (f-k) + HVSR combinados \\
+M\'etodo secundario & inversión conjunta dispersión + elipticidad de Rayleigh \\
+Sensor & sismómetros de banda ancha en array \\
+Fuente & ruido ambiental \\
+Arreglo & array de sismómetros (configuración no especificada) \\
+Sitio & campo urbano (3 sitios en Colonia, Alemania) \\
+Profundidad & profundidad al basamento de sedimentos cuaternarios (escala de cuenca sedimentaria) \\
+Procesamiento & análisis f-k; cálculo de curvas de dispersión; cálculo de elipticidades H/V; inversión conjunta \\
+Inversi\'on & inversión conjunta: dispersión (constrain velocidades) + elipticidad H/V (constrain espesores); modelo capas potenciales \\
+Variables estimadas & perfil Vs de sedimentos cuaternarios; factores de amplificación sísmica SH (\textasciitilde{}5-6) \\
+Limitaciones reportadas & supone modo Rayleigh fundamental dominante; modelo de una capa sobre half-space simplificado; elipticidades sujetas a trade-off espesor-velocidad \\
+Conclusiones clave & La curva de dispersión constrain los valores absolutos de velocidad; la elipticidad H/V constrain los espesores de capa. La inversión conjunta es más robusta que la individual. Validado contra sondeos de pozo en 3 sitios en Colonia. \\
+Utilidad para la tesis & Demuestra la combinación práctica de métodos activos/pasivos de array con H/V; justifica teóricamente el vínculo entre H/V y elipticidad de Rayleigh; template para joint inversion en la tesis; validado contra downhole \\
+Economicidad y factibilidad & alta (solo ruido ambiental + array de sensores; no requiere fuente activa; factible con equipamiento básico) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+

@@ -13,15 +13,18 @@ y que la barrera de entrada real para su aplicaci\'on local es el \textbf{instru
 adquisici\'on multicanal sincronizado}. Esto valida el enfoque del proyecto: el aporte
 est\'a en el sistema de adquisici\'on, no en el m\'etodo de an\'alisis.
 
-\textbf{Sobre el desarrollo instrumental.} Se construy\'o un sistema completo y funcional
-que cubre la cadena entera, desde el transductor hasta el perfil $V_S(z)$: cadena
+\textbf{Sobre el desarrollo instrumental.} Se integr\'o un prototipo que recorre la cadena
+desde el transductor hasta un perfil $V_S(z)$ exploratorio: cadena
 anal\'ogica de cuatro etapas con ganancia programable, adquisici\'on digital determinista
 gobernada por una m\'aquina de estados en hardware, jerarqu\'ia de almacenamiento de tres
-niveles, red inal\'ambrica multi-nodo con disparo sincronizado por flanco f\'isico,
+niveles, red inal\'ambrica multi-nodo con disparo coordinado por flanco f\'isico,
 interfaz web de operador que elimina la necesidad de una computadora en campo, y un
-\emph{pipeline} de procesamiento con inversi\'on multimodal. El sistema fue validado
-funcionalmente mediante una auditor\'ia sistem\'atica con criterios de integridad
-verificables.
+\emph{pipeline} de procesamiento con motores de inversi\'on seleccionables. La capacidad
+multimodal est\'a implementada, mientras que el resultado persistido usa una curva
+etiquetada como modo~0, no identificada independientemente como fundamental. La
+auditor\'ia valid\'o la integridad funcional de captura y transferencia, no el
+\emph{jitter} de extremo a extremo de la sincronizaci\'on vigente ni la equivalencia de la
+apertura sint\'etica con un arreglo simult\'aneo.
 
 \textbf{Sobre el aporte metodol\'ogico.} El desarrollo del \emph{front-end} anal\'ogico
 asistido digitalmente constituye el resultado m\'as maduro del proyecto. Aplicar la
@@ -34,7 +37,8 @@ significancia estad\'istica en las ocho configuraciones. El car\'acter \emph{for
 la calibraci\'on ---activa antes de adquirir y desactivada durante la adquisici\'on---
 preserva un camino de se\~nal puramente anal\'ogico, evitando el compromiso entre tiempo de
 establecimiento y ancho de banda propio de los servos de continua continuos. Este
-resultado fue sometido a revisi\'on externa mediante su env\'io al congreso URUCON~2026.
+resultado fue sometido al congreso URUCON~2026; no se atribuye revisi\'on externa hasta
+recibir un dictamen.
 
 \textbf{Sobre la metodolog\'ia de trabajo.} Dos pr\'acticas resultaron decisivas y merecen
 destacarse. La primera es la \textbf{verificaci\'on automatizada} como condici\'on de
@@ -56,8 +60,24 @@ de \emph{jitter} sobre el arreglo completo, que es cr\'itica para la calidad de 
 de dispersi\'on, est\'a hasta ahora acotada s\'olo por presupuesto te\'orico y por medici\'on
 sobre pocos nodos.
 
-\textbf{Balance.} El estado de avance corresponde a un sistema que \textbf{funciona de
-extremo a extremo y produce resultados}, con una parte de la instrumentaci\'on validada
-cuantitativamente y sometida a revisi\'on externa, y con los frentes restantes
-identificados, acotados y ya iniciados. El trabajo restante es de consolidaci\'on y
-validaci\'on externa, no de exploraci\'on.
+La campa\~na disponible usa una apertura sint\'etica de 21 posiciones, con
+$\Delta x=\SI{2}{\meter}$ y $L=\SI{40}{\meter}$. Una lectura conservadora limita el
+soporte de profundidad a un orden de \SI{20}{\meter}; por eso el objetivo de
+\SI{50}{\meter} no est\'a demostrado y exige simult\'aneamente mayor apertura, mayor
+energ\'ia de fuente y validaci\'on externa.
+
+\textbf{Balance.} El estado de avance corresponde a una \textbf{integraci\'on de extremo a
+extremo que produce resultados exploratorios}, con el DA-AFE cuantificado y la integridad
+de captura verificada, y con los frentes restantes identificados y acotados. El trabajo
+restante combina consolidaci\'on, medici\'on temporal de extremo a extremo y validaci\'on
+geot\'ecnica externa; la capacidad del sistema no debe
+confundirse con una profundidad geot\'ecnica ya validada.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{tablero_evidencia.png}
+\caption{Tablero de cierre del estado actual: evidencia disponible, alcance de cada
+resultado y validaciones que siguen abiertas. La separaci\'on evita equiparar integridad
+funcional, desempe\~no del DA-AFE y validaci\'on geot\'ecnica.}
+\label{fig:tablero-evidencia}
+\end{figure}

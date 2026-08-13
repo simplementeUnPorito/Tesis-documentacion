@@ -7,6 +7,27 @@ la cadena de post-proceso que convierte esos registros en un perfil $V_S(z)$.
 Es la etapa en la que el proyecto deja de ser un sistema de adquisici\'on y
 pasa a ser un m\'etodo completo.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{captura_cruda_campo.png}
+\caption{Captura cruda real a \SI{24}{\meter}: martillo, ge\'ofono con nivel de
+continua y salida FIR. La alineaci\'on temporal no demuestra repetibilidad entre impactos.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{adquisiciones_por_distancia.png}
+\caption{Adquisiciones y espectros normalizados a cuatro distancias. La comparaci\'on
+expone la degradaci\'on espacial con datos reales de la campa\~na Canchita.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{mapa_tiempo_distancia.png}
+\caption{Mapa de 21 posiciones virtuales, normalizadas traza a traza. Es una apertura
+sint\'etica exploratoria compuesta por impactos distintos, no un arreglo simult\'aneo validado.}
+\end{figure}
+
 \subsection{La geometr\'ia real de las campa\~nas}
 
 Este dato no estaba volcado en ning\'un documento y se reconstruy\'o para este
@@ -15,9 +36,9 @@ historial a partir de los \texttt{metadata.json} de cada carpeta de captura.
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\textwidth]{geometria_campanas.png}
-\caption{Posiciones de receptor efectivamente ocupadas en cada sitio,
-reconstruidas desde los metadatos de campo. El \'area del marcador es
-proporcional a la cantidad de capturas en esa posici\'on.}
+\caption{Geometr\'ia guardada en el estado de procesamiento: grupo~1 activo con
+21 posiciones y $L=\SI{40}{\meter}$; grupo~2 con 14 posiciones y peso nulo.
+Ambos son arreglos virtuales construidos moviendo un \'unico ge\'ofono.}
 \label{fig:geometria}
 \end{figure}
 
@@ -25,19 +46,19 @@ proporcional a la cantidad de capturas en esa posici\'on.}
 sintetiza.} Cada captura tiene un \'unico ge\'ofono m\'as el canal de martillo
 (\texttt{n\_slaves}~$=2$, roles \texttt{hammer}\,$+$\,\texttt{geo}). El
 \emph{gather} multicanal se construye repitiendo el disparo en el mismo origen
-y \emph{moviendo el receptor} de posici\'on en posici\'on. Es la forma correcta
-de hacer MASW cuando se tienen dos nodos y no veinticuatro, y explica por qu\'e
-la sincronizaci\'on y la repetibilidad del disparo fueron tan centrales: sin
-repetibilidad entre disparos, el arreglo sintetizado directamente no cierra.}
+y \emph{moviendo el receptor} de posici\'on en posici\'on. Es una aproximaci\'on
+de apertura sint\'etica que permite trabajar con dos nodos, pero agrega una
+hip\'otesis que el MASW simult\'aneo no necesita: repetibilidad de la fuente, del
+acoplamiento y de las condiciones del sitio durante todo el recorrido.}
 
 \begin{center}\small
 \begin{tabularx}{\textwidth}{@{}l r r r X@{}}
 \toprule
 \textbf{Sitio} & \textbf{Pos.} & \textbf{Rango} & \textbf{Capturas} & \textbf{$F_s$ presentes} \\
 \midrule
-Canchiga    & 18 & \SIrange{10}{50}{\meter} & 74 & \SI{1020}{\hertz} y \SI{2929}{\hertz} \\
-Canchita    & 20 & \SIrange{10}{50}{\meter} & 87 & \SI{1020}{\hertz} y \SI{2929}{\hertz} \\
-Canchita 2  & 10 & \SIrange{10}{30}{\meter} & 13 & \SI{1020}{\hertz} \\
+Canchiga    & 19 & \SIrange{10}{50}{\meter} & 74 & \SI{1020}{\hertz} y \SI{2929}{\hertz} \\
+Canchita    & 21 & \SIrange{10}{50}{\meter} & 87 & \SI{1020}{\hertz} y \SI{2929}{\hertz} \\
+Canchita 2  & 11 & \SIrange{10}{30}{\meter} & 13 & \SI{1020}{\hertz} \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -89,8 +110,8 @@ de $L/2 = \SI{20}{\meter}$; el modelo invertido, en cambio, se extiende hasta
 \emph{no est\'an sostenidas por la apertura del arreglo} y deben leerse como
 extrapolaci\'on del modelo, no como medici\'on. Para el objetivo declarado de
 \SI{50}{\meter} hace falta un arreglo m\'as largo ---y esto es una conclusi\'on
-accionable: la extensi\'on de banda hacia abajo ya est\'a resuelta por
-electr\'onica, pero la \emph{apertura} sigue siendo el cuello de botella.}
+accionable: aun si la extensi\'on de banda se completa y verifica, la
+\emph{apertura} seguir\'a siendo un l\'imite independiente.}
 
 \subsection{El dato crudo, tal cual sali\'o del arreglo}
 
@@ -144,7 +165,7 @@ de una sola vez:
 \textbf{M\'odulo} & \textbf{Qu\'e hace} \\
 \midrule
 \texttt{masw\_dispersion.py} & Del \emph{gather} sintetizado a la imagen de dispersi\'on $(f,c)$ por \emph{phase-shift}. Es la reimplementaci\'on propia del \texttt{p03} de MATLAB de la Etapa~1 \\
-\texttt{masw\_inversion.py} & Inversi\'on de la curva a perfil $V_S(z)$ mediante \texttt{evodcinv} sobre \texttt{disba} ---algoritmo evolutivo, elegido por la no unicidad del problema (Cap.~6 de Foti) \\
+\texttt{masw\_inversion.py} & En esta etapa inicial, inversi\'on mediante \texttt{evodcinv} sobre \texttt{disba}; la arquitectura se ampli\'o despu\'es a varios \emph{backends} \\
 \texttt{review\_field\_data.py} & Aplicaci\'on de revisi\'on: inspeccionar, filtrar, alinear y aceptar o rechazar registros antes de procesarlos \\
 \bottomrule
 \end{tabularx}
@@ -207,7 +228,7 @@ Indicador de RSSI en la web (8 jul) & Diagnosticar en terreno si un nodo est\'a 
 \end{tabularx}
 \end{center}
 
-\subsection{Resultado: el perfil $V_S(z)$}
+\subsection{Resultado: el perfil \texorpdfstring{$V_S(z)$}{VS(z)}}
 
 \begin{figure}[!ht]
 \centering
@@ -241,18 +262,138 @@ desajuste \SI{2.55}{\percent}.
 Del total de 598 muestras revisadas se aceptaron 21 promedios y se
 descartaron 9 capturas por criterio expl\'icito.}
 
-\pendiente{El perfil no tiene todav\'ia contraste externo (SPT o ensayo
-invasivo). El camino m\'as accesible es la correlaci\'on $V_S$--SPT reportada
+\dato{\textbf{Distinci\'on cronol\'ogica.} La figura y los n\'umeros anteriores
+corresponden al exportado de julio: 51 puntos y desajuste declarado de
+\SI{2.554}{\percent}. El estado exploratorio guardado posteriormente usa el
+\emph{backend} \texttt{maswavespy(port)}, 113 puntos, s\'olo el modo~0, siete capas
+configuradas y un desajuste de $7{,}1063$. Ninguno de los dos resultados debe
+describirse como una inversi\'on multimodal ya validada. El exportado hist\'orico
+llega a $\lambda=\SI{130.6}{\meter}$ para $L=\SI{40}{\meter}$ y queda fuera de
+la evidencia geot\'ecnica; los 113 puntos actuales abarcan
+$\lambda=\SIrange{4.001}{26.732}{\meter}$.}
+
+\dato{\textbf{Trazabilidad del estado actual.} \texttt{data}:
+\texttt{76c4254b19cfc1f85edb9fb9201b40c7f250b413}; software:
+\texttt{30b60517d3377d175ecc7070278c25cbca35b7ec}; archivo
+\nolinkurl{data/processed/Canchita/field_review_masw_state.json}, SHA-256
+\nolinkurl{8f8bf4d59a092b8f321b2829af07fbfd3e03374304c573103c39e1a43df30006}.
+La inversi\'on guarda siete capas, 1000 iteraciones, $b_s=8$, $b_h=12$,
+$\nu=0{,}35$ y $\rho=\SI{1850}{\kilogram\per\meter\cubed}$.}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\textwidth]{masw_estado_actual.png}
+\caption{Estado exploratorio persistido despu\'es del exportado de julio. Se
+muestran exactamente los puntos y el perfil editado contenidos en el JSON; no
+se inventa una curva te\'orica ausente del archivo.}
+\label{fig:masw-actual-hist}
+\end{figure}
+
+\pendiente{El perfil no tiene todav\'ia contraste externo \emph{invasivo} (SPT o
+perforaci\'on). El camino m\'as accesible es la correlaci\'on $V_S$--SPT reportada
 para Per\'u y otros contextos regionales, ya en la bibliograf\'ia. Sin ese
-contraste, el resultado demuestra que \emph{la cadena cierra de extremo a
-extremo}, que no es poco, pero no que el perfil sea correcto.}
+contraste, el resultado demuestra una \emph{integraci\'on exploratoria del flujo},
+pero no que el perfil sea correcto ni que la apertura sint\'etica sea equivalente
+a un arreglo simult\'aneo.}
+
+\subsection{Contraste con el sondeo el\'ectrico de 2023: el \'unico dato externo
+disponible}
+\label{sec:contraste-sev}
+
+\emph{Hallazgo del 12 de agosto de 2026.} Revisando la carpeta de fuentes
+apareci\'o un informe hidrogeol\'ogico encargado por la propia Facultad en julio
+de 2023\footnote{V\'ictor Gonz\'alez y Asociados S.S., \emph{Estudio
+Hidrogeol\'ogico --- FCyT, UC, Campus Asunci\'on, Sede Santa Librada}, julio de
+2023. Archivo:
+\texttt{docs/investigacion/sources/INFOR\_HIDROGEO\_CYT\_UC\_AS\_JUL\_2023.pdf}.}
+que incluye tres Sondeos El\'ectricos Verticales. \textbf{El SEV~01 se ejecut\'o
+en la cancha de f\'utbol de la UC} (UTM 435595 / 7198920), que es el mismo predio
+donde se hicieron las campa\~nas ``Canchita''.
+
+Es decir: existe una caracterizaci\'on del mismo subsuelo, hecha \textbf{por
+terceros}, con \textbf{otro m\'etodo geof\'isico} (resistividad el\'ectrica en
+corriente continua, arreglo Schlumberger, interpretada con IPI2win) y
+\textbf{antes} del proyecto, de modo que no puede estar contaminada por \'el.
+Es el \'unico contraste externo del que dispone el trabajo hoy, y no cost\'o
+ninguna campa\~na.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{vs_vs_sev.png}
+\caption{Contraste del perfil $V_S$ invertido (izquierda) contra el modelo
+geoel\'ectrico del SEV~01 (centro), con la curva de dispersi\'on que origin\'o la
+inversi\'on (derecha). La banda azul es el nivel fre\'atico declarado en el
+informe. Los c\'irculos rojos de la curva marcan los puntos cuya longitud de onda
+supera la apertura del arreglo.}
+\label{fig:vs-vs-sev}
+\end{figure}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}rrrl@{}}
+\toprule
+SEV~01 [\si{\meter}] & MASW [\si{\meter}] & Diferencia & Interpretaci\'on del informe \\
+\midrule
+1{,}00 & 1{,}69 & \SI{0.69}{\meter} & Base del suelo residual seco compactado \\
+2{,}06 & 2{,}95 & \SI{0.89}{\meter} & Base del nivel conductivo delgado \\
+4{,}15 & 6{,}50 & \SI{2.35}{\meter} & Base de los sedimentos areno-cuarzosos \\
+--- & 9{,}82 & --- & \textit{s\'olo MASW} \\
+--- & 17{,}14 & --- & \textit{s\'olo MASW} \\
+\textbf{24{,}0} & \textbf{26{,}77} & \SI{2.77}{\meter} (\SI{11.5}{\percent}) & \textbf{Base del suelo} \\
+--- & 53{,}91 & --- & \textit{s\'olo MASW} \\
+71{,}8 & 82{,}58 & \SI{10.8}{\meter} (\SI{15}{\percent}) & Base del acu\'ifero \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\dato{\textbf{Las interfaces someras coinciden dentro de \SI{1}{\meter}, y la
+interfaz principal ---la base del suelo--- dentro del \SI{11.5}{\percent}}
+(\SI{24.0}{} contra \SI{26.77}{\meter}). Es la primera evidencia de que el
+sistema construido \emph{mide algo real} y no ruido convenientemente invertido.
+El desajuste de la inversi\'on es \SI{2.554}{\percent}.}
+
+\pendiente{Cuatro salvedades que impiden llamar a esto una validaci\'on, y que
+conviene tener escritas antes de que la coincidencia entusiasme de m\'as:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{Un contraste de resistividad no es un contraste de rigidez.}
+    La resistividad responde a porosidad, salinidad del fluido y contenido de
+    arcilla; $V_S$ responde a la rigidez al corte. Coinciden \emph{a menudo},
+    porque ambas siguen los cambios litol\'ogicos, pero no por construcci\'on.
+    Lo \'unico que las dos t\'ecnicas comparten leg\'itimamente es la
+    \emph{profundidad de las interfaces}, y por eso la tabla compara s\'olo eso.
+    \item \textbf{Las interfaces ``s\'olo MASW'' no son un descubrimiento.} La
+    inversi\'on se parametriz\'o con nueve capas; tener m\'as interfaces que el
+    SEV es consecuencia de esa elecci\'on, no evidencia de estructura adicional.
+    \item \textbf{La parte profunda del perfil no est\'a restringida por los
+    datos.} Con apertura de \SI{40}{\meter}, nada por debajo de unos
+    \SIrange{15}{20}{\meter} est\'a bien resuelto; las capas de 53{,}9 y
+    \SI{82.6}{\meter} son extrapolaci\'on del modelo, y su coincidencia con el
+    SEV a \SI{71.8}{\meter} debe tomarse como anecd\'otica.
+    \item \textbf{Tres de los 51 puntos de la curva tienen
+    $\lambda>\SI{40}{\meter}$} (hasta \SI{130.6}{\meter} a
+    \SI{5.11}{\hertz}), es decir longitudes de onda que la geometr\'ia
+    desplegada no puede resolver. Son justamente los puntos que m\'as pesan en la
+    parte profunda del perfil. Deber\'ian excluirse o declararse como no
+    confiables en la banda v\'alida de la curva.
+\end{enumerate}}
+
+\seleccionado{\textbf{Lo que s\'i habilita este hallazgo.} El informe de 2023
+\textbf{recomienda perforar un pozo de \SI{60}{\meter} exactamente en el sector
+del SEV~01}, con perfilaje geof\'isico (resistividad, potencial espont\'aneo y
+gamma natural). Si esa perforaci\'on se ejecuta, el proyecto tendr\'ia una
+referencia \emph{invasiva} en el mismo punto donde midi\'o ---que es exactamente
+la validaci\'on que la tabla de pendientes viene reclamando desde marzo.
+Conviene gestionar el acceso a esa informaci\'on con la Facultad \textbf{antes} de
+que la obra, si ocurre, se ejecute sin registro geof\'isico. Los detalles
+completos del informe est\'an en
+\texttt{docs/Primera Presentaci\'on/HANDOFF\_SITIO\_SEV.md}.}
 
 \subsection{Balance de la etapa}
 
 \begin{center}\small
 \begin{tabularx}{\textwidth}{@{}l X@{}}
 \toprule
-\textbf{Se qued\'o} & \emph{Pipeline} propio de dispersi\'on e inversi\'on; inversi\'on evolutiva con \texttt{evodcinv}/\texttt{disba}; grupos de dispersi\'on multimodo; revisor de campo con aceptaci\'on expl\'icita de registros; mezcla de $F_s$ por \texttt{resample\_poly}; rangos de ADC conmutables; \emph{watchdog} y \emph{circuit-breaker} de captura; RSSI en la interfaz \\
+\textbf{Se qued\'o} & \emph{Pipeline} propio de dispersi\'on e inversi\'on; arquitectura de \emph{backends}; grupos de dispersi\'on que habilitan an\'alisis multimodal; revisor de campo con aceptaci\'on expl\'icita de registros; mezcla de $F_s$ por \texttt{resample\_poly}; rangos de ADC conmutables; \emph{watchdog} y \emph{circuit-breaker} de captura; RSSI en la interfaz \\
 \addlinespace[3pt]
 \textbf{Se descart\'o} & $F_s$ \'unica fija; rango de ADC \'unico; techo de 512 lotes por captura \\
 \addlinespace[3pt]

@@ -48,7 +48,7 @@ def estilo(ax):
     ax.set_ylabel("Magnitud [dB]", fontsize=9, color=TINTA)
 
 
-f = np.logspace(-2, 4, 3000)
+f = np.logspace(-4, 4, 5000)
 w = 2 * np.pi * f
 
 # ---------------------------------------------------------------- FIGURA A
@@ -136,10 +136,13 @@ for z1, col, lab in ((10.0, C_SK, r"$\zeta_1$ = 10  (Ma et al. 2023)"),
     ax.plot(f, y - y.max(), color=col, lw=2.2, label=lab)
 estilo(ax)
 ax.set_ylabel("Magnitud normalizada [dB]", fontsize=9, color=TINTA)
-ax.set_xlim(1e-2, 1e3)
+ax.set_xlim(1e-4, 1e3)
 ax.set_ylim(-60, 6)
 ax.axhline(-3, color="#b8b8b8", lw=1.0, ls=(0, (4, 3)), zorder=1)
-ax.text(1.1e-2, -2.4, "-3 dB", fontsize=7.5, color=TENUE)
+ax.text(1.1e-4, -2.4, "-3 dB", fontsize=7.5, color=TENUE)
+ax.axvline(5.44e-3, color=C_MFB, lw=0.9, ls=(0, (3, 3)), alpha=0.75)
+ax.text(6.0e-3, -15, "5,44 mHz\n(polo ideal)", fontsize=7.2,
+        color=C_MFB, ha="left", va="center")
 ax.axvline(10, color="#b8b8b8", lw=1.0, ls=(0, (4, 3)), zorder=1)
 ax.text(10.6, 3.2, "$f_n$ = 10 Hz", fontsize=7.5, color=TENUE)
 ax.legend(frameon=False, fontsize=8.5, loc="lower right", labelcolor=TINTA)
@@ -149,7 +152,7 @@ fig.tight_layout()
 fig.savefig(OUTB, bbox_inches="tight", facecolor="white")
 
 # Dato duro para el texto: donde cae el -3 dB en cada caso
-for z1 in (0.0, 10.0, 83.661, 937.4):
+for z1 in (0.0, 10.0, 937.4):
     y = ref - ref.max() if z1 == 0.0 else comp_db(z1) - comp_db(z1).max()
     baja = f[(f < 10) & (y > -3)]
     print(f"  zeta1={z1:>8}: -3 dB inferior en {baja.min():.3f} Hz"

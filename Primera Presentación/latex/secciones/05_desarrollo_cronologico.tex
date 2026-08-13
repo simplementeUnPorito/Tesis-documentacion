@@ -7,6 +7,15 @@ aunque no aparezcan en el resultado final. La fuente es la bit\'acora del proyec
 registra \textbf{66 jornadas de trabajo activo} y aproximadamente \textbf{230
 \emph{commits}} entre el 25 de febrero y el 1 de agosto de 2026.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{timeline_commits.png}
+\caption{Cronolog\'ia del desarrollo reconstruida desde la bit\'acora y los hitos del
+repositorio. La densidad de actividad contextualiza los per\'iodos narrados; no se usa
+como m\'etrica de calidad ni de avance cient\'ifico.}
+\label{fig:timeline-desarrollo}
+\end{figure}
+
 \subsection{Del 25 de febrero al 23 de marzo --- Construcci\'on del marco te\'orico}
 
 En este per\'iodo se cre\'o el repositorio del proyecto y se construy\'o la base te\'orica y
@@ -92,8 +101,11 @@ multiplexados, y se agreg\'o un multiplexor anal\'ogico para medir el modo com\'
 
 Un hallazgo relevante de este per\'iodo: el modelo de amplificador operacional ideal no
 reproduc\'ia el comportamiento medido del compensador en el extremo superior de la banda.
-Se incorpor\'o el \textbf{modelo del operacional real} ($A_0=\SI{90}{\decibel}$,
-$f_p=\SI{8}{\mega\hertz}$) y se valid\'o contra medici\'on. Se atac\'o el dise\~no del
+Se incorpor\'o un primer \textbf{modelo no ideal del operacional} ($A_0=\SI{90}{\decibel}$
+y un par\'ametro de \SI{8}{\mega\hertz}). Una auditor\'ia posterior detect\'o que el
+segundo valor se trat\'o como polo dominante aunque dimensionalmente corresponde a una
+frecuencia de ganancia unitaria. La relaci\'on $f_p=f_t/A_0$ ya se corrigi\'o en el c\'odigo,
+pero el ajuste debe recalcularse y contrastarse. Se atac\'o el dise\~no del
 compensador con cuatro estrategias de optimizaci\'on en paralelo.
 
 El per\'iodo cierra con \texttt{DiferencialToSingleEnded}: la \textbf{cadena anal\'ogica
@@ -113,7 +125,7 @@ incorporaci\'on de la fase de preparaci\'on previa al disparo, el sistema transm
 reales del PSoC hasta el anfitri\'on por primera vez.
 
 En paralelo se cre\'o el proyecto PSoC dedicado al \textbf{martillo instrumentado} para el
-aceler\'ometro PCB~Piezotronics~086D20. Poco despu\'es se tom\'o una decisi\'on de arquitectura
+martillo de impacto con sensor de fuerza PCB~Piezotronics~086D20. Poco despu\'es se tom\'o una decisi\'on de arquitectura
 de software importante: unificar el firmware de ambos tipos de nodo en un \textbf{\'unico
 archivo} que detecta autom\'aticamente en compilaci\'on qu\'e hardware tiene debajo, evitando
 la bifurcaci\'on del c\'odigo embebido.
@@ -131,6 +143,15 @@ sincronizaci\'on que identific\'o un defecto de confirmaci\'on-antes-de-GPIO y e
 presupuesto de \emph{jitter} entre nodos.
 
 \subsection{Del 14 al 30 de junio --- Auto-calibraci\'on del \emph{front-end}}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{autocalibration_signal_waterfall_composite.png}
+\caption{Evidencia visual integrada del tramo junio--julio: trayectoria de
+auto-calibraci\'on, captura temporal y visualizaci\'on tipo \emph{waterfall}. El montaje
+re\'une resultados de etapas distintas para mostrar la progresi\'on de banco a campo.}
+\label{fig:cronologia-autocal-campo}
+\end{figure}
 
 Este per\'iodo produjo el aporte metodol\'ogico central del proyecto, y es un buen ejemplo
 de iteraci\'on de dise\~no porque \textbf{el algoritmo se reemplaz\'o dos veces}.
@@ -260,12 +281,12 @@ abandonadas, con el motivo del descarte.
 \toprule
 \textbf{Alternativa} & \textbf{Motivo del descarte} & \textbf{Per\'iodo} \\
 \midrule
-Filtro pasivo RC de entrada & Reemplazado por FIR digital con decimaci\'on: m\'as flexible, sin tolerancias de componentes & abr. \\
+Filtro pasivo RC de entrada & Reemplazado por FIR digital: tolerancias, deriva t\'ermica, fase no lineal y disponibilidad de DSP & abr. \\
 Topolog\'ia Sallen-Key / VCVS & An\'alisis comparativo favorece MFB (comportamiento con ganancia y sensibilidad a componentes) & abr. \\
-Compensaci\'on anal\'ogica activa del ge\'ofono & Complejidad y sensibilidad frente a la alternativa digital & abr.--may. \\
-Filtro adaptativo LMS para \emph{notch} & Reemplazado por m\'inimos cuadrados, m\'as predecible & jun. \\
-\emph{Notch} arm\'onico en el cliente web & Simplificaci\'on del \emph{pipeline}; se trata en post-proceso & jun. \\
-Enlace SPI PSoC$\leftrightarrow$ESP32 & Migrado a UART por robustez e integraci\'on con el protocolo & may. \\
+Topolog\'ia VCVS de la compensaci\'on & Sensibilidad a tolerancias frente a la MFB; la compensaci\'on anal\'ogica activa se mantuvo & abr.--may. \\
+Filtro adaptativo LMS para \emph{notch} & Transitorio de convergencia y dependencia de la se\~nal; reemplazado por regresi\'on arm\'onica por lote & jun. \\
+\emph{Notch} arm\'onico en el cliente web & Retardo de grupo y eliminaci\'on indiscriminada dentro de la banda MASW; el crudo se trata en post-proceso & jun. \\
+Enlace SPI PSoC$\leftrightarrow$ESP32 & Migrado primero a UART; la versi\'on actual usa UART en bajada e I\textsuperscript{2}C en subida & may.--ago. \\
 Calibraci\'on por bisecci\'on binaria & Reemplazada por PI unificado; no manejaba bien ruido ni signo de ganancia & jun. \\
 Servo lento y variantes PID & Se descarta el t\'ermino derivativo: amplifica el ruido de medici\'on del ADC sin aportar en una planta cuasi-est\'atica; el controlador final es PI & jun. \\
 Captura gobernada por temporizador & Reemplazada por confirmaci\'on real de fin por nodo & jul. \\

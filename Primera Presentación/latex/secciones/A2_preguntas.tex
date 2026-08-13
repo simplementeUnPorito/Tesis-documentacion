@@ -8,33 +8,34 @@ resueltas se incorporaron al cuerpo del documento y se listan al final como regi
 
 \begin{enumerate}[itemsep=0.35em]
 
-\item \textbf{Geometr\'ia de las campa\~nas de campo}: n\'umero de canales efectivamente
-desplegados, espaciamiento entre ge\'ofonos, longitud total del arreglo, distancia
-fuente--primer ge\'ofono (\emph{offset} m\'inimo) y n\'umero de puntos de fuente.
-\emph{Impacto: alto.} Sin estos datos no puede evaluarse el rango de frecuencias ni la
-profundidad de investigaci\'on alcanzable, ni contrastarse la geometr\'ia usada con los
-criterios cuantitativos de~\cite{Yoon2009,Xu2006,Xia2006,Park2002}. Es probablemente el
-dato faltante m\'as importante del documento.
-
-\item \textbf{Par\'ametros medidos del SM-24}: resistencia e inductancia de bobina, masa
-m\'ovil, sensibilidad real medida. Existen en el trabajo de MATLAB pero no est\'an volcados
-al documento. \emph{Impacto: alto.} Permitir\'ian completar la tabla comparativa con el
-ge\'ofono JF-20DX de Ma \emph{et al.} (Secci\'on~\ref{sec:ma2023}), que hoy tiene celdas
-vac\'ias. El $\zeta_0=0{,}25$ ya est\'a incorporado.
+\item \textbf{Par\'ametros medidos del ejemplar SM-24}: frecuencia natural,
+amortiguamiento y sensibilidad reales. La hoja de datos ya aporta los nominales
+---incluidos resistencia de bobina y masa m\'ovil---, pero no especifica inductancia.
+\emph{Impacto: medio.} La medici\'on permitir\'ia separar tolerancia del transductor y error
+de la cadena de acondicionamiento.
 
 \item \textbf{Banda plana efectivamente lograda tras la compensaci\'on}: frecuencia de
 corte inferior medida y ancho de banda plano resultante. \emph{Impacto: alto.} Es el
 resultado que cierra la l\'inea de trabajo del \emph{front-end} anal\'ogico y el que permite
 compararse con los \SIrange{1}{100}{\hertz} que reporta Ma \emph{et al.}~\cite{Ma2023}.
-Con $\zeta_1=83{,}661$ el polo inferior deber\'ia caer cerca de \SI{0.06}{\hertz}; conviene
-verificarlo con medici\'on.
+Con $\zeta_1=937{,}396$, el polo inferior del modelo ideal se aproxima a
+\SI{5.44}{\milli\hertz}; ese valor no sustituye una medici\'on de extremo a extremo.
+
+\item \textbf{Modelo no ideal del operacional}: la funci\'on de lazo abierto de los scripts
+que combinaron
+$A_0=\SI{90}{\decibel}$ con \SI{8}{\mega\hertz} como si este \'ultimo valor fuese el
+polo dominante. Si corresponde a la frecuencia de ganancia unitaria, el modelo monopolo
+requiere $f_p=f_t/A_0\approx\SI{253}{\hertz}$; esa relaci\'on ya fue corregida. Falta
+verificar el dato contra el operacional realmente configurado, repetir la s\'intesis y
+medirla. \emph{Impacto: alto}, porque afecta el ajuste de alta
+frecuencia y la s\'intesis del compensador.
 
 \item \textbf{Ruido del sistema referido a la entrada}, y comparaci\'on con el l\'imite de
 ruido t\'ermico del ge\'ofono. No se midi\'o. \emph{Impacto: medio-alto.} Junto con el
 resultado de \emph{offset} ya obtenido, completar\'ia la caracterizaci\'on del
-\emph{front-end}. Es especialmente pertinente dado el $\zeta_1$ elevado: la compensaci\'on
-requiere ganancia proporcional a $(\zeta_1-\zeta_0)$, de modo que amplifica tambi\'en el
-ruido.
+\emph{front-end}. Es especialmente pertinente dado el $\zeta_1$ elevado y la combinaci\'on
+de trayectorias de gran magnitud que exige la compensaci\'on; la transferencia de cada
+fuente de ruido debe medirse, no inferirse de un \emph{factor} \(\zeta_1-\zeta_0\).
 
 \item \textbf{Apareamiento entre canales y \emph{jitter} real del arreglo completo.}
 Hasta ahora acotado por presupuesto te\'orico y medici\'on sobre pocos nodos.
@@ -49,25 +50,78 @@ valores ($1$, $1$, $6$) son redondos y este no; proviene de an\'alisis simb\'oli
 
 \item \textbf{Autonom\'ia del nodo} y consumo medido. No registrado.
 
-\item \textbf{Detalle del ajuste de \SI{50}{\hertz}}: si se realiza sobre la traza
-completa o por ventanas, y si estima tambi\'en los arm\'onicos o s\'olo la fundamental.
+\item \textbf{Sensibilidad del SM-24: \SI{85.8}{\volt\second\per\meter} frente a los
+\SI{28.8}{\volt\second\per\meter} de cat\'alogo.} Un documento interno recuperado del
+historial registra \SI{85.8}{\volt\second\per\meter} como sensibilidad, que es
+\emph{tres veces} el valor de la hoja de datos. La hip\'otesis m\'as probable es que se
+trate de la sensibilidad de \textbf{tres elementos en serie} o de la \emph{cadena
+completa} y no del transductor individual. \emph{Impacto: alto}, porque el factor de
+escala de todas las conversiones a unidades f\'isicas depende de cu\'al de los dos valores
+corresponde. \emph{Confirmar.}
+
+\item \textbf{Piso de ruido: ?`del instrumento o del sitio?} El an\'alisis de SNR por
+bandas (\'item nuevo m\'as abajo) muestra un piso com\'un por debajo de \SI{7}{\hertz} que
+\emph{no var\'ia con la distancia}. Falta determinar si lo aporta la electr\'onica o el
+ambiente del sitio: son dos problemas con soluciones opuestas. \emph{La medici\'on es
+sencilla y no requiere campa\~na}: una captura larga con el ge\'ofono desacoplado del
+suelo, en el laboratorio; el sistema ya tiene validada la captura continua de
+\SI{10}{\minute}.
+
+\item \textbf{Distancia real entre el tendido y el punto del SEV~01.} El estudio
+hidrogeol\'ogico de 2023 sit\'ua el SEV~01 en UTM $435595$/$7198920$, declarado como
+``cancha de f\'utbol de la UC''. Falta contrastar contra las coordenadas registradas en
+los metadatos de las capturas y anotar la separaci\'on efectiva, de la que depende
+cu\'an literal puede ser la comparaci\'on (\S\ref{sec:sitio-sev}).
+
+\item \textbf{?`Se ejecut\'o la perforaci\'on de \SI{60}{\meter} recomendada?} El mismo
+estudio la recomienda en el sector del SEV~01, con perfilaje geof\'isico de pozo. Si se
+realiz\'o, ese registro ser\'ia la validaci\'on invasiva directa que el proyecto no
+tiene. \emph{Gestionar el acceso con la Facultad.}
+
+\end{enumerate}
+
+\subsection{Hallazgos del 12/08/2026 que abren cuestiones nuevas}
+
+\begin{enumerate}[itemsep=0.35em]
+
+\item \textbf{La banda \'util real de los datos de campo es
+\SIrange{10}{50}{\hertz}, no la banda objetivo.} Medida sobre 257 golpes: SNR mediana de
+\SI{0.4}{\decibel} en \SIrange{1}{2.5}{\hertz} (0 de 16 grupos por encima de
+\SI{10}{\decibel}) frente a \SI{15.2}{\decibel} en \SIrange{10}{20}{\hertz}. Verificado
+contra los CSV crudos, separando configuraciones de adquisici\'on, con cuatro longitudes
+de ventana y sobre un segundo conjunto procesado. \emph{Impacto: m\'aximo.} Reordena las
+prioridades: antes de ampliar la apertura hay que conseguir que exista se\~nal por debajo
+de \SI{10}{\hertz}. \emph{A conversar con el tutor.}
+
+\item \textbf{Exclusi\'on de los \emph{picks} de baja frecuencia antes de invertir.}
+Tres de los 51 puntos de la curva superan $\lambda\le L$ (hasta
+\SI{130.6}{\meter} con $L=\SI{40}{\meter}$) \emph{y} caen en la banda de
+\SIrange{0}{2}{\decibel} de SNR. Dos criterios independientes coinciden. \emph{?`Se
+reprocesa la inversi\'on sin ellos?}
+
+\item \textbf{Saturaci\'on del canal de martillo en parte de las campa\~nas.} En una de
+las dos configuraciones de adquisici\'on identificadas, el pico repite con CV del
+\SI{0.4}{\percent} ---f\'isicamente imposible a mano---, lo que indica techo de la cadena.
+Afecta al \SI{46}{\percent} de los golpes. \emph{Corregible bajando ganancia o cambiando
+el rango de ADC del nodo HAMMER, que no necesita la ganancia agresiva del ge\'ofono.}
+
+\item \textbf{El conjunto procesado mezcla dos configuraciones de adquisici\'on}
+(distribuci\'on de amplitudes bimodal con hueco vac\'io). \emph{?`Se rehace el an\'alisis
+MASW separ\'andolas, o se verifica que mezclarlas no sesga la curva?}
+
+\item \textbf{La punta del martillo como control de banda de la fuente.} El manual del
+086D20 muestra que la dureza de la punta fija el contenido espectral del golpe
+(\SI{-20}{\decibel} en \SI{600}{\hertz} con la m\'as blanda frente a
+\SI{1300}{\hertz} con la m\'as dura), y menciona una masa de extensi\'on que concentra
+a\'un m\'as energ\'ia en baja frecuencia. \emph{Ninguno de los dos recursos se explot\'o
+sistem\'aticamente, y ambos empujan hacia donde el proyecto necesita.} Pendiente: mapear
+los colores de punta registrados en las capturas a su dureza.
 
 \end{enumerate}
 
 \subsection{Decisiones editoriales del documento}
 
 \begin{enumerate}[itemsep=0.35em]
-
-\item \textbf{Perfil $V_S$ sin contraste SPT}: ¿se presenta con la aclaraci\'on expl\'icita
-de que la validaci\'on externa est\'a pendiente, o se reserva para la Defensa Final?
-Recomendaci\'on: presentarlo con la aclaraci\'on, porque demuestra que la cadena completa
-cierra de extremo a extremo.
-
-\item \textbf{Unificaci\'on de la frecuencia de muestreo en el texto}: la configuraci\'on
-vigente es $\SI{2929}{\hertz}/N$, pero los par\'ametros y tiempos de calibraci\'on
-reportados en el art\'iculo URUCON est\'an referidos a \SI{2604}{\hertz}. Recomendaci\'on: no
-modificar n\'umeros ya sometidos a revisi\'on externa y declarar la tasa junto a ellos, que
-es como qued\'o redactado.
 
 \item \textbf{Uso de asistencia de IA}: el proyecto la us\'o de forma intensiva y
 documentada. ¿Se explicita y con qu\'e encuadre metodol\'ogico? Conviene decidirlo antes de
@@ -76,7 +130,9 @@ que lo pregunte la mesa.
 \item \textbf{Nombres de los sitios de medici\'on}: figuran los nombres internos
 (Canchiga, Canchita, Estacionamiento). ¿Se mantienen o se formalizan?
 
-\item \textbf{Figuras}: falta elegir cu\'ales entran. Disponibles en
+\item \textbf{Figuras para la versi\'on reglamentaria de 15 p\'aginas}: el borrador
+extendido ya integra las figuras trazables; falta elegir el subconjunto que entra en el
+recorte formal. Disponibles en
 \texttt{docs/Urucom\_2026\_compact/imagenes/}: cadena anal\'ogica, diagrama de hardware
 digital, trayectorias de calibraci\'on, \emph{waterfall} de campo, imagen de dispersi\'on,
 respuesta del SM-24.
@@ -104,6 +160,10 @@ particularmente pertinente. \emph{¿Se consider\'o?}
 \toprule
 \textbf{Cuesti\'on} & \textbf{Resoluci\'on} & \textbf{Secci\'on} \\
 \midrule
+Geometr\'ia de campo
+& Arreglo virtual: martillo en $x=0$, un ge\'ofono m\'ovil, $\Delta x=\SI{2}{\meter}$, grupo principal de 21 posiciones entre \SI{10}{} y \SI{50}{\meter}, $L=\SI{40}{\meter}$
+& \S\ref{sec:metodologia}, \S\ref{sec:resultados} \\
+\addlinespace[2pt]
 Elecci\'on del SM-24 de \SI{10}{\hertz}
 & Disponibilidad: es el ge\'ofono con que cuenta la Facultad. Restricci\'on de partida, no elecci\'on de dise\~no
 & \S\ref{sec:geofono} \\
@@ -113,16 +173,24 @@ Criterio del pivote Sallen-Key $\to$ MFB
 & \S\ref{sec:mfb} \\
 \addlinespace[2pt]
 $\zeta=83{,}661$ frente a $0{,}25$
-& \textbf{No es una discrepancia}: $0{,}25$ es el amortiguamiento inicial del ge\'ofono y $83{,}661$ el objetivo de dise\~no. Sigue la estrategia de~\cite{Ma2023}, un orden de magnitud m\'as agresiva
+& $0{,}25$ es el amortiguamiento del SM-24 y el objetivo del numerador; $937{,}396$ es el amortiguamiento del denominador BP. $83{,}661$ fue el valor err\'oneo realizado por la tanda descartada del 20/07
 & \S\ref{sec:ma2023} \\
 \addlinespace[2pt]
 Estado del \emph{notch} de \SI{50}{\hertz}
-& Retirado. La interferencia de red se cancela en post-proceso por ajuste no lineal de m\'inimos cuadrados, sin retardo de grupo y de forma reversible
+& Retirado. Se usa b\'usqueda acotada de frecuencia y regresi\'on arm\'onica lineal en post-proceso. No introduce retardo y preserva el crudo, pero puede atenuar contenido s\'ismico coherente con las bases estimadas
 & \S\ref{sec:topologias} \\
 \addlinespace[2pt]
 Frecuencia de muestreo vigente
-& $\SI{2929}{\hertz}/N$; la tasa nativa resulta del reloj del PSoC con el ADC a 18~bits
+& $\SI{2604}{\hertz}/N$, con $N=1,\ldots,100$; $2929$ y \SI{1020}{\hertz} corresponden a configuraciones hist\'oricas de campo
 & \S\ref{sec:arquitectura} \\
+\addlinespace[2pt]
+Supresi\'on de red
+& B\'usqueda acotada de frecuencia sobre el registro completo y regresi\'on lineal seno--coseno de fundamental y arm\'onicos; preserva el crudo, pero puede proyectar contenido coherente
+& \S\ref{sec:topologias} \\
+\addlinespace[2pt]
+Presentaci\'on del perfil $V_S$
+& Se incluye como cierre del \emph{pipeline}, con validaci\'on externa y soporte por debajo de aproximadamente \SI{20}{\meter} declarados como pendientes
+& \S\ref{sec:resultados} \\
 \addlinespace[2pt]
 Controlador de calibraci\'on
 & El t\'ermino derivativo se descarta (amplifica ruido del ADC sin aportar en planta cuasi-est\'atica); el controlador final es PI, tal como se reporta en el art\'iculo URUCON
@@ -131,16 +199,18 @@ Controlador de calibraci\'on
 Trabajo de Delis \emph{et al.}~\cite{Delis2025}
 & Se cita como respaldo independiente de las decisiones de la cadena, sin atribuirle influencia en la decisi\'on original
 & \S\ref{sec:mfb} \\
+\addlinespace[2pt]
+Descarte del RC pasivo de entrada
+& Se confirm\'o que el FIR digital evita el corrimiento por tolerancias y deriva t\'ermica, conserva fase lineal y permite reconfigurar el filtrado con el DSP disponible; adem\'as evita atenuar antes de la primera ganancia
+& \S\ref{sec:mfb} \\
+\addlinespace[2pt]
+Naturaleza del sensor del martillo
+& \textbf{No es un aceler\'ometro}: el PCB Piezotronics 086D20 es un martillo de impacto con \textbf{sensor de fuerza} de cuarzo ICP (0 a \num{5000}~lbf, \SI{0.23}{\milli\volt\per\newton}, cabeza de \num{2.4}~lb). El canal de martillo mide fuerza aplicada, no aceleraci\'on de la maza. Corregido el 12/08/2026
+& \S\ref{sec:arquitectura} \\
+\addlinespace[2pt]
+Verdad de terreno independiente del sitio
+& El SEV~01 del estudio hidrogeol\'ogico de julio de 2023~\cite{GonzalezHidro2023} se ejecut\'o en la misma cancha: interfaces esperables en \SI{24.0}{} y \SI{71.8}{\meter}, nivel fre\'atico entre \SI{10}{} y \SI{30}{\meter} (\'epoca seca, estacional)
+& \S\ref{sec:sitio-sev} \\
 \bottomrule
 \end{tabularx}
 \end{center}
-
-\nota{Qued\'o una pregunta menor sin responder, que reformulo m\'as claramente: sobre el
-\textbf{descarte del filtro pasivo RC de entrada} (18/04), lo que quer\'ia saber es
-simplemente \emph{qu\'e te hizo sacarlo}. Escrib\'i en \S\ref{sec:mfb} que fue porque la
-impedancia de la fuente (bobina del ge\'ofono m\'as resistencia de amortiguamiento) es
-variable y por lo tanto la frecuencia de corte del RC no queda bajo control, adem\'as de
-que atenuar antes de amplificar empeora la relaci\'on se\~nal--ruido. Si en realidad lo
-sacaste simplemente porque el FIR digital resultaba m\'as c\'omodo y flexible, decime y lo
-corrijo ---no es grave, pero es el primer pivote del proyecto y prefiero que el motivo
-escrito sea el real.}

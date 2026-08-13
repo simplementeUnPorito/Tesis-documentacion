@@ -3,18 +3,23 @@
 
 Ordenado por impacto sobre el objetivo del proyecto, no por dificultad.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{roadmap_validacion.png}
+\caption{Hoja de ruta cualitativa por dependencia y valor de evidencia. No reemplaza un
+cronograma acordado con tutor\'ia.}
+\end{figure}
+
 \subsection{Lo que hay que resolver antes de escribir la entrega}
 
 \begin{enumerate}[itemsep=0.45em]
 
-\item \textbf{La discrepancia sobre $\zeta$} (Etapa~9). Los archivos de
-resultados dicen que $0{,}25$ es el objetivo (\texttt{zeta0\_objetivo},
-numerador del compensador, igual al amortiguamiento del ge\'ofono) y que
-$83{,}661$ fue el valor que el circuito realizaba \emph{por error} con la
-resistencia equivocada, corregido a $0{,}250000000000114$ en la tanda
-calibrada. El borrador de la Primera Presentaci\'on afirma lo contrario.
-\emph{Es lo primero a aclarar}, porque cambia la redacci\'on de toda la secci\'on
-de compensaci\'on.
+\item \textbf{Recalcular y medir el modelo no ideal del operacional.} Los
+scripts usaban $A_0=\SI{90}{\decibel}$ y \SI{8}{\mega\hertz} como polo dominante;
+si \SI{8}{\mega\hertz} es GBW, el polo monopolo es aproximadamente
+\SI{253}{\hertz}. La funci\'on de lazo abierto ya se corrigi\'o mediante
+$f_p=f_t/A_0$. Falta identificar el operacional configurado y repetir la
+s\'intesis y el contraste experimental.
 
 \item \textbf{La profundidad alcanzable no est\'a sostenida por la geometr\'ia}
 (Etapa~7). Con apertura $L = \SI{40}{\meter}$, el soporte geom\'etrico
@@ -52,9 +57,9 @@ Apareamiento entre canales. Un desfasaje entre canales se traduce directamente e
 \addlinespace[2pt]
 Banda plana efectivamente lograda tras compensar, medida. Es el resultado que cierra la l\'inea del \emph{front-end} y permite compararse con los \SIrange{1}{100}{\hertz} de Ma \emph{et al.} & Alto \\
 \addlinespace[2pt]
-Ruido del sistema referido a la entrada, contra el l\'imite t\'ermico del ge\'ofono. Pertinente porque la compensaci\'on amplifica tambi\'en el ruido & Medio-alto \\
+Ruido del sistema referido a la entrada, contra el l\'imite t\'ermico del ge\'ofono y separado por etapa. La compensaci\'on modifica la respuesta al ruido y debe caracterizarse de extremo a extremo & Medio-alto \\
 \addlinespace[2pt]
-Par\'ametros medidos del SM-24: resistencia e inductancia de bobina, masa m\'ovil, sensibilidad real. Existen en el trabajo de MATLAB pero no est\'an volcados & Medio \\
+Par\'ametros medidos del SM-24 usado: frecuencia natural, amortiguamiento y sensibilidad. La hoja de datos especifica resistencia de bobina, masa m\'ovil y sensibilidad nominal, pero no informa inductancia & Medio \\
 \addlinespace[2pt]
 Autonom\'ia del nodo y consumo. No registrado en ning\'un lado & Medio \\
 \addlinespace[2pt]
@@ -66,15 +71,6 @@ Recalibrar el lazo PI con la resoluci\'on del IDAC (LSB \SI{3.75}{\milli\volt}) 
 \end{center}
 
 \subsection{Preguntas sin respuesta registrada}
-
-\pendiente{\textbf{Sobre el descarte del filtro RC pasivo (18/04).} La
-bit\'acora reconstruye cuatro motivos ---fase no lineal, tolerancia, deriva
-t\'ermica, y que el PSoC ya tiene DSP--- pero los presenta como \emph{``razones
-probables''} inferidas del \emph{diff}, no como testimonio, y en un pasaje
-habla de un ge\'ofono de \SI{4.5}{\hertz} que no es el SM-24. El motivo
-t\'ecnicamente decisivo, y el que sostiene el resto del dise\~no, es la fase
-lineal. \textbf{¿Fue ese el motivo real, o simplemente result\'o m\'as c\'omodo el
-FIR digital?}}
 
 \pendiente{\textbf{KiCad o JitX.} El repositorio \texttt{PCBs} tiene los dos
 proyectos y no hay bit\'acora de agosto. \textbf{¿Cu\'al es el vigente y por qu\'e
@@ -115,12 +111,11 @@ Nombres de carpeta de campo & No siempre coinciden con la posici\'on declarada e
 
 \subsection{Nota de cierre}
 
-Vale la pena registrar el balance: el proyecto resolvi\'o bien los dos
-problemas que se propuso resolver ---extender la banda del transductor por
-electr\'onica y sincronizar nodos inal\'ambricos con precisi\'on suficiente---, y
-tiene evidencia estad\'istica publicable de la auto-calibraci\'on. Lo que qued\'o
-al descubierto al medir en campo es que \textbf{el cuello de botella se
-mud\'o}: ya no es el ge\'ofono ni la electr\'onica, es la \emph{apertura del
-arreglo} y la \emph{energ\'ia de la fuente}. Eso es un buen problema, porque
-significa que la parte dif\'icil y original del trabajo est\'a hecha, y lo que
-falta es geometr\'ia y mec\'anica.
+Vale la pena registrar el balance sin cerrar antes de tiempo lo que a\'un exige
+medici\'on. El proyecto demostr\'o la cadena completa, una compensaci\'on
+anal\'ogica repetible aunque todav\'ia lejos de la cancelaci\'on fina de dise\~no,
+auto-calibraci\'on con evidencia estad\'istica y sincronizaci\'on inal\'ambrica
+funcional en banco. En campo aparecieron adem\'as dos l\'imites independientes:
+la apertura del arreglo y la energ\'ia de la fuente. La contribuci\'on est\'a
+sostenida; la banda efectiva, el \emph{jitter} extremo a extremo y la validez a
+\SI{50}{\meter} siguen siendo resultados por cerrar, no logros demostrados.

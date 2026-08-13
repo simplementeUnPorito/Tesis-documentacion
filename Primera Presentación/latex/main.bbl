@@ -183,6 +183,12 @@ O.~Kafadar, ``A geophone-based and low-cost data acquisition and analysis
   Instrumentation, Methods and Data Systems}, vol.~9, pp. 365--373, 2020, doi:
   10.5194/gi-9-365-2020.
 
+\bibitem{Korsimaa2025}
+J.~Korsimaa, P.~Weber, E.~H{\ae}ggstr\"om, and A.~Salmi, ``Wireless trigger
+  distribution with nanosecond jitter based on ultra-wideband transceiver
+  modules,'' \emph{HardwareX}, vol.~24, p. e00713, 2025, doi:
+  10.1016/j.ohx.2025.e00713.
+
 \bibitem{Kramer1996}
 S.~L. Kramer, \emph{Geotechnical Earthquake Engineering}.\hskip 1em plus 0.5em
   minus 0.4em\relax Prentice Hall, 1996.
@@ -302,6 +308,12 @@ C.~B. Park, R.~D. Miller, J.~Xia, and J.~Ivanov, ``Multichannel analysis of
   surface waves ({MASW}) --- active and passive methods,'' \emph{The Leading
   Edge}, vol.~26, no.~1, pp. 60--64, 2007, doi: 10.1190/1.2431832.
 
+\bibitem{PerezSolano2022UWB}
+J.~J. P{\'e}rez-Solano, S.~Felici-Castell, A.~Soriano-Asensi, and
+  J.~Segura-Garcia, ``Time synchronization enhancements in wireless networks
+  with ultra wide band communications,'' \emph{Computer Communications}, vol.
+  186, pp. 80--89, 2022, doi: 10.1016/j.comcom.2022.01.012.
+
 \bibitem{Quinteros2019}
 S.~Quinteros \emph{et~al.}, ``{\O}ysand research site: Geotechnical
   characterisation of deltaic sandy-silty soils,'' \emph{AIMS Geosciences},
@@ -315,6 +327,9 @@ S.~Quinteros \emph{et~al.}, ``{\O}ysand research site: Geotechnical
 \bibitem{CypressAN60319}
 P.~Sekar, ``Instrumentation amplifier using {PSoC} 3,'' Cypress Semiconductor,
   Application Note AN60319, Document No.~001-60319, Rev.~*A, Apr. 2010.
+
+\bibitem{SM24}
+{Sensor Nederland B.V.}, ``{SM-24} geophone element,'' product brochure, 2006.
 
 \bibitem{SESAME2004}
 {SESAME European Research Project}, ``Guidelines for the implementation of the
@@ -384,6 +399,20 @@ J.~Xia, Y.~Xu, C.~Chen, R.~D. Kaufmann, and Y.~Luo, ``Simple equations guide
 Y.~Xu, J.~Xia, and R.~D. Miller, ``Quantitative estimation of minimum offset
   for multichannel surface-wave survey with actively exciting source,''
   \emph{J. Applied Geophysics}, 2006, doi: 10.1016/j.jappgeo.2005.08.002.
+
+\bibitem{Xue2021Wicsync}
+B.~Xue, Z.~Li, P.~Lei, Y.~Wang, and X.~Zou, ``{Wicsync}: A wireless multi-node
+  clock synchronization solution based on optimized {UWB} two-way clock
+  synchronization protocol,'' \emph{Measurement}, vol. 183, p. 109760, 2021,
+  doi: 10.1016/j.measurement.2021.109760.
+
+\bibitem{GonzalezHidro2023}
+V.~G. y~Asociados~S.S., ``Estudio hidrogeol\'ogico --- facultad de ciencias y
+  tecnolog\'ia, universidad cat\'olica nuestra se\~nora de la asunci\'on,
+  campus asunci\'on --- sede santa librada,'' Universidad Cat\'olica ``Nuestra
+  Se\~nora de la Asunci\'on'', Asunci\'on, Paraguay, Informe t\'ecnico, jul
+  2023, tres sondeos el\'ectricos verticales (Schlumberger, IPI2win); el SEV~01
+  co-localizado con el sitio de ensayo de este trabajo.
 
 \bibitem{Liu2020}
 {Y. Liu et al.}, ``A low-noise chopper amplifier with offset and low-frequency

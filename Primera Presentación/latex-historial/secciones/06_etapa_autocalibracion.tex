@@ -7,15 +7,24 @@ que avanzan entrelazadas: cerrar el lazo de calibraci\'on del \emph{front-end},
 sacar la adquisici\'on de la CPU, y finalmente sacar la \emph{decisi\'on} de
 adquirir tambi\'en de la CPU.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{diagnostico_pot_capturas.png}
+\caption{Capturas del diagn\'ostico de resoluci\'on de ajuste del potenci\'ometro. Este
+ensayo muestra margen de mejora del residuo; no ampl\'ia por s\'i solo el estudio
+estad\'istico de dos placas.}
+\end{figure}
+
 \subsection{Por qu\'e hace falta calibrar}
 
 La cadena anal\'ogica tiene cuatro etapas en cascada ---PGA, pasa-banda (BP),
 sumador (SUM) y pasa-bajos (LP)--- y cada una aporta su propio \emph{offset} de
 continua: tensiones de \emph{offset} de los operacionales, corrientes de
-polarizaci\'on, desapareamiento de resistencias. El problema es que
-\emph{el \emph{offset} se amplifica junto con la se\~nal}, y la compensaci\'on
-del ge\'ofono exige ganancia alta ---proporcional a $(\zeta_1-\zeta_0)$, con
-$\zeta_0 = 0{,}25$ y $\zeta_1$ de varios cientos: tres \'ordenes de magnitud.
+polarizaci\'on y desapareamiento de resistencias. Adem\'as, la compensaci\'on se
+construye combinando dos trayectorias grandes que deben cancelarse con mucha
+precisi\'on alrededor de $f_n$. Los \emph{offsets} de etapa no participan de
+esa cancelaci\'on ideal y consumen margen del ADC; no corresponde atribuirles
+sin medici\'on un factor de ganancia igual a $(\zeta_1-\zeta_0)$.
 
 \dato{Dimensi\'on del problema, medida: el \emph{offset} con referencia fija a
 la salida de la etapa sumadora lleg\'o a \textbf{\SI{21.8}{\percent}} del fondo
@@ -133,7 +142,7 @@ un minuto es la diferencia entre un instrumento usable en campo y uno que no.}
 Tres pasos en tres d\'ias:
 
 \begin{center}\small
-\begin{tabularx}{\textwidth}{@{}l l X@{}}
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
 \toprule
 \textbf{Fecha} & \textbf{Cambio} & \textbf{Consecuencia} \\
 \midrule
@@ -193,7 +202,7 @@ m\'as usada del proyecto: permite reproducir en aislamiento cualquier paso de
 la secuencia de captura, que es exactamente lo que hizo falta para encontrar
 los bugs cr\'iticos de la Etapa~8.}
 
-\pendiente{Pol\'itica de eventos que qued\'o fijada y conviene no romper: el
+\seleccionado{Pol\'itica de eventos que qued\'o fijada y conviene no romper: el
 \texttt{TC} se atiende por \emph{polling} de \texttt{STATUS\_TC} y \textbf{no}
 por interrupci\'on; la ISR maneja \'unicamente muestras; y \texttt{CLEAR\_FLAGS}
 est\'a prohibido durante \texttt{SAMPLING}.}

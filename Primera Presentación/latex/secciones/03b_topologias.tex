@@ -72,6 +72,15 @@ las etapas BP y SUM \emph{son} la implementaci\'on f\'isica de la
 Ec.~\eqref{eq:ma-comp}, con el PGA aportando la ganancia programable y el LP actuando
 como \emph{anti-aliasing} antes del conversor.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{extension_banda.png}
+\caption{Efecto ideal de elevar el amortiguamiento manteniendo $\omega_n$. La l\'inea de
+\SI{5.44}{\milli\hertz} es el polo inferior del modelo con
+$\zeta_1=937{,}396$; no representa una banda plana ya medida.}
+\label{fig:extension-banda-main}
+\end{figure}
+
 \subsubsection{Par\'ametros del trabajo original}
 
 \begin{center}\footnotesize
@@ -81,13 +90,13 @@ Concepto & Valor en Ma \emph{et al.}~\cite{Ma2023} & En este proyecto \\
 \midrule
 Ge\'ofono & JF-20DX (Sercel) & SM-24 \\
 $f_n$ & \SI{10}{\hertz} & \SI{10}{\hertz} \\
-Sensibilidad & \SI{2.73}{\volt\per\meter\per\second} & $\approx\SI{28.8}{\volt\per\meter\per\second}$ \\
-Resistencia de bobina & \SI{395}{\ohm} & (a completar) \\
-Inductancia de bobina & \SI{50}{\milli\henry} & (a completar) \\
-Masa m\'ovil & \SI{11}{\gram} & (a completar) \\
+Sensibilidad & \SI{2.73}{\volt\second\per\meter} & \SI{28.8}{\volt\second\per\meter} \\
+Resistencia de bobina & \SI{395}{\ohm} & \SI{375}{\ohm} \\
+Inductancia de bobina & \SI{50}{\milli\henry} & no especificada por el fabricante \\
+Masa m\'ovil & \SI{11}{\gram} & \SI{11}{\gram} \\
 $\zeta_0$ del ge\'ofono & 0{,}3 & \textbf{0{,}25} \\
-$\zeta_1$ objetivo & 10 & \textbf{83{,}661} \\
-Frecuencia objetivo & \SI{0.5}{\hertz} & (a definir) \\
+$\zeta_1$ del denominador compensado & 10 & \textbf{937{,}40} nominal \\
+Banda plana demostrada & \SIrange{1}{100}{\hertz} & pendiente de verificaci\'on integral \\
 Topolog\'ia del pasa-banda & Sallen-Key & \textbf{MFB} (ver \S\ref{sec:mfb}) \\
 \bottomrule
 \end{tabular}
@@ -128,16 +137,57 @@ La primera aproximaci\'on (17 de abril) fue un filtro pasivo RC a la entrada, co
 valores de componentes. Se descart\'o en menos de \SI{24}{\hour} en favor de un FIR digital
 con decimaci\'on.
 
-El argumento t\'ecnico contra el filtrado pasivo previo a la amplificaci\'on est\'a bien
-articulado en la literatura de instrumentaci\'on: cuando la \textbf{resistencia de fuente
-es variable o desconocida}, un filtro pasivo antes de la amplificaci\'on tiene una
-frecuencia de corte que depende de esa resistencia, y por lo tanto no est\'a bajo control
-del dise\~nador~\cite{Delis2025}. En el caso de un ge\'ofono esto es exactamente lo que
-ocurre: la impedancia de la fuente es la de la bobina (resistencia en serie con
-inductancia) en paralelo con la resistencia de amortiguamiento, y esa combinaci\'on
-cambia entre unidades y con la temperatura. A esto se suma que el filtro pasivo atenúa
-la se\~nal \emph{antes} de amplificarla, lo que empeora la relaci\'on se\~nal--ruido
-referida a la entrada.
+\textbf{El motivo del descarte fue la tolerancia de los componentes}, y merece detalle
+porque es la primera aparici\'on de un criterio que despu\'es reaparece como decisivo en
+todas las decisiones de topolog\'ia del proyecto. El dise\~no optimizado quedaba con una
+frecuencia de corte nominal de \SI{6.50}{\hertz}. Con tolerancias comerciales de
+\SIrange{5}{10}{\percent} en resistencias y ---sobre todo--- en capacitores, esa
+frecuencia var\'ia en torno a $\pm\SI{0.5}{\hertz}$ entre unidades. En un sistema de un
+solo canal eso ser\'ia una molestia; en un sistema \textbf{multicanal} es un defecto
+estructural, porque introduce una diferencia de fase entre canales que el algoritmo MASW
+interpreta directamente como diferencia de tiempo de arribo, es decir, como velocidad de
+fase err\'onea. Un filtro cuya respuesta no se puede garantizar id\'entica en todos los
+canales es, en este sistema, peor que no tener filtro.
+
+A eso se sumaron tres consideraciones secundarias, en orden de peso:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item \textbf{Deriva t\'ermica.} Los valores de capacidad requeridos ---decenas de
+    microfarad para cortes de unos pocos hertz--- llevan a capacitores electrol\'iticos,
+    cuya capacidad var\'ia apreciablemente con la temperatura y con el envejecimiento. Un
+    nodo de campo trabaja a la intemperie.
+    \item \textbf{Fase no lineal} en la banda donde MASW estima velocidad de fase, con el
+    mismo problema de coherencia entre canales.
+    \item \textbf{El PSoC ya dispon\'ia del recurso.} El bloque de filtro digital
+    programable permite realizar el mismo filtrado con coeficientes exactos,
+    bit-id\'enticos en todos los nodos y de fase lineal por construcci\'on, sin costo de
+    componentes adicionales.
+\end{enumerate}
+
+El reemplazo concreto fue una cadena de tres etapas FIR (\texttt{fir1(31, 0.15)}) con
+decimaci\'on $\times 4$ en cada una, es decir \textbf{decimaci\'on total $\times 64$},
+modelada en \texttt{FiltroDigital.slx}. La simulaci\'on que revel\'o el problema y la
+sustituci\'on ocurrieron el mismo d\'ia (18 de abril).
+
+\paragraph{Un cambio de filosof\'ia, no s\'olo de implementaci\'on.} Vale registrar que el
+RC de entrada era conceptualmente un \textbf{pasa-altos por encima de la resonancia}: se
+descartaba deliberadamente el contenido de baja frecuencia por considerarlo ruido. Eso es
+justo lo contrario del dise\~no final, que \emph{persigue} ese contenido porque en \'el
+reside la informaci\'on de las capas profundas (Secci\'on~\ref{sec:geo-park}). El descarte
+del RC marca as\'i el punto en que el proyecto deja de tratar la baja frecuencia como
+estorbo y pasa a tratarla como el objetivo. El RC tampoco resolv\'ia la extensi\'on de
+banda del transductor, que debe actuar \emph{antes} de que la se\~nal atenuada quede bajo
+el piso de ruido.
+
+Desde entonces el reparto qued\'o fijo y se mantuvo hasta hoy: \textbf{la electr\'onica
+anal\'ogica se reserva para ganancia y compensaci\'on} ---lo que necesariamente debe
+ocurrir antes del conversor--- y \textbf{la selecci\'on de banda migra al dominio
+digital}, donde es exacta, reproducible y reversible. La misma sensibilidad a tolerancias
+que expuls\'o al RC reaparece doce d\'ias despu\'es como argumento n\'umero uno del pivote
+Sallen-Key $\to$ MFB (\S\ref{sec:mfb}), y m\'as tarde como raz\'on para preferir la
+compensaci\'on por amortiguamiento sobre la cancelaci\'on polo--cero
+(\S\ref{sec:geo-por-que-aceleracion}). Es el hilo argumental m\'as persistente del
+proyecto.
 
 \subsubsection{Sallen-Key / VCVS --- implementado, ensayado y descartado}
 
@@ -146,9 +196,9 @@ Entre el 27 de abril y el 5 de mayo se estudi\'o e implement\'o la topolog\'ia V
 trabajo de referencia~\cite{Ma2023}. Se desarroll\'o el an\'alisis completo de la funci\'on
 de transferencia del pasa-banda VCVS (\texttt{Compensador.m}) y se llev\'o a medici\'on.
 
-Se descart\'o el 30 de abril tras el an\'alisis comparativo sistem\'atico realizado con
-\texttt{ComparacionFiltros.m}, que contrast\'o ambas topolog\'ias sobre datos reales de
-captura y en simulaci\'on. El criterio de la decisi\'on se detalla a continuaci\'on.
+Se descart\'o el 30 de abril tras un an\'alisis comparativo sistem\'atico de ambas
+topolog\'ias sobre datos reales de captura y en simulaci\'on. El criterio de la
+decisi\'on se detalla a continuaci\'on.
 
 \subsubsection{MFB (\emph{Multiple Feedback}) --- topolog\'ia adoptada}
 
@@ -197,6 +247,15 @@ cambio fueron, en orden de peso:
     (unidades a decenas de \si{\hertz}). La restricci\'on que suele decidir en contra de la
     MFB simplemente no opera en este rango.
 \end{enumerate}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.88\textwidth]{comparacion_topologias.png}
+\caption{Reconstrucci\'on trazable de \texttt{ComparacionFiltros.m}. En magnitud ambas
+topolog\'ias reproducen el objetivo; la selecci\'on MFB se fundamenta en sensibilidad a
+tolerancias y repetibilidad multicanal, no en una ventaja visible de respuesta nominal.}
+\label{fig:comparacion-topologias-main}
+\end{figure}
 
 En s\'intesis: en la banda s\'ismica de inter\'es las desventajas de la MFB (impedancia de
 entrada, inversi\'on de fase, exigencia de GBW) son inocuas por construcci\'on de la cadena
@@ -256,26 +315,35 @@ propiamente dicha, con tres enfoques:
 
 Un hallazgo relevante de esta etapa (17 de mayo) fue que \textbf{el modelo de
 amplificador operacional ideal no reproduc\'ia el comportamiento medido} en el extremo
-superior de la banda. Se incorpor\'o entonces el modelo del operacional real, con ganancia
-de lazo abierto $A_0=\SI{90}{\decibel}$ y polo dominante $f_p=\SI{8}{\mega\hertz}$, y se
-valid\'o contra medici\'on con \texttt{graficar\_compensador\_csv.py}. Es un resultado
-did\'actico: el producto ganancia--ancho de banda finito del operacional limita la
-compensaci\'on realizable, y omitirlo lleva a dise\~nar redes que en el banco no se
-comportan como en la simulaci\'on.
+superior de la banda. La primera implementaci\'on del modelo no ideal combin\'o una
+ganancia de lazo abierto $A_0=\SI{90}{\decibel}$ con el par\'ametro
+$\SI{8}{\mega\hertz}$, pero lo rotul\'o err\'oneamente como polo dominante. Si
+\SI{8}{\mega\hertz} es la frecuencia de ganancia unitaria de un modelo monopolo, el polo
+correspondiente es $f_p=f_t/A_0\approx\SI{253}{\hertz}$, no \SI{8}{\mega\hertz}. Por
+tanto, la coincidencia obtenida con esa parametrizaci\'on no se usa aqu\'i como validaci\'on
+del modelo del operacional. La funci\'on de lazo abierto fue corregida en los scripts con
+$f_p=f_t/A_0$; a\'un deben verificarse los par\'ametros del componente configurado y repetirse
+la s\'intesis y el contraste experimental. La conclusi\'on cualitativa se mantiene ---el ancho de banda finito puede
+limitar la compensaci\'on---, pero su cuantificaci\'on queda abierta.
 
-\subsubsection{El factor de amortiguamiento objetivo}
+\subsubsection{Los tres valores de amortiguamiento y la correcci\'on del prototipo}
 
-El barrido de la cadena anal\'ogica realizado el 20--21 de julio estableci\'o los valores de
-dise\~no del compensador: \textbf{amortiguamiento inicial del ge\'ofono
-$\zeta_0=0{,}25$ y amortiguamiento objetivo $\zeta_1\approx83{,}661$}.
+La caracterizaci\'on de julio obliga a distinguir tres cantidades que una versi\'on previa
+del borrador hab\'ia mezclado. El valor $\zeta_0=0{,}25$ es el amortiguamiento a circuito
+abierto del SM-24 y, a la vez, el coeficiente que debe reproducir el \textbf{numerador}
+del compensador. El denominador pasa-banda realizado con los componentes nominales
+corregidos tiene $\zeta_1=937{,}396$. Finalmente, $83{,}661$ fue el amortiguamiento
+residual que realizaba por error el numerador de la tanda del 20 de julio, cuando la rama
+BP ten\'ia montada una resistencia incorrecta; esa tanda se archiv\'o como descartada. La
+configuraci\'on corregida del 21 de julio lleva el numerador a
+$\zeta=0{,}250000000000114$, coincidente con el objetivo.
 
-Conviene subrayar que esto \textbf{no es una discrepancia sino el resultado buscado}, y
-que sigue exactamente la estrategia de la Ec.~\eqref{eq:ma-comp}: aumentar fuertemente el
-amortiguamiento manteniendo $\omega_n$ fija. La diferencia con el trabajo de
-referencia~\cite{Ma2023} es de grado, no de naturaleza: all\'i se pasa de
-$\zeta_0=0{,}3$ a $\zeta_1=10$ (un factor $\approx33$), mientras que aqu\'i se va de
-$0{,}25$ a $83{,}661$ (un factor $\approx335$), es decir, un dise\~no un orden de magnitud
-m\'as agresivo.
+La estrategia sigue siendo la de Ma \emph{et al.}~\cite{Ma2023}: aumentar el
+amortiguamiento del denominador manteniendo $\omega_n$ fija. La diferencia es de grado:
+Ma pasa de $0{,}3$ a $10$, mientras que el denominador nominal del prototipo alcanza
+$937{,}4$. Este valor no debe confundirse con una banda plana demostrada; describe el
+modelo nominal de la etapa, cuya cancelaci\'on efectiva depende de un ajuste resistivo
+extremadamente fino.
 
 La interpretaci\'on f\'isica es directa. Con $\zeta_1\gg1$ el par de polos complejos
 conjugados del transductor se separa en dos polos reales situados aproximadamente en
@@ -286,22 +354,154 @@ conjugados del transductor se separa en dos polos reales situados aproximadament
 \omega_{p2}\approx 2\zeta_1\omega_n,
 \end{equation}
 
-de modo que la banda comprendida entre ambos se vuelve plana. Para
-$f_n=\SI{10}{\hertz}$ y $\zeta_1=83{,}661$ el polo inferior cae en el orden de
-\SI{0.06}{\hertz}: se extiende la respuesta \emph{muy} por debajo de la frecuencia
-natural del transductor, que es precisamente lo que exige el objetivo de
-\SI{50}{\meter} de profundidad con un ge\'ofono de \SI{10}{\hertz}
-(Secci\'on~\ref{sec:geofono}).
+de modo que la banda comprendida entre ambos se vuelve plana en el modelo ideal. Con
+$f_n=\SI{10.2046}{\hertz}$ y $\zeta_1=937{,}396$, la aproximaci\'on sit\'ua el polo
+inferior en \SI{5.44}{\milli\hertz}. Es una capacidad \emph{te\'orica}, no una frecuencia
+de corte experimental ya demostrada.
 
-\nota{\textbf{Verificar antes de la entrega}: (a) el valor exacto de la frecuencia de
-corte inferior resultante y el ancho de banda plano efectivamente medido, para poder
-compararlos con los \SIrange{1}{100}{\hertz} que reporta Ma \emph{et al.}; (b) el precio
-de un $\zeta_1$ tan alto ---la compensaci\'on requiere ganancia proporcional a
-$(\zeta_1-\zeta_0)$, de modo que un factor $335$ amplifica tambi\'en el ruido y el
-\emph{offset} de la etapa, lo que enlaza directamente con la necesidad de la
-auto-calibraci\'on descrita en la Secci\'on~\ref{sec:arq-daafe}. Ese v\'inculo, si se
-sostiene con n\'umeros, es un buen argumento narrativo: \emph{la compensaci\'on agresiva es
-la causa de que el control de \emph{offset} sea imprescindible}.}
+La medici\'on explica el l\'imite pr\'actico. El ajuste nominal del potenci\'ometro para
+reproducir $\zeta_0=0{,}25$ es \SI{634.539}{\ohm}, mientras que la cancelaci\'on nula
+ocurre en \SI{632.556}{\ohm}: apenas \SI{1.98}{\ohm} de separaci\'on sobre un recorrido
+de \SI{2}{\kilo\ohm}. En $f_0$ la muesca medida queda \SI{26.33}{\decibel} menos profunda
+que el modelo. Por tanto, el circuito es repetible pero la extensi\'on ideal no est\'a
+verificada; el cuello de botella es la resoluci\'on del ajuste de cancelaci\'on.
+
+Esta sensibilidad enlaza f\'isicamente la compensaci\'on con el DA-AFE. BP y SUM combinan
+dos caminos de gran amplitud que deben cancelarse con precisi\'on, mientras cada etapa
+aporta su propio \emph{offset}. Sin calibraci\'on, el \emph{offset} medido a la salida LP
+lleg\'o a \SI{45.8}{\percent} del fondo de escala; controlar el punto de operaci\'on no es
+un agregado independiente, sino lo que conserva margen din\'amico para realizar esa
+resta anal\'ogica cerca del ADC.
+
+\subsubsection{El costo en ganancia de aplanar, y por qu\'e obliga al DA-AFE}
+\label{sec:costo-ganancia}
+
+El p\'arrafo anterior enuncia el v\'inculo entre compensaci\'on y calibraci\'on como una
+observaci\'on emp\'irica. En realidad es m\'as fuerte que eso: \textbf{se deduce del
+\'algebra de la compensaci\'on}, y conviene demostrarlo porque es el argumento que
+justifica la existencia misma del subsistema de auto-calibraci\'on. Ninguna otra parte del
+documento explica por qu\'e un sistema de adquisici\'on s\'ismica necesitar\'ia un lazo de
+control de \emph{offset} en cada canal.
+
+\paragraph{La cadena compensada.} Aplicando la red de la Ec.~\eqref{eq:ma-comp} a la
+respuesta del transductor, los factores $(s^2+2\zeta_0\omega_n s+\omega_n^2)$ se cancelan
+y queda simplemente
+
+\begin{equation}
+H_{a,\mathrm{comp}}(s)=H_a(s)\,H_{\mathrm{comp}}(s)
+=\frac{-G_0\,s}{s^{2}+2\zeta_1\omega_n s+\omega_n^{2}},
+\label{eq:ha-comp}
+\end{equation}
+
+que es la misma forma de partida con $\zeta_0$ reemplazado por $\zeta_1$. Evaluando
+\eqref{eq:ha-comp} en la banda media ---entre los dos polos reales, donde el t\'ermino
+$2\zeta_1\omega_n s$ domina el denominador--- la sensibilidad plana resultante vale
+
+\begin{equation}
+|H_{a,\mathrm{comp}}|_{\text{plana}}\approx\frac{G_0}{2\zeta_1\omega_n},
+\qquad\text{frente al pico original}\qquad
+|H_a|_{\max}=\frac{G_0}{2\zeta_0\omega_n}.
+\label{eq:sens-plana}
+\end{equation}
+
+\paragraph{El resultado.} Dividiendo ambas expresiones, el factor $G_0/(2\omega_n)$ se
+cancela y sobrevive un cociente desnudo:
+
+\begin{equation}
+\boxed{\ \frac{|H_{a,\mathrm{comp}}|_{\text{plana}}}{|H_a|_{\max}}
+=\frac{\zeta_0}{\zeta_1}\ }
+\label{eq:costo-ganancia}
+\end{equation}
+
+Es decir: \textbf{aplanar la respuesta cuesta ganancia en proporci\'on directa al
+amortiguamiento que se impone}. No es un efecto secundario evitable con mejor dise\~no ni
+un margen que pueda recuperarse eligiendo otros componentes: es el precio algebraico de
+la banda. Se est\'a canjeando ganancia por ancho de banda, exactamente como el producto
+ganancia--ancho de banda de un amplificador, pero aqu\'i el intercambio es expl\'icito y
+cuantificado \emph{a priori}. Num\'ericamente, para los casos de inter\'es:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Caso & $\zeta_1$ & $\zeta_0/\zeta_1$ & P\'erdida [\si{\decibel}] & Polo inferior \\
+\midrule
+Ma \emph{et al.}~\cite{Ma2023} & $10$ & $1/40$ & $-32{,}0$ & \SI{0.5}{\hertz} \\
+Tanda del 20/07 (descartada) & $83{,}661$ & $1/335$ & $-50{,}5$ & \SI{61}{\milli\hertz} \\
+Nominal corregido (21/07) & $937{,}396$ & $1/3750$ & $-71{,}5$ & \SI{5.44}{\milli\hertz} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Verificaci\'on del modelo contra el trabajo de referencia.} La
+Ec.~\eqref{eq:sens-plana} puede contrastarse con datos publicados, lo que la convierte en
+una relaci\'on verificada y no en una manipulaci\'on formal. Para Ma \emph{et al.}
+($G_0=\SI{2.73}{\volt\second\per\meter}$, $\zeta_1=10$,
+$\omega_n=2\pi\cdot\SI{10}{\hertz}=\SI{62.83}{\per\second}$) la sensibilidad plana
+predicha antes de las etapas de ganancia es
+
+\begin{equation*}
+\frac{2{,}73}{2\cdot 10\cdot 62{,}83}=\SI{2.17}{\milli\volt}\ \text{por}\
+\si{\meter\per\second\squared}.
+\end{equation*}
+
+El circuito publicado incorpora a continuaci\'on una etapa de ganancia $\times 10$ y una
+restadora con $R_6/R_f=100/10{,}3\approx 9{,}7$, de modo que el modelo predice
+$2{,}17\times 10\times 9{,}7\approx\SI{210}{\milli\volt}$ por
+\si{\meter\per\second\squared}. Ma \emph{et al.} reportan \SI{194}{\milli\volt} por
+\si{\meter\per\second\squared} medidos: el modelo cierra \textbf{dentro del
+\SI{8}{\percent}}. De igual modo, la f\'ormula de separaci\'on de polos con $\zeta_1=10$ y
+$f_n=\SI{10}{\hertz}$ predice cortes en $f_n/(2\zeta_1)=\SI{0.5}{\hertz}$ y
+$2\zeta_1 f_n=\SI{200}{\hertz}$, que son \emph{exactamente} los puntos de
+\SI{-3}{\decibel} que ese trabajo reporta haber medido.
+
+\paragraph{Consecuencia 1: hay que amplificar mucho, y despu\'es a\'un m\'as.} La se\~nal
+que entrega el ge\'ofono en campo ya es de pocos milivolt ---y en el extremo inferior de
+la banda, de decenas de microvolt---, como se comprueba directamente en los registros
+crudos (Secci\'on~\ref{sec:resultados}). Sobre esa se\~nal ya d\'ebil, la red de
+compensaci\'on aplica los \SIrange{50}{70}{\decibel} de atenuaci\'on de la
+Ec.~\eqref{eq:costo-ganancia}. La consecuencia pr\'actica es contraintuitiva pero
+inevitable: \textbf{no es posible trabajar con ganancias moderadas}. Hay que amplificar
+agresivamente \emph{antes} de la compensaci\'on, porque el ADC no ve la se\~nal
+amplificada sino la se\~nal amplificada \emph{y luego atenuada} por la propia red que
+aplana la banda. Toda ganancia que se ahorre en el PGA se paga en bits de resoluci\'on
+perdidos en el fondo de escala del conversor. Este es el motivo real por el que la cadena
+implementada dispone de PGA \emph{y} PGAout ---ganancia antes y despu\'es de la
+compensaci\'on--- en lugar de una \'unica etapa de ganancia.
+
+\paragraph{Consecuencia 2: el control de \emph{offset} deja de ser un refinamiento.} La
+misma ganancia que amplifica la se\~nal amplifica el \emph{offset} de continua de cada
+etapa que la precede: tensiones de \emph{offset} de entrada, corrientes de polarizaci\'on
+sobre resistencias de realimentaci\'on grandes, desapareamientos del par diferencial. Con
+ganancias de tres cifras, un \emph{offset} de entrada de pocos milivolt satura la etapa
+siguiente antes de que llegue se\~nal alguna. La medici\'on lo confirma sin ambig\"uedad:
+sin calibraci\'on, el \emph{offset} a la salida LP alcanz\'o el \SI{45.8}{\percent} del
+fondo de escala ---casi la mitad del rango din\'amico del ADC consumida por una tensi\'on
+que no contiene informaci\'on.
+
+Por lo tanto, en esta cadena \textbf{el control de \emph{offset} no es un refinamiento de
+calidad sino una condici\'on de existencia}: sin \'el la arquitectura de la
+Ec.~\eqref{eq:ma-comp} simplemente no puede realizarse con la ganancia que la
+Ec.~\eqref{eq:costo-ganancia} obliga a usar. Esto explica y justifica el subsistema
+DA-AFE descrito en la Secci\'on~\ref{sec:arq-daafe}, con un VDAC/IDAC dedicado por etapa y
+un lazo PI de calibraci\'on por c\'odigo de ganancia. La cadena l\'ogica completa es:
+
+\begin{center}\footnotesize
+objetivo de \SI{50}{\meter} $\Rightarrow$ banda de \SIrange{1}{2.5}{\hertz}
+$\Rightarrow$ compensar por debajo de $f_n$ $\Rightarrow$ $\zeta_1\gg\zeta_0$
+$\Rightarrow$ p\'erdida de \SIrange{50}{70}{\decibel} $\Rightarrow$ ganancia agresiva
+$\Rightarrow$ \emph{offset} amplificado $\Rightarrow$ \textbf{DA-AFE obligatorio}
+\end{center}
+
+\paragraph{Un l\'imite superior que no fija la compensaci\'on.} Por simetr\'ia, la misma
+separaci\'on de polos que lleva el corte inferior a \SI{5.44}{\milli\hertz} lleva el polo
+superior a $2\zeta_1 f_n\approx\SI{19}{\kilo\hertz}$ para el valor nominal, y a
+\SI{1.71}{\kilo\hertz} para $\zeta_1=83{,}661$. Ambos quedan muy por encima de la
+frecuencia de Nyquist del sistema ($\SI{2604}{\hertz}/2=\SI{1302}{\hertz}$ sin
+decimaci\'on, y $\SI{1302}{\hertz}/N$ con decimaci\'on). Conviene decirlo
+expl\'icitamente para evitar una lectura err\'onea:
+\textbf{el techo de banda de la cadena no lo fija la compensaci\'on sino el filtro
+pasa-bajos \emph{anti-aliasing} y la frecuencia de muestreo}. El aporte de la
+compensaci\'on es \'unicamente hacia abajo, que es donde se lo necesita.
 
 \subsection{Filtrado de la interferencia de red}
 
@@ -326,12 +526,15 @@ con un pasa-bajos. Se ensayaron sucesivamente:
     de la interferencia se traslad\'o al post-proceso, donde puede revisarse y revertirse.
 \end{enumerate}
 
-\subsubsection{Soluci\'on adoptada: ajuste no lineal por m\'inimos cuadrados}
+\subsubsection{Soluci\'on adoptada: b\'usqueda acotada y regresi\'on arm\'onica}
 
 \textbf{El filtro \emph{notch} fue finalmente retirado de la cadena.} La supresi\'on de la
-interferencia de red se realiza hoy en post-proceso mediante un \textbf{ajuste no lineal
-por m\'inimos cuadrados} de la componente de \SI{50}{\hertz}, documentado en la interfaz
-web del sistema.
+interferencia de red se realiza hoy en post-proceso. El algoritmo busca primero la
+frecuencia fundamental en una ventana acotada alrededor de \SI{50}{\hertz}, puntuando
+simult\'aneamente sus arm\'onicos. Fijada esa frecuencia, construye pares seno--coseno para
+la fundamental y hasta el n\'umero de arm\'onicos elegido por el operador, estima todos los
+coeficientes en una \textbf{regresi\'on lineal por m\'inimos cuadrados sobre la traza
+completa} y resta la componente modelada.
 
 El razonamiento que justifica el cambio es s\'olido y conviene explicitarlo. La
 interferencia de red es una se\~nal \emph{determinista y de forma conocida}: una sinusoide
@@ -344,23 +547,57 @@ eventualmente sus arm\'onicos. Frente a esa estructura:
     \SI{50}{\hertz} cae dentro de la banda \'util del MASW--- e introduce un retardo de
     grupo apreciable que, en un sistema multicanal, debe ser id\'entico en todos los
     canales so pena de introducir error de velocidad de fase.
-    \item Un ajuste por m\'inimos cuadrados \textbf{estima} los par\'ametros de la
-    interferencia (amplitud, fase y frecuencia exacta) y sustrae \'unicamente esa
-    componente, preservando el resto del contenido espectral en la misma banda. No
-    introduce retardo, no altera la fase de la se\~nal s\'ismica, y al operar en
-    post-proceso es revisable y reversible.
+    \item La regresi\'on arm\'onica \textbf{estima} amplitud y fase de un conjunto discreto
+    de sinusoides en la frecuencia de red identificada. No introduce retardo de grupo y
+    evita suprimir una banda continua; adem\'as, al operar en post-proceso sobre una copia,
+    es revisable y el dato crudo permanece intacto.
 \end{itemize}
 
-Se trata, en definitiva, de reemplazar un filtrado ciego por una \textbf{estimaci\'on y
-cancelaci\'on de una interferencia de modelo conocido}. Es la misma l\'inea de razonamiento
-que llev\'o a descartar el filtro adaptativo LMS: cuando la interferencia tiene estructura
-conocida, estimarla es preferible a perseguirla adaptativamente o a suprimir la banda
-entera.
+Se trata de reemplazar un filtrado de banda por la \textbf{estimaci\'on de una
+interferencia de modelo conocido}.
 
-\nota{\textbf{Verificar}: si el ajuste se hace sobre toda la traza o por ventanas, y si
-estima tambi\'en los arm\'onicos (\SI{100}{\hertz}, \SI{150}{\hertz}) o s\'olo la
-fundamental. Conviene tener el detalle porque es una decisi\'on de procesamiento
-defendible y bien fundamentada.}
+\paragraph{Relaci\'on con el filtro adaptativo LMS.} La observaci\'on de que ambos
+m\'etodos se parecen es correcta y conviene desarrollarla, porque la diferencia es
+exactamente el motivo del cambio. En el objetivo son lo mismo: los dos estiman la
+interferencia y la restan. La regresi\'on arm\'onica puede leerse, de hecho, como
+\textbf{el caso l\'imite del LMS con ventana completa y modelo fijo}: si en lugar de
+actualizar los pesos muestra a muestra se los resuelve de una vez sobre todo el registro,
+y si en lugar de un filtro de $N$ coeficientes libres se restringe la base a un par
+seno--coseno por arm\'onico, se obtiene precisamente la soluci\'on de m\'inimos cuadrados
+implementada. La diferencia no est\'a en \emph{qu\'e} se calcula sino en \emph{qu\'e
+libertades se le conceden al estimador}, y esas libertades son las que causaban el
+problema:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X X@{}}
+\toprule
+& \textbf{LMS adaptativo} (descartado 07/06) & \textbf{M\'inimos cuadrados arm\'onicos} (adoptado) \\
+\midrule
+Naturaleza & Recursivo; filtro \textbf{variante en el tiempo} & Estimador \textbf{param\'etrico por lote} \\
+Ventana & Deslizante, con memoria exponencial fijada por $\mu$ & \textbf{Registro completo}, sin ponderaci\'on temporal \\
+R\'egimen & Atraviesa un transitorio de convergencia & Sin transitorio: no hay adaptaci\'on \\
+Requisitos & Necesita una \textbf{se\~nal de referencia} de \SI{50}{\hertz} correlacionada con la interferencia & S\'olo el modelo $A\sin\omega t+B\cos\omega t$ \\
+Grados de libertad & $N$ coeficientes libres del filtro & $2\times$(n\'umero de arm\'onicos) \\
+Riesgo principal & Si la fuente s\'ismica entra durante la adaptaci\'on, el lazo \textbf{puede seguirla y borrarla} & El modelo es fijo: s\'olo puede restar lo que el modelo describe \\
+Reversibilidad & No: modifica la traza al vuelo & S\'i: opera en post-proceso y el crudo queda intacto \\
+Comportamiento multicanal & La ganancia converge distinto en cada canal $\Rightarrow$ \textbf{error de fase entre canales} & Mismos par\'ametros de modelo por canal, sin retardo de grupo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Las dos filas decisivas son las dos \'ultimas. En un sistema \textbf{multicanal} cuyo
+observable es la \emph{diferencia de fase entre canales}, un filtro que converge de forma
+ligeramente distinta en cada canal inyecta error directamente sobre la magnitud que se
+quiere medir; y en un sistema de campo donde repetir una adquisici\'on cuesta una jornada,
+la irreversibilidad de una supresi\'on mal aplicada es inaceptable. Dicho de otro modo:
+\textbf{la restricci\'on del m\'etodo adoptado es su ventaja, no su limitaci\'on}. Se le
+quita al estimador la libertad de perseguir la se\~nal.
+
+La limitaci\'on residual debe quedar expl\'icita: cualquier componente s\'ismica
+exactamente coherente con las sinusoides ajustadas tambi\'en se proyecta y se resta. El
+m\'etodo es m\'as selectivo que un \emph{notch} ---remueve rectas espectrales en lugar de
+una banda continua--- pero no garantiza preservar contenido situado exactamente en
+\SI{50}{\hertz} y sus arm\'onicos.
 
 \subsection{S\'intesis de la cadena adoptada}
 

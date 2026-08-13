@@ -1,0 +1,46 @@
+\section{Inventario de datos crudos y campa\~nas}
+\label{sec:inventario-datos}
+
+Reconstruido recorriendo los archivos \texttt{metadata.json} que la
+propia interfaz escribi\'o junto a cada captura. Es, por lo tanto, el registro de
+lo que \emph{realmente} se midi\'o, y no de lo que estaba planificado medir. Los
+conjuntos completos viven bajo Git~LFS y hay que hidratarlos con
+\texttt{data/scripts/hydrate-lfs.ps1} antes de poder abrirlos.
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l r l r X@{}}
+\toprule
+Campa\~na & Capt. & Fechas & Lotes (mediana) & $F_s$ y roles observados \\
+\midrule
+\texttt{Canchiga} & 1053 & {\scriptsize 2026-07-03 a 2026-07-07} & 360 & {\scriptsize 1020\textasciitilde{}Hz (548), 2929\textasciitilde{}Hz (505); unknown (7495), hammer (991), geo (991)} \\
+\texttt{Canchita} & 1139 & {\scriptsize 2026-07-03 a 2026-07-08} & 360 & {\scriptsize 1020\textasciitilde{}Hz (698), 2929\textasciitilde{}Hz (441); unknown (8077), hammer (1087), geo (1087)} \\
+\texttt{Canchita\_2} & 278 & {\scriptsize 2026-07-08} & 360 & {\scriptsize 1020\textasciitilde{}Hz (278); unknown (1946), hammer (278), geo (278)} \\
+\texttt{Estacionamiento} & 2 & {\scriptsize 2026-06-08} & 300 & {\scriptsize 3000\textasciitilde{}Hz (2)} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{\texttt{Canchiga}}
+\textbf{Duraci\'on de captura.} 1053 capturas con recuento de lotes entre 293 y 360 (mediana 360). A 30 muestras por lote, eso son entre 8.790 y 10.800 muestras por canal.
+\textbf{D\'ias de adquisici\'on} (3): 2026-07-03, 2026-07-06, 2026-07-07.
+\textbf{Nodos por captura}: 2 nodos en 1053 capturas.
+\textbf{Clases de hardware declaradas}: Maestro (1053), Esclavo 3 (1053), Esclavo 4 (1053), Esclavo 5 (1053), Esclavo 6 (1053), Esclavo 7 (1053), Esclavo 8 (1053), Hammer (991), Geo1 (991), Esclavo 1 (62), Esclavo 2 (62).
+
+\subsection{\texttt{Canchita}}
+\textbf{Duraci\'on de captura.} 1139 capturas con recuento de lotes entre 293 y 360 (mediana 360). A 30 muestras por lote, eso son entre 8.790 y 10.800 muestras por canal.
+\textbf{D\'ias de adquisici\'on} (4): 2026-07-03, 2026-07-06, 2026-07-07, 2026-07-08.
+\textbf{Nodos por captura}: 2 nodos en 1139 capturas.
+\textbf{Clases de hardware declaradas}: Maestro (1139), Esclavo 3 (1139), Esclavo 4 (1139), Esclavo 5 (1139), Esclavo 6 (1139), Esclavo 7 (1139), Esclavo 8 (1139), Hammer (1087), Geo1 (1087), Esclavo 1 (52), Esclavo 2 (52).
+
+\subsection{\texttt{Canchita\_2}}
+\textbf{Duraci\'on de captura.} 278 capturas con recuento de lotes entre 360 y 360 (mediana 360). A 30 muestras por lote, eso son entre 10.800 y 10.800 muestras por canal.
+\textbf{D\'ias de adquisici\'on} (1): 2026-07-08.
+\textbf{Nodos por captura}: 2 nodos en 278 capturas.
+\textbf{Clases de hardware declaradas}: Maestro (278), Hammer (278), Geo1 (278), Esclavo 3 (278), Esclavo 4 (278), Esclavo 5 (278), Esclavo 6 (278), Esclavo 7 (278), Esclavo 8 (278).
+
+\subsection{\texttt{Estacionamiento}}
+\textbf{Duraci\'on de captura.} 2 capturas con recuento de lotes entre 300 y 300 (mediana 300). A 30 muestras por lote, eso son entre 9.000 y 9.000 muestras por canal.
+\textbf{D\'ias de adquisici\'on} (1): 2026-06-08.
+\textbf{Nodos por captura}: 2 nodos en 2 capturas.
+\textbf{Clases de hardware declaradas}: Geo2 (4), Maestro (2), Geo1 (2).
+

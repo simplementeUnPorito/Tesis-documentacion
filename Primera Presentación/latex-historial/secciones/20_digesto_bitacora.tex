@@ -1,0 +1,449 @@
+\section{Digesto cronol\'ogico de la bit\'acora}
+\label{sec:digesto}
+
+La bit\'acora diaria son \textbf{66 entradas} y
+\textbf{\SI{1.2}{\mebi\byte}} de texto en
+\texttt{docs/investigacion/Notes/bitacora/}. Cada entrada abre con una cabecera
+estructurada ---etapa, hito, \emph{commits} y una nota sobre el \'animo del
+d\'ia--- y sigue con el an\'alisis t\'ecnico completo de lo que se hizo, con
+\emph{diffs} y mediciones.
+
+Este digesto transcribe esas cabeceras, una l\'inea por d\'ia. No resume ni
+reescribe: sirve para saber \emph{a qu\'e d\'ia ir} cuando uno recuerda un
+problema pero no la fecha. La entrada completa siempre tiene m\'as.
+
+\subsection{Febrero de 2026}
+\paragraph{25 de febrero.}
+\emph{Arranque del proyecto}
+
+Creación del repositorio en GitHub --- el punto cero
+
+\subsection{Marzo de 2026}
+\paragraph{3 de marzo.}
+\emph{Arranque y Marco Teórico --- Sesión fundacional}
+
+Vault de Obsidian creado desde cero, primer resumen académico real del Capítulo 1 de Foti
+
+\paragraph{11 de marzo.}
+\emph{Arranque y Marco Teórico}
+
+PDFs de Sebastiano Foti por capítulo + workspace mobile + nota sobre el asesor
+
+\paragraph{13 de marzo.}
+\emph{Arranque y Marco Teórico}
+
+Capítulo 2 completo (793 líneas) + primera taxonomía de conceptos con subcarpetas numeradas
+
+\paragraph{17 de marzo.}
+\emph{Arranque y Marco Teórico --- Transición hacia herramientas computacionales}
+
+Submodulo MATLAB de MASW + scripts de teoría + primera sesión con Claude + el Problema de Lamb completo
+
+\paragraph{18 de marzo.}
+\emph{Arranque y Marco Teórico --- Validación computacional}
+
+5 scripts MATLAB teóricos completos + primer Worklog del vault + sistema de tareas programadas
+
+\paragraph{19 de marzo.}
+\emph{Arranque y Marco Teórico --- Resúmenes de capítulos Foti}
+
+Los 8 capítulos de Foti completos + 45 conceptos atómicos + 39 iteraciones de Claude en una noche
+
+\paragraph{20 de marzo.}
+\emph{Arranque y Marco Teórico --- Base de datos bibliográfica}
+
+22 papers curados + 11 PDFs descargados + base de datos estructurada construida por el agente nocturno
+
+\paragraph{23 de marzo.}
+\emph{Arranque y Marco Teórico --- Expansión masiva de la base bibliográfica}
+
+Base de datos crece de 22 a 65 papers + 34 PDFs + script .zsh\_tesis + 10.5 horas de scraping el 20/3
+
+\subsection{Abril de 2026}
+\paragraph{10 de abril.}
+\emph{Marco Teórico --- Consolidación del vault Obsidian}
+
+Linking pass sobre los 8 capítulos + 13 imágenes del PDF de Foti embebidas en Chapter 3
+
+\paragraph{11 de abril.}
+\emph{Marco Teórico --- El loop INVESTIGADOR}
+
+89 commits en 20 horas + skill INVESTIGADOR creado + vault transformado en knowledge base profesional
+
+\paragraph{12 de abril.}
+\emph{Marco Teórico --- INVESTIGADOR: continuación y cierre}
+
+29 commits + SEXTA FASE COMPLETA --- todos los capítulos con 4$\times$[!EXAMPLE] + 4 conceptos nuevos (iter. 100)
+
+\paragraph{15 de abril.}
+\emph{Transición Marco Teórico $\rightarrow$ Hardware}
+
+Revisión de la rama del INVESTIGADOR + reorganización Assets/ + alias deiStation (Tailscale SSH)
+
+\paragraph{17 de abril.}
+\emph{Hardware --- Inicio del diseño electrónico del sistema de adquisición}
+
+PSoC SM-24 V1 compilado + Simulink SM24\_model + optimizador de filtro pasivo RC
+
+\paragraph{18 de abril.}
+\emph{Hardware --- Pivote: filtro analógico $\rightarrow$ filtro FIR digital + decimación}
+
+Eliminación de \texttt{FiltroPasivoEntrada.m} + creación de \texttt{FiltroDigital.slx} + rename \texttt{SM-24\_V1} $\rightarrow$ \texttt{Tesis}
+
+\paragraph{19 de abril.}
+\emph{Hardware --- Auto-mejora loop nocturno: PSoC firmware + Python GUI + ESP32 WiFi}
+
+20 commits | 125 tests (125/125 PASS) | Fase 8 FIR Q1.15 | Fase 9 ESP32 WiFi
+
+\paragraph{22 de abril.}
+\emph{Hardware --- Primera señal real del SM-24 + compensadores de geófono}
+
+\texttt{geophone\_scope.m} corriendo en COM7 + scope logs del 20/4 + compensadores Kai/Pazos
+
+\paragraph{27 de abril.}
+\emph{Interfaz simplificada + Compensación analógica activa (VCVS)}
+
+Nueva versión reducida del osciloscopio MATLAB; primer análisis de filtro VCVS para compensación activa del geófono
+
+{\footnotesize\itshape \'Animo: "Pruebas XD" --- tono relajado y experimental, sesión de exploración sin presión}
+
+\paragraph{29 de abril.}
+\emph{Prueba de concepto --- cadena de señal diferencial completa + filtro notch 50Hz}
+
+Firmware \texttt{ComparacionDiferencial} reescrito con pipeline completo ADC$\rightarrow$DFB$\rightarrow$FIR notch$\rightarrow$UART; 18 sesiones de captura el 28 de abril; primera supresión de interferencia de red eléctrica (50Hz)
+
+{\footnotesize\itshape \'Animo: Nombre descriptivo, técnico --- modo científico. Se está documentando una prueba de concepto seria.}
+
+\paragraph{30 de abril.}
+\emph{Pivot de Sallen-Key a MFB + primeras mediciones en campo (mesita de estacionamiento)}
+
+Abandono de topología VCVS/Sallen-Key; adopción de MFB (Multiple Feedback); primeras capturas en exteriores del SM-24; nueva copia de proyecto PSoC con arquitectura modular
+
+{\footnotesize\itshape \'Animo: "Sallen key off, mfb la onda, y suma en corriente lo que es fachero porque sino off" --- mezcla de decisión técnica y argot; "XDnt" --- noche larga}
+
+\subsection{Mayo de 2026}
+\paragraph{5 de mayo.}
+\emph{Sistema de análisis espectral científico + comparación experimental MFB vs Sallen-Key}
+
+\texttt{analisis\_espectral.m} (264 líneas) --- herramienta de análisis de PSD y SNR por entidad; comparación sistemática de topologías de filtro; filtro FIR multibanda orden 800; 41 sesiones de captura en mayo
+
+{\footnotesize\itshape \'Animo: "XDXD" --- humor de madrugada después de un día muy productivo (4 de mayo)}
+
+\paragraph{10 de mayo.}
+\emph{Calibración manual del offset diferencial + protocolo de configuración PSoC$\rightarrow$MATLAB}
+
+"Calibración a manita ya funciona" --- sistema de ajuste de referencias VDAC para cancelar offset DC; protocolo de configuración (0xA5 request); nuevo proyecto \texttt{ComparacionDiferencialMFBIntegradorDigital}; .gitignore para logs
+
+{\footnotesize\itshape \'Animo: Domingo productivo con hito real --- "ya funciona" es la satisfacción de resolver un problema concreto}
+
+\paragraph{17 de mayo.}
+\emph{Protocolo multiplexado + modelo op-amp real + convergencia del circuito analógico}
+
+Protocolo de 4 bytes con tipo/canal multiplexado en byte 2; AMUX para medir modo común; modelado del op-amp real (A0=90dB, fp=8MHz) en compensador; "Casi estamos con el analogico"
+
+{\footnotesize\itshape \'Animo: Trasnochada del 16 al 17 --- "necesito dormir" a las 7AM; vuelta al trabajo el mismo domingo a la noche}
+
+\paragraph{18 de mayo.}
+\emph{Diseño del compensador analógico --- Búsqueda exhaustiva multi-estrategia}
+
+Explosión de scripts de optimización; cuatro variantes paralelas atacan el problema del compensador desde ángulos distintos
+
+{\footnotesize\itshape \'Animo: \texttt{"ayudame dios analogico quiero sucumbir al diablo digital"} --- desesperación lúcida. Ya no hay ironía en el mensaje; es una confesión real.}
+
+\paragraph{20 de mayo.}
+\emph{Implementación del compensador analógico en PSoC + análisis de modelo físico}
+
+\texttt{DiferencialToSingleEnded} --- la cadena analógica completa implementada en el PSoC; primer \texttt{main.c} que arranca todos los bloques analógicos en secuencia correcta
+
+{\footnotesize\itshape \'Animo: \texttt{"ya casi todo el cielo"} / \texttt{"XD"} / \texttt{"Datos y más datos, empieza la locura"} --- euforia contenida. Son la 1 AM y hay un osciloscopio conectado.}
+
+\paragraph{24 de mayo.}
+\emph{Sistema inalámbrico multi-nodo --- diseño y primera implementación}
+
+\texttt{Nodo comunicación} ESP32: arquitectura maestro-esclavo con ESP-NOW + WiFi TCP + SPI al PSoC. El sistema MASW inalámbrico existe como código por primera vez.
+
+{\footnotesize\itshape \'Animo: \texttt{"ESP momento claude sin revisar"} / \texttt{"Cambios pre codex"} / \texttt{"Codigo codex xdxd"} --- transparencia total sobre el proceso de generación de código. Sin rodeos: Claude ayudó, Codex ayudó, el código requiere revisión.}
+
+\paragraph{25 de mayo.}
+\emph{Sistema inalámbrico ESP32 --- depuración intensiva y refinamiento del protocolo}
+
+HELLO beacon diagnostico, START probe/ACK con medición de RTT, store-and-forward, drivers CP210x --- el sistema empieza a funcionar en hardware real
+
+{\footnotesize\itshape \'Animo: \texttt{"Add HELLO beacon"} (4:48 AM --- trasnocho) / \texttt{"ayuda"} (21:23) / \texttt{"Fix batch/dump handling"} / \texttt{"Add START probe/ACK"} --- maratón de 18 horas. El protocolo se rompe y se arregla y se rompe y se arregla.}
+
+\paragraph{26 de mayo.}
+\emph{Sistema inalámbrico ESP32 --- PRESTART + primera evidencia de funcionamiento real}
+
+\texttt{"Parece que funciona la putaaaa"} --- el sistema ESP32 multi-nodo transmite datos reales del PSoC a MATLAB por primera vez
+
+{\footnotesize\itshape \'Animo: \texttt{"Add PRESTART and scope multi-start support"} (20:24) / \texttt{"Parece que funciona la putaaaa"} (22:22) --- dos horas de trabajo entre el diagnóstico y el "funciona". La expresión lo dice todo.}
+
+\paragraph{28 de mayo.}
+\emph{Acondicionamiento del martillo de impacto --- nuevo front-end PSoC}
+
+\texttt{AcondicionamientoMartillo} --- proyecto PSoC dedicado al martillo PCB Piezotronics 086D20
+
+{\footnotesize\itshape \'Animo: \texttt{"AYUDAAAAAAAAAAA"} --- ocho A's. El sistema inalámbrico funcionó el 26. Algo pasó entre el 26 y el 28.}
+
+\paragraph{29 de mayo.}
+\emph{Acondicionamiento del martillo --- reorganización del diseño}
+
+\texttt{AcondicionamientoMartillo} reconfigurado: \texttt{LPF\_ref} + \texttt{LPF\_ADC} + \texttt{Opa\_1V024} + compilación exitosa
+
+{\footnotesize\itshape \'Animo: \texttt{"ayuda"} --- tres letras, sin mayúsculas, sin signos. La versión tranquila del grito del día anterior. El problema sigue pero se está resolviendo.}
+
+\paragraph{31 de mayo.}
+\emph{Refactor inalámbrico final + merge PR --- el sistema queda definido}
+
+PR \#2 mergeado: SPI$\rightarrow$UART, N 16 bits, máquina de estados PSoC, \texttt{debug\_log.h}, READMEs por proyecto
+
+{\footnotesize\itshape \'Animo: Commit messages técnicos, profesionales. Trabajo de Claude (Author: Claude) en un branch separado. Último día del repositorio en Mayo de 2026.}
+
+\subsection{Junio de 2026}
+\paragraph{3 de junio.}
+\emph{Debug VER + arreglos críticos de RF --- sistema llega a funcionar "super bien"}
+
+Sistema MASW inalámbrico pasa de "falta verificar" a "Locura parece que ya funciona super bien" en seis horas
+
+{\footnotesize\itshape \'Animo: Doble arco emocional en el mismo día. A las 17:58: "Circuito del nodo casi terminado / Falta verificar glitches y errores en el muestreo funcion VER" --- el tono de un ingeniero que sabe que falta pero ya ve el final. A las 23:52: "Locura parece que ya funciona super bien" --- el mismo grito de...}
+
+\paragraph{4 de junio.}
+\emph{Firmware unificado GEO/HAMMER --- el mismo \texttt{main.c} para dos PSoCs distintos}
+
+Un único archivo de firmware compila automáticamente como nodo geófono o nodo martillo según el hardware del TopDesign --- arquitectura de código que elimina la bifurcación del firmware embebido
+
+{\footnotesize\itshape \'Animo: \texttt{"Ayuda"} --- con mayúscula, sin signos de exclamación. Es la tercera entrada de la familia "ayuda" del proyecto: \texttt{"AYUDAAAAAAAAAAA"} (28 de mayo), \texttt{"ayuda"} (29 de mayo), \texttt{"Ayuda"} (4 de junio). La escala de mayúsculas y vocales repetidas es un índice emocional. Este "Ayuda" del 4 de junio, con su...}
+
+\paragraph{5 de junio.}
+\emph{Integración y pulido --- hardware y GUI}
+
+Rebuild limpio del proyecto PSoC (\texttt{AcondicionamientoAnalogico}) con nuevo capacitor en el esquemático; fix de layout en la GUI Python para que los plots llenen el espacio disponible
+
+{\footnotesize\itshape \'Animo: Calma productiva. El mensaje "Regenerate PSoC project files; update plot\_area.py" es el más descriptivo y profesional de la semana --- después del caos emocional de "Locura parece que ya funciona super bien" (Jun 03) y "Ayuda" (Jun 04), este mensaje seco y técnico habla de alguien que duerme mejor...}
+
+\paragraph{7 de junio.}
+\emph{Integración de firmware y refactoring del pipeline de señal}
+
+Protocolo FS\_REPORT PSoC$\rightarrow$ESP$\rightarrow$MATLAB; reemplazo de LMS adaptivo por mínimos cuadrados para el notch; reorganización del vault de Obsidian
+
+{\footnotesize\itshape \'Animo: Sesión tranquila, tarde de domingo --- los mensajes de commit son descriptivos y técnicos, sin fragmentos emocionales. Contrasta marcadamente con los "ayuda" y "AYUDAAAAAAAAAAA" de semanas anteriores. Hay algo de alivio implícito en poder refactorizar con calma.}
+
+\paragraph{8 de junio.}
+\emph{Interfaz web embebida --- ESP32 master como servidor de campo}
+
+La PC ya no es necesaria. El master ESP32 sirve una SPA completa sobre su propio AP WiFi.
+
+{\footnotesize\itshape \'Animo: Sin exclamaciones, sin "AYUDA". Un commit message técnico y extendido, casi un RFC. Es la calma del que terminó algo grande y lo sabe. Las 02:47 AM revelan la otra cara: una noche entera.}
+
+\paragraph{9 de junio.}
+\emph{Simplificación del pipeline de procesamiento y exploración de alternativas para ruido de red}
+
+Eliminación del filtro notch armónico del cliente web, subida de tasa ADC a 3 kHz, scripts MATLAB para remoción de ruido de línea
+
+{\footnotesize\itshape \'Animo: Commit limpio, sin exclamaciones ni palabras de ayuda. El mensaje es descriptivo y técnico, con viñetas bien redactadas. Hay algo de madurez aquí: esto no es una sesión de emergencia ni de euforia. Es una sesión de *cirugía electiva*: se saca algo que no funcionaba bien, se estudia si hay algo...}
+
+\paragraph{10 de junio.}
+\emph{Análisis de robustez del sistema de sincronización para MASW}
+
+Documento de handoff técnico identificando el bug crítico ACK-antes-de-GPIO y el presupuesto de jitter inter-nodo
+
+{\footnotesize\itshape \'Animo: "para retomar mañana" --- son las 01:41 hs. No hay exclamaciones de frustración ni de euforia: solo la disciplina de alguien que sabe que se fue a dormir *a punto de encontrar algo importante* y quiere asegurarse de no perder el hilo. El commit message es sobrio y descriptivo, el PR description es...}
+
+\paragraph{14 de junio.}
+\emph{Auto-calibración del front-end analógico del PSoC 5LP}
+
+Implementación parcial del sistema de auto-calibración por búsqueda binaria sobre códigos VDAC, refactorización del firmware PSoC en módulos, telemetría de diagnóstico PSoC$\rightarrow$ESP
+
+{\footnotesize\itshape \'Animo: "Medio hecho ya el autocalibrado" --- hay tres palabras que importan en ese mensaje. "Medio hecho": honestidad sobre el estado de avance, sin inflar. "Ya": sorpresa de que se haya llegado tan lejos, una confirmación de que el autor se propuso algo y llegó al punto de inflexión más rápido de lo...}
+
+\paragraph{15 de junio.}
+\emph{Calibración automática del front-end analógico GEO --- Rediseño completo + validación en hardware}
+
+Auto-calibración funcionando en hardware real tras un día de arquitectura, debug y ajustes
+
+{\footnotesize\itshape \'Animo: El arco de este día lo cuenta todo. A las 19:27 el primer commit se llama "ayuda Dios" --- la desesperación de alguien metido hasta el cuello en una FSM de 251 archivos cambiados, buscando que la calibración no sature, no diverja, no mienta. A las 23:18 el segundo commit se llama "Ya funciona...}
+
+\paragraph{16 de junio.}
+\emph{Consolidación post-calibración --- revisión de arquitectura modular PSoC}
+
+El workspace state captura el estado cognitivo de la sesión: foco en hardware abstraction layer y módulos de calibración, no en la aplicación principal
+
+{\footnotesize\itshape \'Animo: Calma. Después del torbellino del 15 de junio ("ayuda Dios" $\rightarrow$ "Ya funciona autocalibración" $\rightarrow$ "locura"), el 16 es el día de orden. No hay mensajes desesperados ni eufóricos en los commits --- solo "Update DiferencialToSingleEnded\_ESP-000.cywrk.elias", el título más prosaico posible. Es el silencio...}
+
+\paragraph{17 de junio.}
+\emph{Adquisición por DMA + filtro FIR hardware + persistencia de calibración en EEPROM}
+
+El PSoC deja de necesitar CPU para adquirir muestras (ISR clásica $\rightarrow$ cadena DMA con Filter FIR embebido) y la calibración analógica sobrevive a un reset (EEPROM + CRC-16)
+
+{\footnotesize\itshape \'Animo: Montaña rusa comprimida en 42 minutos. El primer commit se llama literalmente "Ayudame dios" (18:03) --- desesperación ante un rediseño grande de la cadena de adquisición. Media hora después, "feat: DMA/Filter ADC..." (18:37) es un mensaje técnico, ordenado, casi un changelog profesional --- la calma...}
+
+\paragraph{18 de junio.}
+\emph{Generalización de la cadena DMA --- arquitectura Single/Lote conmutada por registro de control}
+
+El sistema de adquisición pasa de tener una única ruta DMA fija a un multiplexor de cuatro canales (raw/filtrado $\times$ single/lote) gobernado por un registro \texttt{Reg\_Select}, dejando preparado el terreno para un futuro promediado por hardware sin usarlo todavía
+
+{\footnotesize\itshape \'Animo: El título lo dice todo: "prelocura". No es la euforia de "ya funciona" ni la desesperación de "ayudame dios" --- es la antesala. Un estado de tensión contenida, de estar construyendo algo grande pieza por pieza, sabiendo que en algún momento próximo (el 19, el 23, el 24 de junio, a juzgar por los...}
+
+\paragraph{19 de junio.}
+\emph{Activación del promediado por hardware (canal DMA "Lote") en la calibración analógica}
+
+El canal DMA Lote que quedó cableado pero inerte el 18 de junio se conecta por primera vez: la calibración deja de promediar muestra por muestra en el ISR y pasa a consumir ventanas ya sumadas por hardware, con una verificación de coherencia en tiempo de compilación entre el tamaño del lote DMA y el tamaño de ventana de calibración
+
+{\footnotesize\itshape \'Animo: "Precambios" --- un título de transición, casi administrativo, pero el contenido es denso: comentarios largos y cuidadosos explicando invariantes no obvias (por qué hay que reordenar suma y promedio, por qué hay que re-armar el DMA manualmente, por qué un \texttt{\#error} de compilación es preferible a una...}
+
+\paragraph{23 de junio.}
+\emph{Reemplazo total de la biseccion por un controlador PI unificado (GEO + HAMMER), Filter de hardware como fuente de la calibración, y primera calibración exitosa validada en banco sobre la...}
+
+Después de meses con dos algoritmos de calibración distintos (bisección binaria para GEO, servo lento dormido, intentos de PID abandonados por "overfitting" al ruido), el sistema converge en un único controlador PI con feedforward físico y detector de "lock" portado de una simulación de Simulink de referencia --- y por primera vez se corre \texttt{cal} en hardware real HAMMER con resultado documentado: \texttt{HAMMER\_PGA ok=1 dac=65}, \texttt{HAMMER\_LP ok=1 dac=57}
+
+{\footnotesize\itshape \'Animo: El título "Calibración medio utilizable" es deliberadamente modesto --- no es "funciona", es "medio utilizable". Detrás de esa modestia hay, según el propio \texttt{TEST\_LOG\_2026-06-23.md}, una sesión de bring-up real con hardware: puertos COM que dejan de responder, un programador que cambia de nombre a...}
+
+\paragraph{24 de junio.}
+\emph{Cierre de la calibración PI: escala en códigos de DAC, deadband proporcional a la ganancia de etapa, y coeficientes de FIR en formato nativo del customizer}
+
+\texttt{HAMMER\_LP} converge con \texttt{err\_mV=0} exacto contra el objetivo de 1024 mV; se corrige un bug real donde el filtro de adquisición llevaba meses cargando coeficientes de pasabanda en vez del pasabajos que debía ser
+
+{\footnotesize\itshape \'Animo: "Autocalibración terminada" --- el título más categórico de toda la serie de calibración, tras "medio utilizable" del día anterior. Pero el propio \texttt{HANDOFF\_CALIBRATION.md} revela que detrás de esa frase hubo, en realidad, tres sesiones de trabajo entrelazadas (una "sesión codex" intermedia no...}
+
+\paragraph{25 de junio.}
+\emph{Anti-windup direccional en el PI de calibración y manejo correcto de ganancias con signo (HAMMER\_PGA invertida y dinámica, HAMMER\_LP fija no invertida)}
+
+Calibración completa de HAMMER con dos objetivos de tensión reales (\texttt{PGA=1024mV}, \texttt{LP=3500mV}) validada en banco por el ESP; se corrige el anti-windup para que el integrador solo se congele contra el riel del DAC en el sentido que efectivamente empeoraría la saturación, no en cualquier saturación
+
+{\footnotesize\itshape \'Animo: "Pre Geo autocal" --- un título que mira hacia adelante: todo el ajuste fino de esta sesión ocurre todavía sobre la placa HAMMER, pero cada corrección (ganancia con signo, anti-windup direccional, deadband dependiente del canal físico del capacitor) es exactamente el tipo de generalización que hace...}
+
+\paragraph{26 de junio.}
+\emph{Generalización del PI a GEO (4 etapas: PGA, BP, ADDER, LP) + limpieza radical de la biseccion legacy + primer paso serio de post-procesamiento en la web (envolvente de Hilbert)}
+
+El controlador PI de calibración corre por primera vez sobre las cuatro etapas de la placa GEO; se elimina definitivamente del archivo activo el algoritmo de bisección/realcheck que había quedado "vivo pero apagado" como referencia; se descubre que un problema de calibración que parecía firmware era en realidad un pin sin soldar
+
+{\footnotesize\itshape \'Animo: Los dos mensajes de commit del día son un termómetro perfecto del estado de ánimo: "Prelocura" a las 19:39 anticipa que se viene algo intenso (la extensión del PI a 4 etapas nuevas de GEO, con ajuste empírico de ganancias y constantes de tabla), y "falta solucionar cosas" a las 21:01 ---apenas 82...}
+
+\paragraph{30 de junio.}
+\emph{Depuración de bugs de campo (calibración GEO/HAMMER frágil, envolvente que reemplazaba la señal, LED que no titilaba) + primera versión seria de detección automática de tipo de hardware...}
+
+Se identifican y corrigen cuatro bugs documentados en un handoff de sesión anterior (deadband de lock demasiado exigente en el PI, envolvente de Hilbert mal integrada, polaridad de LED equivocada, procedimiento de EEPROM sin verificar), y se agrega detección automática de tipo de esclavo (\texttt{hw\_class} propagado desde el PSoC hasta la web) validada contra hardware físico real (S2/GEO por \texttt{COM12}, master por \texttt{COM8})
+
+{\footnotesize\itshape \'Animo: El día completo se resume en sus dos mensajes de commit, casi idénticos salvo por la mayúscula inicial: "Ya casi" a media tarde, y "ya casi" ---ya sin energía para la mayúscula--- cinco horas después. Es el patrón clásico de una sesión larga de bring-up de campo: cada bug que se cierra revela otro (el...}
+
+\subsection{Julio de 2026}
+\paragraph{1 de julio.}
+\emph{Cierre de la saga de bugs de campo (LED, EEPROM, sincronización de captura) + integración de MASWavesPy + primera pasada real de deconvolución sobre datos capturados + gran limpieza...}
+
+El sistema de captura pasa de un modelo basado en temporizador a uno basado en confirmación real de fin de captura por nodo; la EEPROM de calibración se rediseña para guardar un slot por código de ganancia PGA; el LED de identificación finalmente titila donde correspondía (el LED del PSoC, no el del ESP); se integra \texttt{maswavespy} como submódulo y se corre la primera deconvolución inversa sobre una captura real de campo; y se reescriben desde cero, con ayuda de Claude, todos los README del proyecto (PSoC, ESP, MATLAB, Python)
+
+{\footnotesize\itshape \'Animo: El título del segundo commit, "Locura ya funciona muy bien la página", es la explosión de alivio después de varios días de "ya casi": el sistema web, la calibración y el LED de identificación finalmente convergen todos juntos en una sesión nocturna que arranca a las 00:14 y sigue hasta las 6 de la...}
+
+\paragraph{2 de julio.}
+\emph{Migración de la lógica de captura del PSoC de C puro (ISRs sobre \texttt{Reg\_Select}) a una máquina de estados en hardware (Verilog, componente \texttt{superMaquina} dentro del TopDesign de PSoC...}
+
+Nace \texttt{superMaquina}: un bloque UDB que decide en hardware qué DRQ de DMA se deja pasar, cuándo arranca/termina una captura y qué interrupciones llegan al ARM --- reemplazando contadores por software y el viejo \texttt{Reg\_Select}. En paralelo, tres timers fixed del PSoC (\texttt{Timer\_1}, \texttt{Timer\_2}, \texttt{Timer\_3}) toman el lugar del tick de sistema de 10 ms para ping de boot/idle, parpadeo de LED y watchdog/progreso de calibración. Del lado del ESP32 esclavo se agrega un set completo de comandos USB (\texttt{probe}, \texttt{status}, \texttt{stream}, \texttt{debugpsoc}, \texttt{pre}, \texttt{sync}, \texttt{startnow}, \texttt{cap}, \texttt{clear}, \texttt{stop}) para operar el pipeline de captura paso...
+
+{\footnotesize\itshape \'Animo: Los nombres de los commits son un chiste interno legible: "preFable" marca el punto de partida antes de una sesión de trabajo asistida por un agente (probablemente Claude/Codex, a juzgar por el lenguaje del handoff), y "fable locura" ---el segundo commit, hora y media después--- es la reacción visceral...}
+
+\paragraph{7 de julio.}
+\emph{Migración de Fs del sistema (2929 Hz $\rightarrow$ 1020 Hz), exposición de dos rangos de ADC seleccionables desde la web ($\pm$2.5 V / $\pm$0.512 V), watchdog de captura dedicado (Timer\_3) con circuit-breaker...}
+
+Cierra en el PSoC la "política de eventos determinismo-primero": los Terminal Count de los cuatro timers fixed dejan de generar IRQ (quedan retenidos en su \texttt{STATUS\_TC} y los consume el polling de \texttt{service\_runtime()}), Timer\_3 pasa de estar libre a ser el watchdog de captura dedicado, y aparece un breaker que detecta IRQ en tormenta (visto en placa con pyOCD) y se auto-recupera. En paralelo, el ESP32 esclavo baja el techo de captura de 512 a 360 lotes tras una regresión de campo, y el repo Python de interfaces suma de una sola vez casi 4600 líneas: dos módulos nuevos de procesamiento de dispersión/inversión MASW...
+
+{\footnotesize\itshape \'Animo: "Casi casi" repetido cinco veces, uno por submódulo, en el mismo segundo --- es un commit coordinado por script/agente, no cinco decisiones separadas de guardar. El mensaje es ambivalente: no es un "funciona" ni un "AYUDA", es el estado de alguien que sabe que el problema de fondo (Fs, rangos de ADC...}
+
+\paragraph{8 de julio.}
+\emph{Firmware PSoC/ESP32 estabilizado tras el cierre del 7/7 + apertura de una superficie nueva de trabajo en Python (revisión de campo + MASW multimodal)}
+
+El ADC del PSoC pasa de 2 a 4 configs de rango de entrada (todas validadas en hardware con el comando de banco \texttt{range N}), la web del maestro suma un indicador de intensidad de señal (RSSI) para el enlace ESP-NOW y el WiFi de la interfaz, y \texttt{review\_field\_data.py} recibe doce fases de pulido (orden por pico a pico, filtros, alineación entre tandas, waterfall f-k, picks de MASW)
+
+{\footnotesize\itshape \'Animo: El mismo "Casi casi" del 7 de julio, repetido al segundo exacto en los tres submódulos. A diferencia de aquel día, acá no hay una lista de bugs de campo pendiente de cerrar --- el "casi" parece describir más bien un estado de trabajo en curso sobre un documento de handoff de doce fases...}
+
+\paragraph{9 de julio.}
+\emph{Post-procesamiento MASW --- pipeline de inversión multi-modo y multi-motor}
+
+Cierre de la sesión maratónica del 7-8/7: se documentan (Fases 10-15) y se implementan grupos de dispersión independientes con combinación ponderada de imágenes MASW
+
+{\footnotesize\itshape \'Animo: "XDD", "Ayuda jesuscristo", "Ayuda dios" --- la progresión de los tres mensajes, todos entre las 00:52 y las 02:24 de la madrugada, es casi literalmente una escalada de desesperación humorística: se nota una sesión nocturna larga que se estira más allá de la medianoche, con la tensión de cerrar una...}
+
+\paragraph{11 de julio.}
+\emph{Auditoría pre-campo del sistema maestro/esclavo (SD en PSoC + ESP-NOW)}
+
+SD validada en hardware real (FatFs + encadenado), y el bug crítico F1 (aceptación de 10 minutos con 0 muestras) encontrado y corregido *en vivo* durante la propia prueba de aceptación
+
+{\footnotesize\itshape \'Animo: de "xdxd" relajado a la madrugada, pasando por "ayuda dios santo que dificil todo" al mediodía, hasta cerrar pasada la medianoche con la satisfacción seca de un bug crítico cazado con evidencia en mano --- una sesión maratónica de \textasciitilde{}22 horas (02:39 a 23:54)}
+
+\paragraph{12 de julio.}
+\emph{Auditoría pre-campo del testbench sísmico (continuación directa del 11 de julio)}
+
+Cierre completo de la ampliación de pruebas E5c--E18, corrección de dos bugs críticos de campo (F5 watchdog de dump colgado, F9 START rompía el nodo) y regeneración del filtro FIR/notch en PSoC. Veredicto final: \textbf{sistema del banco LISTO PARA CAMPO}.
+
+{\footnotesize\itshape \'Animo: Montaña rusa de casi 22 horas ininterrumpidas (00:58 a 22:02). Arranca con alivio técnico tras el F1 del día anterior, pasa por el triunfalismo controlado de "cierre total ampliación pre-campo --- E12-E18 todo PASS" a media tarde, se desinfla brutalmente con "**Funciona casi todo pero se rompió el...}
+
+\paragraph{15 de julio.}
+\emph{Escritura del paper (Urucom) + firmware PSoC de autocalibración}
+
+Reescritura sustancial de las Secciones III y IV del paper "Automatic DC-Offset Calibration for a Low-Cost Geophone Front End" con datos experimentales reales (dos placas, barrido de ganancia completo); adición de un flag de firmware (\texttt{CAL\_PI\_FORCE\_MIN\_DEADBAND}) para el experimento decisivo sobre el estancamiento del PGA; y --- el artefacto más interesante del día --- un documento de revisión editorial simulada (\texttt{Urucom\_Review.md}) que somete el propio paper a un panel de cinco revisores ficticios.
+
+{\footnotesize\itshape \'Animo: El mensaje de commit es literalmente "XDXDXD" en ambos repos, a las 00:20 de la madrugada --- la clase de commit message que aparece cuando se ha estado escribiendo/depurando durante horas y ya no queda energía para redactar nada descriptivo, pero el trabajo (mirando el diff) es todo menos trivial.}
+
+\paragraph{16 de julio.}
+\emph{Escritura del paper (Urucom) --- respuesta a la auto-revisión editorial del 15 de julio}
+
+Segunda pasada de edición del paper "Automatic DC-Offset Calibration for a Low-Cost Geophone Front End": limpieza de comandos de borrador (\texttt{/todoexp}, \texttt{/suggestion}, \texttt{/draftfigure}), incorporación de siete referencias nuevas, tabla de resultados ampliada a las cuatro etapas (no solo LP), nuevas ecuaciones de banda muerta con justificación explícita, y una corrección de honestidad científica sobre qué es realmente la condición "Default". En el submódulo \texttt{psoc}, una regeneración de PSoC Creator sin cambios funcionales (solo reordenamiento de símbolos \texttt{Vref\_PGA}/\texttt{Vref\_BP} en el esquemático).
+
+{\footnotesize\itshape \'Animo: Los dos primeros commits llevan el mismo mensaje robótico "AAAAAAAAAAAAAAAAAAAA" al filo de la medianoche --- continuidad directa con el "XDXDXD" de la noche anterior, la clase de mensaje que aparece cuando ya no hay energía para describir el trabajo pero el trabajo sigue. El tercero, dos horas y...}
+
+\paragraph{20 de julio.}
+\emph{Renombre GEO\_ADDER$\rightarrow$GEO\_SUM en \texttt{psoc} (cierre de una deuda de nomenclatura) + arranque del protocolo de barridos de la cadena analógica en \texttt{matlab}}
+
+El componente analógico \texttt{OPAadder}/\texttt{ADDERm}/\texttt{ADDERo}/\texttt{VDAC\_Ref\_Adder} se renombra por completo a \texttt{OPAsum}/\texttt{SUMm}/\texttt{SUMo}/\texttt{VDAC\_Ref\_Sum} en todo el firmware PSoC (esquemático, calibración, tablas por etapa), y se agrega soporte de \texttt{deadband\_dac} explícito por etapa en el servo PI de calibración. En paralelo, en el submódulo \texttt{matlab} se agrega un protocolo completo de barridos de la cadena analógica (\texttt{PROTOCOLO\_BARRIDOS\_CADENA\_ANALOGICA.md}) con script de análisis (\texttt{analizar\_barridos\_cadena\_analogica.m}), datos de captura reales, y luego se purgan del repo los resultados obsoletos de un análisis anterior...
+
+{\footnotesize\itshape \'Animo: "Ayudame jebus" --- el mismo mensaje, textual, en los cuatro submódulos donde hubo commit esa noche (\texttt{psoc}, \texttt{interfaces/python}, \texttt{calculos\_modelados/matlab}, \texttt{calculos\_modelados/python}), a las 23:53:57 exactas. Es un commit-checkpoint disparado por una sola operación coordinada sobre el...}
+
+\paragraph{21 de julio.}
+\emph{Ruptura arquitectónica --- de repo monolítico a superproyecto modular con 7 submódulos}
+
+El historial monolítico se preserva de forma privada en \texttt{Tesis-legacy} y el repo \texttt{Tesis} se reinicia con un commit raíz que fija (pin) \texttt{firmware/psoc}, \texttt{firmware/esp32}, \texttt{software/python}, \texttt{modelado/matlab}, \texttt{investigacion}, \texttt{data} y \texttt{docs} como repositorios independientes versionados por separado; en paralelo, refactor de topología analógica en el PSoC (AMux dedicados por etapa, \texttt{PGAshield} renombrado a \texttt{PGAout}, \texttt{LPF\_2} habilitado) y primera vuelta de calibración del modelo de circuito con potenciómetro real
+
+{\footnotesize\itshape \'Animo: "XD" / "xddd" / "XDD" repetidos en tres commits de MATLAB el mismo día, más "Posible final" en PSoC --- una mezcla de humor nervioso de sesión larga y la sensación real de estar cerca de cerrar la calibración analógica.}
+
+\paragraph{23 de julio.}
+\emph{Redacción y revisión del paper URUCOM (*Automatic DC-Offset Calibration for a Geophone Front End*)}
+
+Reunión con el tutor + primera pasada de compresión de 6$\rightarrow$5 páginas; figura side-by-side GEO$\rightarrow$ADC nueva para el paper
+
+{\footnotesize\itshape \'Animo: El mensaje "el dolor nunca acaba" --- usado en los cuatro commits del día (super + 3 submódulos) --- es quizás el título más honesto de toda la bitácora. No es un bug de firmware ni una madrugada de debugging; es el desgaste específico de pulir un paper de 5 páginas contra un límite de página duro...}
+
+\paragraph{24 de julio.}
+\emph{Consolidación arquitectónica del superproyecto (post-ruptura del 21 de julio) + primera exploración de conectividad de campo}
+
+\texttt{src/} deja de ser "cada submódulo tal cual estaba" y pasa a organizarse por propósito (firmware / interfaces / cálculos y modelados), con \texttt{investigacion} migrando de la raíz a \texttt{docs/investigacion}; en paralelo arranca la planificación del modo ENLACE del maestro y un primer sketch descartable de validación de hotspot
+
+{\footnotesize\itshape \'Animo: Día de reorganizador compulsivo, no de bombero. Los mensajes son descriptivos y tranquilos ("refactor: reorganizar...", "fix: restaurar..."), salvo el detalle inquietante de un SSID y password de hotspot personal quedando en texto plano dentro de un commit --- la clase de descuido que solo se nota...}
+
+\paragraph{25 de julio.}
+\emph{Port del servidor Python (\texttt{Tesis-interfaces-python}) de \texttt{http.server} artesanal a FastAPI --- arranca el "PORT\_PLAN" ítem por ítem, con gate automatizado como condición de avance}
+
+Se cierra §1 (refactor a FastAPI + estáticos) y §2 (tabs de navegación + tema) del PORT\_PLAN, arranca §3.1 (visor de señal con decimado min/max), y en el medio se corrige un bug de infraestructura del propio gate que estaba dando falsos timeouts
+
+{\footnotesize\itshape \'Animo: Metódico, casi forense. No hay exclamaciones ni "AYUDA": cada commit trae su propia sección "Qué verifiqué", tablas de mutaciones rotas a mano y logs con timestamp citados por nombre de archivo. Es el tono de alguien que dejó de confiar en "pasó el test" a secas después de que un bug de...}
+
+\paragraph{26 de julio.}
+\emph{Porteo de la app PyQt de revisión de campo (\texttt{field\_review\_app}) a la web (\texttt{interfaces/python})}
+
+Snapshot de referencia congelado de la app PyQt completa, tomado justo antes de empezar a portar la ventana "Capturas" entera
+
+{\footnotesize\itshape \'Animo: "Poco a poco todo toma forma" --- un mensaje tranquilo, casi contemplativo, que contrasta con la escala real del commit (\textasciitilde{}6900 líneas). No es un commit de "logro" sino de método: antes de tocar código vivo con lujo de detalle, dejar clavada una copia de qué es lo que hay que replicar.}
+
+\paragraph{29 de julio.}
+\emph{Porteo masivo del servidor web \texttt{interfaces/python} (paridad con \texttt{field\_review\_app} PyQt) + cierre de la comunicación URUCOM 2026}
+
+Un solo commit gigante por submódulo, todos con el mensaje genérico "Diseños 3d" (evidentemente un mensaje pegado por error / heredado de otra sesión), que consolida días de trabajo real acumulado: cuarentena reversible en vez de borrado físico, \texttt{AnalysisJobs} con cola científica persistente, exportaciones reproducibles, \texttt{smoke\_test.py} con gate de 58 checks, y en paralelo el cierre de la revisión de la comunicación URUCOM (bibliografía compartida vía BibTeX, IEEEmembership agregado a los autores)
+
+{\footnotesize\itshape \'Animo: El mensaje "Diseños 3d" no tiene relación aparente con el contenido real de ninguno de los tres commits --- ni diseños, ni 3D. Es casi seguro un mensaje de commit copiado de otra ventana de trabajo (probablemente relacionado con impresión 3D de piezas del proyecto, mencionado en bitácoras previas) y...}
+
+\subsection{Agosto de 2026}
+\paragraph{1 de agosto.}
+\emph{Migración física de la carrier PSoC$\leftrightarrow$ESP32 a un pinout definitivo intermedio (CY8CKIT-059 + ESP32 DevKitC) + arranque de la física del martillo de leva (Simscape Multibody y Python) + cierre...}
+
+Cinco commits, todos con el mismo mensaje "se me acaba la bateria aaaa" y disparados en la misma sesión (16:16--16:20 hs), repartidos en cuatro submódulos distintos: \texttt{firmware/psoc}, \texttt{firmware/esp32} (rama \texttt{cambios-red}), \texttt{calculos\_modelados/matlab}, \texttt{calculos\_modelados/python} y \texttt{docs} (Tesis-documentacion, dos commits)
+
+{\footnotesize\itshape \'Animo: El mensaje de commit es literal, no un descarte apurado: "se me acaba la bateria aaaa" describe exactamente lo que fue esta sesión --- cinco commits en cuatro repos distintos disparados en menos de tres minutos de diferencia entre sí (16:16:59 a 16:19:58), la firma clásica de alguien corriendo `git...}
+

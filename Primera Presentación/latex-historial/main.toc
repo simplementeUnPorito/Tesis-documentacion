@@ -1,114 +1,351 @@
 \babel@toc {spanish}{}\relax 
-\contentsline {section}{\numberline {1}Panorama general}{6}{section.1}%
-\contentsline {subsection}{\numberline {1.1}De qu\'e se trata el proyecto}{6}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Escala del trabajo}{6}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Los diez repositorios}{7}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Las etapas}{7}{subsection.1.4}%
-\contentsline {section}{\numberline {2}Etapa 1 --- Marco te\'orico}{8}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Punto cero}{8}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Fuente primaria: Foti \emph {et al.}, los ocho cap\'itulos}{8}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Del papel al c\'odigo: los cinco scripts de validaci\'on te\'orica}{9}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}La base bibliogr\'afica: de 22 a 65 papers}{9}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Balance de la etapa}{10}{subsection.2.5}%
-\contentsline {section}{\numberline {3}Etapa 2 --- Investigaci\'on asistida}{10}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Qu\'e se le pidi\'o al agente}{10}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Qu\'e produjo}{10}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Consolidaci\'on y cierre}{11}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Etapa 3 --- Electr\'onica anal\'ogica y modelo del transductor}{11}{section.4}%
-\contentsline {subsection}{\numberline {4.1}El problema de partida}{11}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Primer intento: filtro RC pasivo de entrada (17 de abril)}{11}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Lo que reemplaz\'o al RC: FIR con decimaci\'on en cascada}{12}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Segundo intento: compensaci\'on activa}{12}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}El pivote de topolog\'ia: Sallen-Key $\to $ MFB (30 de abril)}{12}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Medici\'on: MFB contra Sallen-Key en banco}{14}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Primeras se\~nales reales y primera salida a exteriores}{14}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}La cadena de firmware toma forma}{15}{subsection.4.8}%
-\contentsline {subsection}{\numberline {4.9}Calibraci\'on manual del \emph {offset} (10 de mayo)}{15}{subsection.4.9}%
-\contentsline {subsection}{\numberline {4.10}Cierre del compensador: del ideal al circuito real (17--20 de mayo)}{15}{subsection.4.10}%
-\contentsline {subsection}{\numberline {4.11}Balance de la etapa}{16}{subsection.4.11}%
-\contentsline {section}{\numberline {5}Etapa 4 --- La red inal\'ambrica ESP-NOW}{16}{section.5}%
-\contentsline {subsection}{\numberline {5.1}El problema que resuelve}{16}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Arquitectura adoptada}{16}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}La secuencia de sincronizaci\'on: c\'omo se lleg\'o a PRESTART}{17}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}C\'omo se midi\'o la sincronizaci\'on}{17}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Hitos de funcionamiento}{17}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}En paralelo: acondicionamiento del martillo (28--29 de mayo)}{18}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Refactor de cierre (31 de mayo, PR \#2)}{18}{subsection.5.7}%
-\contentsline {subsection}{\numberline {5.8}Balance de la etapa}{18}{subsection.5.8}%
-\contentsline {section}{\numberline {6}Etapa 5 --- Consolidaci\'on del nodo e interfaz de campo}{18}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Un solo firmware para dos nodos distintos}{18}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}La PC deja de ser necesaria (8 de junio)}{19}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}El notch de \SI {50}{\hertz } se retira (7 y 9 de junio)}{19}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}El \emph {handoff} de \emph {jitter} (10 de junio)}{19}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Balance de la etapa}{20}{subsection.6.5}%
-\contentsline {section}{\numberline {7}Etapa 6 --- Auto-calibraci\'on, DMA y \texttt {superMaquina}}{20}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Por qu\'e hace falta calibrar}{20}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Los tres algoritmos que se probaron}{20}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Los detalles finos del controlador}{21}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Dos bugs que valen su propia entrada}{21}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Persistencia: la calibraci\'on sobrevive al reset}{22}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}La adquisici\'on sale de la CPU}{22}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}\texttt {superMaquina}: la captura se vuelve hardware (2 de julio)}{24}{subsection.7.7}%
-\contentsline {subsection}{\numberline {7.8}Resultado medido de la auto-calibraci\'on}{25}{subsection.7.8}%
-\contentsline {subsection}{\numberline {7.9}Balance de la etapa}{26}{subsection.7.9}%
-\contentsline {section}{\numberline {8}Etapa 7 --- El \emph {pipeline} MASW en Python y las campa\~nas de campo}{26}{section.8}%
-\contentsline {subsection}{\numberline {8.1}La geometr\'ia real de las campa\~nas}{26}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}El dato crudo, tal cual sali\'o del arreglo}{27}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Lo que se implement\'o en Python}{27}{subsection.8.3}%
-\contentsline {subsubsection}{\numberline {8.3.1}Las doce fases de pulido del revisor de campo}{28}{subsubsection.8.3.1}%
-\contentsline {subsubsection}{\numberline {8.3.2}Grupos de dispersi\'on y multimodalidad (9 de julio)}{29}{subsubsection.8.3.2}%
-\contentsline {subsection}{\numberline {8.4}En paralelo, en el firmware}{30}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Resultado: el perfil $V_S(z)$}{31}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Balance de la etapa}{32}{subsection.8.6}%
-\contentsline {section}{\numberline {9}Etapa 8 --- Auditor\'ia pre-campo}{32}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Por qu\'e hac\'ia falta}{32}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}La jerarqu\'ia de memoria, validada}{32}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}La matriz de aceptaci\'on E1--E18}{33}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Los tres defectos cr\'iticos}{33}{subsection.9.4}%
-\contentsline {subsubsection}{\numberline {9.4.1}F1 --- el \emph {watchdog} destru\'ia las capturas largas}{33}{subsubsection.9.4.1}%
-\contentsline {subsubsection}{\numberline {9.4.2}F9 --- START romp\'ia el nodo}{33}{subsubsection.9.4.2}%
-\contentsline {subsubsection}{\numberline {9.4.3}F5 --- volcado colgado por socket zombi}{34}{subsubsection.9.4.3}%
-\contentsline {subsection}{\numberline {9.5}Defectos menores documentados y no corregidos}{34}{subsection.9.5}%
-\contentsline {subsection}{\numberline {9.6}Balance de la etapa}{34}{subsection.9.6}%
-\contentsline {section}{\numberline {10}Etapa 9 --- Art\'iculo URUCON y caracterizaci\'on medida de la cadena}{34}{section.10}%
-\contentsline {subsection}{\numberline {10.1}El art\'iculo: \emph {Automatic DC-Offset Calibration for a Low-Cost Geophone Front End}}{35}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}El protocolo de barridos: c\'omo se midi\'o la cadena}{35}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Tratamiento de datos: lo que se hizo bien}{35}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}Un conjunto de datos completo, descartado}{36}{subsection.10.4}%
-\contentsline {subsection}{\numberline {10.5}La tanda calibrada del 21 de julio}{36}{subsection.10.5}%
-\contentsline {subsubsection}{\numberline {10.5.1}El hallazgo principal: la muesca no llega a profundidad}{36}{subsubsection.10.5.1}%
-\contentsline {subsection}{\numberline {10.6}Discrepancia a resolver sobre $\zeta $}{37}{subsection.10.6}%
-\contentsline {subsection}{\numberline {10.7}Balance de la etapa}{37}{subsection.10.7}%
-\contentsline {section}{\numberline {11}Etapa 10 --- Ruptura arquitect\'onica y portaci\'on a la web}{37}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Del monolito al superproyecto (21 de julio)}{38}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Reorganizaci\'on por prop\'osito (24 de julio)}{38}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}El pivote de interfaz: de PyQt a web}{38}{subsection.11.3}%
-\contentsline {subsubsection}{\numberline {11.3.1}Lo que trajo la portaci\'on (29 de julio)}{38}{subsubsection.11.3.1}%
-\contentsline {subsection}{\numberline {11.4}Otras l\'ineas del per\'iodo}{39}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Balance de la etapa}{39}{subsection.11.5}%
-\contentsline {section}{\numberline {12}Etapa 11 --- La placa nueva (rama \texttt {cambios-hardware})}{39}{section.12}%
-\contentsline {subsection}{\numberline {12.1}Cambios en el PSoC}{40}{subsection.12.1}%
-\contentsline {subsubsection}{\numberline {12.1.1}Trampas del TopDesign nuevo, registradas}{40}{subsubsection.12.1.1}%
-\contentsline {subsection}{\numberline {12.2}Cambios en el ESP32}{40}{subsection.12.2}%
-\contentsline {subsection}{\numberline {12.3}PCBs}{41}{subsection.12.3}%
-\contentsline {subsection}{\numberline {12.4}Balance de la etapa}{41}{subsection.12.4}%
-\contentsline {section}{\numberline {13}Inventario de lo construido}{41}{section.13}%
-\contentsline {subsection}{\numberline {13.1}Firmware}{42}{subsection.13.1}%
-\contentsline {subsection}{\numberline {13.2}Interfaces y post-proceso}{42}{subsection.13.2}%
-\contentsline {subsection}{\numberline {13.3}Datos}{43}{subsection.13.3}%
-\contentsline {subsection}{\numberline {13.4}Documentaci\'on e investigaci\'on}{43}{subsection.13.4}%
-\contentsline {subsection}{\numberline {13.5}Instrumentaci\'on de laboratorio}{43}{subsection.13.5}%
-\contentsline {section}{\numberline {14}Tabla maestra de decisiones}{43}{section.14}%
-\contentsline {subsection}{\numberline {14.1}Cadena anal\'ogica}{44}{subsection.14.1}%
-\contentsline {subsection}{\numberline {14.2}Procesamiento de se\~nal}{45}{subsection.14.2}%
-\contentsline {subsection}{\numberline {14.3}Firmware y arquitectura embebida}{45}{subsection.14.3}%
-\contentsline {subsection}{\numberline {14.4}Comunicaci\'on y sincronizaci\'on}{46}{subsection.14.4}%
-\contentsline {subsection}{\numberline {14.5}Robustez (auditor\'ia pre-campo)}{46}{subsection.14.5}%
-\contentsline {subsection}{\numberline {14.6}Herramientas e infraestructura}{47}{subsection.14.6}%
-\contentsline {subsection}{\numberline {14.7}Los principios que sobrevivieron a todo}{47}{subsection.14.7}%
-\contentsline {section}{\numberline {15}Qu\'e queda abierto}{47}{section.15}%
-\contentsline {subsection}{\numberline {15.1}Lo que hay que resolver antes de escribir la entrega}{47}{subsection.15.1}%
-\contentsline {subsection}{\numberline {15.2}Mediciones que faltan}{48}{subsection.15.2}%
-\contentsline {subsection}{\numberline {15.3}Preguntas sin respuesta registrada}{48}{subsection.15.3}%
-\contentsline {subsection}{\numberline {15.4}Deuda t\'ecnica conocida}{49}{subsection.15.4}%
-\contentsline {subsection}{\numberline {15.5}Nota de cierre}{49}{subsection.15.5}%
+\contentsline {section}{\numberline {1}Panorama general}{8}{section.1}%
+\contentsline {subsection}{\numberline {1.1}De qu\'e se trata el proyecto}{8}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Resumen autoritativo al 12 de agosto de 2026}{8}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Escala del trabajo}{10}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Los diez repositorios}{10}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Las etapas}{11}{subsection.1.5}%
+\contentsline {section}{\numberline {2}Hallazgos de la revisi\'on del 12 de agosto de 2026}{11}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Lo que cambia decisiones}{12}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Correcciones a la documentaci\'on previa}{13}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Evidencia recuperada que ya exist\'ia}{13}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Los \emph {scripts} que produjeron estos hallazgos}{13}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Etapa 1 --- Marco te\'orico}{13}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Punto cero}{14}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Fuente primaria: Foti \emph {et al.}, los ocho cap\'itulos}{14}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Del papel al c\'odigo: los cinco scripts de validaci\'on te\'orica}{15}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Qu\'e cubri\'o cada script, en detalle}{16}{subsubsection.3.3.1}%
+\contentsline {paragraph}{\texttt {p01\_ondas\_de\_cuerpo.m} (722 l\'ineas)}{16}{paragraph*.4}%
+\contentsline {paragraph}{\texttt {p02\_rayleigh\_love.m} (647 l\'ineas)}{16}{paragraph*.5}%
+\contentsline {paragraph}{\texttt {p03\_sismograma\_imagen\_dispersion.m} (543 l\'ineas)}{16}{paragraph*.6}%
+\contentsline {paragraph}{\texttt {p04\_inversion\_perfil\_vs.m} (651 l\'ineas)}{16}{paragraph*.7}%
+\contentsline {paragraph}{\texttt {p05\_viscoelasticidad.m} (644 l\'ineas)}{16}{paragraph*.8}%
+\contentsline {subsection}{\numberline {3.4}La base bibliogr\'afica: de 22 a 65 papers}{17}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Balance de la etapa}{17}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Etapa 2 --- Investigaci\'on asistida}{17}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Qu\'e se le pidi\'o al agente}{17}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Qu\'e produjo}{18}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Consolidaci\'on y cierre}{18}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Etapa 3 --- Electr\'onica anal\'ogica y modelo del transductor}{19}{section.5}%
+\contentsline {subsection}{\numberline {5.1}El problema de partida}{19}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Primer intento: filtro RC pasivo de entrada (17 de abril)}{19}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Lo que reemplaz\'o al RC: FIR con decimaci\'on en cascada}{20}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Segundo intento: compensaci\'on activa}{21}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}El pivote de topolog\'ia: Sallen-Key $\to $ MFB (30 de abril)}{21}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Medici\'on: MFB contra Sallen-Key en banco}{23}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Primeras se\~nales reales y primera salida a exteriores}{24}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}La cadena de firmware toma forma}{24}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}Calibraci\'on manual del \emph {offset} (10 de mayo)}{24}{subsection.5.9}%
+\contentsline {subsection}{\numberline {5.10}Cierre del compensador: del ideal al circuito real (17--20 de mayo)}{24}{subsection.5.10}%
+\contentsline {subsection}{\numberline {5.11}Balance de la etapa}{25}{subsection.5.11}%
+\contentsline {section}{\numberline {6}Etapa 4 --- La red inal\'ambrica ESP-NOW}{25}{section.6}%
+\contentsline {subsection}{\numberline {6.1}El problema que resuelve}{25}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Arquitectura adoptada}{26}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}La secuencia de sincronizaci\'on: c\'omo se lleg\'o a PRESTART}{26}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}C\'omo se midi\'o la sincronizaci\'on}{27}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Hitos de funcionamiento}{27}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}En paralelo: acondicionamiento del martillo (28--29 de mayo)}{27}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Refactor de cierre (31 de mayo, PR \#2)}{27}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Balance de la etapa}{28}{subsection.6.8}%
+\contentsline {section}{\numberline {7}Etapa 5 --- Consolidaci\'on del nodo e interfaz de campo}{28}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Un solo firmware para dos nodos distintos}{28}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}La PC deja de ser necesaria (8 de junio)}{29}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}El notch de \SI {50}{\hertz } se retira (7 y 9 de junio)}{29}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}El \emph {handoff} de \emph {jitter} (10 de junio)}{29}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Balance de la etapa}{30}{subsection.7.5}%
+\contentsline {section}{\numberline {8}Etapa 6 --- Auto-calibraci\'on, DMA y \texttt {superMaquina}}{30}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Por qu\'e hace falta calibrar}{30}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Los tres algoritmos que se probaron}{31}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Los detalles finos del controlador}{32}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Dos bugs que valen su propia entrada}{33}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Persistencia: la calibraci\'on sobrevive al reset}{33}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}La adquisici\'on sale de la CPU}{33}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}\texttt {superMaquina}: la captura se vuelve hardware (2 de julio)}{33}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Resultado medido de la auto-calibraci\'on}{34}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}Balance de la etapa}{35}{subsection.8.9}%
+\contentsline {section}{\numberline {9}Etapa 7 --- El \emph {pipeline} MASW en Python y las campa\~nas de campo}{35}{section.9}%
+\contentsline {subsection}{\numberline {9.1}La geometr\'ia real de las campa\~nas}{36}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}El dato crudo, tal cual sali\'o del arreglo}{38}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Lo que se implement\'o en Python}{39}{subsection.9.3}%
+\contentsline {subsubsection}{\numberline {9.3.1}Las doce fases de pulido del revisor de campo}{39}{subsubsection.9.3.1}%
+\contentsline {subsubsection}{\numberline {9.3.2}Grupos de dispersi\'on y multimodalidad (9 de julio)}{40}{subsubsection.9.3.2}%
+\contentsline {subsection}{\numberline {9.4}En paralelo, en el firmware}{41}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Resultado: el perfil $V_S(z)$}{42}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Contraste con el sondeo el\'ectrico de 2023: el \'unico dato externo disponible}{43}{subsection.9.6}%
+\contentsline {subsection}{\numberline {9.7}Balance de la etapa}{45}{subsection.9.7}%
+\contentsline {section}{\numberline {10}Etapa 8 --- Auditor\'ia pre-campo}{45}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Por qu\'e hac\'ia falta}{46}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}La jerarqu\'ia de memoria, validada}{46}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}La matriz de aceptaci\'on E1--E18}{46}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Los tres defectos cr\'iticos}{46}{subsection.10.4}%
+\contentsline {subsubsection}{\numberline {10.4.1}F1 --- el \emph {watchdog} destru\'ia las capturas largas}{46}{subsubsection.10.4.1}%
+\contentsline {subsubsection}{\numberline {10.4.2}F9 --- START romp\'ia el nodo}{47}{subsubsection.10.4.2}%
+\contentsline {subsubsection}{\numberline {10.4.3}F5 --- volcado colgado por socket zombi}{47}{subsubsection.10.4.3}%
+\contentsline {subsection}{\numberline {10.5}Defectos menores documentados y no corregidos}{47}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}Balance de la etapa}{48}{subsection.10.6}%
+\contentsline {section}{\numberline {11}Etapa 9 --- Art\'iculo URUCON y caracterizaci\'on medida de la cadena}{48}{section.11}%
+\contentsline {subsection}{\numberline {11.1}El art\'iculo: \emph {Automatic DC-Offset Calibration for a Low-Cost Geophone Front End}}{49}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}El protocolo de barridos: c\'omo se midi\'o la cadena}{49}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Tratamiento de datos: lo que se hizo bien}{50}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Un conjunto de datos completo, descartado}{51}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}La tanda calibrada del 21 de julio}{51}{subsection.11.5}%
+\contentsline {subsubsection}{\numberline {11.5.1}El hallazgo principal: la muesca no llega a profundidad}{51}{subsubsection.11.5.1}%
+\contentsline {subsection}{\numberline {11.6}Lectura resuelta de los tres valores de $\zeta $}{52}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Balance de la etapa}{52}{subsection.11.7}%
+\contentsline {section}{\numberline {12}Etapa 10 --- Ruptura arquitect\'onica y portaci\'on a la web}{52}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Del monolito al superproyecto (21 de julio)}{53}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Reorganizaci\'on por prop\'osito (24 de julio)}{53}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}El pivote de interfaz: de PyQt a web}{53}{subsection.12.3}%
+\contentsline {subsubsection}{\numberline {12.3.1}Lo que trajo la portaci\'on (29 de julio)}{53}{subsubsection.12.3.1}%
+\contentsline {subsection}{\numberline {12.4}Otras l\'ineas del per\'iodo}{54}{subsection.12.4}%
+\contentsline {subsection}{\numberline {12.5}Balance de la etapa}{54}{subsection.12.5}%
+\contentsline {section}{\numberline {13}Etapa 11 --- La placa nueva (rama \texttt {cambios-hardware})}{54}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Cambios en el PSoC}{55}{subsection.13.1}%
+\contentsline {subsubsection}{\numberline {13.1.1}Trampas del TopDesign nuevo, registradas}{55}{subsubsection.13.1.1}%
+\contentsline {subsection}{\numberline {13.2}Cambios en el ESP32}{55}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}PCBs}{56}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Balance de la etapa}{57}{subsection.13.4}%
+\contentsline {section}{\numberline {14}Anatom\'ia del firmware: qu\'e hace cada m\'odulo}{57}{section.14}%
+\contentsline {subsection}{\numberline {14.1}PSoC 5LP --- proyecto \texttt {AcondicionamientoAnalogico.cydsn}}{57}{subsection.14.1}%
+\contentsline {subsubsection}{\numberline {14.1.1}El protocolo UART, tal como est\'a documentado en el c\'odigo}{57}{subsubsection.14.1.1}%
+\contentsline {subsubsection}{\numberline {14.1.2}Componentes del TopDesign por clase de nodo}{58}{subsubsection.14.1.2}%
+\contentsline {subsection}{\numberline {14.2}ESP32 --- maestro}{58}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}ESP32 --- esclavo}{59}{subsection.14.3}%
+\contentsline {subsection}{\numberline {14.4}\texttt {MasterFoo}: el \emph {sketch} descartable}{59}{subsection.14.4}%
+\contentsline {subsection}{\numberline {14.5}Utilidades de soporte del repositorio de firmware}{59}{subsection.14.5}%
+\contentsline {section}{\numberline {15}Usar el SEV para guiar la inversi\'on: qu\'e se puede y qu\'e no}{59}{section.15}%
+\contentsline {subsection}{\numberline {15.1}Respuesta corta: la geometr\'ia s\'i, los valores no}{60}{subsection.15.1}%
+\contentsline {subsection}{\numberline {15.2}Lo que el SEV s\'i aporta: la parametrizaci\'on}{60}{subsection.15.2}%
+\contentsline {subsection}{\numberline {15.3}Verificaci\'on del trabajo previo (\texttt {Moldeo Hidro})}{60}{subsection.15.3}%
+\contentsline {paragraph}{a) La curva elegida es la mejor condicionada de las tres disponibles.}{60}{paragraph*.36}%
+\contentsline {paragraph}{b) Las cotas del modelo coinciden con el SEV\ldots \ salvo dos.}{61}{paragraph*.37}%
+\contentsline {paragraph}{c) La curva ``prior'' no es un modelo directo de Rayleigh.}{61}{paragraph*.38}%
+\contentsline {paragraph}{d) La imagen de dispersi\'on tiene un problema propio, anterior a cualquier gu\'ia.}{61}{paragraph*.39}%
+\contentsline {subsection}{\numberline {15.4}El l\'imite duro: el SEV s\'olo puede guiar los primeros metros}{62}{subsection.15.4}%
+\contentsline {subsection}{\numberline {15.5}Qu\'e dice la curva medida, le\'ida de la forma m\'as simple posible}{62}{subsection.15.5}%
+\contentsline {subsection}{\numberline {15.6}Un intento de inversi\'on, y la lecci\'on metodol\'ogica que dej\'o}{62}{subsection.15.6}%
+\contentsline {subsubsection}{\numberline {15.6.1}El resultado, ya con la restricci\'on puesta}{63}{subsubsection.15.6.1}%
+\contentsline {subsection}{\numberline {15.7}Recomendaci\'on operativa}{64}{subsection.15.7}%
+\contentsline {section}{\numberline {16}Las dos inversiones del mismo sitio: la no unicidad, con datos propios}{64}{section.16}%
+\contentsline {subsection}{\numberline {16.1}Resultado 1: el an\'alisis se volvi\'o m\'as disciplinado}{65}{subsection.16.1}%
+\contentsline {subsection}{\numberline {16.2}Resultado 2: el mismo sitio da dos $V_{S,30}$ que difieren en un factor 1,9}{65}{subsection.16.2}%
+\contentsline {subsection}{\numberline {16.3}Resultado 3: incluso la inversi\'on disciplinada usa puntos sin se\~nal}{66}{subsection.16.3}%
+\contentsline {subsubsection}{\numberline {16.3.1}Cu\'anto ensucian, medido}{66}{subsubsection.16.3.1}%
+\contentsline {subsection}{\numberline {16.4}Qu\'e conviene reportar}{66}{subsection.16.4}%
+\contentsline {section}{\numberline {17}Decaimiento con la distancia: qu\'e onda se est\'a registrando, y cu\'anto atenúa el suelo}{67}{section.17}%
+\contentsline {subsection}{\numberline {17.1}El planteo}{67}{subsection.17.1}%
+\contentsline {subsection}{\numberline {17.2}Resultado 1: las bandas sin se\~nal son planas}{68}{subsection.17.2}%
+\contentsline {subsection}{\numberline {17.3}Resultado 2: el decaimiento real es mucho m\'as fuerte que el geom\'etrico}{68}{subsection.17.3}%
+\contentsline {subsection}{\numberline {17.4}Y explica la ca\'ida de alcance del arreglo}{69}{subsection.17.4}%
+\contentsline {section}{\numberline {18}Evidencia de la auditor\'ia pre-campo: los artefactos que quedaron}{69}{section.18}%
+\contentsline {subsection}{\numberline {18.1}El fallo F1 y su correcci\'on, en n\'umeros}{69}{subsection.18.1}%
+\contentsline {subsection}{\numberline {18.2}Otros artefactos conservados}{70}{subsection.18.2}%
+\contentsline {subsection}{\numberline {18.3}Los barridos crudos de osciloscopio}{70}{subsection.18.3}%
+\contentsline {subsection}{\numberline {18.4}La m\'aquina de estados de la calibraci\'on}{71}{subsection.18.4}%
+\contentsline {section}{\numberline {19}La banda \'util real de los datos de campo}{71}{section.19}%
+\contentsline {subsection}{\numberline {19.1}M\'etodo}{71}{subsection.19.1}%
+\contentsline {subsection}{\numberline {19.2}El resultado}{72}{subsection.19.2}%
+\contentsline {subsection}{\numberline {19.3}Controles de robustez}{73}{subsection.19.3}%
+\contentsline {paragraph}{Control 1: ?`lo borr\'o el procesamiento?}{73}{paragraph*.45}%
+\contentsline {paragraph}{Control 2: ?`es un artefacto de mezclar las dos configuraciones?}{73}{paragraph*.46}%
+\contentsline {paragraph}{Control 3: ?`la ventana de \SI {1}{\second } alcanza para medir \SIrange {1}{2.5}{\hertz }?}{73}{paragraph*.47}%
+\contentsline {paragraph}{Control 4: ?`es propio de un solo conjunto procesado?}{73}{paragraph*.48}%
+\contentsline {subsection}{\numberline {19.4}Qu\'e significa y qu\'e no significa}{74}{subsection.19.4}%
+\contentsline {subsection}{\numberline {19.5}Consecuencia para el orden de prioridades}{74}{subsection.19.5}%
+\contentsline {section}{\numberline {20}Las interfaces, en funcionamiento}{75}{section.20}%
+\contentsline {subsection}{\numberline {20.1}Pesta\~na Capturas: el visor de validaci\'on}{75}{subsection.20.1}%
+\contentsline {subsection}{\numberline {20.2}Pesta\~na Waterfall: el \emph {gather} reconstruido}{75}{subsection.20.2}%
+\contentsline {subsection}{\numberline {20.3}Pesta\~na MASW: dispersi\'on y \emph {picking}}{76}{subsection.20.3}%
+\contentsline {subsection}{\numberline {20.4}Pesta\~na Filtros: donde est\'a documentada la mezcla de $F_s$}{77}{subsection.20.4}%
+\contentsline {subsection}{\numberline {20.5}La SPA del ESP32, reconstruida desde su c\'odigo fuente}{78}{subsection.20.5}%
+\contentsline {subsubsection}{\numberline {20.5.1}Controles globales y panel de gr\'aficas}{78}{subsubsection.20.5.1}%
+\contentsline {subsubsection}{\numberline {20.5.2}Pesta\~na Captura}{78}{subsubsection.20.5.2}%
+\contentsline {subsubsection}{\numberline {20.5.3}Pesta\~na Esclavos: el panel por nodo}{78}{subsubsection.20.5.3}%
+\contentsline {subsubsection}{\numberline {20.5.4}Pesta\~na Enlace}{79}{subsubsection.20.5.4}%
+\contentsline {subsection}{\numberline {20.6}Lo que no se pudo capturar}{79}{subsection.20.6}%
+\contentsline {section}{\numberline {21}La fuente s\'ismica: el martillo, sus puntas y el martinete de leva}{79}{section.21}%
+\contentsline {subsection}{\numberline {21.1}El instrumento: PCB Piezotronics 086D20}{79}{subsection.21.1}%
+\contentsline {subsection}{\numberline {21.2}Las puntas: el control de ancho de banda de la fuente}{80}{subsection.21.2}%
+\contentsline {subsection}{\numberline {21.3}El martinete de leva: hacia una fuente repetible}{80}{subsection.21.3}%
+\contentsline {subsection}{\numberline {21.4}Repetibilidad medida de la fuente (an\'alisis del 12/08/2026)}{82}{subsection.21.4}%
+\contentsline {section}{\numberline {22}Atlas visual: todo lo que se midi\'o y se grafic\'o}{83}{section.22}%
+\contentsline {subsection}{\numberline {22.1}La campa\~na de barridos de la cadena anal\'ogica}{84}{subsection.22.1}%
+\contentsline {subsection}{\numberline {22.2}Resultados num\'ericos de la identificaci\'on}{84}{subsection.22.2}%
+\contentsline {subsubsection}{\numberline {22.2.1}Higiene de datos aplicada}{88}{subsubsection.22.2.1}%
+\contentsline {subsection}{\numberline {22.3}Otros conjuntos de figuras del proyecto}{89}{subsection.22.3}%
+\contentsline {section}{\numberline {23}Inventario de lo construido}{93}{section.23}%
+\contentsline {subsection}{\numberline {23.1}Firmware}{93}{subsection.23.1}%
+\contentsline {subsection}{\numberline {23.2}Interfaces y post-proceso}{94}{subsection.23.2}%
+\contentsline {subsection}{\numberline {23.3}Datos}{94}{subsection.23.3}%
+\contentsline {subsection}{\numberline {23.4}Documentaci\'on e investigaci\'on}{95}{subsection.23.4}%
+\contentsline {subsection}{\numberline {23.5}Instrumentaci\'on de laboratorio}{95}{subsection.23.5}%
+\contentsline {section}{\numberline {24}Tabla maestra de decisiones}{95}{section.24}%
+\contentsline {subsection}{\numberline {24.1}Cadena anal\'ogica}{96}{subsection.24.1}%
+\contentsline {subsection}{\numberline {24.2}Procesamiento de se\~nal}{97}{subsection.24.2}%
+\contentsline {subsection}{\numberline {24.3}Firmware y arquitectura embebida}{98}{subsection.24.3}%
+\contentsline {subsection}{\numberline {24.4}Comunicaci\'on y sincronizaci\'on}{98}{subsection.24.4}%
+\contentsline {subsection}{\numberline {24.5}Robustez (auditor\'ia pre-campo)}{99}{subsection.24.5}%
+\contentsline {subsection}{\numberline {24.6}Herramientas e infraestructura}{99}{subsection.24.6}%
+\contentsline {subsection}{\numberline {24.7}Los principios que sobrevivieron a todo}{100}{subsection.24.7}%
+\contentsline {section}{\numberline {25}Qu\'e queda abierto}{100}{section.25}%
+\contentsline {subsection}{\numberline {25.1}Lo que hay que resolver antes de escribir la entrega}{100}{subsection.25.1}%
+\contentsline {subsection}{\numberline {25.2}Mediciones que faltan}{101}{subsection.25.2}%
+\contentsline {subsection}{\numberline {25.3}Preguntas sin respuesta registrada}{101}{subsection.25.3}%
+\contentsline {subsection}{\numberline {25.4}Deuda t\'ecnica conocida}{102}{subsection.25.4}%
+\contentsline {subsection}{\numberline {25.5}Nota de cierre}{102}{subsection.25.5}%
+\contentsline {section}{\numberline {26}Inventario de datos crudos y campa\~nas}{102}{section.26}%
+\contentsline {subsection}{\numberline {26.1}\texttt {Canchiga}}{102}{subsection.26.1}%
+\contentsline {subsection}{\numberline {26.2}\texttt {Canchita}}{102}{subsection.26.2}%
+\contentsline {subsection}{\numberline {26.3}\texttt {Canchita\_2}}{103}{subsection.26.3}%
+\contentsline {subsection}{\numberline {26.4}\texttt {Estacionamiento}}{103}{subsection.26.4}%
+\contentsline {section}{\numberline {27}Inventario de c\'odigo: todos los \emph {scripts} del proyecto}{103}{section.27}%
+\contentsline {subsection}{\numberline {27.1}C\'alculo y modelado --- MATLAB}{103}{subsection.27.1}%
+\contentsline {subsection}{\numberline {27.2}C\'alculo y modelado --- Python}{104}{subsection.27.2}%
+\contentsline {subsection}{\numberline {27.3}Interfaces de banco --- MATLAB}{105}{subsection.27.3}%
+\contentsline {subsection}{\numberline {27.4}Interfaces y servidor --- Python}{106}{subsection.27.4}%
+\contentsline {subsection}{\numberline {27.5}Utilidades del firmware}{108}{subsection.27.5}%
+\contentsline {subsection}{\numberline {27.6}Automatizaci\'on del repositorio}{108}{subsection.27.6}%
+\contentsline {subsection}{\numberline {27.7}Generaci\'on de figuras y documentos}{109}{subsection.27.7}%
+\contentsline {section}{\numberline {28}La base bibliogr\'afica, art\'iculo por art\'iculo}{109}{section.28}%
+\contentsline {subsection}{\numberline {28.1}\'Indice}{110}{subsection.28.1}%
+\contentsline {subsection}{\numberline {28.2}Fichas}{111}{subsection.28.2}%
+\contentsline {paragraph}{[001] Multichannel analysis of surface waves}{111}{paragraph*.69}%
+\contentsline {paragraph}{[002] Estimation of near-surface shear-wave velocity by inversion of Rayleigh waves}{112}{paragraph*.70}%
+\contentsline {paragraph}{[003] In situ shear wave velocities from spectral analysis of surface waves}{112}{paragraph*.71}%
+\contentsline {paragraph}{[004] Faster, Better: Shear-Wave Velocity to 100 Meters Depth from Refraction Microtremor Arrays}{113}{paragraph*.72}%
+\contentsline {paragraph}{[005] Space and Time Spectra of Stationary Stochastic Waves, with Special Reference to Microtremors}{113}{paragraph*.73}%
+\contentsline {paragraph}{[006] Guidelines for the good practice of surface wave analysis: a product of the InterPACIFIC project}{114}{paragraph*.74}%
+\contentsline {paragraph}{[007] InterPACIFIC project: Comparison of invasive and non-invasive methods for seismic site characterization. Part I: Intra-comparison of surface wave...}{114}{paragraph*.75}%
+\contentsline {paragraph}{[008] Surface-wave method for near-surface characterization: a tutorial}{115}{paragraph*.76}%
+\contentsline {paragraph}{[009] Comparing shear-wave velocity profiles inverted from multichannel surface wave with borehole measurements}{115}{paragraph*.77}%
+\contentsline {paragraph}{[010] Multichannel analysis of surface waves (MASW)---active and passive methods}{116}{paragraph*.78}%
+\contentsline {paragraph}{[011] Increasing horizontal resolution of geophysical models by generalized inversion}{116}{paragraph*.79}%
+\contentsline {paragraph}{[012] Multichannel Analysis of Surface Waves (MASW) to Estimate the Shear Wave Velocity for Engineering Characterization of Soils at Hawassa Town, Southern...}{116}{paragraph*.80}%
+\contentsline {paragraph}{[013] Open-Source MASW Inversion Tool Aimed at Shear Wave Velocity Profiling for Soil Site Explorations}{117}{paragraph*.81}%
+\contentsline {paragraph}{[014] Geopsy: A User-Friendly Open-Source Tool Set for Ambient Vibration Processing}{117}{paragraph*.82}%
+\contentsline {paragraph}{[015] Comparison of mean shear wave velocity of the top 30 m using downhole, MASW and bender elements methods}{118}{paragraph*.83}%
+\contentsline {paragraph}{[016] The empirical correlation between shear wave velocity and penetration resistance for the eolian sand deposits in the city of Olmos-Peru}{118}{paragraph*.84}%
+\contentsline {paragraph}{[017] A method for dynamic characteristics estimation of subsurface using microtremor on the ground surface}{119}{paragraph*.85}%
+\contentsline {paragraph}{[018] Site effect evaluation using spectral ratios with only one station}{119}{paragraph*.86}%
+\contentsline {paragraph}{[019] Guidelines for the Implementation of the H/V Spectral Ratio Technique on Ambient Vibrations Measurements, Processing and Interpretation}{120}{paragraph*.87}%
+\contentsline {paragraph}{[020] Site characterization using geophysical and geotechnical Prospecting. Case study main road North Central Trunk (National Route 55) at Km 68+500 in...}{120}{paragraph*.88}%
+\contentsline {paragraph}{[021] Use of Surface Waves in Statistical Correlations of Shear Wave Velocity and Penetration Resistance of Chennai Soils}{121}{paragraph*.89}%
+\contentsline {paragraph}{[022] Tool for analysis of multichannel analysis of surface waves (MASW) field data and evaluation of shear wave velocity profiles of soils}{121}{paragraph*.90}%
+\contentsline {paragraph}{[023] Imaging dispersion curves of surface waves on multi-channel record}{122}{paragraph*.91}%
+\contentsline {paragraph}{[024] Near-Field Effects on Array-Based Surface Wave Methods with Active Sources}{122}{paragraph*.92}%
+\contentsline {paragraph}{[025] Inversion of high frequency surface waves with fundamental and higher modes}{123}{paragraph*.93}%
+\contentsline {paragraph}{[026] Optimum Field Parameters of an MASW Survey}{123}{paragraph*.94}%
+\contentsline {paragraph}{[027] Multi-offset phase analysis of surface wave data (MOPA)}{124}{paragraph*.95}%
+\contentsline {paragraph}{[028] Application of Multichannel Analysis of Surface Waves Method (MASW) in an Area Susceptible to Landslide at Ubatuba City, Brazil}{125}{paragraph*.96}%
+\contentsline {paragraph}{[029] Joint inversion of phase velocity dispersion and H/V ratio curves from seismic noise recordings using a genetic algorithm, considering higher modes}{125}{paragraph*.97}%
+\contentsline {paragraph}{[030] Multichannel analysis of surface waves to map bedrock}{126}{paragraph*.98}%
+\contentsline {paragraph}{[031] Effects of Multiple Modes on Rayleigh Wave Dispersion Characteristics}{126}{paragraph*.99}%
+\contentsline {paragraph}{[032] Analise Multicanal de Ondas de Superficie (MASW): um estudo comparativo com fontes ativas e passivas, ondas Rayleigh e Love e diferentes modos de...}{127}{paragraph*.100}%
+\contentsline {paragraph}{[033] Surface-wave analysis for building near-surface velocity models --- Established approaches and new perspectives}{127}{paragraph*.101}%
+\contentsline {paragraph}{[034] A Monte Carlo multimodal inversion of surface waves}{128}{paragraph*.102}%
+\contentsline {paragraph}{[035] In situ shear wave velocity from multichannel analysis of surface waves (MASW) tests at eight Norwegian research sites}{128}{paragraph*.103}%
+\contentsline {paragraph}{[036] Blind Shear-Wave Velocity Comparison of ReMi and MASW Results with Boreholes to 200 m in Santa Clara Valley: Implications for Earthquake...}{129}{paragraph*.104}%
+\contentsline {paragraph}{[037] Seismic characterization of shallow bedrock sites with multimodal Monte Carlo inversion of surface wave data}{129}{paragraph*.105}%
+\contentsline {paragraph}{[038] Emergence of broadband Rayleigh waves from correlations of the ambient seismic noise}{130}{paragraph*.106}%
+\contentsline {paragraph}{[039] Rayleigh-wave mode separation by high-resolution linear Radon transform}{130}{paragraph*.107}%
+\contentsline {paragraph}{[040] CMP cross-correlation analysis of multi-channel surface-wave data}{131}{paragraph*.108}%
+\contentsline {paragraph}{[041] S-Wave Velocity Profiling by Joint Inversion of Microtremor Dispersion Curve and Horizontal-to-Vertical (H/V) Spectrum}{131}{paragraph*.109}%
+\contentsline {paragraph}{[042] Surface-wave inversion using a direct search algorithm and its application to ambient vibration measurements}{131}{paragraph*.110}%
+\contentsline {paragraph}{[043] Inversion of shallow-seismic wavefields: I. Wavefield transformation}{132}{paragraph*.111}%
+\contentsline {paragraph}{[044] Estimating Vs(30) (or NEHRP Site Classes) from Shallow Velocity Models (Depths < 30 m)}{132}{paragraph*.112}%
+\contentsline {paragraph}{[045] Joint analysis of Rayleigh- and Love-wave dispersion: Issues, criteria and improvements}{133}{paragraph*.113}%
+\contentsline {paragraph}{[046] InterPACIFIC project: Comparison of invasive and non-invasive methods for seismic site characterization. Part II: Inter-comparison between...}{133}{paragraph*.114}%
+\contentsline {paragraph}{[047] Mapping Dispersion Misfit and Uncertainty in Vs Profiles to Variability in Site Response Estimates}{133}{paragraph*.115}%
+\contentsline {paragraph}{[048] Roadside Passive Multichannel Analysis of Surface Waves (MASW)}{134}{paragraph*.116}%
+\contentsline {paragraph}{[049] Site effect evaluation in the basin of Santiago de Chile using ambient noise measurements}{134}{paragraph*.117}%
+\contentsline {paragraph}{[050] Topographic Slope as a Proxy for Seismic Site Conditions and Amplification}{135}{paragraph*.118}%
+\contentsline {paragraph}{[051] Layering ratios: a systematic approach to the inversion of surface wave data in the absence of a priori information}{135}{paragraph*.119}%
+\contentsline {paragraph}{[052] A geophone-based and low-cost data acquisition and analysis system designed for microtremor measurements}{135}{paragraph*.120}%
+\contentsline {paragraph}{[053] Quantitative estimation of minimum offset for multichannel surface-wave survey with actively exciting source}{136}{paragraph*.121}%
+\contentsline {paragraph}{[054] Simple equations guide high-frequency surface-wave investigation techniques}{136}{paragraph*.122}%
+\contentsline {paragraph}{[055] Statistical correlations of shear wave velocity and penetration resistance for soils}{136}{paragraph*.123}%
+\contentsline {paragraph}{[056] The nature of noise wavefield and its applications for site effects studies: A literature review}{137}{paragraph*.124}%
+\contentsline {paragraph}{[057] Stacking of surface waves}{137}{paragraph*.125}%
+\contentsline {paragraph}{[058] Non-uniqueness in surface-wave inversion and consequences on seismic site response analyses}{138}{paragraph*.126}%
+\contentsline {paragraph}{[059] Combined Use of Active and Passive Surface Waves}{138}{paragraph*.127}%
+\contentsline {paragraph}{[060] Array estimators and the use of microseisms for reconnaissance of sedimentary basins}{138}{paragraph*.128}%
+\contentsline {paragraph}{[061] Liquefaction Resistance of Soils from Shear-Wave Velocity}{139}{paragraph*.129}%
+\contentsline {paragraph}{[062] Reliability of VS,30 Evaluation from Surface-Wave Tests}{139}{paragraph*.130}%
+\contentsline {paragraph}{[063] Estimates of Site-Dependent Response Spectra for Design (Methodology and Justification)}{140}{paragraph*.131}%
+\contentsline {paragraph}{[064] Vs30: Proxy for Seismic Amplification?}{140}{paragraph*.132}%
+\contentsline {paragraph}{[065] Determination of shallow shear wave velocity profiles in the Cologne, Germany area using ambient vibrations}{140}{paragraph*.133}%
+\contentsline {section}{\numberline {29}Digesto cronol\'ogico de la bit\'acora}{141}{section.29}%
+\contentsline {subsection}{\numberline {29.1}Febrero de 2026}{141}{subsection.29.1}%
+\contentsline {paragraph}{25 de febrero.}{141}{paragraph*.134}%
+\contentsline {subsection}{\numberline {29.2}Marzo de 2026}{141}{subsection.29.2}%
+\contentsline {paragraph}{3 de marzo.}{141}{paragraph*.135}%
+\contentsline {paragraph}{11 de marzo.}{141}{paragraph*.136}%
+\contentsline {paragraph}{13 de marzo.}{141}{paragraph*.137}%
+\contentsline {paragraph}{17 de marzo.}{141}{paragraph*.138}%
+\contentsline {paragraph}{18 de marzo.}{142}{paragraph*.139}%
+\contentsline {paragraph}{19 de marzo.}{142}{paragraph*.140}%
+\contentsline {paragraph}{20 de marzo.}{142}{paragraph*.141}%
+\contentsline {paragraph}{23 de marzo.}{142}{paragraph*.142}%
+\contentsline {subsection}{\numberline {29.3}Abril de 2026}{142}{subsection.29.3}%
+\contentsline {paragraph}{10 de abril.}{142}{paragraph*.143}%
+\contentsline {paragraph}{11 de abril.}{142}{paragraph*.144}%
+\contentsline {paragraph}{12 de abril.}{142}{paragraph*.145}%
+\contentsline {paragraph}{15 de abril.}{142}{paragraph*.146}%
+\contentsline {paragraph}{17 de abril.}{142}{paragraph*.147}%
+\contentsline {paragraph}{18 de abril.}{142}{paragraph*.148}%
+\contentsline {paragraph}{19 de abril.}{142}{paragraph*.149}%
+\contentsline {paragraph}{22 de abril.}{143}{paragraph*.150}%
+\contentsline {paragraph}{27 de abril.}{143}{paragraph*.151}%
+\contentsline {paragraph}{29 de abril.}{143}{paragraph*.152}%
+\contentsline {paragraph}{30 de abril.}{143}{paragraph*.153}%
+\contentsline {subsection}{\numberline {29.4}Mayo de 2026}{143}{subsection.29.4}%
+\contentsline {paragraph}{5 de mayo.}{143}{paragraph*.154}%
+\contentsline {paragraph}{10 de mayo.}{143}{paragraph*.155}%
+\contentsline {paragraph}{17 de mayo.}{143}{paragraph*.156}%
+\contentsline {paragraph}{18 de mayo.}{143}{paragraph*.157}%
+\contentsline {paragraph}{20 de mayo.}{144}{paragraph*.158}%
+\contentsline {paragraph}{24 de mayo.}{144}{paragraph*.159}%
+\contentsline {paragraph}{25 de mayo.}{144}{paragraph*.160}%
+\contentsline {paragraph}{26 de mayo.}{144}{paragraph*.161}%
+\contentsline {paragraph}{28 de mayo.}{144}{paragraph*.162}%
+\contentsline {paragraph}{29 de mayo.}{144}{paragraph*.163}%
+\contentsline {paragraph}{31 de mayo.}{144}{paragraph*.164}%
+\contentsline {subsection}{\numberline {29.5}Junio de 2026}{145}{subsection.29.5}%
+\contentsline {paragraph}{3 de junio.}{145}{paragraph*.165}%
+\contentsline {paragraph}{4 de junio.}{145}{paragraph*.166}%
+\contentsline {paragraph}{5 de junio.}{145}{paragraph*.167}%
+\contentsline {paragraph}{7 de junio.}{145}{paragraph*.168}%
+\contentsline {paragraph}{8 de junio.}{145}{paragraph*.169}%
+\contentsline {paragraph}{9 de junio.}{145}{paragraph*.170}%
+\contentsline {paragraph}{10 de junio.}{145}{paragraph*.171}%
+\contentsline {paragraph}{14 de junio.}{146}{paragraph*.172}%
+\contentsline {paragraph}{15 de junio.}{146}{paragraph*.173}%
+\contentsline {paragraph}{16 de junio.}{146}{paragraph*.174}%
+\contentsline {paragraph}{17 de junio.}{146}{paragraph*.175}%
+\contentsline {paragraph}{18 de junio.}{146}{paragraph*.176}%
+\contentsline {paragraph}{19 de junio.}{146}{paragraph*.177}%
+\contentsline {paragraph}{23 de junio.}{147}{paragraph*.178}%
+\contentsline {paragraph}{24 de junio.}{147}{paragraph*.179}%
+\contentsline {paragraph}{25 de junio.}{147}{paragraph*.180}%
+\contentsline {paragraph}{26 de junio.}{147}{paragraph*.181}%
+\contentsline {paragraph}{30 de junio.}{148}{paragraph*.182}%
+\contentsline {subsection}{\numberline {29.6}Julio de 2026}{148}{subsection.29.6}%
+\contentsline {paragraph}{1 de julio.}{148}{paragraph*.183}%
+\contentsline {paragraph}{2 de julio.}{148}{paragraph*.184}%
+\contentsline {paragraph}{7 de julio.}{148}{paragraph*.185}%
+\contentsline {paragraph}{8 de julio.}{149}{paragraph*.186}%
+\contentsline {paragraph}{9 de julio.}{149}{paragraph*.187}%
+\contentsline {paragraph}{11 de julio.}{149}{paragraph*.188}%
+\contentsline {paragraph}{12 de julio.}{149}{paragraph*.189}%
+\contentsline {paragraph}{15 de julio.}{149}{paragraph*.190}%
+\contentsline {paragraph}{16 de julio.}{150}{paragraph*.191}%
+\contentsline {paragraph}{20 de julio.}{150}{paragraph*.192}%
+\contentsline {paragraph}{21 de julio.}{150}{paragraph*.193}%
+\contentsline {paragraph}{23 de julio.}{150}{paragraph*.194}%
+\contentsline {paragraph}{24 de julio.}{151}{paragraph*.195}%
+\contentsline {paragraph}{25 de julio.}{151}{paragraph*.196}%
+\contentsline {paragraph}{26 de julio.}{151}{paragraph*.197}%
+\contentsline {paragraph}{29 de julio.}{151}{paragraph*.198}%
+\contentsline {subsection}{\numberline {29.7}Agosto de 2026}{151}{subsection.29.7}%
+\contentsline {paragraph}{1 de agosto.}{151}{paragraph*.199}%
+\contentsline {section}{\numberline {30}Registro completo de \emph {commits}}{152}{section.30}%

@@ -1,0 +1,161 @@
+\section{Decaimiento con la distancia: qu\'e onda se est\'a registrando, y cu\'anto
+atenúa el suelo}
+\label{sec:atenuacion}
+
+\emph{An\'alisis nuevo del 12 de agosto de 2026.} Es una verificaci\'on f\'isica
+barata y sorprendentemente fuerte, y aporta de paso una magnitud geot\'ecnica que
+el proyecto nunca hab\'ia estimado.
+
+\subsection{El planteo}
+
+La teor\'ia predice decaimientos geom\'etricos distintos seg\'un el tipo de onda
+(Foti \S2.4.3, reproducido en el \emph{script} \texttt{p03} de marzo):
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+Tipo de onda & Decaimiento & Exponente $n$ en $A\propto r^{-n}$ \\
+\midrule
+Rayleigh (superficial) & $1/\sqrt{r}$ & $0{,}5$ \\
+Cuerpo, en el interior & $1/r$ & $1$ \\
+Cuerpo, sobre la superficie libre & $1/r^{2}$ & $2$ \\
+\textbf{Piso de ruido} & \textbf{no decae} & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Midiendo el exponente sobre los datos propios se puede contrastar la hip\'otesis
+central del m\'etodo: que lo registrado son ondas superficiales. Y como la
+\'ultima fila predice $n=0$ para ruido, el mismo an\'alisis funciona como
+\textbf{segundo diagn\'ostico independiente} de la banda \'util.
+
+Se calcul\'o la amplitud RMS en banda de \SI{1}{\second} de se\~nal tras el
+arribo, mediana por posici\'on, sobre 637 golpes en 21 posiciones entre
+\SI{10}{} y \SI{50}{\meter}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{atenuacion_geometrica.png}
+\caption{Amplitud RMS por banda contra distancia, en escala doble logar\'itmica,
+normalizada al primer punto. Las l\'ineas grises son las pendientes te\'oricas.}
+\label{fig:atenuacion}
+\end{figure}
+
+\subsection{Resultado 1: las bandas sin se\~nal son planas}
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Banda & $n$ ajustado & $R^{2}$ & Lectura \\
+\midrule
+\SIrange{1}{5}{\hertz}   & $-0{,}01$ & $0{,}00$ & \textbf{No decae y no correlaciona: piso de ruido} \\
+\SIrange{5}{10}{\hertz}  & $0{,}05$  & $0{,}01$ & \textbf{Idem} \\
+\SIrange{10}{20}{\hertz} & $1{,}47$  & $0{,}95$ & Decaimiento fuerte y bien ajustado \\
+\SIrange{20}{50}{\hertz} & $1{,}27$  & $0{,}90$ & Decaimiento fuerte y bien ajustado \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\dato{\textbf{Confirmaci\'on independiente del hallazgo de la banda \'util.} Las
+bandas \SIrange{1}{5}{} y \SIrange{5}{10}{\hertz} dan exponente \emph{cero}
+($-0{,}01$ y $0{,}05$) con \emph{coeficiente de determinaci\'on cero}
+($R^2=0{,}00$ y $0{,}01$): la amplitud no cambia con la distancia y ni siquiera
+correlaciona con ella. Es exactamente lo que hace un piso de ruido y exactamente
+lo que \emph{no} hace una onda que se propaga.
+
+Esto llega por un camino completamente distinto al del an\'alisis de SNR
+(\S\ref{sec:banda-util}) ---all\'i se compar\'o se\~nal contra ruido en el
+tiempo; aqu\'i se mira c\'omo var\'ia con la geometr\'ia--- y coincide. Es la
+verificaci\'on m\'as limpia que se le pudo hacer al hallazgo.}
+
+\subsection{Resultado 2: el decaimiento real es mucho m\'as fuerte que el
+geom\'etrico}
+
+En las bandas con se\~nal el exponente ajustado es $1{,}27$--$1{,}47$, muy por
+encima del $0{,}5$ de Rayleigh puro. Esto \textbf{no} significa que no sean ondas
+superficiales: significa que al decaimiento geom\'etrico se le suma
+\textbf{atenuaci\'on material} (anel\'astica), que es exponencial en la
+distancia. El modelo completo es
+
+\begin{equation}
+A(r)=\frac{A_0}{\sqrt{r}}\;e^{-\alpha r},
+\label{eq:atenuacion}
+\end{equation}
+
+y ajustar una ley de potencia pura a esa forma da siempre un exponente aparente
+mayor que $0{,}5$. Fijando el t\'ermino geom\'etrico de Rayleigh y ajustando
+$\ln\!\left(A\sqrt{r}\right)=\ln A_0-\alpha r$, que es lineal en $r$:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Banda & $n$ libre & $\alpha$ [\si{\per\meter}] & $R^{2}$ del ajuste & $Q$ estimado \\
+\midrule
+\SIrange{10}{15}{\hertz} & $0{,}99$ & $0{,}0201$ & $0{,}49$ & $21{,}7$ \\
+\SIrange{15}{20}{\hertz} & $1{,}83$ & $0{,}0522$ & $0{,}92$ & $11{,}7$ \\
+\SIrange{20}{30}{\hertz} & $1{,}13$ & $0{,}0261$ & $0{,}75$ & $33{,}4$ \\
+\SIrange{30}{50}{\hertz} & $1{,}63$ & $0{,}0427$ & $0{,}82$ & $32{,}7$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+con $Q=\pi f/(\alpha V_R)$ y $V_R\approx\SI{90}{\meter\per\second}$ tomado de la
+propia curva de dispersi\'on medida en esa banda.
+
+\seleccionado{\textbf{Los factores de calidad estimados, $Q$ entre 12 y 33, caen
+de lleno en el rango esperable para suelos blandos a intermedios}
+(t\'ipicamente 5 a 30). Es un resultado f\'isicamente coherente obtenido
+\emph{\'integramente de los datos propios}, y una magnitud que el proyecto nunca
+hab\'ia estimado: el amortiguamiento material del sitio, $D_S\approx1/(2Q)$, es
+decir del orden del \SIrange{1.5}{4}{\percent}.
+
+Vale se\~nalar que esto conecta con algo que ya estaba escrito en el documento
+pero sin dato: la Secci\'on sobre acoplamiento con el suelo advierte que la
+estimaci\'on de $D_S$ a partir de la curva de atenuaci\'on es sensible a un
+acoplamiento deficiente. Ahora hay un n\'umero preliminar contra el cual
+comparar cuando esa medici\'on se haga con rigor.}
+
+\pendiente{\textbf{Salvedades, y son varias.} Este es un c\'alculo de primer
+orden, no una medici\'on de atenuaci\'on hecha con m\'etodo:
+
+\begin{enumerate}[itemsep=0.15em]
+    \item Se supone una \'unica $V_R$ por banda, cuando el medio es dispersivo
+    por construcci\'on ---es lo que el propio proyecto mide. Un c\'alculo
+    correcto usar\'ia $V_R(f)$ punto a punto de la curva de dispersi\'on.
+    \item Se atribuye \emph{todo} el exceso de decaimiento a atenuaci\'on
+    material. Parte puede venir de dispersi\'on geom\'etrica por
+    heterogeneidad lateral, de p\'erdida por conversi\'on de modos, o de
+    variaci\'on del acoplamiento entre posiciones ---recu\'erdese que el arreglo
+    es \emph{sint\'etico}: es el mismo ge\'ofono reubicado, y cada reubicaci\'on
+    es un acoplamiento nuevo.
+    \item La repetibilidad de la fuente (\SI{8.7}{\percent} en amplitud,
+    \S\ref{sec:repetibilidad-fuente}) introduce dispersi\'on que el ajuste no
+    modela; y los golpes de la configuraci\'on saturada aportan una amplitud que
+    no es la real.
+    \item Los $R^2$ del ajuste con atenuaci\'on son dispares (0{,}49 a 0{,}92),
+    lo que indica que el modelo de la Ec.~\eqref{eq:atenuacion} describe unas
+    bandas mejor que otras.
+\end{enumerate}
+
+Con esas reservas, el orden de magnitud es s\'olido y el resultado es
+\emph{utilizable como punto de partida}, no como valor reportable.}
+
+\subsection{Y explica la ca\'ida de alcance del arreglo}
+
+Con $\alpha\approx\SI{0.04}{\per\meter}$ en la banda de trabajo, el t\'ermino
+exponencial solo aporta unos \SI{-1.4}{\decibel} cada \SI{4}{\meter}: entre
+\SI{10}{} y \SI{50}{\meter} son m\'as de \SI{14}{\decibel} \emph{adicionales} a
+la ca\'ida geom\'etrica. Eso da la explicaci\'on f\'isica de algo ya observado
+emp\'iricamente en el documento ---la SNR aparente cayendo de una mediana de
+\SI{18.9}{\decibel} entre \SIrange{10}{26}{\meter} a \SI{4.9}{\decibel} entre
+\SIrange{30}{50}{\meter}--- y de por qu\'e las posiciones m\'as lejanas del
+an\'alisis de banda \'util son justamente las peores.
+
+\seleccionado{\textbf{Consecuencia pr\'actica, y refuerza lo dicho en
+\S\ref{sec:banda-util}}: ampliar la apertura no basta, porque la atenuaci\'on
+material crece exponencialmente con la distancia y a estas frecuencias es severa.
+Hay dos salidas y ambas apuntan al mismo lado: \textbf{bajar en frecuencia}
+---donde la atenuaci\'on es menor, ya que $\alpha$ crece con $f$--- y
+\textbf{aumentar la energ\'ia de la fuente}. Es decir, exactamente la punta m\'as
+blanda con masa de extensi\'on (\S\ref{sec:fuente-sismica}) y el apilado de
+m\'as golpes.}

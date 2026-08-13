@@ -6,6 +6,21 @@ La etapa m\'as densa en decisiones de dise\~no. Arranca con el modelo del
 ge\'ofono y termina con la cadena anal\'ogica que sigue en uso. Contiene los
 \textbf{dos pivotes de arquitectura} del proyecto.
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{respuesta_sm24_modelo.png}
+\caption{Respuesta nominal que motiv\'o la cadena anal\'ogica, mostrando por separado
+las formas referidas a aceleraci\'on y velocidad para $\zeta=0{,}25$ y $0{,}60$.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{barrido_crudo_cadena.png}
+\caption{Barrido real de laboratorio incorporado posteriormente para contrastar el
+dise\~no. El registro crudo es evidencia; la superposici\'on del modelo no ideal hist\'orico
+debe recalcularse con el polo dominante corregido.}
+\end{figure}
+
 \subsection{El problema de partida}
 
 El SM-24 tiene frecuencia natural $f_n = \SI{10}{\hertz}$ y amortiguamiento
@@ -46,12 +61,10 @@ velocidad de fase y un error de fase se traduce directo en error de velocidad;
 y \textbf{(4)} el PSoC ya trae DSP, as\'i que el filtrado sale gratis en
 componentes.}
 
-\pendiente{La bit\'acora del 18/04 presenta estos motivos como
-\emph{reconstrucci\'on} a partir del \emph{diff}, no como testimonio directo
----dice literalmente ``las razones probables''--- y en un pasaje habla de un
-ge\'ofono de \SI{4.5}{\hertz}, que no es el SM-24. El motivo (3), fase lineal,
-es el t\'ecnicamente decisivo y el que sostiene el resto del dise\~no.
-\textbf{Confirmar cu\'al fue el motivo real.}}
+\dato{Esta decisi\'on fue confirmada posteriormente por el autor: pesaron la
+tolerancia de los componentes, la deriva t\'ermica, la fase no lineal y la
+disponibilidad del DSP del PSoC. La referencia reconstruida a un ge\'ofono de
+\SI{4.5}{\hertz} no corresponde al SM-24 y no se usa como justificaci\'on.}
 
 \subsection{Lo que reemplaz\'o al RC: FIR con decimaci\'on en cascada}
 
@@ -113,28 +126,29 @@ que fija el denominador de la etapa pasa-banda. En el script de abril se us\'o
 $\zeta_1=100$ como valor de trabajo; la caracterizaci\'on medida de julio
 (Etapa~9) da $\zeta_1 \approx 937$ para el circuito calibrado.
 
-Esta es exactamente la estrategia de Ma \emph{et al.} (2023): \textbf{no se
-cancelan polos ni ceros}, se sube el amortiguamiento manteniendo $\omega_n$.
-La red completa resulta $1 - H_3(s)$ ---pasa-todo menos pasa-banda---, y \emph{eso
+Esta es la estrategia de Ma \emph{et al.} (2023): transformar la respuesta
+elevando el amortiguamiento efectivo y manteniendo $\omega_n$. En el modelo
+ideal, la red $1-H_3(s)$ aporta el numerador que cancela algebraicamente el
+denominador original y lo reemplaza por el de $\zeta_1$; su implementaci\'on es
+pasa-todo menos pasa-banda. Esto
 explica por qu\'e la cadena anal\'ogica del proyecto tiene una etapa pasa-banda
-seguida de una suma}: el pasa-banda y la resta \textbf{son} la compensaci\'on.
+seguida de una suma: el pasa-banda y la resta \textbf{son} la compensaci\'on.
 
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.86\textwidth]{extension_banda.png}
-\caption{Qu\'e hace la compensaci\'on. Al elevar $\zeta_1$, los polos complejos
-del transductor se separan en dos reales y el inferior queda en
-$\omega_n/(2\zeta_1)$. El corte de \SI{-3}{\decibel} pasa de
-\SI{8.0}{\hertz} sin compensar a \SI{0.51}{\hertz} con el $\zeta_1=10$ de Ma
-\emph{et al.}\ y a \SI{0.010}{\hertz} con el $\zeta_1\approx 937$ que resulta
-del denominador BP medido en la tanda calibrada del 21/07. Calculado a partir
-de la Ec.~\eqref{eq:hgeo} y $1-H_3$ con $f_n = \SI{10.2046}{\hertz}$.
-\textbf{Esta es la respuesta \emph{de dise\~no}}; la muesca realmente medida
-resulta \SI{26.3}{\decibel} menos profunda de lo previsto (Etapa~9).}
+\caption{Respuesta ideal de la compensaci\'on. Al elevar $\zeta_1$, los polos
+complejos se separan en dos reales; para $\zeta_1\gg1$, el inferior se aproxima
+a $f_n/(2\zeta_1)$. Con $f_n=\SI{10.2046}{\hertz}$ y
+$\zeta_1=937{,}396$, esa frecuencia es \SI{5.44}{\milli\hertz}. Es una
+predicci\'on del modelo, no una banda plana demostrada experimentalmente. La
+muesca medida qued\'o \SI{26.33}{\decibel} por encima de la profundidad de
+dise\~no (Etapa~9), por lo que la extensi\'on efectiva debe verificarse con una
+medici\'on de extremo a extremo.}
 \label{fig:extension}
 \end{figure}
 
-\subsection{El pivote de topolog\'ia: Sallen-Key $\to$ MFB (30 de abril)}
+\subsection{El pivote de topolog\'ia: Sallen-Key \texorpdfstring{$\to$}{a} MFB (30 de abril)}
 
 El 30 de abril se escribi\'o \texttt{ComparacionFiltros.m}, que superpone los
 Bode de tres funciones: la MFB propuesta, la Sallen-Key vigente y la respuesta
@@ -152,6 +166,7 @@ magnitud son intercambiables. \textbf{El pivote no se decidi\'o por respuesta.}}
 \label{fig:topologias}
 \end{figure}
 
+\clearpage
 \seleccionado{\textbf{Topolog\'ia MFB (\emph{Multiple Feedback}).} Criterio, en
 orden de peso:
 \begin{enumerate}[itemsep=0.1em,topsep=0.2em]
@@ -244,11 +259,12 @@ detectar cuelgues.
 \end{itemize}
 
 \descartado{\textbf{El notch de \SI{50}{\hertz} termin\'o retirado} (decisi\'on
-posterior, Etapa~9). La interferencia de red es determinista y de forma
-conocida, as\'i que conviene \emph{estimarla y restarla} en post-proceso por
-ajuste no lineal de m\'inimos cuadrados: eso no introduce retardo de grupo, es
-reversible y ---lo importante--- no borra se\~nal s\'ismica \'util, que en
-\SI{50}{\hertz} todav\'ia la hay.}
+posterior, Etapa~9). El procesamiento vigente busca la frecuencia de red en
+una ventana acotada y, una vez fijada, estima por regresi\'on lineal los
+coeficientes seno--coseno de la fundamental y sus arm\'onicos. La resta no
+introduce retardo de grupo y conserva el registro crudo, pero toda componente
+s\'ismica exactamente coherente con esas bases tambi\'en puede proyectarse y
+atenuarse; por eso el procedimiento no se describe como ``sin p\'erdida''.}
 
 \subsection{Calibraci\'on manual del \emph{offset} (10 de mayo)}
 
@@ -269,12 +285,13 @@ convertirlo en un circuito con componentes comprables y operacionales reales,
 y eso ocup\'o tres d\'ias duros ---el mensaje de \emph{commit} del 18 de mayo
 fue \emph{``ayudame dios anal\'ogico quiero sucumbir al diablo digital''}.
 
-\textbf{El operacional real entra al modelo.} Se dej\'o de suponer ganancia
-infinita: se model\'o el amplificador con $A_0 = \SI{90}{\decibel}$ y polo
-dominante en \SI{8}{\mega\hertz}, y se reverific\'o la respuesta del
-compensador con esa no idealidad
-(\texttt{graficar\_compensador\_csv.py}). Este es el paso que suele delatar un
-dise\~no que ``andaba en el papel''.
+\textbf{El operacional real entra al modelo, pero con una parametrizaci\'on que
+despu\'es result\'o inconsistente.} Se dej\'o de suponer ganancia infinita y se
+usaron $A_0 = \SI{90}{\decibel}$ y \SI{8}{\mega\hertz}; los scripts rotularon
+este \'ultimo valor como polo dominante. Si es la frecuencia de ganancia unitaria,
+el polo monopolo es $f_t/A_0\approx\SI{253}{\hertz}$. Por eso la verificaci\'on
+hecha con esa no idealidad debe repetirse y no se conserva como resultado v\'alido. La
+funci\'on de lazo abierto ya se corrigi\'o en los scripts mediante $f_p=f_t/A_0$.
 
 \textbf{B\'usqueda de componentes.} Se escribieron cuatro variantes de
 optimizaci\'on en paralelo, atacando el mismo problema desde \'angulos

@@ -30,18 +30,94 @@ Estado del suelo & Perturba el entorno del sondeo & No perturbado \\
 \end{tabularx}
 \end{table}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.96\textwidth]{comparacion_metodos.png}
+\caption{Mapa comparativo de los m\'etodos revisados. Resume qu\'e magnitud aporta cada
+familia, la log\'istica que exige y el lugar que ocupa MASW activo dentro del proyecto;
+no representa una jerarqu\'ia universal de exactitud.}
+\label{fig:comparacion-metodos}
+\end{figure}
+
 La referencia cuantitativa m\'as s\'olida sobre la confiabilidad relativa de ambas familias
 es el proyecto \textbf{InterPACIFIC}, un ejercicio de comparaci\'on entre laboratorios con
 14 equipos participantes. Su primera parte~\cite{Garofalo2016a} cuantific\'o la dispersi\'on
 \emph{entre} distintos operadores aplicando m\'etodos de ondas superficiales al mismo
 sitio; la segunda~\cite{Garofalo2016b} compar\'o esos resultados contra m\'etodos de
 perforaci\'on. Las gu\'ias de buenas pr\'acticas derivadas del proyecto~\cite{Foti2018}
-constituyen la referencia normativa que orienta el dise\~no experimental de este trabajo.
+constituyen la referencia metodol\'ogica que orienta el dise\~no experimental de este
+trabajo; no fijan una norma \'unica aplicable a toda configuraci\'on.
+Dentro del intervalo de longitudes de onda considerado confiable, el ejercicio encontr\'o
+coeficientes de variaci\'on entre analistas de aproximadamente \SIrange{5}{10}{\percent}
+para la velocidad de fase media, mientras que las incertidumbres declaradas por los
+propios analistas estuvieron t\'ipicamente entre \SIrange{5}{20}{\percent}. La segunda
+parte mostr\'o que los m\'etodos invasivos resuelven mejor capas delgadas y contrastes
+abruptos, pero que ambas familias producen valores de $V_{S,30}$ comparables.
 
-En la misma l\'inea de validaci\'on cruzada, Stephenson~\cite{Stephenson2005} realiz\'o una
-comparaci\'on \emph{ciega} de ReMi y MASW contra perforaciones hasta \SI{200}{\meter}, y
-Comina \emph{et al.}~\cite{Comina2011} evaluaron espec\'ificamente la confiabilidad de la
-estimaci\'on de $V_{S,30}$ a partir de ensayos de ondas superficiales.
+En la misma l\'inea, Stephenson~\cite{Stephenson2005} compar\'o a ciegas ReMi y MASW con
+cuatro sondeos registrados hasta al menos \SI{260}{\meter}. Los promedios de $V_S$ hasta
+30, 50 y \SI{100}{\meter} quedaron generalmente dentro de \SI{15}{\percent} de la
+referencia; en dos sondeos el promedio a \SI{100}{\meter} difiri\'o menos de
+\SI{3}{\percent}, y la amplificaci\'on espectral entre 1 y \SI{10}{\hertz} qued\'o dentro
+de \SI{15}{\percent}. Ninguno de los dos m\'etodos fue consistentemente superior.
+Comina \emph{et al.}~\cite{Comina2011}, sobre ocho sitios, reportaron repetibilidad de
+medici\'on t\'ipicamente mejor que \SI{5}{\percent} y variaci\'on de $V_{S,30}$ cercana a
+\SI{2}{\percent} entre modelos equivalentes cuando la banda experimental cubre las
+longitudes de onda necesarias. Con una longitud de onda m\'axima superior a
+\SI{60}{\meter}, los resultados se aproximaron a los invasivos; el estimador simplificado
+basado en $c_R$ a \SI{36}{\meter} tuvo una dispersi\'on cercana a \SI{6}{\percent} y una
+desviaci\'on RMS de aproximadamente \SI{7}{\percent}, pero no sustituye la inversi\'on.
+
+\subsubsection{Qu\'e se lleva este trabajo de InterPACIFIC}
+\label{sec:buenas-practicas}
+
+El hallazgo estructural de InterPACIFIC, m\'as importante que cualquiera de sus n\'umeros
+individuales, es la \textbf{separaci\'on entre dos fuentes de error que suelen confundirse}:
+
+\begin{itemize}[itemsep=0.2em]
+    \item La \textbf{curva de dispersi\'on experimental} presenta variabilidad
+    \emph{baja} entre equipos independientes que miden el mismo sitio. Es decir, la etapa
+    de \emph{medici\'on} ---instrumento, arreglo, procesamiento hasta la imagen de
+    dispersi\'on--- est\'a esencialmente resuelta y es reproducible.
+    \item La dispersi\'on entre los \textbf{perfiles $V_S$} finales es sustancialmente
+    mayor, y su origen dominante es la \textbf{parametrizaci\'on del modelo y la no
+    unicidad de la inversi\'on} (\S\ref{sec:no-unicidad}), no el ruido de medici\'on.
+\end{itemize}
+
+La lectura para este proyecto es directa y conviene enunciarla sin adornos: \textbf{el
+cuello de botella de la exactitud no est\'a en el instrumento que este trabajo construye,
+sino en la inversi\'on}. Eso no invalida el aporte ---un instrumento que no mide no habilita
+ninguna inversi\'on--- pero s\'i fija expectativas: mejorar el \emph{front-end} mejora la
+banda \'util y la SNR de la curva de dispersi\'on, que es exactamente la etapa que
+InterPACIFIC encuentra reproducible; no reduce por s\'i mismo la incertidumbre del perfil
+final.
+
+De las gu\'ias de buenas pr\'acticas~\cite{Foti2018} derivadas del proyecto, este trabajo
+adopta expl\'icitamente las siguientes, y en cada caso se indica d\'onde se materializan:
+
+\begin{center}\footnotesize
+\begin{tabularx}{\textwidth}{@{}l X l@{}}
+\toprule
+Buena pr\'actica & C\'omo se implementa aqu\'i & D\'onde \\
+\midrule
+Apilamiento de m\'ultiples golpes & Promediado por punto de fuente, con rechazo expl\'icito de capturas an\'omalas y compuerta \texttt{reviewed} por traza & \S\ref{sec:metodologia} \\
+Control del \emph{offset} m\'inimo fuente--primer receptor & Registro del \emph{offset} por nodo en la interfaz; criterio de campo contra efecto de campo cercano & \S\ref{sec:estado-arte-arreglo} \\
+Declaraci\'on de la banda v\'alida de la curva & Selecci\'on manual de la regi\'on de dispersi\'on con restricci\'on anti-\emph{aliasing} $c\ge 2\,\Delta x\,f$ en el \emph{picking} & \S\ref{sec:arq-interfaces} \\
+Reporte de incertidumbre, no de un \'unico perfil & Inversi\'on evolutiva que entrega poblaci\'on de modelos, no una \'unica soluci\'on & \S\ref{sec:resultados} \\
+Documentaci\'on de la geometr\'ia real, no la planificada & Geometr\'ia registrada por captura en los metadatos & Ap\'endice~\ref{sec:inventario} \\
+Verificaci\'on de la respuesta instrumental & Caracterizaci\'on de la cadena por barrido y contraste con el modelo & \S\ref{sec:metodologia} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Del trabajo de Comina \emph{et al.}~\cite{Comina2011} se retiene adem\'as un
+\textbf{criterio de dise\~no directamente accionable}: si la banda experimental alcanza
+longitudes de onda m\'aximas superiores a \SI{60}{\meter}, la no unicidad deja de afectar
+significativamente la exactitud de $V_{S,30}$, con incertidumbres del orden del
+\SIrange{5}{6}{\percent}. Ese umbral de $\lambda_{\max}>\SI{60}{\meter}$ es
+\textbf{exactamente la especificaci\'on que la compensaci\'on del transductor
+persigue habilitar} (\S\ref{sec:geo-park}) y el criterio contra el cual debe contrastarse
+la apertura del arreglo desplegado (\S\ref{sec:estado-arte-arreglo}).
 
 \subsection{Evoluci\'on de los m\'etodos de ondas superficiales}
 
@@ -109,6 +185,7 @@ extensi\'on de bajo costo que ampliar\'ia el alcance del trabajo y que conviene 
 en trabajos futuros. ¿Se consider\'o?}
 
 \subsection{Dise\~no del arreglo: los criterios cuantitativos}
+\label{sec:estado-arte-arreglo}
 
 Esta es la parte del estado del arte que impacta m\'as directamente sobre las decisiones
 de campo, y sobre la que existe literatura espec\'ifica:
@@ -135,10 +212,10 @@ de campo, y sobre la que existe literatura espec\'ifica:
     pseudo-2D de $V_S$ a partir de adquisici\'on rodante.
 \end{itemize}
 
-\nota{Estos cuatro criterios (\cite{Park2002,Yoon2009,Xu2006,Xia2006}) son los que
-permitir\'ian evaluar formalmente si la geometr\'ia usada en las campa\~nas realizadas es
-adecuada para el objetivo de \SI{50}{\meter}. Para poder hacerlo necesito los datos de
-geometr\'ia listados en el Ap\'endice~\ref{sec:preguntas}.}
+Estos criterios (\cite{Park2002,Yoon2009,Xu2006,Xia2006}) se aplican en la
+Secci\'on~\ref{sec:resultados} a la geometr\'ia realmente usada. La conclusi\'on no se
+deduce s\'olo de la frecuencia m\'inima observada: exige considerar simult\'aneamente
+espaciamiento, apertura, \emph{offset}, energ\'ia de fuente y banda con SNR suficiente.
 
 \subsection{Modos superiores e inversi\'on}
 
@@ -158,11 +235,52 @@ alta resoluci\'on; y Maraschini y Foti~\cite{Maraschini2010} proponen una invers
 multimodal por Monte Carlo, aplicada a sitios con basamento somero por Bergamo
 \emph{et al.}~\cite{Bergamo2011}.
 
-\textbf{Esta l\'inea es la que sigue el \emph{pipeline} desarrollado en este proyecto},
-que extrae varias curvas simult\'aneas ---una por modo--- mediante regiones-pol\'igono
-sobre la imagen de dispersi\'on, y las invierte conjuntamente.
+El \emph{pipeline} desarrollado permite separar varias curvas mediante regiones poligonales
+sobre la imagen de dispersi\'on y dispone de motores capaces de invertirlas en conjunto.
+Esa es una \textbf{capacidad de la infraestructura}, no la descripci\'on del resultado de
+campo que se conserva actualmente: la inversi\'on persistida usa s\'olo el modo~0 asignado
+por el operador, sin identificaci\'on modal independiente,
+con el \emph{port} num\'erico de MASWavesPy. La comparaci\'on multimodal entre motores queda
+como validaci\'on futura.
+
+\paragraph{Qu\'e se eligi\'o, concretamente.} Conviene ser expl\'icito porque el p\'arrafo
+anterior describe una capacidad y no una elecci\'on. La configuraci\'on adoptada es:
+
+\begin{itemize}[itemsep=0.15em]
+    \item \textbf{Extracci\'on de curvas}: selecci\'on manual de \emph{regiones
+    poligonales} sobre la imagen de dispersi\'on, una regi\'on por modo, produciendo $N$
+    curvas simult\'aneas. La alternativa autom\'atica ---seguimiento de m\'aximos--- se
+    descart\'o porque en presencia de salto modal el m\'aximo cambia de modo sin aviso, que
+    es exactamente el modo de falla que Tokimatsu \emph{et al.}~\cite{Tokimatsu1992}
+    describen.
+    \item \textbf{Modelado directo}: \textbf{disba}, implementaci\'on por matriz de
+    propagaci\'on compilada con Numba.
+    \item \textbf{Inversi\'on}: \textbf{evodcinv}, b\'usqueda evolutiva sobre disba, capaz
+    de invertir varios modos en conjunto y de entregar una poblaci\'on de modelos en vez de
+    una \'unica soluci\'on ---lo que se alinea con la buena pr\'actica de reportar
+    incertidumbre (\S\ref{sec:buenas-practicas}).
+    \item \textbf{Motor del estado persistido de campo} que se reporta en resultados:
+    \emph{port} num\'erico de MASWavesPy sobre el modo~0.
+\end{itemize}
+
+\paragraph{Por qu\'e esa elecci\'on, y no otra.} La justificaci\'on es deliberadamente
+simple y conviene declararla como tal en lugar de construir un argumento t\'ecnico
+\emph{a posteriori}: \textbf{se apost\'o por implementaciones ya validadas por la
+comunidad \emph{open-source}} en lugar de reimplementar el modelado directo. Un motor de
+matriz de propagaci\'on es c\'odigo delicado ---inestabilidad num\'erica a alta frecuencia,
+p\'erdida de precisi\'on en capas delgadas, b\'usqueda de ra\'ices que puede saltarse
+modos--- y reescribirlo habr\'ia consumido meses sin aportar nada nuevo, adem\'as de
+introducir una fuente de error imposible de separar de los errores del instrumento que
+s\'i se quiere evaluar. \textbf{El aporte de este proyecto est\'a en la instrumentaci\'on y
+en la cadena de adquisici\'on, no en el motor de inversi\'on}; usar herramientas
+consolidadas para la parte que no es el aporte es la decisi\'on econ\'omicamente correcta
+y adem\'as la que hace los resultados reproducibles por terceros. Los criterios
+operativos que decantaron la elecci\'on concreta fueron tres: integrabilidad directa en
+Python (el resto del \emph{pipeline} ya lo es), licencia permisiva, y soporte nativo de
+inversi\'on multimodal.
 
 \subsubsection{No unicidad y regularizaci\'on}
+\label{sec:no-unicidad}
 
 La inversi\'on es un problema mal condicionado: distintos perfiles $V_S(z)$ pueden producir
 curvas de dispersi\'on indistinguibles dentro del error experimental. Foti \emph{et
@@ -243,11 +361,33 @@ este proyecto se ubica entre ambos.
     \item \textbf{SWprocess}~\cite{Vantassel2022}: orientado a estimaciones robustas de
     la incertidumbre de la curva de dispersi\'on.
     \item \textbf{disba} y \textbf{evodcinv}: modelado directo por matriz de propagaci\'on
-    e inversi\'on por algoritmos evolutivos, empleados en el \emph{pipeline} multimodal de
-    este proyecto.
+    e inversi\'on por algoritmos evolutivos, disponibles como \emph{backend} multimodal del
+    proyecto; no son el motor del estado de inversi\'on persistido que se reporta en
+    resultados.
 \end{itemize}
 
-\subsection{Aplicaci\'on final: del perfil $V_S$ al par\'ametro geot\'ecnico}
+\paragraph{La comparaci\'on entre implementaciones queda como trabajo futuro.} Debe
+quedar constancia expl\'icita de un l\'imite del estado actual: \textbf{la elecci\'on
+entre estas herramientas fue pragm\'atica, no el resultado de un \emph{benchmark}}. Se
+decidi\'o por integrabilidad en Python, licencia y soporte multimodal
+(\S\ref{sec:no-unicidad}), no porque se haya demostrado que alguna produce mejores
+perfiles sobre los datos de este proyecto.
+
+La evaluaci\'on sistem\'atica de las distintas implementaciones y m\'etodos propuestos
+---MASWavesPy frente a Geopsy frente a SWprocess frente a disba+evodcinv, y dentro de cada
+uno las variantes de transformaci\'on al dominio de dispersi\'on (desplazamiento de fase,
+$f$--$k$, $\tau$--$p$/Radon) y de estrategia de inversi\'on (b\'usqueda local, algoritmo de
+vecindad, evolutiva, Monte Carlo)--- \textbf{queda como trabajo futuro}
+(\S\ref{sec:futuros}). Es una comparaci\'on que este proyecto est\'a en condiciones
+inusualmente buenas de hacer, porque dispone de algo que la mayor\'ia de los trabajos de
+comparaci\'on no tiene: \emph{datos propios de un sitio medido repetidamente con un
+instrumento cuya respuesta se caracteriz\'o de forma independiente}. Corriendo todos los
+motores sobre exactamente los mismos registros, la dispersi\'on entre perfiles resultantes
+ser\'ia atribuible \'unicamente al m\'etodo ---lo que constituye, a escala reducida, el
+mismo experimento que InterPACIFIC realiz\'o entre equipos
+(\S\ref{sec:buenas-practicas}).
+
+\subsection{Aplicaci\'on final: del perfil \texorpdfstring{$V_S$}{VS} al par\'ametro geot\'ecnico}
 
 El perfil $V_S$ no es un fin en s\'i mismo. Sus usos establecidos son:
 
@@ -262,7 +402,7 @@ El perfil $V_S$ no es un fin en s\'i mismo. Sus usos establecidos son:
     para este proyecto y se trata a continuaci\'on.
 \end{itemize}
 
-\subsubsection{Correlaciones $V_S$--SPT}
+\subsubsection{Correlaciones \texorpdfstring{$V_S$}{VS}--SPT}
 
 Existe un cuerpo consolidado de trabajos que correlacionan $V_S$ obtenido por ondas
 superficiales con la resistencia a la penetraci\'on $N$ del SPT. Uma Maheswari \emph{et
@@ -312,12 +452,12 @@ de la instrumentaci\'on anal\'ogica, los trabajos de extensi\'on de respuesta de
 frecuencia~\cite{Ma2023,Deng2025} se validan sobre un canal de laboratorio, no sobre un
 arreglo desplegado en campo.
 
-Este proyecto se posiciona en esa brecha: construir el sistema completo, de extremo a
-extremo, con componentes de bajo costo, y validarlo experimentalmente. El aporte
+Este proyecto se posiciona en esa brecha: integrar un prototipo de extremo a extremo con
+componentes de bajo costo y validar progresivamente sus subsistemas. El aporte
 metodol\'ogico espec\'ifico ---el \emph{front-end} anal\'ogico asistido digitalmente con
 auto-calibraci\'on--- surgi\'o como respuesta a un problema concreto encontrado durante la
-construcci\'on, y fue sometido a revisi\'on externa mediante su env\'io al congreso
-URUCON~2026.
+construcci\'on, y fue sometido al congreso URUCON~2026; el env\'io no se contabiliza como
+revisi\'on externa recibida hasta contar con un dictamen.
 
 \nota{Esta secci\'on es el n\'ucleo formal de la Primera Presentaci\'on (el Art.~19 pide
 espec\'ificamente un ``documento de Estado del Arte''). En la versi\'on de 15 p\'aginas

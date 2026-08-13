@@ -30,15 +30,41 @@ V_{\mathrm{out}}(t)=G_0\,\dot{z}(t),
 \label{eq:geo-fem}
 \end{equation}
 
-donde $G_0$ es la sensibilidad, en \si{\volt\per\meter\per\second}.
+donde $G_0$ es la sensibilidad, en \si{\volt\second\per\meter}.
 
-\subsection{Las tres formas de la funci\'on de transferencia}
+\subsubsection{D\'onde est\'a la ganancia: el bloque mec\'anico no la aporta}
+\label{sec:geo-donde-ganancia}
+
+Conviene detenerse en un punto que suele pasarse por alto y que condiciona todo el
+dise\~no posterior. Al dividir la primera igualdad de \eqref{eq:geo-mecanico} por la masa
+$m$, \textbf{la masa se cancela exactamente} en ambos miembros y el forzante queda con
+coeficiente $-1$. Es decir: no existe una ``ganancia mec\'anica'' ajustable en el
+transductor. Aumentar la masa m\'ovil no aumenta la se\~nal; s\'olo desplaza $\omega_n$,
+porque $m$ aparece simult\'aneamente en la inercia y en la definici\'on de $\omega_n$ y
+$\zeta$.
+
+El bloque mec\'anico es, por lo tanto, un \emph{conformador de forma}: fija d\'onde est\'an
+los polos y con qu\'e amortiguamiento, es decir la \textbf{banda} del transductor, pero
+entrega el desplazamiento relativo $z$ con transferencia de m\'odulo unitario en la banda
+media. Toda la \textbf{escala} de la cadena la aporta el bloque el\'ectrico a trav\'es de
+\eqref{eq:geo-fem}: $G_0\equiv G_e$ es puramente electromagn\'etica ---producto del flujo
+del im\'an permanente por la longitud efectiva de conductor de la bobina, $G_0=B\ell$---
+y se mide en volt por metro por segundo.
+
+Esta separaci\'on explica por qu\'e $G_0$ aparece como factor com\'un en todas las formas de
+la funci\'on de transferencia de la Secci\'on~\ref{sec:geo-tres-formas}, y por qu\'e no
+puede recuperarse ``m\'as se\~nal'' actuando sobre la mec\'anica: dado un ge\'ofono, la
+\'unica v\'ia para mejorar la relaci\'on se\~nal--ruido en baja frecuencia es actuar sobre
+la \emph{forma} de la respuesta ---mover los polos, que es exactamente lo que hace la
+compensaci\'on de la Secci\'on~\ref{sec:topologias}--- y pagar el costo en ganancia que
+ello implica, cuantificado en la Secci\'on~\ref{sec:topologias}.
+
+\subsection{Formas de la funci\'on de transferencia}
 \label{sec:geo-tres-formas}
 
 De \eqref{eq:geo-mecanico} y \eqref{eq:geo-fem} se obtiene la funci\'on de transferencia,
 cuya \textbf{forma depende de qu\'e variable del movimiento del suelo se tome como
-entrada}. Esta distinci\'on es importante y conviene fijarla expl\'icitamente, porque las
-tres formas circulan en la literatura y difieren en un factor $s$:
+entrada}. En este trabajo interesan dos formas, que difieren en un factor $s$:
 
 \begin{align}
 \text{entrada aceleraci\'on } \ddot{x}_g:\quad
@@ -48,11 +74,7 @@ H_a(s)&=\frac{V_{\mathrm{out}}(s)}{\ddot{X}_g(s)}
 \text{entrada velocidad } \dot{x}_g:\quad
 H_v(s)&=\frac{V_{\mathrm{out}}(s)}{\dot{X}_g(s)}
 =\frac{-G_0\,s^{2}}{s^{2}+2\zeta\omega_n s+\omega_n^{2}},
-\label{eq:geo-vel}\\[0.4em]
-\text{entrada desplazamiento } x_g:\quad
-H_d(s)&=\frac{V_{\mathrm{out}}(s)}{X_g(s)}
-=\frac{-G_0\,s^{3}}{s^{2}+2\zeta\omega_n s+\omega_n^{2}}.
-\label{eq:geo-desp}
+\label{eq:geo-vel}
 \end{align}
 
 \textbf{En este trabajo se adopta la forma en aceleraci\'on}, Ec.~\eqref{eq:geo-acel},
@@ -64,19 +86,104 @@ comporta como un \textbf{filtro pasa-banda de segundo orden}, y el problema de d
 un problema de modificaci\'on de los polos de esa funci\'on, tal como se desarrolla en la
 Secci\'on~\ref{sec:topologias}.
 
-Conviene observar que las tres formas describen el mismo dispositivo f\'isico: se
-relacionan por $H_v=s\,H_a$ y $H_d=s\,H_v$, ya que en el dominio de Laplace derivar
-equivale a multiplicar por $s$. La forma en velocidad, Ec.~\eqref{eq:geo-vel}, es la que
+Conviene observar que ambas formas describen el mismo dispositivo f\'isico y se
+relacionan por $H_v=s\,H_a$, ya que en el dominio de Laplace derivar equivale a
+multiplicar por $s$. La forma en velocidad, Ec.~\eqref{eq:geo-vel}, es la que
 justifica la afirmaci\'on habitual de que ``el ge\'ofono mide velocidad'': para
 $\omega\gg\omega_n$ se tiene $H_v\to -G_0$, es decir, respuesta plana y salida
 proporcional a la velocidad de part\'icula del suelo.
 
-\nota{\textbf{Confirmar}: en el documento fij\'e la forma en aceleraci\'on como referencia,
-por coherencia con Ma \emph{et al.} y porque es la que usa el an\'alisis del compensador.
-Si en el trabajo de MATLAB (\texttt{SM24\_model.slx}, \texttt{compensadorKai.m}) la
-entrada del modelo est\'a definida como velocidad, hay que unificar el criterio o
-declarar expl\'icitamente en cada lugar cu\'al se usa, para que las ganancias no queden
-desfasadas en un factor $\omega$.}
+\subsubsection{Por qu\'e aceleraci\'on y no velocidad}
+\label{sec:geo-por-que-aceleracion}
+
+La elecci\'on de la variable de entrada no es cosm\'etica: determina qu\'e clase de
+circuito hace falta para compensar y cu\'an sensible es ese circuito a las tolerancias de
+los componentes. Ma \emph{et al.}~\cite{Ma2023} comparan expl\'icitamente ambos caminos y
+sus argumentos, verificados contra el texto original, son los siguientes.
+
+\paragraph{1) La forma en aceleraci\'on \emph{ya es} el objeto que se quiere corregir.}
+En aceleraci\'on la respuesta del ge\'ofono ``se ajusta a la forma de la funci\'on de
+transferencia de un filtro pasa-banda de segundo orden'' \cite{Ma2023}. El problema de
+ampliar la banda se reduce entonces a un enunciado limpio: \emph{mantener $\omega_n$ y
+aumentar $\zeta$}. En velocidad, en cambio, la funci\'on tiene un cero doble en el origen
+y no admite esa lectura directa.
+
+\paragraph{2) La alternativa cl\'asica no elimina el problema, s\'olo lo desplaza.}
+El m\'etodo habitual con entrada velocidad es la \textbf{compensaci\'on polo--cero}:
+cancelar los polos del transductor con ceros de la red y reponer polos m\'as bajos. Ma
+\emph{et al.} muestran que ``tras la correcci\'on por el m\'etodo de compensaci\'on
+polo--cero, el nuevo sistema sigue exhibiendo caracter\'isticas pasa-altos de segundo
+orden'': la naturaleza pasa-altos no desaparece, se traslada a una frecuencia de corte
+menor. La ganancia de banda es real pero acotada, y el sistema conserva la pendiente de
+\SI{40}{\decibel\per decade} por debajo del nuevo corte.
+
+\paragraph{3) Costo de hardware.}
+La compensaci\'on polo--cero requiere \textbf{tres filtros} ---un pasa-altos, un
+pasa-banda y un pasa-bajos--- m\'as una etapa sumadora. El m\'etodo en aceleraci\'on
+requiere \textbf{un pasa-banda y un restador}, esto es, dos amplificadores operacionales,
+porque la funci\'on compensadora se factoriza como ``pasa-todo menos pasa-banda''
+(v\'ease la Secci\'on~\ref{sec:topologias}). Menos etapas significa menos ruido
+acumulado, menos consumo y menos componentes cr\'iticos en un nodo de campo alimentado a
+bater\'ia.
+
+\paragraph{4) Sensibilidad a tolerancias.}
+Este es el argumento decisivo y coincide con el criterio que el proyecto termin\'o
+adoptando por su cuenta en otras decisiones (Secci\'on~\ref{sec:topologias}). Seg\'un
+Ma \emph{et al.}, ``la efectividad del m\'etodo polo--cero est\'a influida por la
+exactitud de los dispositivos anal\'ogicos, especialmente porque los capacitores
+comercializados tienen valores de capacitancia variables y pueden estar sujetos a
+desviaciones no peque\~nas''. La raz\'on es estructural: el m\'etodo polo--cero descansa
+en una \emph{cancelaci\'on} entre ceros de la red y polos del transductor, y toda
+cancelaci\'on es fr\'agil por definici\'on ---si el cero no cae exactamente sobre el polo,
+queda un residuo que la ganancia posterior amplifica. El m\'etodo en aceleraci\'on no
+cancela nada: \emph{suma} un t\'ermino correctivo, y un error en ese t\'ermino produce un
+error proporcional, no un residuo divergente. La evidencia experimental de Ma lo
+confirma: donde la teor\'ia del m\'etodo polo--cero predice \SI{-3}{\decibel} a
+\SI{0.5}{\hertz}, la implementaci\'on real mide \SI{-5}{\decibel}.
+
+\paragraph{5) La ventaja crece al alejarse de $\omega_0$ ---y este proyecto trabaja
+deliberadamente por debajo de $\omega_0$.}
+Las relaciones se\~nal--ruido comparadas que reporta Ma \emph{et al.} para ambos m\'etodos
+sobre la misma se\~nal muestran una ventaja del m\'etodo en aceleraci\'on que crece con la
+distancia al punto de trabajo nominal:
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}ccl@{}}
+\toprule
+Frecuencia & Ventaja del m\'etodo en aceleraci\'on & Observaci\'on \\
+\midrule
+\SI{1}{\hertz}  & \SI{+1.51}{\decibel} & Muy por debajo de $f_0$ \\
+\SI{10}{\hertz} & \SI{+17.52}{\decibel} & En torno a $f_0=\SI{10}{\hertz}$ \\
+\SI{20}{\hertz} & \SI{+21.28}{\decibel} & Por encima de $f_0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Para este trabajo el punto es directo: el objetivo de profundidad obliga a operar en la
+banda de unos pocos hertz (Secci\'on~\ref{sec:geo-park}), es decir \emph{fuera} de la
+zona donde ambos m\'etodos se parecen. Adoptar la formulaci\'on en aceleraci\'on no es una
+preferencia de notaci\'on: es la que degrada m\'as suavemente justo donde el proyecto
+necesita medir.
+
+\paragraph{6) Un tercer camino descartado: resistencia negativa.}
+Existe una v\'ia puramente el\'ectrica que consiste en presentar al ge\'ofono una
+impedancia negativa que cancele parte de la resistencia de bobina y modifique as\'i el
+amortiguamiento efectivo. Se descart\'o por el motivo que se\~nala la misma fuente:
+``cuando la frecuencia es alta, el cambio de impedancia causado por la inductancia no
+puede ignorarse, lo que distorsiona la curva de respuesta''. A esto se suma que un
+convertidor de impedancia negativa es un lazo con realimentaci\'on positiva y por lo
+tanto un riesgo de inestabilidad ante la variaci\'on t\'ermica de $R_{\mathrm{bobina}}$,
+que en el SM-24 es de \SI{375}{\ohm} nominales especificados a \SI{25}{\celsius}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.94\textwidth]{respuesta_sm24_modelo.png}
+\caption{Respuesta nominal del SM-24 obtenida de las ecuaciones del transductor. Se
+comparan el amortiguamiento a circuito abierto ($\zeta=0{,}25$) y la condici\'on con
+\emph{shunt} de calibraci\'on ($\zeta=0{,}60$). La figura separa las formas referidas a
+aceleraci\'on y a velocidad para evitar atribuirles la misma pendiente.}
+\label{fig:sm24-respuesta-modelo}
+\end{figure}
 
 \subsection{El problema de la respuesta en baja frecuencia}
 
@@ -114,12 +221,58 @@ $f_n$ (\si{\hertz}) & Aplicaci\'on t\'ipica & Uso en ondas superficiales \\
 \end{tabular}
 \end{center}
 
-Park \emph{et al.}~\cite{Park1999} emplearon ge\'ofonos de \SI{14}{\hertz} en el trabajo
-fundacional del MASW, y para el rango dominado por la maza (\SIrange{5}{50}{\hertz}) la
-respuesta es plana con variaciones menores al \SI{1}{\percent} en amplitud y
-\SI{2}{\degree} en fase, sin necesidad de correcci\'on instrumental. Para trabajo pasivo o
-profundidades mayores a \SI{30}{\meter} la recomendaci\'on habitual es
-$f_n\leq\SI{4.5}{\hertz}$.
+\subsubsection{Un l\'imite honesto: por qu\'e Park no necesit\'o compensar y este trabajo s\'i}
+\label{sec:geo-park}
+
+Corresponde enfrentar de frente una objeci\'on que un lector informado plantear\'ia de
+inmediato. Park \emph{et al.}~\cite{Park1999} emplearon ge\'ofonos de \SI{14}{\hertz}
+---todav\'ia m\'as duros que los \SI{10}{\hertz} de este trabajo--- en el art\'iculo
+fundacional del MASW, y en el rango dominado por la maza
+(\SIrange{5}{50}{\hertz}) la respuesta de esos transductores es esencialmente plana, sin
+necesidad de correcci\'on instrumental alguna. Si el MASW naci\'o funcionando sin
+compensar, \textbf{?`por qu\'e compensar aqu\'i?}
+
+La respuesta es cuantitativa y delimita con precisi\'on el alcance de la contribuci\'on.
+La profundidad de investigaci\'on del MASW se relaciona con la longitud de onda m\'axima
+resuelta seg\'un el criterio habitual
+$z_{\max}\approx\lambda_{\max}/2\ \text{a}\ \lambda_{\max}/3$. Para el objetivo de
+\SI{50}{\meter} de este proyecto se requiere entonces
+$\lambda_{\max}\approx\SIrange{100}{150}{\meter}$. Con velocidades de onda Rayleigh
+t\'ipicas de suelo blando a intermedio, $V_R\approx\SIrange{150}{250}{\meter\per\second}$,
+la frecuencia asociada es
+
+\begin{equation}
+f=\frac{V_R}{\lambda_{\max}}\approx\SIrange{1}{2.5}{\hertz}.
+\label{eq:geo-banda-objetivo}
+\end{equation}
+
+Es decir: la banda cr\'itica para el objetivo de profundidad de este trabajo cae
+\textbf{aproximadamente una d\'ecada por debajo} del rango \SIrange{5}{50}{\hertz} donde
+Park no necesit\'o corregir nada, y muy por debajo de la frecuencia natural del
+transductor disponible. El rango de Park es el del \textbf{MASW somero}; el de este
+proyecto no lo es.
+
+Esto se corresponde con la pr\'actica establecida. La propia clasificaci\'on de la tabla
+anterior asigna los ge\'ofonos de \SI{4.5}{\hertz} a la exploraci\'on profunda, y la
+bit\'acora del proyecto registra tempranamente (23/03/2026) la misma conclusi\'on tomada
+de la literatura: ``los ge\'ofonos de \SI{4.5}{\hertz} son \'optimos para investigar
+hasta \SI{50}{\meter}''. El proyecto no dispone de ge\'ofonos de \SI{4.5}{\hertz} sino de
+\SI{10}{\hertz}, por la restricci\'on de disponibilidad descrita m\'as abajo.
+\textbf{La compensaci\'on electr\'onica es exactamente lo que cierra esa brecha}: es el
+intento de obtener de un transductor de \SI{10}{\hertz} el extremo inferior de banda que
+la aplicaci\'on habr\'ia obtenido de uno de \SI{4.5}{\hertz}.
+
+Enunciado as\'i, el pasaje de Park no debilita el trabajo, lo enmarca: la compensaci\'on
+\textbf{no compite con la pr\'actica establecida del MASW somero} ---donde efectivamente
+es innecesaria--- sino que ataca el r\'egimen que esa pr\'actica deja fuera. Omitir esta
+discusi\'on dejar\'ia la impresi\'on de que la compensaci\'on se presenta como
+gen\'ericamente necesaria, lo que ser\'ia falso y una objeci\'on f\'acil en la defensa.
+
+Debe subrayarse, sin embargo, un l\'imite de este argumento: la adecuaci\'on del
+transductor depende de la banda \emph{y} de la geometr\'ia exigidas por el objetivo. No
+existe correspondencia universal entre profundidad y frecuencia natural; tambi\'en mandan
+la apertura del arreglo, la energ\'ia de la fuente, la atenuaci\'on del sitio y la
+relaci\'on se\~nal--ruido. La compensaci\'on es condici\'on necesaria, no suficiente.
 
 \subsubsection{Justificaci\'on de la elecci\'on del transductor}
 
@@ -128,11 +281,13 @@ transductor en la Facultad}: es el ge\'ofono con el que se cuenta. No fue, por l
 una elecci\'on libre de dise\~no sino una restricci\'on de partida.
 
 Esto es importante para interpretar correctamente el trabajo desarrollado. Para el
-objetivo de \SI{50}{\meter} de profundidad la literatura recomendar\'ia
-$f_n\leq\SI{4.5}{\hertz}$, de modo que el transductor disponible atenúa precisamente la
-banda que interesa. En consecuencia, \textbf{el trabajo de extensi\'on de banda descrito en
-la Secci\'on~\ref{sec:topologias} no es un refinamiento opcional sino la condici\'on que
-hace viable el objetivo del proyecto con el hardware disponible}. Es, adem\'as, una
+objetivo de \SI{50}{\meter}, el transductor disponible atenúa parte de la banda de baja
+frecuencia que puede contener las longitudes de onda profundas. No existe, sin embargo,
+una correspondencia universal entre profundidad y frecuencia natural: tambi\'en mandan la
+apertura, la fuente, la atenuaci\'on del sitio y la relaci\'on se\~nal--ruido. En
+consecuencia, \textbf{la extensi\'on de banda descrita en la
+Secci\'on~\ref{sec:topologias} es una estrategia candidata para recuperar margen de SNR,
+no una demostraci\'on por s\'i sola de viabilidad a \SI{50}{\meter}}. Es, adem\'as, una
 situaci\'on representativa del contexto que el proyecto busca atender: la de un
 laboratorio que debe obtener resultados \'utiles con el instrumental que tiene, en lugar
 de especificar el \'optimo y comprarlo.
@@ -144,18 +299,20 @@ de especificar el \'optimo y comprarlo.
 \toprule
 Par\'ametro & Valor & Observaci\'on \\
 \midrule
-Frecuencia natural $f_n$ & \SI{10}{\hertz} nominal & Define el l\'imite inferior sin compensar \\
-Sensibilidad $G_0$ & $\approx\SI{28.8}{\volt\per\meter\per\second}$ & Determina el nivel de se\~nal \\
-Amortiguamiento $\zeta$ & $\approx0{,}7$ con resistencia de shunt & Valor de respuesta m\'as plana \\
+Frecuencia natural $f_n$ & \SI{10}{\hertz} $\pm2{,}5\%$ & Valor nominal \\
+Sensibilidad $G_0$ & \SI{28.8}{\volt\second\per\meter} $\pm2{,}5\%$ & Valor nominal \\
+Amortiguamiento a circuito abierto & $0{,}25$ & Valor usado en el modelo \\
+Amortiguamiento con \emph{shunt} & $0{,}60$ con \SI{1339}{\ohm} & Condici\'on de calibraci\'on \\
+Resistencia de bobina & \SI{375}{\ohm} $\pm2{,}5\%$ & A \SI{25}{\celsius} \\
+Masa m\'ovil & \SI{11}{\gram} & Valor nominal \\
+Frecuencia espuria & mayor que \SI{240}{\hertz} & Especificaci\'on del fabricante \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\nota{\textbf{Verificar contra la hoja de datos y contra la medici\'on}: resistencia de
-bobina, inductancia, masa m\'ovil, amortiguamiento a circuito abierto y distorsi\'on. Estos
-valores existen medidos en el trabajo de MATLAB (\texttt{SM-24/}) pero no los volqu\'e
-ac\'a; conviene completar la tabla con \emph{valores medidos} adem\'as de los nominales,
-porque es exactamente el tipo de dato que una mesa evaluadora pide.}
+Los valores anteriores provienen de la hoja de datos del fabricante~\cite{SM24}. La
+inductancia no est\'a especificada en ese documento y no se presenta como valor medido,
+para no confundir datos nominales con una caracterizaci\'on propia todav\'ia pendiente.
 
 \subsection{Acoplamiento con el suelo}
 
