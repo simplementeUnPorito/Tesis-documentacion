@@ -113,6 +113,24 @@ una red con salida a internet mientras mantiene su punto de acceso. Quedan pendi
 
 \subsection{Sincronizaci\'on: cerrar ESP-NOW y evaluar UWB}
 
+\paragraph{Eliminar el rearranque tard\'io que puede ocultar una falla de sincronismo.}
+La ruta normal vigente no arranca los nodos de manera secuencial: el maestro emite un
+\'unico \texttt{CMD\_START} por \emph{broadcast}, cada esclavo genera primero el flanco
+\texttt{SYNC\_TO\_PSOC} y el PSoC inicia la adquisici\'on desde su m\'aquina de estados
+en hardware. Sin embargo, queda un defecto pendiente en la ruta de recuperaci\'on de
+capturas almacenadas en RAM. Si, despu\'es del tiempo de captura previsto m\'as
+\SI{2.5}{\second}, el esclavo no recibi\'o ning\'un lote del PSoC, el \emph{watchdog}
+ejecuta autom\'aticamente \texttt{START\_NOW}. Ese segundo arranque conserva la marca
+temporal del disparo original, por lo que una falla podr\'ia terminar produciendo datos
+aparentemente completos pero iniciados varios segundos tarde y, por tanto, inv\'alidos
+para el an\'alisis de fase. No es una fuente de retardo durante las capturas que arrancan
+correctamente, sino un mecanismo que puede ocultar un fallo excepcional. La correcci\'on
+pendiente es eliminar \texttt{START\_NOW} de todo flujo sincronizado y, ante
+\texttt{CAPTURE\_SYNC\_STALL}, abortar la captura y enviar un NACK al maestro, igual que
+ya se hace en el camino de almacenamiento SD. El comando \texttt{START\_NOW} manual
+puede conservarse exclusivamente para pruebas de laboratorio. Conviene acompa\~nar el
+cambio con una prueba de regresi\'on que impida reintroducir un rearranque autom\'atico.
+
 La prioridad inmediata es ejecutar \texttt{SCOPE\_MULTI} sobre la topolog\'ia vigente y
 medir el camino callback$\to$GPIO$\to$PSoC en varios nodos, distancias, orientaciones,
 cargas WiFi y estados de canal. Deben reportarse distribuci\'on, percentiles y peor caso,
