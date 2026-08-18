@@ -1,0 +1,5 @@
+top_m,bottom_m,vs_invertida_ms,rho_sev_ohm_m,interpretacion
+0.0,1.0,70.84477608625373,1186.0,capa geoeléctrica superficial muy resistiva
+1.0,2.06,85.99999121866664,15.0,nivel conductor delgado dentro del suelo residual
+2.06,4.15,86.00000862388124,105.0,nivel areno-cuarzoso de resistividad intermedia
+4.15,inf,111.0,24.2,continuación de la unidad superficial hasta 24 m

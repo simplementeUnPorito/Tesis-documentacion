@@ -1,0 +1,62 @@
+\begin{thebibliography}{1}
+
+\bibitem{AnalogDevicesADXL355}
+{Analog Devices}.
+\newblock {ADXL355}: Low-noise, low-drift, low-power 3-axis {MEMS}
+  accelerometer.
+\newblock \url{https://www.analog.com/en/products/ADXL355.html}, 2026.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem{DigiKeyADXL355}
+{DigiKey}.
+\newblock {ADXL355BEZ-RL7} pricing and availability.
+\newblock
+  \url{https://www.digikey.com/en/products/detail/analog-devices-inc/ADXL355BEZ-RL7/6490627},
+  2026.
+\newblock Precio unitario consultado el 18 de agosto de 2026.
+
+\bibitem{Foti2014}
+S.~Foti, C.~G. Lai, G.~J. Rix, and C.~Strobbia.
+\newblock {\em Surface Wave Methods for Near-Surface Site Characterization}.
+\newblock CRC Press, Boca Raton, FL, USA, 2014.
+
+\bibitem{Guralp3ESPC}
+{Güralp Systems}.
+\newblock {3ESPC} portable broadband seismometer.
+\newblock \url{https://guralp.com/products/3espc-series}, 2026.
+\newblock Precio por solicitud. Consulta: 18 de agosto de 2026.
+
+\bibitem{Park1999}
+C.~B. Park, R.~D. Miller, and J.~Xia.
+\newblock Multichannel analysis of surface waves.
+\newblock {\em Geophysics}, 64(3):800--808, 1999.
+
+\bibitem{PCB393B31}
+{PCB Piezotronics}.
+\newblock Model 393b31 high-sensitivity seismic {ICP} accelerometer.
+\newblock \url{https://www.pcb.com/products?m=393B31}, 2026.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem{RTClark45}
+{R. T. Clark}.
+\newblock {RTC 4.5 Hz 375 Ohm Vertical Geophone}.
+\newblock
+  \url{https://rtclark.com/product/rtc-4-5hz-375ohm-vertical-geophone/}, 2026.
+\newblock Precio consultado el 18 de agosto de 2026.
+
+\bibitem{SM24}
+{Sensor Nederland B.V.}
+\newblock {SM-24 Geophone Element}.
+\newblock Product brochure:
+  \url{https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/SM-24%20Brochure.pdf},
+  2006.
+
+\bibitem{SparkFunSM24}
+{SparkFun Electronics}.
+\newblock Geophone --- {SM-24}, with insulating disc.
+\newblock
+  \url{https://www.sparkfun.com/sensors/environmental-sensors/seismograph.html},
+  2026.
+\newblock Precio consultado el 18 de agosto de 2026.
+
+\end{thebibliography}

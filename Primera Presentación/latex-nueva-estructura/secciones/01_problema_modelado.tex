@@ -1,0 +1,626 @@
+\section{Utilidad del modelado del subsuelo, métodos disponibles y brecha de acceso}
+\label{sec:problema-modelado}
+
+\subsection{El problema no es abstracto: se toman decisiones sobre un medio que no se ve}
+
+Toda obra se apoya en un material cuya estructura no puede observarse directamente en
+su totalidad. El suelo no es una pieza fabricada y uniforme: su composición, rigidez,
+compactación, saturación y espesor cambian con la profundidad y también entre puntos
+cercanos. Por eso, antes de construir, rehabilitar o estudiar una obra aparecen
+preguntas concretas:
+
+\begin{itemize}
+    \item ¿A qué profundidad cambia significativamente la rigidez del terreno?
+    \item ¿Existe una capa blanda, un relleno, una cavidad o un contacto con roca?
+    \item ¿El perfil observado en un sondeo representa realmente todo el sitio?
+    \item ¿Cómo puede amplificar el terreno una vibración o un movimiento sísmico?
+    \item ¿Dónde conviene realizar ensayos adicionales antes de tomar una decisión?
+\end{itemize}
+
+Modelar el subsuelo significa transformar observaciones parciales en una
+representación de capas o zonas con propiedades mecánicas estimadas. El modelo no es
+una fotografía exacta del terreno; es una hipótesis cuantitativa que debe ser compatible
+con las mediciones, la geología conocida y la resolución del método empleado.
+
+En este trabajo interesa especialmente la velocidad de onda de corte, $V_S$, porque se
+relaciona con el módulo de corte a pequeñas deformaciones mediante
+
+\begin{equation}
+    G_{\max}=\rho V_S^2,
+\end{equation}
+
+donde $\rho$ es la densidad del material. Un perfil $V_S(z)$ permite reconocer cambios
+de rigidez con la profundidad y aporta una entrada fundamental para la clasificación
+sísmica y el análisis de respuesta de sitio~\cite{Kramer1996,Foti2014}. Cuando se
+repiten perfiles a lo largo de una línea o sobre una grilla, la información deja de ser
+puramente puntual y puede convertirse en una sección 2D o en un modelo 3D.
+
+La utilidad no está, entonces, en ``medir una señal sísmica''. La señal es el dato
+crudo; el producto de ingeniería es un modelo del subsuelo con alcance, supuestos e
+incertidumbre declarados.
+
+\subsection{Casos reales: de la medición a una decisión}
+
+Los siguientes casos muestran que el modelado sísmico del subsuelo ya se utiliza para
+problemas de construcción, rehabilitación, clasificación de sitio e investigación. No
+son demostraciones de laboratorio: en todos ellos la información obtenida responde a
+una necesidad concreta del sitio.
+
+\subsubsection{CentrePort, Wellington: comprender daños y orientar la mitigación}
+
+El puerto de Wellington, Nueva Zelanda, sufrió licuefacción, desplazamiento lateral y
+daños estructurales durante el terremoto de Kaik\={o}ura de magnitud $M_w=7{,}8$. Para
+comprender la respuesta del terreno y proponer medidas de mitigación se combinaron
+\textbf{114 mediciones HVSR}, ensayos MASW activos y arreglos pasivos MAM. En seis
+ubicaciones se desarrollaron perfiles $V_S$ de más de \SI{200}{\meter} de profundidad,
+con los cuales se estimaron la rigidez, la profundidad a roca y el período fundamental
+del sitio~\cite{Vantassel2018}.
+
+El resultado no fue un número aislado. Se obtuvo un mapa que reveló cambios abruptos de
+la estructura del subsuelo en distancias cortas. Además, los períodos estimados con
+ruido ambiental fueron coherentes con los períodos de máxima amplificación registrados
+durante terremotos reales. Este caso muestra dos ideas importantes para la tesis: la
+información espacial puede cambiar una interpretación de sitio y la combinación de
+métodos activos, pasivos y datos de sondeo es más fuerte que cualquiera de ellos por
+separado.
+
+\subsubsection{Mina abandonada en Colorado: localizar zonas peligrosas antes de construir}
+
+En una antigua mina de oro de Colorado se necesitaba evaluar el terreno antes de
+construir un nuevo estanque industrial. El problema eran los pozos colapsados, rellenos
+y labores mineras someras que habían quedado pobremente documentadas. Se adquirieron
+\textbf{40 perfiles MASW} a lo largo de varios trazados para investigar aproximadamente
+los primeros \SIrange{9}{15}{\meter} del subsuelo. A partir de las anomalías detectadas
+se elaboró un mapa de posibles zonas débiles o vacíos para orientar los trabajos de
+movimiento de suelo y construcción~\cite{Crook2017}.
+
+El valor del método fue ampliar la cobertura entre observaciones puntuales. El estudio
+no ``demostró'' por sí solo la geometría exacta de cada labor minera, pero permitió
+concentrar la investigación y la gestión del riesgo donde la respuesta del terreno era
+anómala.
+
+\subsubsection{Delhi Technological University: clasificar varios sectores con un equipo comercial}
+
+En el campus de Delhi Technological University se realizaron 30 ensayos MASW en seis
+sectores. La adquisición utilizó un sismógrafo PASI GEA24 de 24 canales, geófonos
+verticales de \SI{4.5}{\hertz}, espaciamiento de \SI{2}{\meter} y una maza como fuente.
+El trabajo reportó una velocidad de corte media de \SI{285}{\meter\per\second} y
+clasificó el sitio dentro de la clase D utilizada por NEHRP~\cite{Gautam2020}.
+
+Este caso es especialmente útil para esta presentación porque conecta una aplicación
+real con uno de los equipos comerciales analizados más adelante. Muestra el flujo
+industrial completo: arreglo multicanal, fuente controlada, adquisición, curva de
+dispersión, inversión y clasificación del terreno.
+
+\subsubsection{Metro Manila: MASW y SPT como fuentes complementarias}
+
+En tres sitios de Metro Manila se comparó la estimación de $V_{S,30}$ obtenida mediante
+investigación geotécnica ---valores SPT y calidad de roca--- con la obtenida mediante
+MASW. Aunque los valores numéricos no fueron idénticos, ambos caminos produjeron una
+clasificación sísmica NEHRP consistente en los tres sitios~\cite{Monjardin2023}.
+
+La lección no es que MASW reemplace al SPT. El sondeo aporta muestras y una descripción
+local detallada; el método geofísico aporta cobertura y una estimación dinámica. Su
+comparación permite detectar contradicciones, reducir supuestos y construir una
+interpretación más defendible.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Qué demuestra cada caso de estudio.}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth} Y Y@{}}
+\toprule
+\textbf{Caso} & \textbf{Pregunta práctica} & \textbf{Resultado utilizable} \\
+\midrule
+CentrePort & ¿Por qué varió la amplificación y qué profundidad debe incluir el modelo? & Mapa de período de sitio y perfiles profundos de rigidez y roca para análisis de respuesta. \\
+Mina de Colorado & ¿Dónde pueden existir labores colapsadas antes de construir? & Mapa de zonas débiles o vacíos para orientar investigación y movimiento de suelo. \\
+Campus de Delhi & ¿Cómo varía la rigidez entre sectores del campus? & Perfiles $V_S$ y clasificación sísmica a partir de 30 ensayos. \\
+Metro Manila & ¿Son compatibles la investigación geotécnica y la geofísica? & Clasificación NEHRP consistente mediante SPT/RQD y MASW. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Métodos disponibles: cada uno observa una parte distinta del problema}
+
+No existe un método universalmente superior. La elección depende de la propiedad que
+se desea conocer, la profundidad, la resolución, la cobertura, el acceso al sitio y el
+nivel de incertidumbre aceptable. Una primera división separa los ensayos que requieren
+penetrar o perforar el terreno de aquellos que infieren propiedades desde la superficie.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\caption{Comparación funcional de métodos de caracterización.}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.13\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} Y Y@{}}
+\toprule
+\textbf{Método} & \textbf{Información principal} & \textbf{Fortaleza} & \textbf{Limitación relevante} \\
+\midrule
+SPT & Resistencia a penetración y muestra alterada & Práctica extendida, contacto directo y correlaciones geotécnicas conocidas & Información puntual; requiere sondeo; $V_S$ se obtiene sólo mediante correlaciones empíricas \\
+CPT/CPTu & Resistencia de punta, fricción y, con CPTu, presión de poros & Perfil casi continuo y buena resolución estratigráfica & Intrusivo; no recupera muestra; dificultad en gravas o materiales muy duros \\
+Downhole / crosshole & Tiempos de viaje y $V_P$/$V_S$ en profundidad & Alta resolución local y referencia valiosa para validar otros métodos & Requiere uno o varios pozos y representa un volumen limitado \\
+Refracción / tomografía & Velocidad de primeras llegadas, usualmente $V_P$ & Buena lectura lateral de contactos y profundidad a roca & Las capas de baja velocidad bajo capas rígidas pueden quedar ocultas; no entrega directamente $V_S$ salvo configuración específica \\
+MASW activo & Curva de dispersión y perfil $V_S(z)$ & No invasivo, multicanal y repetible; permite perfiles 1D y secciones pseudo-2D & Requiere fuente, arreglo sincronizado e inversión; existe compromiso entre resolución y profundidad \\
+MAM / ReMi / SPAC & Dispersión del ruido ambiental & Extiende la investigación a frecuencias bajas y mayores profundidades sin fuente controlada & Depende del campo de ruido, la geometría y registros más largos \\
+HVSR & Frecuencia o período fundamental del sitio & Una estación triaxial y despliegue rápido & Por sí solo no determina un perfil $V_S$ único \\
+ERT & Distribución de resistividad eléctrica & Sensible a saturación, arcillas, cavidades y cambios litológicos & La resistividad no es una medida directa de rigidez mecánica \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Los métodos clásicos siguen siendo necesarios}
+
+SPT y CPT son valiosos porque entregan información de contacto y se encuentran
+integrados en la práctica geotécnica. Los ensayos downhole y crosshole, por su parte,
+permiten medir velocidades sísmicas dentro o entre perforaciones. Su principal
+desventaja no es la calidad del dato, sino la representatividad espacial y la logística:
+un sondeo describe muy bien su entorno inmediato, pero la extrapolación entre sondeos
+puede ocultar variaciones laterales.
+
+Por eso, la pregunta correcta no es ``¿sondeo o geofísica?'', sino ``¿cómo usar los
+sondeos para anclar una medición que cubra un volumen mayor?''. El caso de CentrePort
+es ilustrativo: los datos CPT y de perforación se utilizaron para restringir la
+parametrización de la inversión de ondas superficiales~\cite{Vantassel2018}.
+
+\subsubsection{Los métodos no invasivos intercambian contacto directo por cobertura}
+
+La refracción, la resistividad y las ondas superficiales permiten estudiar líneas o
+superficies sin perforar cada punto. Esa cobertura es útil para localizar cambios y
+decidir dónde conviene realizar una verificación directa. El precio metodológico es que
+el resultado se obtiene mediante un problema inverso: las propiedades se infieren a
+partir de la respuesta observada y varias estructuras pueden explicar datos similares.
+
+En consecuencia, la geofísica no debe presentarse como una ``radiografía'' perfecta.
+Su utilidad está en incorporar información espacial y dinámica que los ensayos puntuales
+no aportan con la misma facilidad.
+
+\subsection{Por qué las ondas superficiales y por qué MASW}
+
+Las ondas Rayleigh son dispersivas en un medio estratificado: las componentes de
+distinta longitud de onda muestrean volúmenes diferentes del subsuelo y se propagan con
+velocidades de fase distintas. Esa dependencia de velocidad con frecuencia contiene
+información sobre la distribución de $V_S$.
+
+El procedimiento MASW activo separa el problema en tres etapas:
+
+\begin{enumerate}
+    \item \textbf{Adquisición}: una fuente controlada genera ondas y un arreglo de
+    receptores registra simultáneamente el campo de ondas.
+    \item \textbf{Análisis de dispersión}: las señales se transforman al dominio
+    frecuencia--velocidad para identificar una o varias curvas modales.
+    \item \textbf{Inversión}: se buscan perfiles estratificados cuya dispersión teórica
+    sea compatible con la observada.
+\end{enumerate}
+
+MASW evolucionó respecto de SASW al pasar de pares de receptores a un registro
+multicanal simultáneo. El muestreo espacial facilita la separación de energía coherente,
+reduce ambigüedades de fase y aumenta la productividad de campo~\cite{Park1999}. Los
+métodos pasivos MAM, ReMi o SPAC no compiten necesariamente con el activo: pueden
+extender la curva hacia frecuencias más bajas y, por tanto, mayores profundidades.
+
+La elección de MASW activo para este proyecto responde a que permite generar una
+excitación repetible, trabajar con una geometría conocida y evaluar de manera directa
+la cadena instrumental multicanal desarrollada. Además, el mismo sistema puede explorar
+en el futuro adquisiciones pasivas mediante registros continuos.
+
+La elección no elimina sus limitaciones:
+
+\begin{itemize}
+    \item la profundidad depende de las longitudes de onda realmente observadas con
+    relación señal--ruido suficiente;
+    \item la apertura, el espaciamiento y el \emph{offset} del arreglo condicionan la
+    banda válida;
+    \item los modos superiores pueden confundirse con el modo fundamental;
+    \item la inversión es no única y debe reportarse con incertidumbre;
+    \item errores de fase entre canales pueden convertirse directamente en errores de
+    velocidad de fase.
+\end{itemize}
+
+El proyecto InterPACIFIC y las guías derivadas demostraron que los métodos de ondas
+superficiales pueden producir resultados reproducibles entre equipos y analistas cuando
+se documentan la geometría, la banda válida, el procesamiento y la incertidumbre. A la
+vez, mostraron que las diferencias del perfil final dependen fuertemente de la
+parametrización y la inversión~\cite{Foti2018}. Esto acota el papel del instrumento: debe
+producir datos sincronizados y trazables de calidad conocida, pero no puede eliminar por
+sí solo la no unicidad del subsuelo.
+
+\subsection{De la señal medida al modelo \texorpdfstring{$V_S(z)$}{Vs(z)}: física y ecuaciones}
+
+La cadena que suele resumirse como
+
+\begin{center}
+$V_{R,\mathrm{aparente}}\longrightarrow V_S\longrightarrow\text{modelo}$
+\end{center}
+
+contiene en realidad dos problemas distintos. Primero se estima, a partir de las
+señales multicanal, cómo cambia la velocidad de fase de las ondas Rayleigh con la
+frecuencia. Después se buscan las propiedades de un medio estratificado que puedan
+producir esa dispersión. Esta distinción es esencial: en un suelo formado por capas no
+se mide directamente la $V_S$ de una profundidad determinada.
+
+\subsubsection{Del registro espacio--tiempo a la velocidad de fase aparente}
+
+Sea $u(x_j,t)$ el desplazamiento o, en la práctica, la señal proporcional a velocidad
+registrada por el geófono ubicado en $x_j$. Para cada canal se calcula la transformada
+temporal de Fourier
+
+\begin{equation}
+    U(x_j,\omega)=\int_{-\infty}^{\infty}u(x_j,t)
+    e^{i\omega t}\,\mathrm{d}t
+    =A(x_j,\omega)e^{i\phi(x_j,\omega)}.
+\end{equation}
+
+Si una componente de frecuencia $f=\omega/(2\pi)$ se propaga como una onda plana, su
+fase cambia aproximadamente como $\phi(x,\omega)=\phi_0-kx$, con número de onda
+$k=\omega/c_R$. Entre dos receptores separados una distancia $\Delta x$ se obtendría
+entonces
+
+\begin{equation}
+    c_{R,\mathrm{aparente}}(f)
+    =\frac{\omega\,\Delta x}{|\Delta\phi(f)|}
+    =\frac{2\pi f\,\Delta x}{|\Delta\phi(f)|}.
+    \label{eq:velocidad-fase-dos-canales}
+\end{equation}
+
+El problema práctico de esta expresión es que la fase está definida módulo $2\pi$,
+puede contaminarse con ruido y puede contener simultáneamente varios modos. MASW utiliza
+todos los canales para reducir esa ambigüedad. En el método de desplazamiento de fase
+se prueba una velocidad $c$ y se corrige la fase esperada en cada posición. Una forma
+normalizada del espectro es~\cite{Park1998}
+
+\begin{equation}
+    S(\omega,c)=\frac{1}{N}\left|
+    \sum_{j=1}^{N}
+    \frac{U(x_j,\omega)}{|U(x_j,\omega)|}
+    \exp\!\left(i\frac{\omega x_j}{c}\right)
+    \right|.
+    \label{eq:phase-shift}
+\end{equation}
+
+Cuando la velocidad ensayada coincide con la velocidad de fase de una onda presente,
+las contribuciones de los receptores se alinean y $S$ presenta un máximo. Al seleccionar
+esos máximos para cada frecuencia se obtiene la curva observada
+
+\begin{equation}
+    c_R^{\mathrm{obs}}(f)=\operatorname*{arg\,max}_{c}S(2\pi f,c).
+\end{equation}
+
+Se la denomina velocidad de fase \emph{aparente} porque se infiere desde un arreglo
+finito y puede incluir efectos de ruido, modos, geometría y variación lateral. Bajo la
+aproximación de estratos horizontales representa la dispersión modal de Rayleigh que se
+utilizará en la inversión.
+
+\subsubsection{Frecuencia, longitud de onda y profundidad}
+
+Cada punto de la curva tiene asociada una longitud de onda
+
+\begin{equation}
+    \lambda_R(f)=\frac{c_R(f)}{f}.
+    \label{eq:longitud-onda}
+\end{equation}
+
+Las longitudes de onda cortas concentran mayor sensibilidad cerca de la superficie;
+las largas involucran un volumen más profundo. No existe, sin embargo, una igualdad
+universal del tipo $z=\lambda/2$: cada medición posee una función de sensibilidad
+distribuida y solapada con la de otras frecuencias. La regla de una fracción de la
+longitud de onda sirve para diseñar e interpretar preliminarmente el ensayo, no para
+asignar cada velocidad a una profundidad exacta.
+
+Por ejemplo, un máximo de dispersión de \SI{240}{\meter\per\second} a
+\SI{20}{\hertz} corresponde a $\lambda_R=\SI{12}{\meter}$. Ese dato restringe la
+combinación de propiedades de las capas someras sensibles a esa longitud de onda; no
+significa que $V_S$ a \SI{6}{\meter} sea \SI{240}{\meter\per\second}. Un punto de
+\SI{500}{\meter\per\second} a \SI{5}{\hertz}, en cambio, tiene
+$\lambda_R=\SI{100}{\meter}$ y aporta información integrada de un volumen mucho más
+profundo.
+
+\subsubsection{Relación física entre \texorpdfstring{$c_R$ y $V_S$}{cR y Vs}}
+
+En un semiespacio elástico, homogéneo e isótropo, la velocidad de Rayleigh se relaciona
+con $V_S$ y $V_P$. Si $\xi=c_R/V_S$ y $\kappa=(V_S/V_P)^2$, la raíz física satisface
+
+\begin{equation}
+    \xi^6-8\xi^4+(24-16\kappa)\xi^2-16(1-\kappa)=0.
+    \label{eq:rayleigh-homogeneo}
+\end{equation}
+
+Para una relación de Poisson $\nu=0{,}25$, $\kappa=1/3$ y
+$c_R\simeq0{,}9194V_S$~\cite{Xia1999}. Sólo bajo ese modelo homogéneo podría utilizarse
+la aproximación $V_S\simeq c_R/0{,}9194$. Así, para el ejemplo anterior se obtendría
+$V_S\simeq\SI{261}{\meter\per\second}$, pero sería la velocidad de un semiespacio
+equivalente, no el valor de una capa a una profundidad particular.
+
+En un terreno estratificado, las condiciones de continuidad de esfuerzos y
+desplazamientos en cada interfaz producen una ecuación característica cuyos ceros
+dependen de la frecuencia y del modelo completo:
+
+\begin{equation}
+    F\!\left(f,c_R;\boldsymbol{V}_S,\boldsymbol{V}_P,
+    \boldsymbol{\rho},\boldsymbol{h}\right)=0.
+    \label{eq:forward-rayleigh}
+\end{equation}
+
+Aquí $\boldsymbol{h}$ contiene los espesores y $\boldsymbol{V}_S$,
+$\boldsymbol{V}_P$ y $\boldsymbol{\rho}$ las propiedades de cada estrato. Para cada
+frecuencia, las raíces de la ecuación~\eqref{eq:forward-rayleigh} son las velocidades
+de fase teóricas de los distintos modos. En el rango habitual de ingeniería la
+dispersión de Rayleigh es especialmente sensible a $V_S$ y, después, a los espesores;
+por eso $V_P$ y $\rho$ suelen fijarse o restringirse con información auxiliar
+~\cite{Xia1999}.
+
+\subsubsection{De la curva de dispersión a una familia de modelos}
+
+La inversión parte de los datos
+$\boldsymbol{d}=[c_R^{\mathrm{obs}}(f_1),\ldots,c_R^{\mathrm{obs}}(f_M)]$ y propone un
+modelo
+
+\begin{equation}
+\begin{split}
+    \boldsymbol{m}=[&h_1,\ldots,h_{L-1},
+    V_{S,1},\ldots,V_{S,L},\\
+    &V_{P,1},\ldots,V_{P,L},
+    \rho_1,\ldots,\rho_L].
+\end{split}
+\end{equation}
+
+Un solucionador directo calcula
+$\boldsymbol{g}(\boldsymbol{m})=\boldsymbol{c}_R^{\mathrm{calc}}$ mediante la
+ecuación~\eqref{eq:forward-rayleigh}. La inversión modifica el modelo para minimizar,
+por ejemplo,
+
+\begin{equation}
+    \Phi(\boldsymbol{m})=
+    \left\|\boldsymbol{W}_d
+    [\boldsymbol{d}-\boldsymbol{g}(\boldsymbol{m})]\right\|_2^2
+    +\lambda\,R(\boldsymbol{m}),
+    \label{eq:objetivo-inversion}
+\end{equation}
+
+donde $\boldsymbol{W}_d$ pondera cada dato según su incertidumbre y
+$R(\boldsymbol{m})$ penaliza modelos incompatibles con restricciones elegidas, por
+ejemplo variaciones excesivamente abruptas. En una inversión linealizada, la corrección
+puede expresarse como
+
+\begin{equation}
+    (\boldsymbol{J}^{T}\boldsymbol{W}\boldsymbol{J}+\lambda\boldsymbol{L}^{T}
+    \boldsymbol{L})\,\Delta\boldsymbol{m}
+    =\boldsymbol{J}^{T}\boldsymbol{W}
+    [\boldsymbol{d}-\boldsymbol{g}(\boldsymbol{m})],
+\end{equation}
+
+con $J_{ij}=\partial c_R(f_i)/\partial m_j$. El proceso se repite con
+$\boldsymbol{m}_{k+1}=\boldsymbol{m}_k+\Delta\boldsymbol{m}$, o se reemplaza por una
+búsqueda global; aquí $\boldsymbol{W}=\boldsymbol{W}_d^T\boldsymbol{W}_d$. En ambos
+casos la salida honesta no es una única ``fotografía'', sino
+un conjunto de modelos aceptables y sus bandas de variación.
+
+Una vez estimado el perfil $V_S(z)$ pueden calcularse magnitudes de ingeniería. Para
+capas que completan los primeros \SI{30}{\meter},
+
+\begin{equation}
+    V_{S,30}=\frac{30}{\displaystyle\sum_i h_i/V_{S,i}},
+    \qquad
+    G_{\max,i}=\rho_i V_{S,i}^{2}.
+\end{equation}
+
+La cadena física completa queda, por tanto,
+
+\begin{center}
+\small
+$u_j(t)\rightarrow U_j(f)\rightarrow S(f,c)\rightarrow
+c_R^{\mathrm{obs}}(f)\rightarrow
+\text{inversión estratificada}\rightarrow
+\{h_i,V_{S,i},V_{P,i},\rho_i\}\rightarrow V_S(z),V_{S,30},G_{\max}$.
+\end{center}
+
+Esto también explica por qué la instrumentación importa: error de fase entre canales,
+una banda recortada por el transductor o una geometría mal documentada alteran la curva
+de dispersión antes de que el algoritmo de inversión pueda intervenir.
+
+\subsection{Soluciones comerciales: evidencia de interés industrial}
+
+La existencia de varias familias de sismógrafos profesionales confirma que la
+adquisición sísmica somera no es un problema puramente académico. Los fabricantes han
+invertido en mejorar exactamente los aspectos que aparecen en campo: resolución y rango
+dinámico, sincronización, control sencillo, autonomía, escalabilidad y reducción de
+cableado.
+
+Por eso no resulta correcto presentar esta parte como ``problemas de los MASW
+comerciales''. Son soluciones maduras y, en varios casos, muy capaces. Lo que interesa
+es observar qué arquitectura adopta cada una y qué necesidad industrial demuestra.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\caption{Soluciones comerciales y señal de demanda industrial. Las prestaciones provienen de las páginas oficiales de los fabricantes.}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.22\textwidth} Y Y@{}}
+\toprule
+\textbf{Producto} & \textbf{Arquitectura} & \textbf{Qué resuelve} & \textbf{Qué demuestra} \\
+\midrule
+Geometrics GeodeFlex & 24 canales analógicos centralizados; control web; Wi-Fi en versión Core; GPS integrado & Adquisición simultánea de 24 bits, operación desde PC, tableta o teléfono y registro autónomo & La interfaz web y la sincronización forman parte del valor industrial, no son accesorios \\
+PASI GEA24 & Sismógrafo compacto de 24 canales conectado por USB a una computadora; ampliable a 48 & Portabilidad, alimentación USB y uso multipropósito: MASW, Vs30, refracción, tomografía y pozo & Existe demanda por una plataforma compacta que reutilice la misma adquisición en varios métodos \\
+DMT SUMMIT X One & Unidades remotas distribuidas sobre un cable ligero de dos conductores para datos y energía & Geometrías flexibles, despliegue rápido y escalabilidad desde más de 24 hasta miles de canales & Reducir el cableado y distribuir la adquisición tiene valor operativo real \\
+Geometrics Atom-3C & Unidades triaxiales autónomas, temporizadas por GPS, sin cable de tendido; descarga por Wi-Fi & Adquisición pasiva prolongada sin fuente, computadora ni interconexión entre estaciones & La autonomía y la eliminación de cables son suficientemente valiosas para justificar una familia específica de producto \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Geometrics GeodeFlex: control moderno sobre una adquisición centralizada}
+
+GeodeFlex integra 24 canales con conversión sigma--delta de 24 bits y muestreo
+simultáneo de hasta \SI{32}{\kilo\hertz} por canal. La versión Core incorpora
+controlador Linux, GPS, Wi-Fi y una aplicación web operable desde computadora, tableta o
+teléfono. El sistema puede realizar registro autónomo sincronizado por GPS para ensayos
+pasivos y de monitoreo~\cite{GeometricsGeodeFlex}.
+
+Es importante interpretar bien la palabra ``inalámbrico'': el Wi-Fi simplifica el
+control, pero los 24 geófonos analógicos continúan conectados mediante el cable de
+tendido y el disparo activo es cableado. El producto demuestra que una interfaz web
+mejora la operación de campo incluso cuando la arquitectura de adquisición sigue siendo
+centralizada.
+
+\subsubsection{PASI GEA24: compactación del sistema profesional clásico}
+
+GEA24 integra 24 canales, conversión de 24 bits, interfaz USB y alimentación desde la
+computadora. Dos unidades pueden sincronizarse para obtener 48 canales. El fabricante lo
+orienta a refracción, tomografía, downhole, crosshole, $V_{S,30}$, MASW y reflexión
+somera~\cite{PASIGEA24}. El caso de Delhi confirma que no se trata de una lista teórica
+de aplicaciones: el equipo fue utilizado efectivamente para caracterizar seis sectores
+de un campus~\cite{Gautam2020}.
+
+Su arquitectura conserva los cables sísmicos de 12 o 24 canales y depende de una
+computadora externa, pero reduce el volumen del sismógrafo y elimina una batería de
+\SI{12}{\volt} independiente. Representa una optimización clara del esquema centralizado.
+
+\subsubsection{DMT SUMMIT X One: adquisición distribuida sin abandonar el cable}
+
+SUMMIT X One desplaza la conversión hacia unidades remotas que pueden conectarse en
+posiciones flexibles sobre una línea de dos conductores. Ese cable distribuye tanto
+energía como datos. El fabricante ofrece configuraciones desde más de 24 canales para
+ingeniería hasta despliegues 2D/3D de más de 3000 canales, además de registro continuo
+para aplicaciones pasivas~\cite{DMTSummitXOne}.
+
+La lección de arquitectura es relevante: distribuir nodos no obliga a eliminar todo
+cable. Un enlace físico ligero puede simplificar simultáneamente alimentación,
+telemetría y sincronización. El producto demuestra que la logística del arreglo es un
+problema industrial suficientemente importante como para rediseñar el sistema completo
+alrededor de ella.
+
+\subsubsection{Geometrics Atom-3C: nodos autónomos para adquisición pasiva}
+
+Atom-3C elimina el cable de tendido mediante unidades autónomas de tres canales. Cada
+unidad incorpora conversión de 24 bits efectiva, temporización GPS, almacenamiento
+interno, batería y descarga por Wi-Fi. El fabricante declara hasta 70 horas de operación
+por carga y lo orienta a microtremores, clasificación $V_{S,30}$, estructuras profundas
+y microzonificación~\cite{GeometricsAtom3C}.
+
+Atom-3C resuelve muy bien la adquisición pasiva, pero no es un sistema MASW activo con
+disparo de fuente. Esa diferencia evita una comparación engañosa: quitar los cables es
+más sencillo cuando cada nodo registra continuamente con reloj GPS que cuando todos
+deben responder de forma determinista a una fuente impulsiva.
+
+\subsection{Precios de referencia: dimensión económica de la brecha}
+
+Los fabricantes venden configuraciones diferentes y varios trabajan exclusivamente
+mediante cotización. Por eso, un precio aislado puede ser engañoso: debe indicarse el
+año, la cantidad de canales y si incluye geófonos, cables, fuente, software, transporte
+e impuestos. La tabla siguiente utiliza listas públicas encontradas, conserva la moneda
+original y no ajusta inflación ni tipo de cambio.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\caption{Precios públicos de referencia. Son antecedentes fechados, no cotizaciones vigentes.}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.22\textwidth} Y Y@{}}
+\toprule
+\textbf{Sistema} & \textbf{Referencia pública} & \textbf{Alcance declarado} & \textbf{Lectura correcta} \\
+\midrule
+PASI GEA24 & 4.125~EUR sólo instrumento; 8.525~EUR sistema MASW de 24 canales (enero de 2022) & Consola, dos cables de 12 canales, 24 geófonos verticales de \SI{4.5}{\hertz}, disparo de maza, cable de disparo y placa; excluye PC, software de análisis, transporte e impuestos & Es la comparación más cercana a un arreglo MASW activo completo, pero es precio histórico \emph{ex works} Turín~\cite{PASIPrice2022} \\
+Geometrics & 18.700~USD por un Geode G24 de 24 canales (lista 2023) & Sismógrafo, interfaz digital, accesorios de alimentación/disparo y SeisImager/2D Lite; sin geófonos ni cable sísmico & Sirve como orden de magnitud de la generación anterior; \textbf{no es el precio de GeodeFlex}, que actualmente se ofrece por cotización~\cite{GeometricsPrice2023,GeometricsGeodeFlex} \\
+DMT SUMMIT X One & Precio vigente sólo por solicitud & La arquitectura puede variar en número de unidades remotas, recolectores, tramos de cable, disparos y accesorios & La ausencia de una cifra pública refleja que se cotiza un sistema configurado, no una caja estándar~\cite{GeoDeviceSummitPrice} \\
+Geometrics Atom & 1.800~USD por unidad de adquisición y 1.160~USD por geófono triaxial de \SI{2}{\hertz} (lista 2023) & Doce estaciones sumarían 35.520~USD; con un punto de acceso de 900~USD y dos cargadores de seis puertos de 430~USD, 37.280~USD antes de software, transporte e impuestos & Es una estimación aritmética para doce estaciones pasivas a partir de componentes de catálogo, no una cotización Atom-3C actual~\cite{GeometricsPrice2023} \\
+MicDAC académico & Aproximadamente 255~EUR (2020) & Hardware completo con sensores para tres componentes, 12 bits y \SI{200}{\hertz}, destinado a HVSR & Demuestra acceso económico, pero no equivale a 24 canales sincronizados ni a un sistema MASW activo~\cite{Kafadar2020} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La comparación no pretende concluir que dos sistemas son equivalentes por costar menos.
+El GEA24 completo ofrece una referencia histórica del orden de miles de euros; el Geode
+de 24 canales, aun sin sensores ni tendido, aparece en decenas de miles de dólares; y
+una red pasiva Atom escala aproximadamente con cada estación autónoma. En contraste,
+MicDAC muestra que un registrador académico de pocos canales puede construirse por
+cientos de euros, pero todavía no resuelve sincronización, disparo activo, cantidad de
+canales, robustez ni flujo de procesamiento.
+
+\subsection{La brecha no es tecnológica: es de acceso e integración económica}
+
+Los cuatro productos anteriores prueban que la industria ya resolvió, con distintas
+arquitecturas, buena parte de los problemas de adquisición. La brecha que motiva esta
+tesis debe formularse con más precisión:
+
+\begin{quote}
+\textbf{Existe instrumentación profesional capaz, pero falta una plataforma económica,
+reproducible y modificable que integre adquisición multicanal sincronizada, operación
+de campo y procesamiento para investigación local.}
+\end{quote}
+
+La dificultad de acceso no se reduce al precio publicado del sismógrafo: también incluye
+sensores, cables, disparo, software, importación, impuestos, soporte y reparación. Para
+una empresa especializada esa inversión puede justificarse por productividad y
+confiabilidad. Para un laboratorio pequeño, una universidad o una etapa exploratoria,
+la barrera es diferente.
+
+La literatura académica confirma esa demanda por alternativas. Kafadar desarrolló
+MicDAC, un sistema abierto de tres componentes basado en Arduino para mediciones HVSR,
+con una frecuencia de muestreo de \SI{200}{\hertz}, conversión de 12 bits y un costo de
+componentes, incluidos sensores, estimado en 255~EUR en 2020~\cite{Kafadar2020}.
+Geophonino demostró que un registrador abierto y económico de un canal puede adquirir
+señales de un geófono y compararse favorablemente con equipos comerciales en su alcance
+de prueba~\cite{Llorens2016}.
+
+Estos antecedentes son valiosos porque muestran que el acondicionamiento y la
+digitalización económicos son posibles. Al mismo tiempo, dejan visible el salto que
+falta para MASW activo:
+
+\begin{itemize}
+    \item pasar de uno o tres canales a un arreglo de nodos sincronizados;
+    \item coordinar una fuente impulsiva y conservar una referencia temporal común;
+    \item controlar ganancias, calibración, almacenamiento y estado de cada nodo;
+    \item operar el sistema en campo sin depender de infraestructura externa;
+    \item preservar datos crudos y metadatos de geometría;
+    \item integrar dispersión e inversión sin ocultar las decisiones del operador.
+\end{itemize}
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Posicionamiento de la brecha abordada por la tesis.}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} Y Y Y@{}}
+\toprule
+\textbf{Necesidad} & \textbf{Equipo profesional} & \textbf{Prototipo económico típico} & \textbf{Objetivo de esta tesis} \\
+\midrule
+Adquisición multicanal & Resuelta y validada & Uno o pocos canales & Nodos ampliables con captura coordinada \\
+Sincronización & GPS, cable o electrónica dedicada & Frecuentemente no necesaria en un solo nodo & Sincronización distribuida medida y documentada \\
+Operación de campo & Software del fabricante y gabinete robusto & Interfaz de laboratorio o computadora conectada & Interfaz web local sin dependencia de Internet \\
+Modificabilidad & Producto terminado y soportado & Hardware abierto pero alcance limitado & Cadena completa inspeccionable y reconfigurable \\
+Procesamiento & Ecosistema comercial integrado & Análisis específico o externo & Datos crudos, ingesta, revisión, dispersión e inversión \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+El objetivo no es afirmar que un prototipo académico sustituye a GeodeFlex, GEA24,
+SUMMIT X One o Atom-3C en confiabilidad, robustez o soporte. El aporte consiste en
+construir y evaluar una plataforma accesible que permita estudiar las decisiones que
+esos productos encapsulan: transducción, acondicionamiento, digitalización,
+sincronización, transmisión, interfaz y procesamiento.
+
+\subsection{Acotamiento del proyecto}
+
+La revisión anterior conduce a una cadena funcional concreta:
+
+\begin{center}
+\small
+Generación de señal $\longrightarrow$ transductor $\longrightarrow$
+acondicionamiento e instrumentación $\longrightarrow$ digitalización
+
+$\longrightarrow$ transmisión e interfaz de campo $\longrightarrow$ ingesta
+$\longrightarrow$ procesamiento e inversión con interfaz de análisis.
+\end{center}
+
+Cada bloque presenta una pregunta verificable. El transductor define la banda que puede
+observarse; el acondicionamiento determina ruido, ganancia y rango dinámico; la
+digitalización y sincronización condicionan la coherencia entre canales; la transmisión
+define cómo se despliega el arreglo; las interfaces determinan si el sistema puede
+operarse y auditarse; y el procesamiento convierte los registros en un modelo con
+incertidumbre.
+
+La pregunta que abre el resto de la presentación puede formularse así:
+
+\begin{quote}
+\textbf{¿Cómo integrar, con componentes accesibles, una cadena multicanal de
+adquisición y análisis para ondas superficiales que sea operable en campo, conserve la
+trazabilidad de los datos y permita evaluar honestamente sus limitaciones?}
+\end{quote}
+
+Las secciones siguientes estudiarán cada bloque de esa cadena: selección y banda del
+transductor, evolución del acondicionamiento, digitalización, comunicación distribuida,
+interfaces de operación e ingesta, y finalmente procesamiento e inversión.

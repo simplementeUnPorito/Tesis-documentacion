@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+
+\bibitem{InfineonPSoC}
+{Infineon Technologies AG}.
+\newblock {PSoC} {5LP}: {CY8C58LP} family datasheet.
+\newblock Document No.~001-84932, Rev.~*N, Nov. 27, 2019.
+
+\bibitem{Ma2023}
+{K. Ma et al.}
+\newblock An effective method for improving low-frequency response of geophone.
+\newblock {\em Sensors}, 23(6), 2023.
+\newblock Art. no. 3082, doi: 10.3390/s23063082.
+
+\bibitem{CypressAN60319}
+P.~Sekar.
+\newblock Instrumentation amplifier using {PSoC} 3.
+\newblock Cypress Semiconductor, Application Note AN60319, Document
+  No.~001-60319, Rev.~*A, Apr. 2010.
+
+\end{thebibliography}

@@ -1,0 +1,181 @@
+\begin{thebibliography}{}
+
+\bibitem[{Analog Devices}, 2026]{AnalogDevicesADXL355}
+{Analog Devices} (2026).
+\newblock {ADXL355}: Low-noise, low-drift, low-power 3-axis {MEMS}
+  accelerometer.
+\newblock \url{https://www.analog.com/en/products/ADXL355.html}.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[Crook et~al., 2017]{Crook2017}
+Crook, N., Calendine, S., and Levitt, M. (2017).
+\newblock Site characterization of an abandoned gold mine using the
+  multi-channel analysis of the surface waves method.
+\newblock In {\em Geotechnical Frontiers 2017}, pages 596--603.
+
+\bibitem[{DigiKey}, 2026]{DigiKeyADXL355}
+{DigiKey} (2026).
+\newblock {ADXL355BEZ-RL7} pricing and availability.
+\newblock
+  \url{https://www.digikey.com/en/products/detail/analog-devices-inc/ADXL355BEZ-RL7/6490627}.
+\newblock Precio unitario consultado el 18 de agosto de 2026.
+
+\bibitem[{DMT Group}, 2026]{DMTSummitXOne}
+{DMT Group} (2026).
+\newblock {SUMMIT X One} seismic data acquisition system.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[Foti et~al., 2018]{Foti2018}
+Foti, S. et~al. (2018).
+\newblock Guidelines for the good practice of surface wave analysis: a product
+  of the {InterPACIFIC} project.
+\newblock {\em Bulletin of Earthquake Engineering}, 16(6):2367--2420.
+
+\bibitem[Foti et~al., 2014]{Foti2014}
+Foti, S., Lai, C.~G., Rix, G.~J., and Strobbia, C. (2014).
+\newblock {\em Surface Wave Methods for Near-Surface Site Characterization}.
+\newblock CRC Press, Boca Raton, FL, USA.
+
+\bibitem[Gautam et~al., 2020]{Gautam2020}
+Gautam, R., Shrivastava, A.~K., Gupta, S., and Sharma, V. (2020).
+\newblock In situ shear wave velocity from multichannel analysis of surface
+  waves ({MASW}) tests at six sites of {Delhi Technological University}.
+\newblock In {\em International Conference on Innovative Advancement in
+  Engineering and Technology}.
+
+\bibitem[{GeoDevice}, 2026]{GeoDeviceSummitPrice}
+{GeoDevice} (2026).
+\newblock {SUMMIT X One}.
+\newblock \url{https://geodevice.co/product/summit-x-one/}.
+\newblock Distribuidor; precio por solicitud. Consulta: 18 de agosto de 2026.
+
+\bibitem[{Geometrics}, 2023]{GeometricsPrice2023}
+{Geometrics} (2023).
+\newblock Seismic price list 2023.
+\newblock Lista del fabricante, revisión junio de 2023:
+  \url{https://www.geometrics.com/wp-content/uploads/2023/07/Seismic_Pricelist_2023_rev0623.pdf}.
+\newblock Referencia histórica; el archivo ya no se encontraba disponible en
+  la consulta de 2026.
+
+\bibitem[{Geometrics}, 2026a]{GeometricsAtom3C}
+{Geometrics} (2026a).
+\newblock {Atom-3C} seismograph.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[{Geometrics}, 2026b]{GeometricsGeodeFlex}
+{Geometrics} (2026b).
+\newblock {GeodeFlex}.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[{Güralp Systems}, 2026]{Guralp3ESPC}
+{Güralp Systems} (2026).
+\newblock {3ESPC} portable broadband seismometer.
+\newblock \url{https://guralp.com/products/3espc-series}.
+\newblock Precio por solicitud. Consulta: 18 de agosto de 2026.
+
+\bibitem[{Infineon Technologies AG}, 2019]{InfineonPSoC}
+{Infineon Technologies AG} (2019).
+\newblock {PSoC} {5LP}: {CY8C58LP} family datasheet.
+\newblock Document No.~001-84932, Rev.~*N.
+
+\bibitem[{K. Ma et al.}, 2023]{Ma2023}
+{K. Ma et al.} (2023).
+\newblock An effective method for improving low-frequency response of geophone.
+\newblock {\em Sensors}, 23(6).
+\newblock Art. no. 3082, doi: 10.3390/s23063082.
+
+\bibitem[Kafadar, 2020]{Kafadar2020}
+Kafadar, O. (2020).
+\newblock A geophone-based and low-cost data acquisition and analysis system
+  designed for microtremor measurements.
+\newblock {\em Geoscientific Instrumentation, Methods and Data Systems},
+  9:365--373.
+
+\bibitem[Kramer, 1996]{Kramer1996}
+Kramer, S.~L. (1996).
+\newblock {\em Geotechnical Earthquake Engineering}.
+\newblock Prentice Hall.
+
+\bibitem[Llorens et~al., 2016]{Llorens2016}
+Llorens, C.~D., Molina, J., Giner, J.~A., Ivorra, S., and Zornoza, P.~R.
+  (2016).
+\newblock Development and programming of {Geophonino}: A low cost
+  {Arduino}-based seismic recorder for vertical geophones.
+\newblock {\em Computers \& Geosciences}, 94:1--10.
+
+\bibitem[Monjardin and Medina, 2023]{Monjardin2023}
+Monjardin, C. E.~F. and Medina, A.~B. (2023).
+\newblock Comparative analysis of geotechnical and geophysical investigations
+  for average shear wave velocity in {Metro Manila}.
+\newblock {\em Energy Reports}, 9(S2):38--47.
+
+\bibitem[Park et~al., 1998]{Park1998}
+Park, C.~B., Miller, R.~D., and Xia, J. (1998).
+\newblock Imaging dispersion curves of surface waves on multi-channel record.
+\newblock In {\em SEG Technical Program Expanded Abstracts 1998}, pages
+  1377--1380.
+
+\bibitem[Park et~al., 1999]{Park1999}
+Park, C.~B., Miller, R.~D., and Xia, J. (1999).
+\newblock Multichannel analysis of surface waves.
+\newblock {\em Geophysics}, 64(3):800--808.
+
+\bibitem[{PASI srl}, 2022]{PASIPrice2022}
+{PASI srl} (2022).
+\newblock {GEA24 Price List --- January 2022}.
+\newblock Copia pública de la lista del fabricante:
+  \url{https://es.scribd.com/document/602682047/GEA-24-PRICE-LIST-JANUARY-2022}.
+\newblock Referencia histórica; precios ex works Turín.
+
+\bibitem[{PASI srl}, 2026]{PASIGEA24}
+{PASI srl} (2026).
+\newblock {GEA24}: 24-channel seismograph.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[{PCB Piezotronics}, 2026]{PCB393B31}
+{PCB Piezotronics} (2026).
+\newblock Model 393b31 high-sensitivity seismic {ICP} accelerometer.
+\newblock \url{https://www.pcb.com/products?m=393B31}.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[{R. T. Clark}, 2026]{RTClark45}
+{R. T. Clark} (2026).
+\newblock {RTC 4.5 Hz 375 Ohm Vertical Geophone}.
+\newblock
+  \url{https://rtclark.com/product/rtc-4-5hz-375ohm-vertical-geophone/}.
+\newblock Precio consultado el 18 de agosto de 2026.
+
+\bibitem[Sekar, 2010]{CypressAN60319}
+Sekar, P. (2010).
+\newblock Instrumentation amplifier using {PSoC} 3.
+\newblock Cypress Semiconductor, Application Note AN60319, Document
+  No.~001-60319, Rev.~*A.
+
+\bibitem[{Sensor Nederland B.V.}, 2006]{SM24}
+{Sensor Nederland B.V.} (2006).
+\newblock {SM-24 Geophone Element}.
+\newblock Product brochure:
+  \url{https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/SM-24%20Brochure.pdf}.
+
+\bibitem[{SparkFun Electronics}, 2026]{SparkFunSM24}
+{SparkFun Electronics} (2026).
+\newblock Geophone --- {SM-24}, with insulating disc.
+\newblock
+  \url{https://www.sparkfun.com/sensors/environmental-sensors/seismograph.html}.
+\newblock Precio consultado el 18 de agosto de 2026.
+
+\bibitem[Vantassel et~al., 2018]{Vantassel2018}
+Vantassel, J.~P., Cox, B.~R., Wotherspoon, L., and Stolte, A. (2018).
+\newblock Mapping depth to bedrock, shear stiffness, and fundamental site
+  period at {CentrePort}, {Wellington}, using surface-wave methods:
+  Implications for local seismic site amplification.
+\newblock {\em Bulletin of the Seismological Society of America},
+  108(3B):1709--1721.
+
+\bibitem[Xia et~al., 1999]{Xia1999}
+Xia, J., Miller, R.~D., and Park, C.~B. (1999).
+\newblock Estimation of near-surface shear-wave velocity by inversion of
+  {Rayleigh} waves.
+\newblock {\em Geophysics}, 64(3):691--700.
+
+\end{thebibliography}

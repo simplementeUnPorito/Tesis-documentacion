@@ -1,0 +1,47 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\setlist[itemize]{itemsep=0.2em}
+\sisetup{output-decimal-marker={,}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue
+}
+\graphicspath{{../../Propuesta Urucom/Imagenes/}{../latex-historial/figuras/}}
+
+\title{Primera Presentación\\Nueva estructura narrativa}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\input{secciones/01_problema_modelado}
+\input{secciones/02_transductores}
+\input{secciones/03_acondicionamiento_digitalizacion}
+
+\bibliographystyle{apalike}
+\bibliography{referencias}
+
+\end{document}

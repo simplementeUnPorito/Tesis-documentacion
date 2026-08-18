@@ -1,0 +1,429 @@
+\section{Acondicionamiento, instrumentaci\'on y digitalizaci\'on}
+\label{sec:acondicionamiento-digitalizacion}
+
+Esta secci\'on comienza en los terminales el\'ectricos de entrada del nodo. No vuelve a
+discutir qu\'e transductor se emplea, su modelo mec\'anico ni la fuente que genera la
+se\~nal. El problema acotado es otro: \textbf{convertir una tensi\'on diferencial peque\~na
+en una secuencia digital que aproveche el rango del conversor, conserve la informaci\'on
+de fase y pueda adquirirse de forma determinista}. La transmisi\'on de esas muestras se
+trata despu\'es, como una etapa independiente.
+
+El desarrollo de esta parte no produjo un circuito definitivo de una sola vez. El
+historial de Git del antiguo repositorio \texttt{tesis-legacy}, preservado actualmente en
+\texttt{src/firmware/psoc}, permite reconstruir una sucesi\'on de proyectos de PSoC
+Creator entre el 17 de abril y el 3 de junio de 2026, seguida por revisiones de
+calibraci\'on, DMA y control de captura hasta agosto. Esa evoluci\'on es relevante porque
+explica qu\'e problema resolvi\'o cada bloque que permanece en el dise\~no.
+
+\subsection{Qu\'e debe resolver esta etapa}
+
+Si $v_d(t)$ es la tensi\'on diferencial disponible en la entrada, una representaci\'on
+compacta del camino de acondicionamiento y conversi\'on es
+
+\begin{equation}
+v_{\mathrm{ADC}}(t)=V_{\mathrm{CM}}+
+\left[h_{\mathrm{AFE}}(t)*v_d(t)\right]+v_{\mathrm{os}}(t)+n_{\mathrm{AFE}}(t),
+\label{eq:afe-general}
+\end{equation}
+
+donde $H_{\mathrm{AFE}}(s)$ incluye la ganancia y los filtros anal\'ogicos,
+$V_{\mathrm{CM}}$ fija el punto de operaci\'on para alimentaci\'on simple,
+$v_{\mathrm{os}}$ agrupa los desplazamientos de continua y $n_{\mathrm{AFE}}$ el ruido
+incorporado por la instrumentaci\'on. El ADC observa esta tensi\'on en $t=nT_s$ y entrega
+
+\begin{equation}
+x[n]=Q_{B,V_{\mathrm{span}}}\!\left\{v_{\mathrm{ADC}}(nT_s)\right\},
+\qquad
+\Delta V_{\mathrm{LSB}}=\frac{V_{\mathrm{span}}}{2^B}.
+\label{eq:adc-cuantizacion}
+\end{equation}
+
+La Ec.~\eqref{eq:afe-general} muestra que ``amplificar'' no es suficiente. La etapa debe
+resolver simult\'aneamente:
+
+\begin{itemize}
+    \item \textbf{entrada diferencial y rechazo de modo com\'un}, para que interferencias
+    presentes de forma semejante en ambos conductores no se confundan con la se\~nal;
+    \item \textbf{ganancia programable}, porque una ganancia peque\~na desperdicia
+    resoluci\'on y una demasiado alta recorta la forma de onda;
+    \item \textbf{conformaci\'on espectral anal\'ogica}, incluida la red de compensaci\'on
+    y un pasa-bajos anterior al muestreo;
+    \item \textbf{control del punto de operaci\'on}, ya que el \emph{offset} de varias
+    etapas en cascada puede consumir el rango del ADC aun sin se\~nal;
+    \item \textbf{digitalizaci\'on reproducible}, con tasa, rango, filtrado y formato de
+    muestra conocidos;
+    \item \textbf{movimiento determinista de datos}, evitando que la atenci\'on de otras
+    tareas del procesador cambie el instante de adquisici\'on.
+\end{itemize}
+
+Por eso acondicionamiento y digitalizaci\'on se presentan juntos: el rango del ADC decide
+cu\'anta ganancia anal\'ogica conviene, el filtro anti-\emph{aliasing} debe actuar antes
+del ADC y el multiplexor del propio camino digital permite observar y ajustar las etapas
+anal\'ogicas.
+
+\subsection{Reconstrucci\'on mediante Git: todos los proyectos de la cadena GEO}
+\label{sec:git-topdesign}
+
+Se buscaron en todas las ramas los archivos binarios
+\texttt{TopDesign/TopDesign.cysch} y se sigui\'o su aparici\'on, renombrado y eliminaci\'on.
+Las Tablas~\ref{tab:git-circuitos-a} y~\ref{tab:git-circuitos-b} enumeran
+\textbf{todos los proyectos de acondicionamiento GEO encontrados}; no se cuentan los
+ejemplos USB de Cypress ni los proyectos del martillo, porque pertenecen a otra cadena
+instrumental.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\caption{Primera mitad del inventario hist\'orico de circuitos PSoC Creator.}
+\label{tab:git-circuitos-a}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.29\textwidth} p{0.12\textwidth} Y@{}}
+\toprule
+\textbf{Proyecto y primer commit} & \textbf{Fecha} & \textbf{Funci\'on en la evoluci\'on} \\
+\midrule
+\texttt{SM-24\_V1} --- \texttt{9a91eda} & 17/04 & Primera prueba de acondicionamiento; red pasiva de entrada y bloques b\'asicos de amplificaci\'on. Se abandon\'o al cambiar el reparto entre anal\'ogico y digital. \\
+\texttt{Tesis} --- \texttt{74a65c2} & 18/04 & Primera cadena activa temprana, con ramas diferenciales, suma/transimpedancia y filtrado. Reemplaz\'o al proyecto inicial. \\
+\texttt{Comparation} --- \texttt{c4b0a8a} & 19/04 & Banco para comparar caminos anal\'ogicos e integrar AMux, ADC $\Delta\Sigma$, filtro digital y salida de laboratorio. \\
+\texttt{FiltradoDiferencial} --- \texttt{0051880} & 22/04 & Conserv\'o la se\~nal en forma diferencial a trav\'es de la amplificaci\'on y el filtrado. \\
+\texttt{ComparacionDiferencial} --- \texttt{0051880} & 22/04 & Proyecto paralelo para contrastar las variantes diferenciales y su conversi\'on. \\
+\texttt{ComparacionDiferencial\_Copy\_01} --- \texttt{c46b7ae} & 30/04 & Rama de comparaci\'on durante el pivote de topolog\'ia; separ\'o etapas PGA, BP y LP para contrastar Sallen--Key/VCVS con MFB. \\
+\texttt{DiferencialConRrefs} --- \texttt{6900805} & 10/05 & Introdujo referencias desplazadas por etapa para corregir manualmente el punto de operaci\'on. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\caption{Segunda mitad del inventario hist\'orico de circuitos PSoC Creator.}
+\label{tab:git-circuitos-b}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.32\textwidth} p{0.12\textwidth} Y@{}}
+\toprule
+\textbf{Proyecto y primer commit} & \textbf{Fecha} & \textbf{Funci\'on en la evoluci\'on} \\
+\midrule
+\texttt{DiferencialConRrefs\_Copy\_01} --- \texttt{6900805} & 10/05 & Copia de trabajo para modificar la arquitectura de referencias sin perder la variante precedente. \\
+\texttt{DiferencialConRrefsXD} --- \texttt{1f73657} & 17/05 & Variante experimental del circuito con referencias independientes. \\
+\texttt{DiferencialConRrefsYMux} --- \texttt{1f73657} & 17/05 & Agreg\'o multiplexaci\'on para observar nodos intermedios con un mismo ADC. \\
+\texttt{DiferencialConRrefsYMux\_Copy\_01} --- \texttt{1f73657} & 17/05 & Ensay\'o la salida single-ended y la sucesi\'on BP--SUM--LP que conducir\'ia a la cadena completa. \\
+\texttt{DiferencialToSingleEnded} --- \texttt{610e19a} & 20/05 & Primera implementaci\'on completa: instrumentaci\'on diferencial, conversi\'on single-ended, MFB, sumador, LP, AMux y ADC. \\
+\texttt{DiferencialToSingleEnded\_ESP} --- \texttt{70a15d9} & 24/05 & Integraci\'on inicial del circuito completo con el enlace hacia el controlador externo. \\
+\texttt{DiferencialToSingleEnded\_\_ESP} --- renombre en \texttt{9e26866} & 25/05 & Continuaci\'on de la integraci\'on; fue absorbido por el proyecto unificado. \\
+\texttt{AcondicionamientoAnalogico} --- \texttt{4062297} & 03/06 & Proyecto consolidado y vigente; reuni\'o la cadena anal\'ogica, digitalizaci\'on y l\'ogica de captura. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los nombres de los proyectos no deben interpretarse como catorce soluciones totalmente
+independientes. Git muestra una genealog\'ia: algunas carpetas fueron copias de trabajo,
+otras bancos comparativos y otras reemplazos directos. Agrupadas por cambio estructural,
+la evoluci\'on puede resumirse as\'i:
+
+\begin{center}
+\small
+\fbox{pasivo inicial}
+$\longrightarrow$
+\fbox{cadena activa diferencial}
+$\longrightarrow$
+\fbox{Sallen--Key vs. MFB}
+$\longrightarrow$
+\fbox{referencias por etapa + AMux}
+$\longrightarrow$
+\fbox{diferencial a single-ended}
+$\longrightarrow$
+\fbox{AFE + ADC + DMA}
+\end{center}
+
+Esta lectura evita dos errores: presentar el circuito final como una elecci\'on inmediata
+y contar cada autoguardado del mismo \texttt{TopDesign} como una topolog\'ia nueva.
+
+\subsection{Decisiones de topolog\'ia que sobreviven en el dise\~no}
+
+\subsubsection{Del filtro pasivo al reparto anal\'ogico--digital}
+
+El primer proyecto intent\'o resolver la selecci\'on de banda mediante una red RC pasiva.
+Se descart\'o por sensibilidad a tolerancias, deriva de capacitores y fase no lineal.
+En un arreglo multicanal importa no s\'olo que un canal tenga la magnitud esperada, sino
+que los canales tengan respuestas de fase reproducibles. El reemplazo estableci\'o una
+regla de dise\~no que contin\'ua vigente:
+
+\begin{quote}
+Lo que debe ocurrir antes de cuantizar ---ganancia, punto de operaci\'on, compensaci\'on y
+anti-\emph{aliasing}--- permanece en anal\'ogico; la selecci\'on reconfigurable de banda y
+el movimiento de muestras se realizan con recursos digitales.
+\end{quote}
+
+\subsubsection{De Sallen--Key a MFB}
+
+La compensaci\'on adoptada puede escribirse como un camino directo menos un pasa-banda
+de segundo orden~\cite{Ma2023}:
+
+\begin{equation}
+H_{\mathrm{comp}}(s)=1-
+\frac{2(\zeta_1-\zeta_0)\omega_n s}
+{s^2+2\zeta_1\omega_n s+\omega_n^2}.
+\label{eq:comp-afe}
+\end{equation}
+
+Por tanto, el filtro BP y el sumador no son dos bloques arbitrarios: juntos realizan la
+resta de la Ec.~\eqref{eq:comp-afe}. Se analizaron Sallen--Key/VCVS y MFB. Las dos
+reproduc\'ian de forma semejante la respuesta nominal; la MFB se seleccion\'o por menor
+sensibilidad del factor de calidad y de la frecuencia central a las tolerancias, mejor
+atenuaci\'on a alta frecuencia y porque sus desventajas habituales ---inversi\'on y baja
+impedancia de entrada--- no son decisivas despu\'es de una etapa de baja impedancia.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.9\textwidth]{comparacion_topologias.png}
+\caption{Comparaci\'on reconstruida a partir del an\'alisis utilizado el 30 de abril.
+La magnitud nominal no decide el pivote: el criterio principal es la robustez frente a
+tolerancias al replicar canales.}
+\label{fig:comparacion-topologias-nueva}
+\end{figure}
+
+\subsubsection{Conversi\'on diferencial--single-ended y referencias independientes}
+
+La entrada se amplifica con una configuraci\'on de instrumentaci\'on formada por dos PGA
+internos del PSoC, coherente con la topolog\'ia documentada por Cypress para sus bloques
+de capacitores conmutados~\cite{CypressAN60319}. La cadena se convierte luego a una
+se\~nal single-ended referida a un nivel interno. Esto reduce la cantidad de recursos
+anal\'ogicos que exigir\'ia mantener dos ramas completas hasta el ADC.
+
+El costo de operar con alimentaci\'on simple y varias etapas de ganancia es la acumulaci\'on
+de \emph{offset}. Por eso las versiones \texttt{DiferencialConRrefs*} introdujeron una
+referencia independiente para PGA, BP, SUM y LP, y las versiones \texttt{*YMux*} agregaron
+un multiplexor que permite medir cada salida intermedia con el mismo ADC. Esa combinaci\'on
+es la base de la calibraci\'on asistida digitalmente.
+
+\subsection{Arquitectura anal\'ogica consolidada}
+\label{sec:afe-consolidada}
+
+Tomando como entrada $v_d$, la funci\'on de transferencia global puede organizarse como
+
+\begin{equation}
+H_{\mathrm{AFE}}(s)=G_{\mathrm{IA}}\,G_{\mathrm{PGA}}
+\left[k_d-k_bH_{\mathrm{BP}}(s)\right]H_{\mathrm{LP}}(s),
+\label{eq:afe-bloques}
+\end{equation}
+
+donde $G_{\mathrm{IA}}$ representa la etapa diferencial, $G_{\mathrm{PGA}}$ la ganancia
+seleccionable, $H_{\mathrm{BP}}$ el MFB de compensaci\'on, $k_d$ y $k_b$ las relaciones
+del sumador y $H_{\mathrm{LP}}$ el filtro anti-\emph{aliasing}. El orden funcional es:
+
+\begin{center}
+\small
+\fbox{$v_d$ diferencial}
+$\rightarrow$
+\fbox{IA/PGA}
+$\rightarrow$
+\fbox{BP MFB}
+$\rightarrow$
+\fbox{SUM}
+$\rightarrow$
+\fbox{LP anal\'ogico}
+$\rightarrow$
+\fbox{AMux}
+$\rightarrow$
+\fbox{ADC $\Delta\Sigma$}
+\end{center}
+
+La Fig.~\ref{fig:topdesign-analogico} corresponde a la versi\'on consolidada previa al
+cambio VDAC$\to$IDAC de agosto. Se conserva porque muestra con claridad la topolog\'ia;
+la revisi\'on actual mantiene las cuatro referencias, pero las genera con IDAC y
+resistencias externas.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth,trim=115 115 0 105,clip]{Schematic-images-0.jpg}
+\caption{Cadena de acondicionamiento consolidada en PSoC Creator. El recorte comienza
+despu\'es de los terminales de entrada para mantener esta secci\'on independiente del
+transductor: PGA diferencial, ganancia adicional, MFB, sumador, LP, referencias
+independientes, AMux y ADC. La captura corresponde a la revisi\'on hist\'orica con VDAC.}
+\label{fig:topdesign-analogico}
+\end{figure}
+
+Los valores transferidos desde el \texttt{TopDesign.cysch} actual al esquema KiCad se
+resumen en la Tabla~\ref{tab:componentes-afe}. La tabla documenta la realizaci\'on f\'isica;
+no reemplaza la verificaci\'on de la funci\'on de transferencia completa con tolerancias.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\caption{Redes externas de la cadena anal\'ogica vigente.}
+\label{tab:componentes-afe}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth} Y@{}}
+\toprule
+\textbf{Bloque} & \textbf{Componentes identificados} \\
+\midrule
+Polarizaci\'on de entrada & Dos resistencias de \SI{50}{\kilo\ohm} hacia la referencia com\'un. \\
+Pasa-banda MFB & $R=\SI{43}{\kilo\ohm}$ y \SI{47}{\kilo\ohm}; $C=\SI{680}{\micro\farad}$ y \SI{27}{\pico\farad}. \\
+Sumador & \SI{6.8}{\kilo\ohm}, \SI{47}{\kilo\ohm}, potenci\'ometro de \SI{2}{\kilo\ohm} al 31,7\,\%, \SI{27}{\kilo\ohm} y \SI{15}{\nano\farad}. \\
+Pasa-bajos & \SI{47}{\nano\farad}, \SI{12}{\kilo\ohm}, \SI{150}{\kilo\ohm} y \SI{3.3}{\nano\farad}. \\
+Referencias de etapa & Cuatro ramas de \SI{30}{\kilo\ohm}, desacopladas con \SI{1}{\micro\farad}$\parallel$\SI{100}{\nano\farad}; excitaci\'on IDAC en la rama vigente. \\
+AMux & Capacitor externo de \SI{100}{\nano\farad} y selecci\'on de PGA, BP, SUM o LP para observaci\'on. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Asistencia digital para recentrar la cadena}
+
+El multiplexor, el ADC y las referencias programables convierten al AFE en una
+instrumentaci\'on anal\'ogica asistida digitalmente. Durante una calibraci\'on
+\emph{foreground}, cada etapa se observa de manera secuencial y se ajusta su referencia.
+Durante la captura, los c\'odigos quedan fijos: no hay un lazo digital modulando la se\~nal
+s\'ismica.
+
+Para continua, la salida de la etapa $i$ puede modelarse como
+
+\begin{equation}
+y_i^{\mathrm{DC}}=\sum_{j<i}A_{ij}y_j^{\mathrm{DC}}+b_i+K_i u_i,
+\label{eq:offset-etapas}
+\end{equation}
+
+donde $b_i$ es su \emph{offset}, $A_{ij}$ la propagaci\'on de residuos anteriores,
+$u_i$ el c\'odigo o tensi\'on de referencia y $K_i$ su efecto sobre la salida. La forma
+triangular de la Ec.~\eqref{eq:offset-etapas} impone el orden PGA$\to$BP$\to$SUM$\to$LP:
+ajustar primero una etapa posterior dejar\'ia que el residuo de una anterior volviera a
+desplazarla.
+
+La evoluci\'on fue manual al comienzo, con c\'odigos de referencia enviados desde la
+interfaz de banco, y despu\'es autom\'atica mediante un controlador PI con banda muerta,
+saturaci\'on y \emph{anti-windup}. Los valores aceptados se conservan en EEPROM con CRC
+e indexaci\'on por configuraci\'on de ganancia. La revisi\'on de agosto reemplaz\'o los VDAC
+por IDAC, pero conserva el mismo principio: medir una salida intermedia, corregir su
+referencia y retirar el lazo antes de adquirir.
+
+\subsection{Digitalizaci\'on: ADC, rango y cuantizaci\'on}
+
+El conversor seleccionado dentro del PSoC~5LP es un $\Delta\Sigma$ configurado a
+\textbf{18 bits nominales}. Esta arquitectura resulta apropiada para priorizar resoluci\'on
+en una banda relativamente baja; los 18 bits describen la palabra nominal, no garantizan
+18 bits efectivos en presencia de ruido, no linealidad y referencias reales
+~\cite{InfineonPSoC}.
+
+El firmware vigente emplea una tasa nativa de
+
+\begin{equation}
+F_{s,0}=\SI{2604}{SPS}.
+\end{equation}
+
+El ADC posee cuatro configuraciones de rango seleccionables. Aplicando
+\eqref{eq:adc-cuantizacion}, sus pasos ideales son:
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\caption{Rangos vigentes del ADC $\Delta\Sigma$ de 18 bits.}
+\label{tab:rangos-adc}
+\begin{tabular}{@{}clrr@{}}
+\toprule
+\textbf{C\'odigo} & \textbf{Rango bipolar} & $V_{\mathrm{span}}$ & $\Delta V_{\mathrm{LSB}}$ ideal \\
+\midrule
+1 & $\pm\SI{2.5}{\volt}$   & \SI{5.000}{\volt} & \SI{19.1}{\micro\volt} \\
+2 & $\pm\SI{0.512}{\volt}$ & \SI{1.024}{\volt} & \SI{3.91}{\micro\volt} \\
+3 & $\pm\SI{1.024}{\volt}$ & \SI{2.048}{\volt} & \SI{7.81}{\micro\volt} \\
+4 & $\pm\SI{0.625}{\volt}$ & \SI{1.250}{\volt} & \SI{4.77}{\micro\volt} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Elegir el rango es una segunda forma de adaptar la se\~nal al conversor. Pasar de
+$\pm\SI{2.5}{\volt}$ a $\pm\SI{0.512}{\volt}$ reduce el LSB ideal casi cinco veces,
+pero reduce en la misma proporci\'on el margen antes del recorte. Por tanto, PGA y rango
+del ADC deben configurarse conjuntamente: \textbf{la mejor resoluci\'on no es el rango m\'as
+estrecho, sino el rango m\'as estrecho que no sature la captura}.
+
+\subsection{Del ADC a memoria: FIR, DMA y control determinista}
+
+La primera digitalizaci\'on utilizaba una interrupci\'on convencional por muestra y salida
+serie. El proyecto consolidado evolucion\'o hacia dos caminos concurrentes:
+
+\begin{align}
+\text{crudo:}\quad &\mathrm{ADC}\rightarrow\mathrm{DMA}\rightarrow\mathrm{RAM},\\
+\text{filtrado:}\quad &\mathrm{ADC}\rightarrow\mathrm{DFB/FIR}
+\rightarrow\mathrm{DMA}\rightarrow\mathrm{RAM}.
+\end{align}
+
+El bloque DFB ejecuta el FIR en hardware y los canales DMA trasladan las palabras sin que
+el Cortex--M3 copie cada muestra. Esto reduce carga de CPU y, sobre todo, separa el
+instante de muestreo de tareas lentas de control o diagn\'ostico.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{DigitalPathGordito_cropped.png}
+\caption{Camino digital del proyecto consolidado: filtro DFB, l\'ogica de control,
+solicitudes DMA, registros de estado, EEPROM y temporizadores. La UART que aparece en
+esta captura corresponde a la revisi\'on anterior; en la rama de hardware vigente la
+salida del PSoC se migr\'o a I$^2$C y la UART qued\'o s\'olo como recepci\'on.}
+\label{fig:camino-digital-nueva}
+\end{figure}
+
+Desde julio, el bloque \texttt{superMaquina}, descrito en Verilog e implementado en UDB,
+decide en hardware cu\'ando habilitar cada solicitud DMA, cu\'ando comienza y termina una
+captura y qu\'e eventos pueden interrumpir al procesador. La regla de partici\'on es:
+
+\begin{itemize}
+    \item va a \textbf{hardware} lo que debe ocurrir en un instante preciso: flanco de
+    inicio, habilitaci\'on del ADC, conteo de muestras/lotes, enrutamiento DMA y fin;
+    \item queda en \textbf{software} lo lento pero complejo: calibraci\'on, persistencia,
+    configuraci\'on, supervisi\'on y protocolo de comandos.
+\end{itemize}
+
+El sistema admite decimaci\'on programable
+
+\begin{equation}
+F_s=\frac{\SI{2604}{SPS}}{N},\qquad N\in\{1,\ldots,100\}.
+\label{eq:decimacion-psoc}
+\end{equation}
+
+El promediado de $N$ muestras reduce ruido no correlacionado, pero su respuesta es una
+\emph{sinc}; no constituye por s\'i solo un filtro anti-\emph{aliasing} ideal. Por eso la
+capacidad de seleccionar $N$ no implica que los cien valores sean igualmente apropiados:
+para cada configuraci\'on de campo debe verificarse la banda combinada del LP anal\'ogico,
+el FIR y la decimaci\'on.
+
+\subsection{Hitos dentro del proyecto consolidado}
+
+Una vez absorbidos los proyectos exploratorios, las modificaciones dejaron de crear
+carpetas nuevas y pasaron a actualizar \texttt{AcondicionamientoAnalogico}. Los cambios
+estructurales principales recuperados con Git son:
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth} p{0.13\textwidth} Y@{}}
+\toprule
+\textbf{Fecha} & \textbf{Commit} & \textbf{Cambio de arquitectura} \\
+\midrule
+03/06 & \texttt{4062297} & Nace el proyecto unificado con la cadena completa. \\
+17/06 & \texttt{e490334} & Se consolidan DMA, camino filtrado por DFB, EEPROM y selecci\'on crudo/FIR; se eliminan del \emph{head} los proyectos exploratorios, que permanecen recuperables en Git. \\
+02/07 & \texttt{87dcd7e} & La l\'ogica temporal de captura migra a \texttt{superMaquina} en Verilog/UDB. \\
+11/07 & \texttt{38098e9} & Se consolida la tasa nativa de \SI{2604}{SPS} y la decimaci\'on asociada. \\
+03/08 & \texttt{f355a8a} & Nueva revisi\'on de hardware: cuatro IDAC sustituyen los VDAC, se agrega una etapa \texttt{PGAout}, la salida de datos pasa a I$^2$C y la UART queda s\'olo RX. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Qu\'e queda establecido y qu\'e debe verificarse}
+
+La arquitectura ya est\'a definida: entrada diferencial, ganancia programable,
+compensaci\'on MFB con sumador, pasa-bajos anal\'ogico, referencias independientes,
+observaci\'on por AMux, ADC $\Delta\Sigma$ de 18 bits, cuatro rangos, DFB/FIR, DMA y
+control temporal en hardware. Git permite adem\'as justificar esa arquitectura como el
+resultado de alternativas concretas, no como una descripci\'on retrospectiva.
+
+Antes de cerrar esta secci\'on como dise\~no validado faltan pruebas que pertenecen
+exclusivamente a la instrumentaci\'on:
+
+\begin{itemize}
+    \item respuesta en magnitud y fase extremo a extremo para cada ganancia y rango;
+    \item ruido referido a la entrada y n\'umero efectivo de bits, no s\'olo resoluci\'on
+    nominal;
+    \item tolerancias entre varias placas y deriva t\'ermica;
+    \item margen de saturaci\'on en cada nodo intermedio, no \'unicamente en la salida;
+    \item rechazo anti-\emph{aliasing} para las combinaciones de FIR y decimaci\'on que se
+    usar\'an;
+    \item repetibilidad de la calibraci\'on luego de la migraci\'on VDAC$\to$IDAC.
+\end{itemize}
+
+Estas verificaciones no cambian el alcance de la etapa: determinan si el camino entre
+los terminales de entrada y la memoria digital cumple lo dise\~nado. La transmisi\'on de
+los datos almacenados comienza reci\'en despu\'es de este punto.

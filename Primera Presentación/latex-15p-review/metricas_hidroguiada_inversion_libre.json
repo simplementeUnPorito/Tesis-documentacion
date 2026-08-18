@@ -1,0 +1,59 @@
+{
+  "sev_used_in_inversion": false,
+  "observed_points": 132,
+  "frequency_range_hz": [
+    8.000017600034663,
+    29.83339896679593
+  ],
+  "observed_phase_velocity_range_m_s": [
+    67.0,
+    102.0
+  ],
+  "max_wavelength_m": 11.749974150005958,
+  "indicative_depth_lambda_max_over_3_m": 3.916658050001986,
+  "model": {
+    "vs_m_s": [
+      57.67176387803284,
+      91.68891913088112,
+      96.16076697375631,
+      96.8969914748113,
+      105.59417125591011
+    ],
+    "thickness_m": [
+      0.6794622555798255,
+      0.9585628275575635,
+      1.9991056339688456,
+      2.579536165679135
+    ],
+    "interfaces_m": [
+      0.6794622555798255,
+      1.638025083137389,
+      3.637130717106235,
+      6.21666688278537
+    ]
+  },
+  "fit_relative_rms": 0.08228278558801135,
+  "homogeneous_equivalent_vs_c_over_0p92_range_m_s": [
+    72.82608695652173,
+    110.8695652173913
+  ],
+  "sev_interfaces_added_after_inversion_m": [
+    1.0,
+    2.06,
+    4.15,
+    24.0,
+    71.8
+  ],
+  "free_minus_sev_first_three_interfaces_m": [
+    -0.32053774442017446,
+    -0.421974916862611,
+    -0.5128692828937655
+  ],
+  "optimizer": {
+    "monte_carlo_misfit_percent": 4.833299574068542,
+    "local_optimizer_success": true,
+    "local_optimizer_message": "Optimization terminated successfully",
+    "local_objective_subsample_relative_rms": 0.0873316355960914
+  },
+  "interpretation_limit": "Interfaces below approximately lambda_max/3 are not resolved by this curve."
+}
