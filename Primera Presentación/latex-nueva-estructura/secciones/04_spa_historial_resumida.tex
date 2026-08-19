@@ -1,0 +1,28 @@
+El servidor de demostraci\'on emula WebSocket, estados, tres nodos, escaneo de
+redes e ingesta local. Las formas de onda son \textbf{se\~nales sint\'eticas
+utilizadas para activar y documentar la interfaz}; no se presentan como
+mediciones de campo ni como validaci\'on del sistema. Cada figura muestra una
+sola pantalla por hito, elegida para que la diferencia con el hito anterior sea
+legible sin repetir pesta\~nas de esclavo, temas o vistas auxiliares.
+
+\newcommand{\spahito}[3]{%
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.88\textwidth,height=0.8\textheight,keepaspectratio]{esp_historico/#1}
+\caption{Hito #2. #3}
+\end{figure}
+\clearpage}
+
+\spahito{01_ui_inicial/01_vista_inicial_oscura.png}{1 --- interfaz inicial (08/06/2026)}{P\'agina \'unica sin pesta\~nas: ARM, START/STOP, gr\'afica con zoom, configuraci\'on de tres esclavos, exportaci\'on ZIP/CSV y log de WebSocket, todo visible a la vez. Es el punto de partida frente al que se miden los seis hitos siguientes.}
+
+\spahito{02_funcional_incompleta/01_captura.png}{2 --- primera separaci\'on funcional (08/06/2026)}{Cambio principal: la p\'agina \'unica se reemplaza por pesta\~nas (Captura, Nodos, Esclavos, Export, Log). Define la arquitectura de navegaci\'on que se mantiene en todos los hitos posteriores; a\'un no agrega funciones de campo nuevas.}
+
+\spahito{03_autocalibracion/01_captura.png}{3 --- autocalibraci\'on y lectura (15/06/2026)}{Cambio principal: aparecen cursores, vista espectral y un estado expl\'icito de autocalibraci\'on por esclavo. La interfaz deja de ser solo transporte y empieza a asistir la evaluaci\'on de la se\~nal.}
+
+\spahito{04_pagina_operativa/01_captura.png}{4 --- p\'agina operativa (01/07/2026)}{Cambio principal: pesta\~nas Nodos y Export se consolidan en Esclavos y Preservados; se agregan autenticaci\'on y guardado CSV/ZIP integrado a la captura. La interfaz pasa de banco de pruebas a flujo de campo reconocible.}
+
+\spahito{05_ui_finalizada/01_captura_completa.png}{5 --- captura finalizada (12/07/2026)}{Cambio principal: decimaci\'on por $N$, duraciones independientes para GEO y HAMMER, y l\'imites de captura por RAM y por SD. Estos controles provienen de restricciones reales de memoria detectadas durante las primeras pruebas de campo.}
+
+\spahito{06_enlace_mdns/01_captura.png}{6 --- enlace e ingesta por mDNS (24/07/2026)}{Cambio principal: nueva pesta\~na Enlace con escaneo de redes de \SI{2.4}{\giga\hertz}, credenciales, URL de ingesta y cola de subida. Completa la ruta desde el maestro hacia una direcci\'on de servidor conocida, ausente en los cinco hitos anteriores.}
+
+\spahito{07_pga_pgaout/01_captura_completa.png}{7 --- revisi\'on estable con PGA/PGAout (03/08/2026)}{Cambio principal: selecci\'on independiente entre PGA y PGAout por esclavo, sumada a rango de ADC y calibraci\'on ya estabilizados. Es la versi\'on vigente y la que aparece tambi\'en en la Fig.~\ref{fig:spa-hito7-resumen}.}

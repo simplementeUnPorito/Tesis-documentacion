@@ -1,0 +1,687 @@
+\section{Transmisi\'on, ingesta e interfaces}
+\label{sec:transmision-interfaces}
+
+Una vez que la se\~nal fue acondicionada y digitalizada, el problema deja de ser
+exclusivamente anal\'ogico. Los datos deben abandonar cada nodo, llegar sin
+ambig\"uedades a un punto com\'un, conservar su contexto de adquisici\'on y quedar
+disponibles para revisi\'on y procesamiento. En esta etapa aparecen, por tanto,
+dos interfaces distintas:
+
+\begin{equation}
+\text{nodos de medida}
+\longrightarrow
+\text{maestro de campo}
+\longrightarrow
+\text{servidor de ingesta}
+\longrightarrow
+\text{revisi\'on y MASW}.
+\end{equation}
+
+La primera interfaz permite controlar la adquisici\'on: armar nodos, ajustar
+par\'ametros, iniciar o detener una captura, observar el enlace y exportar los
+datos. La segunda permite controlar el conjunto de datos: validar capturas,
+filtrar, agrupar, alinear, promediar, construir el \emph{gather}, estimar la
+dispersi\'on e invertir el perfil de velocidad. Esta separaci\'on evita que el
+microcontrolador tenga que ejecutar las tareas pesadas y permite que el trabajo
+de campo contin\'ue aun cuando no exista conexi\'on a Internet.
+
+\subsection{Decisi\'on de plataforma de comunicaci\'on}
+
+Se seleccion\'o la familia ESP32 por accesibilidad local, bajo costo, abundante
+documentaci\'on, integraci\'on de Wi-Fi y disponibilidad de una pila de desarrollo
+simple. No se plantea al ESP32 como un instrumento de medida: su funci\'on comienza
+despu\'es de la digitalizaci\'on. El nodo esclavo recibe los datos digitales del
+frente de adquisici\'on, los empaqueta y los entrega al maestro.
+
+Para el enlace entre nodos se adopt\'o ESP-NOW. Esta decisi\'on permite una red
+directa de baja sobrecarga que no depende de un \emph{router} en el sitio. A
+cambio, impone restricciones concretas: carga \`util limitada por paquete,
+entrega no equivalente a un transporte confiable, necesidad de mantener el canal
+de radio y dificultad para sostener simult\'aneamente la red de adquisici\'on y
+una conexi\'on convencional a Internet. El dise\~no afronta estas limitaciones
+mediante fragmentaci\'on y reensamblado, numeraci\'on de mensajes, confirmaciones,
+reintentos, estados expl\'icitos de cada nodo y almacenamiento local antes de la
+subida.
+
+El maestro concentra los enlaces ESP-NOW y expone una red Wi-Fi propia. Desde un
+tel\'efono o una computadora se abre la interfaz web embebida, sin instalar una
+aplicaci\'on. Cuando hay conectividad disponible, el equipo cambia a la fase de
+enlace, se asocia a una red de \SI{2.4}{\giga\hertz} y ofrece la cola de capturas
+para su transferencia. El uso de un nombre estable mediante mDNS evita que el
+operador tenga que memorizar la direcci\'on que recibe el maestro en cada red.
+
+\subsection{Por qu\'e se desarrollaron varias interfaces}
+
+Las interfaces no fueron implementaciones redundantes de una misma idea. Cada
+una resolvi\'o una pregunta de una etapa diferente y dej\'o funciones que luego
+se trasladaron a la siguiente versi\'on.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.23\textwidth}Y@{}}
+\toprule
+\textbf{Interfaz} & \textbf{Uso principal} & \textbf{Aporte al dise\~no} \\
+\midrule
+MATLAB: alcance USB & Verificar el canal individual & Visualizaci\'on cruda, referencia DC, FIR, persistencia de configuraci\'on y guardado de muestras. \\
+MATLAB: InterfaceESP & Probar maestro y esclavos & Sincronizaci\'on, lotes, canales, control de PGA, FIR, VDAC y depuraci\'on por nodo. \\
+PyQt: adquisici\'on & Operar varios nodos & Escritorio multipesta\~na, estado de enlace, gr\'aficos simult\'aneos, tema oscuro/claro y registro central. \\
+SPA embebida & Operar en campo sin instalar software & Control desde cualquier navegador, funcionamiento fuera de l\'inea y configuraci\'on del enlace. \\
+PyQt: revisi\'on & Explorar el flujo cient\'ifico & Prototipo de validaci\'on, filtros, grupos, enfase, promedios, \emph{waterfall} y MASW. \\
+FastAPI web & Ingestar y procesar en una direcci\'on conocida & Acceso remoto, estado persistente y continuidad entre campa\~nas y equipos. \\
+\bottomrule
+\end{tabularx}
+\caption{Funciones y alcance de las interfaces desarrolladas.}
+\label{tab:evolucion-interfaces}
+\end{table}
+
+\clearpage
+\subsection{Primera interfaz MATLAB: observaci\'on del canal}
+
+La primera aplicaci\'on cumple la funci\'on de osciloscopio de desarrollo. Su
+importancia no reside en la apariencia, sino en que concentra las variables que
+deben quedar controladas antes de comparar capturas: puerto USB, referencia DC,
+ganancia, filtro, cantidad de muestras, escala y persistencia de los bloques
+anal\'ogicos.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.88\textwidth,height=0.82\textheight,keepaspectratio]{matlab_scope_simple.png}
+\caption{Interfaz MATLAB de alcance individual. Se distinguen la conexi\'on USB,
+la referencia DC, el FIR calculado en MATLAB, el control de PGA, el guardado de
+muestras y los controles de escala y desplazamiento. La pantalla permite
+contrastar la forma de onda cruda con el resultado filtrado antes de introducir
+la comunicaci\'on distribuida.}
+\label{fig:matlab-scope-simple}
+\end{figure}
+
+\clearpage
+\subsection{MATLAB InterfaceESP: del canal aislado al sistema distribuido}
+
+La segunda aplicaci\'on incorpora al maestro y a los esclavos. La vista
+\textbf{Stream} concentra el estado global, mientras que cada pesta\~na de
+esclavo expone sus par\'ametros. Esta organizaci\'on hace visible una decisi\'on
+central: los nodos comparten una l\'ogica com\'un, pero deben conservar identidad,
+estado y diagn\'ostico propios.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{matlab_interface_esp_05_stream.png}
+\caption{Vista \textbf{Stream} de InterfaceESP. Incluye puerto serie, cantidad
+de esclavos, sincronizaci\'on, recepci\'on por lotes, respuesta de ESP-NOW,
+selecci\'on de canal y guardado. La interfaz ya trata la adquisici\'on como un
+sistema de nodos y no como un osciloscopio aislado.}
+\label{fig:matlab-interface-stream}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{matlab_interface_esp_04_esclavo_1_s1.png}
+\caption{Pesta\~na del esclavo 1. Se muestran los controles de VDAC, PGA, FIR,
+se\~nal de prueba, cancelaci\'on de \SI{50}{\hertz} y puerto de depuraci\'on. La
+separaci\'on por nodo permite calibrar o diagnosticar uno sin ocultar el estado
+global.}
+\label{fig:matlab-interface-s1}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{matlab_interface_esp_03_esclavo_2_s2.png}
+\caption{Pesta\~na del esclavo 2, generada con una configuraci\'on de tres nodos.
+La repetici\'on controlada del panel comprueba que la aplicaci\'on no depend\'ia de
+un \`unico esclavo codificado de forma fija.}
+\label{fig:matlab-interface-s2}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{matlab_interface_esp_02_esclavo_3_s3.png}
+\caption{Pesta\~na del esclavo 3. La identidad del nodo forma parte del estado de
+la interfaz y debe acompa\~nar a la captura hasta el servidor.}
+\label{fig:matlab-interface-s3}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{matlab_interface_esp_01_log.png}
+\caption{Registro de InterfaceESP. El \emph{log} desacopla el diagn\'ostico de la
+visualizaci\'on: conexiones, confirmaciones, errores y transiciones pueden
+auditarse sin depender de que una curva se vea correctamente.}
+\label{fig:matlab-interface-log}
+\end{figure}
+
+\clearpage
+\subsection{Aplicaci\'on PyQt de adquisici\'on multipunto}
+
+La versi\'on PyQt reorganiza el prototipo en una herramienta de escritorio. La
+vista global presenta las trazas de varios nodos en paralelo y mantiene acceso
+directo a cada esclavo y al registro. Tambi\'en se ensayaron temas oscuro y
+claro, relevante para una herramienta que puede utilizarse tanto en laboratorio
+como a plena luz durante una campa\~na.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_scope_01_stream.png}
+\caption{Vista global oscura de \textbf{Geophone Multi-Node Scope}. El panel
+superior concentra conexi\'on y acciones globales; el resto del espacio se
+reserva a la comparaci\'on temporal entre canales.}
+\label{fig:qt-scope-stream}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_scope_02_esclavo1.png}
+\caption{Controles del esclavo 1 en la aplicaci\'on PyQt. La configuraci\'on y el
+diagn\'ostico se agrupan por nodo sin abandonar la misma sesi\'on de adquisici\'on.}
+\label{fig:qt-scope-s1}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_scope_03_esclavo2.png}
+\caption{Controles del esclavo 2. La estructura equivalente facilita detectar
+diferencias de configuraci\'on que podr\'ian confundirse con diferencias del
+subsuelo.}
+\label{fig:qt-scope-s2}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_scope_04_esclavo3.png}
+\caption{Controles del esclavo 3. Esta vista confirma la extensi\'on del patr\'on
+de operaci\'on a tres unidades de adquisici\'on.}
+\label{fig:qt-scope-s3}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_scope_05_log.png}
+\caption{Registro central de la aplicaci\'on PyQt. La secuencia de eventos de
+comunicaci\'on permanece disponible aunque el operador cambie de pesta\~na.}
+\label{fig:qt-scope-log}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_scope_06_stream_tema_claro.png}
+\caption{La misma vista global en tema claro. Esta variante permite evaluar la
+legibilidad de trazas, controles y estados bajo otra condici\'on de iluminaci\'on.}
+\label{fig:qt-scope-light}
+\end{figure}
+
+\clearpage
+\subsection{Interfaz embebida en el maestro ESP32}
+
+El paso siguiente consiste en eliminar la dependencia de MATLAB, Python o un
+instalador en la computadora de campo. La aplicaci\'on se almacena junto al
+firmware y se entrega como una SPA desde el propio maestro. Su historial Git
+permite reconstruir siete hitos de desarrollo, todos ejecutables sin hardware
+mediante un servidor que emula las rutas del ESP32.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.13\textwidth}p{0.15\textwidth}Y@{}}
+\toprule
+\textbf{Fecha} & \textbf{Commit} & \textbf{Cambio visible o funcional} \\
+\midrule
+08/06/2026 & \texttt{323fcb7} & Primera interfaz web, relay WebSocket y pruebas. \\
+08/06/2026 & \texttt{76d6092} & Primer estado funcional, todav\'ia incompleto. \\
+15/06/2026 & \texttt{70ca42e} & Incorporaci\'on de la autocalibraci\'on. \\
+01/07/2026 & \texttt{8b63d2b} & P\'agina operativa para el flujo de adquisici\'on. \\
+12/07/2026 & \texttt{89384d8} & Cierre de la UI y herramientas de captura de campo. \\
+24/07/2026 & \texttt{9eb8b5a} & Configuraci\'on de enlace, escaneo de redes, canal y mDNS. \\
+03/08/2026 & \texttt{d6463a} & Compilaci\'on local estable y selecci\'on PGA/PGAout. \\
+\bottomrule
+\end{tabularx}
+\caption{Versiones de la SPA extra\'idas del historial del firmware ESP32.}
+\label{tab:spa-historica}
+\end{table}
+
+La inspecci\'on de los documentos HTML de cada commit permite reconstruir
+tambi\'en la evoluci\'on de los men\'us. El cambio no fue solamente visual: a
+medida que la adquisici\'on dej\'o de ser una prueba de WebSocket aparecieron
+operaciones de campo que antes no exist\'ian.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}p{0.11\textwidth}p{0.25\textwidth}Y@{}}
+\toprule
+\textbf{Hito} & \textbf{Men\'us visibles} & \textbf{Controles incorporados o consolidados} \\
+\midrule
+08/06 inicial & Vista \`unica & Reconexi\'on, tema, ARM, START/STOP, estado, zoom, reset y descarga ZIP. \\
+08/06 funcional & Captura, Nodos, Esclavos, Export, Log & Separaci\'on entre operaci\'on global, estado por nodo, exportaci\'on y diagn\'ostico. \\
+15/06 & Captura, Nodos, Esclavos, Export, Log & Cursores, espectro y autocalibraci\'on; la interfaz comienza a asistir la evaluaci\'on de la se\~nal. \\
+01/07 & Captura, Esclavos, Preservados, Log & Preservaci\'on expl\'icita, calibraci\'on de todos los nodos, guardado CSV/ZIP y autenticaci\'on. \\
+12/07 & Captura, Esclavos, Preservados, Log & Decimaci\'on por $N$, duraciones separadas, l\'imites de RAM/SD y operaci\'on de descuento. \\
+24/07 & Captura, Esclavos, Preservados, Enlace, Log & Escaneo de redes, credenciales, URL de ingesta, cola de archivos, subida al servidor y mDNS. \\
+03/08 & Captura, Esclavos, Preservados, Enlace, Log & Se estabiliza el flujo anterior y se incorpora la selecci\'on entre PGA y PGAout en la cadena distribuida. \\
+\bottomrule
+\end{tabularx}
+\caption{Evoluci\'on verificable de men\'us y controles de la interfaz embebida.}
+\label{tab:spa-menus}
+\end{table}
+
+La versi\'on reciente distribuye sus funciones en cinco men\'us:
+
+\begin{itemize}
+  \item \textbf{Captura}: armado, duraci\'on de ge\'ofono y martillo,
+  decimaci\'on, l\'imites de RAM y SD, inicio, detenci\'on, calibraci\'on,
+  exportaci\'on ZIP/CSV y subida al servidor.
+  \item \textbf{Esclavos}: estado y configuraci\'on individual de cada nodo.
+  \item \textbf{Preservados}: inspecci\'on de adquisiciones conservadas antes de
+  su exportaci\'on o eliminaci\'on.
+  \item \textbf{Enlace}: escaneo de redes, SSID, contrase\~na, URL del servidor,
+  canal y estado de la cola.
+  \item \textbf{Log}: secuencia de conexi\'on, comandos, confirmaciones y errores.
+\end{itemize}
+
+El gr\'afico global puede alternar se\~nal cruda, filtrada, envolvente,
+componente DC y espectro; adem\'as ofrece zoom, cursores y tema. Esta densidad de
+funciones es posible porque el navegador ejecuta la presentaci\'on y parte del
+procesamiento visual, mientras el ESP32 conserva las tareas deterministas de
+adquisici\'on, enlace y almacenamiento.
+
+Las Tablas~\ref{tab:spa-historica} y~\ref{tab:spa-menus} ya documentan, hito a
+hito, qu\'e problema resolvi\'o cada revisi\'on: de una p\'agina \'unica de prueba de
+WebSocket a un flujo con captura, esclavos, preservados, enlace y registro. Las
+dos figuras siguientes bastan para hacer visible ese recorrido dentro del texto
+principal ---el punto de partida y el punto de llegada---; el resto de las
+capturas de los siete hitos, incluidas las pesta\~nas de configuraci\'on repetidas
+por nodo, se conserva de forma exhaustiva en el
+Ap\'endice~\ref{sec:anexo-spa-visual} como banco visual de referencia, sin
+interrumpir aqu\'i la lectura del flujo de transmisi\'on.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.88\textwidth,height=0.82\textheight,keepaspectratio]{esp_historico/01_ui_inicial/01_vista_inicial_oscura.png}
+\caption{Hito 1 (08/06/2026), p\'agina \'unica: adquisici\'on, gr\'afica, configuraci\'on
+de esclavos y registro conviven todav\'ia sin separaci\'on por pesta\~nas. Esta es la
+primera versi\'on ejecutable de la SPA, apenas posterior a que los datos empezaran a
+salir del PSoC por I$^2$C.}
+\label{fig:spa-hito1-resumen}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.88\textwidth,height=0.82\textheight,keepaspectratio]{esp_historico/07_pga_pgaout/01_captura_completa.png}
+\caption{Hito 7 (03/08/2026), estado vigente: cinco men\'us (Captura, Esclavos,
+Preservados, Enlace, Log), decimaci\'on, l\'imites de RAM/SD, selecci\'on PGA/PGAout y
+subida al servidor. La comparaci\'on directa con la Fig.~\ref{fig:spa-hito1-resumen}
+resume en dos im\'agenes lo que las Tablas~\ref{tab:spa-historica}
+y~\ref{tab:spa-menus} describen en texto: la interfaz pas\'o de exponer transporte a
+exponer una operaci\'on de campo completa.}
+\label{fig:spa-hito7-resumen}
+\end{figure}
+
+\clearpage
+\subsection{Revisi\'on de campo: prototipo PyQt del flujo cient\'ifico}
+
+La herramienta de revisi\'on organiza el posprocesado como una secuencia
+expl\'icita. Las capturas siguientes utilizan una copia de un conjunto real de
+nueve adquisiciones; de ese modo la interfaz puede recorrerse sin modificar los
+datos originales.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_01_capturas.png}
+\caption{Pesta\~na \textbf{Capturas} de la revisi\'on PyQt. La tabla vincula cada
+registro con las curvas de martillo y ge\'ofono, permitiendo inspeccionar la
+forma de onda antes de cualquier operaci\'on colectiva.}
+\label{fig:qt-review-capturas}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_02_filtros.png}
+\caption{Pesta\~na \textbf{Filtros}. Re\'une los par\'ametros que determinan qu\'e
+contenido espectral entra a las etapas posteriores. Mantenerlos visibles evita
+que el procesamiento se convierta en una operaci\'on oculta.}
+\label{fig:qt-review-filtros}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_03_agrupamiento.png}
+\caption{Pesta\~na \textbf{Agrupamiento}. Las capturas se organizan por campa\~na,
+distancia y criterio de repetici\'on antes de combinarse.}
+\label{fig:qt-review-grupos}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_04_enfase.png}
+\caption{Pesta\~na \textbf{Enfase}. El alineamiento temporal utiliza la referencia
+del golpe para que el promedio refuerce contenido coherente en lugar de borrar
+los arribos por desfase.}
+\label{fig:qt-review-enfase}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_05_promedios.png}
+\caption{Pesta\~na \textbf{Promedios}. Presenta los resultados combinados y los
+tiempos de arribo derivados de grupos ya validados y alineados.}
+\label{fig:qt-review-promedios}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_06_waterfall.png}
+\caption{Pesta\~na \textbf{Waterfall}. El conjunto de trazas se ordena por
+distancia para observar el cambio temporal y construir el registro multicanal
+equivalente que requiere MASW.}
+\label{fig:qt-review-waterfall}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_07_masw_dispersion.png}
+\caption{Subpesta\~na \textbf{Dispersi\'on}. Los controles definen los rangos de
+frecuencia y velocidad de fase y preparan la selecci\'on de la curva aparente
+$V_R(f)$.}
+\label{fig:qt-review-masw-disp}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_08_masw_inversion.png}
+\caption{Subpesta\~na \textbf{Inversi\'on}. La curva de dispersi\'on elegida se
+convierte en entrada de un modelo estratificado cuyas velocidades y espesores
+se ajustan para reducir el error entre dispersi\'on observada y calculada.}
+\label{fig:qt-review-masw-inv}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{qt_revision_09_masw_perfil_vs.png}
+\caption{Subpesta\~na \textbf{Perfil Vs}. Es la salida final prevista del flujo:
+un modelo de velocidad de onda de corte en funci\'on de la profundidad. La vista
+permanece vac\'ia hasta ejecutar y aceptar una inversi\'on.}
+\label{fig:qt-review-masw-vs}
+\end{figure}
+
+\clearpage
+\subsection{Servidor web: ingesta y procesamiento desde una direcci\'on conocida}
+
+La experiencia con las interfaces anteriores conduce a un modelo web para el
+trabajo posterior a la adquisici\'on. El operador no necesita copiar una
+configuraci\'on de MATLAB o Python entre computadoras y el estado del conjunto
+puede persistir junto a los datos. El servidor se ejecuta en modo de solo
+lectura para estas capturas y utiliza la misma copia de nueve adquisiciones.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_01_capturas_datos.png}
+\caption{Servidor web, pesta\~na \textbf{Capturas}. La lista de adquisiciones se
+relaciona con la se\~nal real de martillo y ge\'ofono. Esta es la puerta de
+entrada para validar metadatos, polaridad, distancia y zona \`util.}
+\label{fig:web-capturas}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_02_filtros_kalman.png}
+\caption{Servidor web, pesta\~na \textbf{Filtros}. Se muestran las alternativas
+de preprocesado y el panel de configuraci\'on del filtro de Kalman.}
+\label{fig:web-filtros}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{web_servidor_03_filtros_kalman_expandido.png}
+\caption{Configuraci\'on expandida del filtro de Kalman. La captura larga conserva
+todos los campos y explicaciones del men\'u, aunque en una versi\'on resumida de
+la presentaci\'on podr\'ia reemplazarse por un recorte.}
+\label{fig:web-kalman-expandido}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_04_agrupamiento.png}
+\caption{Servidor web, pesta\~na \textbf{Agrupamiento}. Define qu\'e repeticiones
+representan una misma posici\'on y pueden participar en las operaciones
+colectivas.}
+\label{fig:web-agrupamiento}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_05_enfase.png}
+\caption{Servidor web, pesta\~na \textbf{Enfase}. La interfaz hace expl\'icita la
+referencia utilizada para alinear los golpes antes del promedio.}
+\label{fig:web-enfase}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_06_promedios_arrivals.png}
+\caption{Servidor web, pesta\~na \textbf{Promedios/arrivals}. Los resultados
+promediados y los arribos se inspeccionan antes de construir la representaci\'on
+por distancia.}
+\label{fig:web-promedios}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_07_waterfall.png}
+\caption{Servidor web, pesta\~na \textbf{Waterfall}. La visualizaci\'on integra
+trazas de distintas posiciones en el \emph{gather} que alimenta el an\'alisis de
+ondas superficiales.}
+\label{fig:web-waterfall}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_08_masw_dispersion.png}
+\caption{Servidor web, MASW: \textbf{Dispersi\'on}. La interfaz contiene los
+rangos de c\'alculo, normalizaci\'on, pesos, selecci\'on modal y herramientas de
+\emph{picking}.}
+\label{fig:web-masw-disp}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_09_masw_inversion.png}
+\caption{Servidor web, MASW: \textbf{Inversi\'on}. Esta pantalla concentra la
+parametrizaci\'on del modelo y la ejecuci\'on del ajuste entre curva observada y
+curva te\'orica.}
+\label{fig:web-masw-inv}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_10_masw_perfil_vs.png}
+\caption{Servidor web, MASW: \textbf{Perfil Vs}. La salida se reserva para el
+modelo final y sus indicadores, una vez que se complete y acepte la inversi\'on.}
+\label{fig:web-masw-vs}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{web_servidor_12_borrado.png}
+\caption{Pesta\~na \textbf{Borrado}. Las operaciones destructivas quedan
+separadas del flujo de an\'alisis. Esta decisi\'on de interfaz reduce el riesgo
+de confundir una exclusi\'on metodol\'ogica con la eliminaci\'on f\'isica de una
+captura.}
+\label{fig:web-borrado}
+\end{figure}
+
+\clearpage
+\subsection{Resultados reproducibles fuera de la interfaz: estado actual y l\'imites}
+
+Las pantallas anteriores documentan \emph{d\'onde} se ejecuta cada etapa. Para no
+confundir una interfaz implementada con un resultado cient\'ifico validado, esta
+subsecci\'on conserva tambi\'en las salidas num\'ericas generadas por los scripts de
+an\'alisis. Provienen de una reconstrucci\'on de 21 trazas reales entre 10 y
+\SI{50}{\meter}, muestreadas a \SI{1020}{\hertz}. El repositorio almacena la salida
+el\'ectrica de la cadena de aceleraci\'on en voltios; por eso las comparaciones
+espectrales pueden defenderse, pero no deben presentarse como una calibraci\'on absoluta
+de aceleraci\'on del suelo.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../../../src/interfaces/python/geophone_scope/kalman_deconv/reports/real_canchita_group1/01_traza_real_y_espectro.png}
+\caption{Traza real a \SI{30}{\meter} y distribuci\'on espectral normalizada.
+Se comparan la salida medida, el filtrado Butterworth SOS aplicado en ambos
+sentidos y la reconstrucci\'on RTS. La normalizaci\'on por \'area entre 1 y
+\SI{200}{\hertz} permite comparar contenido espectral aun cuando las curvas no
+comparten una calibraci\'on absoluta de amplitud.}
+\label{fig:resultado-real-traza-espectro}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../../../src/interfaces/python/geophone_scope/kalman_deconv/reports/real_canchita_group1/02_dispersion_rts_real.png}
+\caption{Imagen de dispersi\'on calculada con las trazas reconstruidas por RTS.
+La referencia externa en cian se utiliza solamente para evaluar; no inicializa
+ni ajusta el seguimiento. La curva verde corresponde al \emph{tracker}
+Kalman+RTS en frecuencia y los puntos blancos al selector autom\'atico anterior.}
+\label{fig:resultado-dispersion-rts}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../../../src/interfaces/python/geophone_scope/kalman_deconv/reports/real_canchita_group1/02_dispersion_sos_filtfilt.png}
+\caption{Imagen de dispersi\'on obtenida con el brazo de control SOS
+\emph{filtfilt}. Al aplicar el mismo \emph{tracker} de frecuencia aparece una
+curva semejante a la del brazo RTS. Esta comparaci\'on separa el efecto del
+preprocesamiento temporal del efecto del algoritmo de selecci\'on de cresta.}
+\label{fig:resultado-dispersion-sos}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../../../src/interfaces/python/geophone_scope/kalman_deconv/reports/real_canchita_group1/04_comparacion_picking.png}
+\caption{Comparaci\'on contra la referencia externa entre el selector autom\'atico
+anterior y Kalman+RTS. En la banda 8--\SI{29.83}{\hertz}, el error RMSE pasa de
+138,2 a \SI{16.2}{\meter\per\second} para SOS y de 148,2 a
+\SI{16.4}{\meter\per\second} para RTS. Es evidencia de mejora del
+\emph{picking} en este conjunto, no una validaci\'on general ni metrol\'ogica del
+sistema.}
+\label{fig:resultado-comparacion-picking}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../../../src/interfaces/python/geophone_scope/kalman_deconv/reports/acceleration_kalman_inversion_2026-08-17/01_masw_acceleration_kalman_curve.png}
+\caption{Imagen MASW y curva seleccionada para la inversi\'on preliminar. Se
+utilizan 25 puntos entre 8 y \SI{21.71}{\hertz}; el l\'imite superior se impone
+antes de que el espaciamiento de \SI{2}{\meter} obligue al seguimiento a saltar
+a otra cresta. La referencia externa se superpone solamente para evaluaci\'on.}
+\label{fig:resultado-masw-curva-inversion}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{../../../src/interfaces/python/geophone_scope/kalman_deconv/reports/acceleration_kalman_inversion_2026-08-17/02_inversion_vs_profile.png}
+\caption{Ajuste de la curva de Rayleigh y dos parametrizaciones de $V_S(z)$.
+El modelo mon\'otono obtiene un RMSE de \SI{0.463}{\meter\per\second} respecto
+del \emph{pick}; permitir dos inversiones reduce el residuo, pero introduce
+capas oscilatorias sensibles a la parametrizaci\'on. La banda disponible resuelve
+aproximadamente hasta \SI{5.4}{\meter}: las interfaces y el semiespacio no deben
+interpretarse a\'un como un perfil geol\'ogico definitivo.}
+\label{fig:resultado-inversion-vs-preliminar}
+\end{figure}
+
+\noindent Estas salidas completan la cadena demostrada
+
+\begin{center}
+\small
+\fbox{trazas reales}
+$\rightarrow$
+\fbox{preprocesado}
+$\rightarrow$
+\fbox{dispersi\'on}
+$\rightarrow$
+\fbox{selecci\'on $V_R(f)$}
+$\rightarrow$
+\fbox{inversi\'on}
+$\rightarrow$
+\fbox{$V_S(z)$ preliminar}.
+\end{center}
+
+Lo que queda por probar no es la existencia de estas etapas, sino su validez fuera del
+conjunto mostrado: repetibilidad entre grupos y campa\~nas, sensibilidad a la geometr\'ia
+y a las m\'ascaras, incertidumbre del \emph{picking}, no unicidad de la inversi\'on y
+comparaci\'on con informaci\'on independiente del sitio.
+
+\clearpage
+\subsection{Acceso remoto, VPN y tunelamiento}
+
+El equipo de campo puede operar sin Internet, pero la ingesta remota necesita
+una direcci\'on que el maestro o el navegador puedan alcanzar. Una IP privada
+asignada por una red Wi-Fi no cumple esta condici\'on: cambia entre sitios y no
+es enrutable desde fuera. La soluci\'on adoptada combina una VPN de malla y
+tunelamiento para presentar el servidor bajo una direcci\'on conocida.
+
+Esta capa no sustituye el almacenamiento local. La secuencia robusta es:
+
+\begin{enumerate}
+  \item adquirir y verificar la captura en la red local del maestro;
+  \item preservar el archivo y sus metadatos en el equipo de campo;
+  \item entrar en la fase de enlace cuando exista una red adecuada;
+  \item transferir a la direcci\'on conocida y comprobar la respuesta de ingesta;
+  \item conservar o liberar la copia local seg\'un la pol\'itica de respaldo.
+\end{enumerate}
+
+La VPN resuelve identidad y alcance entre equipos; el t\'unel publica el servicio
+sin exigir configuraci\'on manual de puertos en cada red visitada. La URL queda
+guardada en la pesta\~na \textbf{Enlace}, por lo que el operador no necesita
+editar el firmware al cambiar el servidor.
+
+\subsection{Conclusi\'on de la etapa}
+
+La evoluci\'on MATLAB $\rightarrow$ PyQt $\rightarrow$ SPA embebida y servidor
+web no representa un cambio meramente est\'etico. Separa responsabilidades:
+adquisici\'on local tolerante a desconexiones, transporte verificable, ingesta
+persistente y procesamiento reproducible. Las capturas muestran que cada bloque
+del flujo posee una interfaz observable y que las operaciones metodol\'ogicas no
+quedan escondidas en un script \`unico.
+
+Quedan por completar pruebas integrales con todos los nodos conectados, medidas
+de p\'erdida y latencia bajo interferencia, verificaci\'on de recuperaci\'on tras
+cortes de energ\'ia o red, y cierre del ciclo de inversi\'on hasta producir un
+perfil Vs aceptado. Estas pruebas pertenecen a la validaci\'on del sistema; no
+alteran la separaci\'on funcional definida en esta secci\'on.
+
+\ifdefined\cuartaresumen\else\def\cuartaresumen{0}\fi
+
+\clearpage
+\ifnum\cuartaresumen=1
+
+\section*{Ap\'endice: un hito por revisi\'on de la SPA embebida}
+\label{sec:anexo-spa-visual}
+\addcontentsline{toc}{section}{Ap\'endice: un hito por revisi\'on de la SPA embebida}
+
+Este ap\'endice complementa la Fig.~\ref{fig:spa-hito1-resumen} y la
+Fig.~\ref{fig:spa-hito7-resumen} con una captura por hito ---no una por pesta\~na
+ni por nodo---, de modo que se vea \'unicamente qu\'e cambi\'o entre revisiones
+consecutivas. Las pesta\~nas de configuraci\'on repetidas por nodo, los temas
+claro/oscuro y las variantes de cursores o espectro se omiten aqu\'i porque no
+aportan una diferencia funcional nueva frente al hito anterior; esa versi\'on
+exhaustiva se conserva en \texttt{cuarta-seccion.tex} para quien necesite el
+banco visual completo.
+
+\input{secciones/04_spa_historial_resumida}
+
+\else
+
+\section*{Ap\'endice: recorrido visual exhaustivo de la SPA embebida}
+\label{sec:anexo-spa-visual}
+\addcontentsline{toc}{section}{Ap\'endice: recorrido visual exhaustivo de la SPA embebida}
+
+Este ap\'endice re\'une, sin resumir, las capturas de los siete hitos de la SPA
+mencionados en la Tabla~\ref{tab:spa-historica} y ya introducidos en la
+Fig.~\ref{fig:spa-hito1-resumen} y la Fig.~\ref{fig:spa-hito7-resumen}. Se
+mantiene como banco visual completo ---incluidas las pesta\~nas de configuraci\'on
+que se repiten por nodo--- para que, al preparar una versi\'on resumida de la
+presentaci\'on, puedan elegirse desde aqu\'i las pocas im\'agenes adicionales que
+hagan falta, en lugar de volver a capturar pantallas. Existe tambi\'en una
+versi\'on condensada de esta secci\'on, \texttt{cuarta-seccion-resumida.tex}, que
+reemplaza este ap\'endice por una \'unica captura por hito.
+
+\input{secciones/04_spa_historial_visual}
+
+\fi

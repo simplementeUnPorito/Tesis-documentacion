@@ -7,6 +7,16 @@
 \newblock \url{https://www.analog.com/en/products/ADXL355.html}.
 \newblock Consulta: 18 de agosto de 2026.
 
+\bibitem[{Convocatoria PINV01-317}, 2024]{PINV01317}
+{Convocatoria PINV01-317} (2024).
+\newblock Sistema electrónico multicanal para generación y captación de
+  ondas sísmicas orientado a la caracterización geotécnica del suelo hasta
+  50 metros de profundidad.
+\newblock Technical report, Propuesta de proyecto de investigación (formulario
+  PINV01-317B).
+\newblock Propuesta de financiación no aceptada; antecedente directo de esta
+  tesis.
+
 \bibitem[Crook et~al., 2017]{Crook2017}
 Crook, N., Calendine, S., and Levitt, M. (2017).
 \newblock Site characterization of an abandoned gold mine using the
@@ -78,6 +88,13 @@ Gautam, R., Shrivastava, A.~K., Gupta, S., and Sharma, V. (2020).
 \newblock {PSoC} {5LP}: {CY8C58LP} family datasheet.
 \newblock Document No.~001-84932, Rev.~*N.
 
+\bibitem[Jagadesh, 2012]{WikimediaSM24Photo}
+Jagadesh, B. (2012).
+\newblock Geophone {SM-24}.
+\newblock Wikimedia Commons, licencia CC BY-SA 3.0:
+  \url{https://commons.wikimedia.org/wiki/File:Geophone_SM-24.jpg}.
+\newblock Consulta: 18 de agosto de 2026.
+
 \bibitem[{K. Ma et al.}, 2023]{Ma2023}
 {K. Ma et al.} (2023).
 \newblock An effective method for improving low-frequency response of geophone.
@@ -109,6 +126,11 @@ Monjardin, C. E.~F. and Medina, A.~B. (2023).
   for average shear wave velocity in {Metro Manila}.
 \newblock {\em Energy Reports}, 9(S2):38--47.
 
+\bibitem[Park, 2013]{Park2013}
+Park, C.~B. (2013).
+\newblock {MASW} for geotechnical site investigation.
+\newblock {\em The Leading Edge}, 32(6):656--662.
+
 \bibitem[Park et~al., 1998]{Park1998}
 Park, C.~B., Miller, R.~D., and Xia, J. (1998).
 \newblock Imaging dispersion curves of surface waves on multi-channel record.
@@ -119,6 +141,11 @@ Park, C.~B., Miller, R.~D., and Xia, J. (1998).
 Park, C.~B., Miller, R.~D., and Xia, J. (1999).
 \newblock Multichannel analysis of surface waves.
 \newblock {\em Geophysics}, 64(3):800--808.
+
+\bibitem[Park et~al., 2018]{Park2018Roads}
+Park, C.~B., Richter, J., Rodrigues, R., and Cirone, A. (2018).
+\newblock {MASW} applications for road construction and maintenance.
+\newblock {\em The Leading Edge}, 37(10):724--730.
 
 \bibitem[{PASI srl}, 2022]{PASIPrice2022}
 {PASI srl} (2022).
@@ -171,6 +198,7 @@ Vantassel, J.~P., Cox, B.~R., Wotherspoon, L., and Stolte, A. (2018).
   Implications for local seismic site amplification.
 \newblock {\em Bulletin of the Seismological Society of America},
   108(3B):1709--1721.
+\newblock Prepublicación de acceso abierto consultada para las figuras.
 
 \bibitem[Xia et~al., 1999]{Xia1999}
 Xia, J., Miller, R.~D., and Park, C.~B. (1999).

@@ -1,0 +1,130 @@
+El servidor de demostraci\'on emula WebSocket, estados, tres nodos, escaneo de
+redes e ingesta local. Las formas de onda son \textbf{se\~nales sint\'eticas
+utilizadas para activar y documentar la interfaz}; no se presentan como
+mediciones de campo ni como validaci\'on del sistema.
+
+\newcommand{\spavisual}[2]{%
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.79\textheight,keepaspectratio]{esp_historico/#1}
+\caption{#2}
+\end{figure}
+\clearpage}
+
+\clearpage
+\paragraph{Hito 1 --- interfaz inicial del 08/06/2026.}
+La primera versi\'on utiliza una p\'agina continua. Aunque todav\'ia no separa el
+flujo en men\'us, ya re\'une adquisici\'on, gr\'aficas, configuraci\'on individual,
+exportaci\'on y diagn\'ostico.
+
+\spavisual{01_ui_inicial/01_vista_inicial_oscura.png}{Hito 1, vista oscura completa. La p\'agina continua muestra la primera integraci\'on de captura, gr\'aficas, nodos, configuraci\'on y registro.}
+\spavisual{01_ui_inicial/02_vista_inicial_clara.png}{Hito 1, tema claro. La misma interfaz permite comparar contraste y legibilidad sin cambiar el flujo de operaci\'on.}
+\spavisual{01_ui_inicial/03_captura_arm_start_stop.png}{Hito 1, bloque de adquisici\'on: cantidad de esclavos, ARM, duraci\'on, START, STOP y consulta de estado.}
+\spavisual{01_ui_inicial/04_grafico_zoom_reset.png}{Hito 1, gr\'afica temporal y primeras herramientas de zoom y restablecimiento.}
+\spavisual{01_ui_inicial/04b_nodos_activos.png}{Hito 1, detalle de los controles iniciales del filtro FIR, remoci\'on de continua, notch y pruebas de latencia.}
+\spavisual{01_ui_inicial/05_descarga_zip.png}{Hito 1, exportaci\'on: nombre de la adquisici\'on, opci\'on CSV y descarga del contenedor ZIP.}
+\spavisual{01_ui_inicial/06_log_websocket.png}{Hito 1, registro WebSocket. El log hace observable la conexi\'on y los mensajes intercambiados con el maestro.}
+\spavisual{01_ui_inicial/07_esclavo_1_configuracion.png}{Hito 1, configuraci\'on del esclavo 1: tipo, VDAC, PGA, FIR, remoci\'on de continua, notch y comandos de prueba.}
+\spavisual{01_ui_inicial/07_esclavo_2_configuracion.png}{Hito 1, configuraci\'on del esclavo 2. La repetici\'on por nodo anticipa el control distribuido posterior.}
+\spavisual{01_ui_inicial/07_esclavo_3_configuracion.png}{Hito 1, configuraci\'on del esclavo 3 con los mismos controles y estad\'isticas independientes.}
+
+\clearpage
+\paragraph{Hito 2 --- primera separaci\'on funcional del 08/06/2026.}
+La segunda revisi\'on reemplaza la p\'agina continua por pesta\~nas. La separaci\'on
+todav\'ia es incompleta, pero define la arquitectura de navegaci\'on que se
+mantendr\'a en los hitos siguientes.
+
+\spavisual{02_funcional_incompleta/01_captura.png}{Hito 2, pesta\~na Captura con operaci\'on global y gr\'aficas visibles en paralelo.}
+\spavisual{02_funcional_incompleta/02_nodos.png}{Hito 2, pesta\~na Nodos: estado compacto de los canales antes de entrar a su configuraci\'on detallada.}
+\spavisual{02_funcional_incompleta/03_esclavos.png}{Hito 2, pesta\~na Esclavos con los paneles de configuraci\'on individual.}
+\spavisual{02_funcional_incompleta/04_export.png}{Hito 2, pesta\~na Export: se independiza la generaci\'on de archivos del control de captura.}
+\spavisual{02_funcional_incompleta/05_log.png}{Hito 2, pesta\~na Log con la secuencia de conexi\'on, estados y mensajes de los nodos.}
+\spavisual{02_funcional_incompleta/06_tema_claro.png}{Hito 2, recorrido completo en tema claro.}
+
+\clearpage
+\paragraph{Hito 3 --- autocalibraci\'on y herramientas de lectura del 15/06/2026.}
+En esta revisi\'on la interfaz deja de limitarse al transporte: aparecen cursores,
+espectro, filtrado local y un estado expl\'icito de autocalibraci\'on.
+
+\spavisual{03_autocalibracion/01_captura.png}{Hito 3, Captura: control global, frecuencia de muestreo y acceso directo a cursores y espectro.}
+\spavisual{03_autocalibracion/02_nodos.png}{Hito 3, Nodos: lectura simult\'anea del estado y las se\~nales de los canales activos.}
+\spavisual{03_autocalibracion/03_esclavos.png}{Hito 3, Esclavos: autocalibraci\'on, FIR, remoci\'on de continua y diagn\'ostico por nodo.}
+\spavisual{03_autocalibracion/04_export.png}{Hito 3, Export: selecci\'on y preparaci\'on de los datos a conservar.}
+\spavisual{03_autocalibracion/05_cursores.png}{Hito 3, cursores temporales incorporados a las gr\'aficas.}
+\spavisual{03_autocalibracion/06_espectro.png}{Hito 3, vista espectral para inspeccionar la distribuci\'on de energ\'ia de la se\~nal.}
+\spavisual{03_autocalibracion/07_autocalibracion.png}{Hito 3, autocalibraci\'on solicitada y filtro FIR activo en el panel del esclavo.}
+\spavisual{03_autocalibracion/08_log.png}{Hito 3, registro de las operaciones de calibraci\'on, filtrado y comunicaci\'on.}
+\spavisual{03_autocalibracion/09_tema_claro.png}{Hito 3, tema claro con todas las pesta\~nas y gr\'aficas.}
+
+\clearpage
+\paragraph{Hito 4 --- p\'agina operativa del 01/07/2026.}
+El cuarto hito organiza un flujo de campo reconocible: adquisici\'on, configuraci\'on
+de esclavos, preservaci\'on, exportaci\'on y acceso protegido.
+
+\spavisual{04_pagina_operativa/01_captura.png}{Hito 4, Captura operativa con tres nodos y trazas sint\'eticas para ejercitar la visualizaci\'on.}
+\spavisual{04_pagina_operativa/02_esclavos.png}{Hito 4, Esclavos: inversi\'on de se\~nal, PGA, FIR y funciones de hardware PSoC.}
+\spavisual{04_pagina_operativa/03_preservados.png}{Hito 4, pesta\~na Preservados para separar adquisiciones conservadas del flujo vivo.}
+\spavisual{04_pagina_operativa/04_preservar.png}{Hito 4, operaci\'on Preservar aplicada a la captura disponible.}
+\spavisual{04_pagina_operativa/05_export_csv_zip.png}{Hito 4, nombre y guardado CSV/ZIP integrados en la pesta\~na de captura.}
+\spavisual{04_pagina_operativa/06_autenticacion.png}{Hito 4, modal de acceso protegido emitido por el flujo real de autenticaci\'on WebSocket.}
+\spavisual{04_pagina_operativa/07_log.png}{Hito 4, log operativo con estados, HELLO de nodos y confirmaciones del emulador.}
+\spavisual{04_pagina_operativa/08_procesamiento_graficas.png}{Hito 4, envolventes y remoci\'on de componente continua aplicadas a las trazas de demostraci\'on.}
+\spavisual{04_pagina_operativa/09_tema_claro.png}{Hito 4, tema claro de la p\'agina operativa.}
+
+\clearpage
+\paragraph{Hito 5 --- interfaz de captura finalizada del 12/07/2026.}
+La revisi\'on agrega par\'ametros que provienen de restricciones reales de memoria
+y de tipos de nodo: decimaci\'on, duraciones diferentes y l\'imites RAM/SD.
+
+\spavisual{05_ui_finalizada/01_captura_completa.png}{Hito 5, vista completa del flujo de captura finalizado.}
+\spavisual{05_ui_finalizada/02_decimacion_n.png}{Hito 5, aplicaci\'on del factor global de decimaci\'on $N$ y actualizaci\'on de la frecuencia efectiva.}
+\spavisual{05_ui_finalizada/03_duraciones_geo_hammer.png}{Hito 5, duraciones independientes para nodos GEO y HAMMER.}
+\spavisual{05_ui_finalizada/04_limite_ram.png}{Hito 5, acceso directo al m\'aximo de captura limitado por RAM.}
+\spavisual{05_ui_finalizada/04b_limite_sd.png}{Hito 5, acceso directo al m\'aximo de captura habilitado por almacenamiento SD.}
+\spavisual{05_ui_finalizada/05_descontar.png}{Hito 5, operaci\'on Descontar incorporada al control de la adquisici\'on.}
+\spavisual{05_ui_finalizada/06_esclavos.png}{Hito 5, configuraci\'on avanzada: PGA, rango ADC, SD, FIR, rechazo de ruido de l\'inea y comandos PSoC.}
+\spavisual{05_ui_finalizada/07_preservados.png}{Hito 5, selecci\'on de capturas preservadas antes de exportar o limpiar.}
+\spavisual{05_ui_finalizada/08_log.png}{Hito 5, registro de comandos y estados de la interfaz finalizada.}
+\spavisual{05_ui_finalizada/09_tema_claro.png}{Hito 5, tema claro.}
+\spavisual{05_ui_finalizada/10_procesamiento_graficas.png}{Hito 5, controles de cruda, filtrada, envolventes y continua disponibles en la barra gr\'afica.}
+
+\clearpage
+\paragraph{Hito 6 --- enlace, ingesta y mDNS del 24/07/2026.}
+Este hito completa la ruta desde el maestro hacia una direcci\'on conocida. La
+SPA conserva la captura y suma escaneo, credenciales, diagn\'ostico de canal,
+cola de archivos y subida del ZIP.
+
+\spavisual{06_enlace_mdns/01_captura.png}{Hito 6, primera vista de la pesta\~na Enlace, con red, b\'usqueda, credenciales y URL del servidor reunidas en el maestro.}
+\spavisual{06_enlace_mdns/02_esclavos.png}{Hito 6, Esclavos con RSSI ESP-NOW y configuraci\'on individual.}
+\spavisual{06_enlace_mdns/03_preservados.png}{Hito 6, Preservados: capturas elegibles para el ZIP y la ingesta.}
+\spavisual{06_enlace_mdns/04_enlace_estado.png}{Hito 6, Enlace: red, IP, canal, cantidad de archivos en cola y espacio libre.}
+\spavisual{06_enlace_mdns/05_enlace_buscar.png}{Hito 6, b\'usqueda de redes de \SI{2.4}{\giga\hertz} visibles para el ESP32.}
+\spavisual{06_enlace_mdns/06_enlace_configuracion.png}{Hito 6, configuraci\'on de SSID, credencial y URL de ingesta.}
+\spavisual{06_enlace_mdns/07_subir_servidor.png}{Hito 6, operaci\'on Subir al server ejecutada contra la ruta local del emulador.}
+\spavisual{06_enlace_mdns/08_log.png}{Hito 6, log de enlace, guardado de configuraci\'on y subida.}
+\spavisual{06_enlace_mdns/09_tema_claro.png}{Hito 6, tema claro del flujo con conectividad.}
+
+\clearpage
+\paragraph{Hito 7 --- revisi\'on estable con PGA/PGAout del 03/08/2026.}
+La \`ultima versi\'on mantiene el flujo anterior e incorpora el punto de selecci\'on
+PGAout, junto con rango ADC, filtrado, calibraci\'on y lectura del estado de enlace.
+
+\spavisual{07_pga_pgaout/01_captura_completa.png}{Hito 7, vista final completa con tres nodos y se\~nales sint\'eticas.}
+\spavisual{07_pga_pgaout/02_grafico_cruda_filtrada.png}{Hito 7, controles preparados para alternar la visualizaci\'on temporal de la se\~nal cruda y filtrada.}
+\spavisual{07_pga_pgaout/03_envolventes_dc.png}{Hito 7, se\~nal, envolvente y remoci\'on de continua despu\'es de actualizar el filtro.}
+\spavisual{07_pga_pgaout/04_espectro.png}{Hito 7, espectro de los canales activos.}
+\spavisual{07_pga_pgaout/05_cursores_zoom.png}{Hito 7, cursores y zoom sobre la vista temporal.}
+\spavisual{07_pga_pgaout/06_captura_parametros.png}{Hito 7, ARM, decimaci\'on, duraciones GEO/HAMMER y l\'imites de memoria.}
+\spavisual{07_pga_pgaout/07_esclavos_general.png}{Hito 7, vista general de los tres paneles de esclavo.}
+\spavisual{07_pga_pgaout/07b_esclavo_filtro_adc_calibracion.png}{Hito 7, combinaci\'on de rango ADC, FIR pasa banda y calibraci\'on en un nodo GEO.}
+\spavisual{07_pga_pgaout/08_esclavo_pga.png}{Hito 7, selecci\'on de ganancia PGA.}
+\spavisual{07_pga_pgaout/09_esclavo_pgaout.png}{Hito 7, selecci\'on independiente de PGAout en el nuevo punto de la cadena anal\'ogica.}
+\spavisual{07_pga_pgaout/10_preservados.png}{Hito 7, capturas preservadas en la versi\'on final.}
+\spavisual{07_pga_pgaout/11_enlace_estado.png}{Hito 7, estado de red, canal y cola en la pesta\~na Enlace.}
+\spavisual{07_pga_pgaout/12_enlace_escaneo.png}{Hito 7, resultado del escaneo de redes de \SI{2.4}{\giga\hertz}.}
+\spavisual{07_pga_pgaout/13_enlace_servidor.png}{Hito 7, URL local de ingesta guardada en el maestro emulado.}
+\spavisual{07_pga_pgaout/14_subida_servidor.png}{Hito 7, ZIP de demostraci\'on subido correctamente al endpoint local.}
+\spavisual{07_pga_pgaout/15_log.png}{Hito 7, registro final de conexi\'on, HELLO, comandos, configuraci\'on y subida.}
+\spavisual{07_pga_pgaout/16_tema_claro.png}{Hito 7, vista final en tema claro.}
+
+\clearpage

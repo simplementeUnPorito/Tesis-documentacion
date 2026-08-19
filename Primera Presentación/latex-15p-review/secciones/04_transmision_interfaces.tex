@@ -1,0 +1,113 @@
+\section{Transmisión, ingesta e interfaces}
+\label{sec:transmision-interfaces}
+
+Una vez acondicionada y digitalizada, la señal debe abandonar cada nodo, llegar sin
+ambigüedades a un punto común, conservar su contexto de adquisición y quedar disponible
+para revisión y procesamiento:
+
+\begin{equation}
+\text{nodos de medida}
+\longrightarrow
+\text{maestro de campo}
+\longrightarrow
+\text{servidor de ingesta}
+\longrightarrow
+\text{revisión y MASW}.
+\end{equation}
+
+La primera interfaz controla la adquisición (armar nodos, ajustar parámetros, iniciar o
+detener una captura, observar el enlace, exportar); la segunda controla el conjunto de
+datos (validar, filtrar, agrupar, alinear, promediar, invertir). Esta separación evita
+que el microcontrolador ejecute tareas pesadas y permite seguir trabajando en campo sin
+conexión a Internet.
+
+\subsection{Plataforma de comunicación}
+
+Se eligió la familia ESP32 por accesibilidad local, bajo costo, documentación abundante
+e integración de Wi-Fi; no se lo usa como instrumento de medida, sino después de la
+digitalización: el nodo esclavo empaqueta los datos del frente analógico y los entrega
+al maestro. El enlace entre nodos usa ESP-NOW, que da una red directa de baja sobrecarga
+sin depender de un \emph{router} en el sitio, a cambio de carga útil limitada por
+paquete y entrega no confiable por sí sola; el diseño compensa esto con fragmentación,
+numeración de mensajes, confirmaciones, reintentos y almacenamiento local previo a la
+subida. El maestro concentra los enlaces ESP-NOW y expone además una red Wi-Fi propia
+con una interfaz web embebida accesible desde cualquier teléfono o computadora sin
+instalar software; cuando hay conectividad disponible pasa a una fase de enlace,
+se asocia a una red externa y transfiere la cola de capturas pendientes.
+
+\subsection{Por qué se desarrollaron varias interfaces}
+
+Cada interfaz resolvió una pregunta de una etapa distinta y dejó funciones que se
+trasladaron a la siguiente versión. Se empezó por un osciloscopio MATLAB de un solo
+canal para fijar las variables que debían quedar controladas (puerto, referencia DC,
+ganancia, filtro) antes de comparar capturas; al incorporar varios nodos, una segunda
+aplicación MATLAB agregó una vista de estado global y una pestaña por esclavo, tratando
+ya la adquisición como un sistema y no como un canal aislado. Una versión de escritorio
+en PyQt reorganizó esto en una herramienta multi-nodo con temas claro/oscuro, útil tanto
+en laboratorio como a la intemperie. El paso siguiente fue eliminar la dependencia de
+una computadora con MATLAB o Python instalado: la interfaz se embebió como una \emph{SPA}
+servida directamente por el maestro, operable desde cualquier navegador y funcional sin
+conexión a Internet, con menús de Captura, Esclavos, Preservados, Enlace y Log. En
+paralelo se prototipó en PyQt, y luego en un servidor web, el flujo de posprocesado
+completo (filtros, agrupamiento, enfase, promedios, \emph{waterfall}, dispersión e
+inversión MASW), migrando finalmente a un servidor FastAPI para tener una dirección
+conocida, estado persistente entre campañas y acceso remoto sin reinstalar nada en cada
+equipo de campo.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.23\textwidth}Y@{}}
+\toprule
+\textbf{Interfaz} & \textbf{Uso principal} & \textbf{Aporte al diseño} \\
+\midrule
+MATLAB: alcance USB & Verificar el canal individual & Visualización cruda, referencia DC, FIR, guardado de muestras. \\
+MATLAB: InterfaceESP & Probar maestro y esclavos & Sincronización, lotes, control de PGA/FIR por nodo, depuración. \\
+PyQt: adquisición & Operar varios nodos & Escritorio multipestaña, estado de enlace, gráficos simultáneos. \\
+SPA embebida & Operar en campo sin instalar software & Control desde el navegador, funcionamiento fuera de línea. \\
+PyQt: revisión & Explorar el flujo científico & Filtros, grupos, enfase, promedios, \emph{waterfall} y MASW. \\
+Servidor FastAPI & Ingestar y procesar en una dirección conocida & Acceso remoto, estado persistente entre campañas. \\
+\bottomrule
+\end{tabularx}
+\caption{Funciones y alcance de las interfaces desarrolladas.}
+\label{tab:evolucion-interfaces}
+\end{table}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth,height=0.62\textheight,keepaspectratio]{esp_historico/07_pga_pgaout/01_captura_completa.png}
+\caption{Estado vigente de la SPA embebida: cinco menús (Captura, Esclavos,
+Preservados, Enlace, Log), decimación, límites de RAM/SD, selección PGA/PGAout y
+subida al servidor. Frente a la primera versión ejecutable, la interfaz pasó de
+exponer sólo transporte a exponer una operación de campo completa.}
+\label{fig:spa-hito7-resumen}
+\end{figure}
+
+\subsection{Resultados reproducibles: estado actual y límites}
+
+Además de las interfaces, el repositorio conserva salidas numéricas generadas por los
+scripts de análisis sobre 21 trazas reales entre 10 y \SI{50}{\meter}, muestreadas a
+\SI{1020}{\hertz}. Comparando el seguimiento automático de cresta previo contra un
+seguidor Kalman+RTS, el error respecto de una referencia externa en la banda
+8--\SI{29.83}{\hertz} bajó de aproximadamente 138--148 a \SI{16}{\meter\per\second}: es
+evidencia de mejora del \emph{picking} en este conjunto, no una validación general del
+sistema. Una inversión preliminar con esa curva (25 puntos entre 8 y \SI{21.71}{\hertz})
+alcanza un RMSE de \SI{0.463}{\meter\per\second} contra el \emph{pick}, resolviendo la
+banda disponible hasta aproximadamente \SI{5.4}{\meter}: la cadena completa
+trazas~$\to$~dispersión~$\to$~inversión~$\to$~$V_S(z)$ ya funciona de punta a punta,
+pero todavía falta evaluar repetibilidad entre grupos y campañas, sensibilidad a la
+geometría, incertidumbre del \emph{picking}, no unicidad de la inversión y comparación
+con información independiente del sitio.
+
+\subsection{Acceso remoto y conclusión}
+
+Como el equipo de campo opera sin Internet pero la ingesta remota necesita una dirección
+alcanzable, se combina una VPN de malla con tunelamiento para publicar el servidor bajo
+una dirección conocida, sin exigir configuración manual de puertos en cada red visitada;
+esta capa no reemplaza el respaldo local, que se libera recién después de confirmar la
+transferencia. La evolución MATLAB~$\rightarrow$~PyQt~$\rightarrow$~SPA embebida y
+servidor web separó responsabilidades ---adquisición local tolerante a desconexiones,
+transporte verificable, ingesta persistente y procesamiento reproducible--- en lugar de
+concentrar toda la operación en un script único. Quedan pendientes pruebas integrales
+con todos los nodos conectados, medición de pérdida y latencia bajo interferencia, y
+verificación de recuperación ante cortes de energía o de red.

@@ -1,6 +1,0 @@
-interval_m,rho_ohm_m,vs_interval_m_s,mechanical_class,sev_interpretation,equivalence,reason,supported_fraction
-0.00-1.00,1186.0,65.4558733983695,Muy blando-blando (baja rigidez),"Cubierta residual seca, levemente arcillosa y 'muy compactada'",NO,no respalda 'muy compactado',1.0
-1.00-2.06,15.0,93.41834535929176,Muy blando-blando (baja rigidez),Unidad superficial 0-24 m; nivel eléctrico conductor delgado,PARCIAL,compatible con finos/arcilla,1.0
-2.06-4.15,105.0,96.34039280412397,Muy blando-blando (baja rigidez),Finos cuarzosos / intercalaciones areno-cuarzosas,PARCIAL,compatible con finos/arcilla,0.888353133972242
-4.15-24.00,24.2,104.61653242134338,Blando (baja rigidez),Suelo residual y sedimentos areno-cuarzosos hasta 24 m,NO VERIFICABLE,"extrapolado bajo 3,9 m",0.0
-24.00-50.00,126.0,105.59417125591011,Blando (baja rigidez),Sedimentos cuarzosos finos-medios con matriz levemente arcillosa,NO VERIFICABLE,"extrapolado bajo 3,9 m",0.0

@@ -135,6 +135,75 @@ $\longrightarrow$
 Esta lectura evita dos errores: presentar el circuito final como una elecci\'on inmediata
 y contar cada autoguardado del mismo \texttt{TopDesign} como una topolog\'ia nueva.
 
+Las tres primeras revisiones conservan, adem\'as del archivo editable de PSoC Creator,
+una exportaci\'on completa. Los hitos 02 y 03 ocupan dos hojas cada uno: una para el
+camino anal\'ogico y otra para los bloques digitales. Por eso se presentan como cinco
+figuras separadas, desde la Fig.~\ref{fig:topdesign-historico-01} hasta la
+Fig.~\ref{fig:topdesign-historico-03-digital}, y no como una miniatura conjunta. As\'i
+pueden leerse nombres, valores y conexiones sin esconder precisamente la parte de
+digitalizaci\'on que diferencia a cada revisi\'on.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{historico_psoc/01_sm24_ina.png}
+\caption{Hito 01, \texttt{SM-24\_V1}: primera instrumentaci\'on diferencial
+con dos PGA y un operacional de salida. La red de resistencias establece las
+referencias y la diferencia entre ramas, pero todav\'ia no aparecen el ADC, el
+movimiento de muestras ni un camino de observaci\'on de etapas. La hoja completa
+expone el punto de partida real del desarrollo.}
+\label{fig:topdesign-historico-01}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{historico_psoc/02_tesis_analogico.png}
+\caption{Hito 02, \texttt{Tesis}, hoja anal\'ogica: el acondicionamiento pasa a dos ramas TIA,
+polarizadas alrededor de $V_{DDA}/2$, y termina en un ADC $\Delta\Sigma$ de
+17 bits. Los capacitores de realimentaci\'on y las redes RC anteriores al ADC
+introducen una conformaci\'on espectral expl\'icita que no exist\'ia en la
+revisi\'on inicial.}
+\label{fig:topdesign-historico-02-analogico}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.72\textwidth,height=0.72\textheight,keepaspectratio]{historico_psoc/02_tesis_digital.png}
+\caption{Hito 02, \texttt{Tesis}, hoja digital: filtro digital configurado
+como rechazo de banda, transferencia por DMA y una interrupci\'on al guardar
+cada muestra. Esta segunda hoja demuestra que la versi\'on no terminaba en el
+ADC; ya exist\'ia una ruta determinista de posprocesado y memoria.}
+\label{fig:topdesign-historico-02-digital}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{historico_psoc/03_comparation_analogico.png}
+\caption{Hito 03, \texttt{Comparation}, hoja anal\'ogica: banco de comparaci\'on de caminos. A la
+izquierda se incorporan un ADC SAR de 12 bits y DMA; a la derecha se conserva el
+camino anal\'ogico diferencial, se agregan multiplexores, dos operacionales de
+filtrado y un ADC $\Delta\Sigma$ de 18 bits con DMA y filtro digital. La hoja
+documenta que la elecci\'on del conversor y el reparto anal\'ogico--digital se
+evaluaron como un sistema, no como decisiones independientes.}
+\label{fig:topdesign-historico-03-analogico}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.82\textwidth,height=0.76\textheight,keepaspectratio]{historico_psoc/03_comparation_digital.png}
+\caption{Hito 03, \texttt{Comparation}, hoja digital: filtro y DMA, temporizador
+de 16 bits alimentado por el reloj de bus, USBFS y UART a \SI{57600}{bit\per\second}.
+Esta hoja completa la arquitectura visible en la figura anterior y registra las
+alternativas de temporizaci\'on y comunicaci\'on disponibles en el banco.}
+\label{fig:topdesign-historico-03-digital}
+\end{figure}
+
+La comparaci\'on binaria de los veinte archivos recuperados tambi\'en encontr\'o un caso
+concreto de duplicaci\'on: los \texttt{TopDesign} de
+\texttt{FiltradoDiferencial} y \texttt{ComparacionDiferencial} son id\'enticos byte a
+byte. Ambos nombres se conservan en el inventario porque corresponden a proyectos del
+historial, pero no deben presentarse como dos circuitos distintos. Los otros dieciocho
+archivos principales poseen contenido diferente y requieren una captura individual.
+
 \subsection{Decisiones de topolog\'ia que sobreviven en el dise\~no}
 
 \subsubsection{Del filtro pasivo al reparto anal\'ogico--digital}
@@ -177,6 +246,27 @@ impedancia de entrada--- no son decisivas despu\'es de una etapa de baja impedan
 La magnitud nominal no decide el pivote: el criterio principal es la robustez frente a
 tolerancias al replicar canales.}
 \label{fig:comparacion-topologias-nueva}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth,height=0.76\textheight,keepaspectratio]{mfb_lpf_circuit.png}
+\caption{Esquema de la topolog\'ia MFB utilizada durante el an\'alisis de
+alternativas. La referencia de alimentaci\'on simple desplaza el punto de trabajo
+y las dos redes de realimentaci\'on fijan polos, ganancia y sensibilidad a
+tolerancias. La figura permite leer el circuito que est\'a detr\'as de la funci\'on
+de transferencia, no s\'olo su diagrama de Bode.}
+\label{fig:mfb-circuito}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{analog_path_check_magcoh.png}
+\caption{Comprobaci\'on exploratoria del camino anal\'ogico: magnitud medida,
+envolvente de ajuste del circuito, respuesta nominal y coherencia. Se conserva
+como evidencia del proceso de diagn\'ostico; la p\'erdida de coherencia a alta
+frecuencia impide interpretarla como validaci\'on definitiva de toda la cadena.}
+\label{fig:analog-path-check}
 \end{figure}
 
 \subsubsection{Conversi\'on diferencial--single-ended y referencias independientes}
@@ -240,6 +330,27 @@ independientes, AMux y ADC. La captura corresponde a la revisi\'on hist\'orica c
 \label{fig:topdesign-analogico}
 \end{figure}
 
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.78\textheight,keepaspectratio]{AnalogPathGordito.png}
+\caption{Lectura funcional ampliada del camino anal\'ogico. Se distinguen el AFE,
+las cuatro referencias programables, el multiplexor de observaci\'on y el ADC.
+La separaci\'on gr\'afica ayuda a explicar por qu\'e el circuito puede calibrarse
+etapa por etapa sin que el lazo permanezca activo durante la adquisici\'on.}
+\label{fig:analog-path-gordito}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{Schematic-Circuit-PSoC.jpg}
+\caption{TopDesign completo utilizado como base de la documentaci\'on de la
+revisi\'on con VDAC. Adem\'as del AFE aparecen ADC, bloques digitales, DMA,
+temporizadores y comunicaciones. Esta captura se mantiene completa para
+conservar las relaciones que se pierden en el recorte de la
+Fig.~\ref{fig:topdesign-analogico}.}
+\label{fig:topdesign-completo}
+\end{figure}
+
 Los valores transferidos desde el \texttt{TopDesign.cysch} actual al esquema KiCad se
 resumen en la Tabla~\ref{tab:componentes-afe}. La tabla documenta la realizaci\'on f\'isica;
 no reemplaza la verificaci\'on de la funci\'on de transferencia completa con tolerancias.
@@ -254,14 +365,102 @@ no reemplaza la verificaci\'on de la funci\'on de transferencia completa con tol
 \textbf{Bloque} & \textbf{Componentes identificados} \\
 \midrule
 Polarizaci\'on de entrada & Dos resistencias de \SI{50}{\kilo\ohm} hacia la referencia com\'un. \\
-Pasa-banda MFB & $R=\SI{43}{\kilo\ohm}$ y \SI{47}{\kilo\ohm}; $C=\SI{680}{\micro\farad}$ y \SI{27}{\pico\farad}. \\
-Sumador & \SI{6.8}{\kilo\ohm}, \SI{47}{\kilo\ohm}, potenci\'ometro de \SI{2}{\kilo\ohm} al 31,7\,\%, \SI{27}{\kilo\ohm} y \SI{15}{\nano\farad}. \\
-Pasa-bajos & \SI{47}{\nano\farad}, \SI{12}{\kilo\ohm}, \SI{150}{\kilo\ohm} y \SI{3.3}{\nano\farad}. \\
+Pasa-banda MFB, rama de entrada & $R_4=\SI{43}{\kilo\ohm}$ en serie con $C_1=\SI{680}{\micro\farad}$ (electrol\'itico; acopla en AC y bloquea continua, no fija la banda). \\
+Pasa-banda MFB, rama de realimentaci\'on & $R_5=\SI{47}{\kilo\ohm}$ en paralelo con $C_2=\SI{27}{\pico\farad}$ (define el polo de alta frecuencia de esta etapa). \\
+Sumador & Entrada directa \SI{6.8}{\kilo\ohm}; potenci\'ometro de \SI{2}{\kilo\ohm} al 31,7\,\% para la rama BP; realimentaci\'on \SI{27}{\kilo\ohm}$\parallel$\SI{15}{\nano\farad}. \\
+Pasa-bajos & Entrada \SI{12}{\kilo\ohm}; realimentaci\'on \SI{150}{\kilo\ohm}$\parallel$\SI{3.3}{\nano\farad}; \SI{47}{\nano\farad} de desacoplo asociado. \\
 Referencias de etapa & Cuatro ramas de \SI{30}{\kilo\ohm}, desacopladas con \SI{1}{\micro\farad}$\parallel$\SI{100}{\nano\farad}; excitaci\'on IDAC en la rama vigente. \\
 AMux & Capacitor externo de \SI{100}{\nano\farad} y selecci\'on de PGA, BP, SUM o LP para observaci\'on. \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{kicad_esquema_completo.png}
+\caption{Esquema el\'ectrico completo trasladado a KiCad: carrier del PSoC y el
+ESP32, perif\'ericos, entrada del ge\'ofono, redes externas del pasa-banda y
+sumador, pasa-bajos, referencias y desacoplos. La imagen es deliberadamente
+extensa; sirve como plano de implementaci\'on y como reserva para recortes
+posteriores.}
+\label{fig:kicad-esquema-completo}
+\end{figure}
+
+\subsection{Verificaci\'on cuantitativa a partir de los valores reales}
+\label{sec:verificacion-cuantitativa-afe}
+
+La Tabla~\ref{tab:componentes-afe} no es una lista decorativa: sus valores permiten
+comprobar si el circuito realmente construido hace lo que enuncia la
+Ec.~\eqref{eq:comp-afe}, en lugar de asumirlo. Con las resistencias y capacitores del
+esquema KiCad vigente,
+
+\begin{equation}
+f_{\mathrm{in}}=\frac{1}{2\pi R_4 C_1}\approx\SI{5.4}{\milli\hertz},
+\qquad
+f_{\mathrm{fb}}=\frac{1}{2\pi R_5 C_2}\approx\SI{125}{\kilo\hertz}.
+\label{eq:polos-mfb-reales}
+\end{equation}
+
+Ambos polos caen muy lejos de la banda de inter\'es (\SI{10}{}--\SI{50}{\hertz}, la
+banda \'util de campo identificada en el historial de mediciones). Esto significa que,
+en esa banda, $C_1$ se comporta como un cortocircuito ($X_{C_1}\ll R_4$) y $C_2$ como un
+circuito abierto ($X_{C_2}\gg R_5$): la etapa opera con ganancia esencialmente resistiva
+
+\begin{equation}
+\left.\frac{v_{\mathrm{BP}}}{v_{\mathrm{in}}}\right|_{\SI{10}{}-\SI{50}{\hertz}}
+\approx-\frac{R_5}{R_4}=-\frac{47}{43}\approx-1{,}09.
+\label{eq:ganancia-bp-real}
+\end{equation}
+
+En otras palabras, \textbf{la rama MFB, tal como est\'a poblada, no realiza un
+pasa-banda resonante dentro del rango \'util}: act\'ua como un inversor de ganancia
+casi unitaria, acoplado en AC por $C_1$ y limitado en ancho de banda muy por encima de
+la zona de trabajo por $C_2$. La forma resonante de la Ec.~\eqref{eq:comp-afe},
+con $\omega_n$ y los factores de amortiguamiento $\zeta_0,\zeta_1$, describe el
+\emph{objetivo} de compensaci\'on frente al polo mec\'anico del ge\'ofono; los valores
+poblados en esta revisi\'on de hardware no ubican ese par de polos/cero dentro de la
+banda de campo. Dos lecturas son posibles y ninguna puede descartarse sin medir la
+placa real: (a) $R_4/C_1$ y $R_5/C_2$ cumplen aqu\'i s\'olo funciones de acoplo AC y
+limitaci\'on de ancho de banda, y la compensaci\'on resonante depende de otro par de
+componentes que este inventario no aisl\'o correctamente a partir del esquem\'atico, o
+(b) la topolog\'ia poblada en agosto qued\'o, de hecho, m\'as cerca de un inversor
+ancho de banda que de un pasa-banda estrecho, y la compensaci\'on de
+Ec.~\eqref{eq:comp-afe} se apoya principalmente en el sumador y el pasa-bajos. Esta
+verificaci\'on se agrega a la lista de pendientes de la
+Secci\'on~\ref{sec:afe-consolidada} y debe resolverse con una medici\'on de magnitud y
+fase extremo a extremo, no s\'olo con el an\'alisis de componentes.
+
+El sumador y el pasa-bajos, en cambio, s\'i quedan caracterizados de forma directa
+porque cada uno usa un solo capacitor de realimentaci\'on (topolog\'ia inversora de
+un polo):
+
+\begin{equation}
+f_{\mathrm{SUM}}=\frac{1}{2\pi R_8 C_3}\approx\SI{393}{\hertz},
+\qquad
+f_{\mathrm{LP}}=\frac{1}{2\pi R_{10} C_5}\approx\SI{322}{\hertz}.
+\label{eq:polos-sum-lp}
+\end{equation}
+
+Ambos polos quedan muy por encima de la banda \'util de \SI{10}{}--\SI{50}{\hertz} y
+por debajo de la frecuencia de Nyquist nativa ($\SI{2604}{SPS}/2\approx\SI{1302}{\hertz}$),
+de modo que aportan atenuaci\'on anti-\emph{aliasing} adicional sin recortar la se\~nal
+s\'ismica. Las ganancias resistivas de continua tambi\'en se desprenden directamente de
+la tabla: el camino directo del sumador aporta $-R_8/R_6\approx-3{,}97$, la rama BP
+contribuye a trav\'es del potenci\'ometro con $-R_8/R_{\mathrm{pot}}\approx-42{,}6$ (con
+el cursor al 31,7\,\%, es decir $R_{\mathrm{pot}}\approx\SI{634}{\ohm}$) y el pasa-bajos
+aporta $-R_{10}/R_9=-12{,}5$. Estos n\'umeros no reemplazan
+la medici\'on de magnitud y fase de las Figs.~\ref{fig:analog-path-check},
+\ref{fig:medicion-pga-adc} y~\ref{fig:medicion-geo-adc}, pero permiten distinguir, antes
+de medir, qu\'e desviaciones observadas se explican por los componentes poblados y
+cu\'ales exigir\'ian revisar la topolog\'ia.
+
+Finalmente, la descripci\'on del propio esquem\'atico marca un riesgo de \emph{bring-up}
+a\'un no cerrado: $C_1$ es un capacitor electrol\'itico polarizado y su documentaci\'on
+indica expl\'icitamente que la polaridad debe verificarse al energizar la placa por
+primera vez. Una polaridad inversa en ese punto no impedir\'ia necesariamente el
+funcionamiento a bajo nivel de se\~nal, pero degradar\'ia la fuga y el ruido del
+acoplo AC de forma dif\'icil de distinguir, en una medici\'on r\'apida, de ruido propio
+del ADC.
 
 \subsection{Asistencia digital para recentrar la cadena}
 
@@ -290,6 +489,36 @@ saturaci\'on y \emph{anti-windup}. Los valores aceptados se conservan en EEPROM 
 e indexaci\'on por configuraci\'on de ganancia. La revisi\'on de agosto reemplaz\'o los VDAC
 por IDAC, pero conserva el mismo principio: medir una salida intermedia, corregir su
 referencia y retirar el lazo antes de adquirir.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{psoc_foreground_calibration_flow.drawio_horizontal_comprimido.png}
+\caption{Flujo de calibraci\'on \emph{foreground}. Al iniciar o cambiar ganancia
+se intenta recuperar un registro EEPROM; si no es v\'alido, el AMux observa PGA,
+BP, SUM y LP de manera secuencial, se ajustan las referencias y luego se restaura
+el camino de adquisici\'on con los c\'odigos congelados.}
+\label{fig:flujo-calibracion-foreground}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{autocalibration_stage_outputs_5_to_20s.png}
+\caption{Salidas internas observadas durante una secuencia de autocalibraci\'on:
+PGA, pasa-banda, sumador y pasa-bajos. La figura documenta que el sistema puede
+medir nodos intermedios mediante el mismo ADC; no demuestra por s\'i sola que la
+calibraci\'on sea repetible entre placas.}
+\label{fig:salidas-autocalibracion}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{autocalibration_filter_comparison.png}
+\caption{Comparaci\'on de una configuraci\'on FIR inicial y otra de mayor longitud
+durante el desarrollo de la autocalibraci\'on. La imagen permite discutir el
+compromiso entre suavizado, respuesta transitoria, costo del DFB y preservaci\'on
+de la forma de onda.}
+\label{fig:comparacion-fir-autocalibracion}
+\end{figure}
 
 \subsection{Digitalizaci\'on: ADC, rango y cuantizaci\'on}
 
@@ -356,6 +585,25 @@ salida del PSoC se migr\'o a I$^2$C y la UART qued\'o s\'olo como recepci\'on.}
 \label{fig:camino-digital-nueva}
 \end{figure}
 
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{system_architecture_autocalibration.drawio.png}
+\caption{Arquitectura conjunta de adquisici\'on y autocalibraci\'on. La frontera
+roja delimita el hardware anal\'ogico, la verde los recursos digitales del PSoC
+y la violeta la comunicaci\'on mediante ESP32. El diagrama muestra d\'onde termina
+esta secci\'on y d\'onde comienza la transmisi\'on.}
+\label{fig:arquitectura-autocalibracion}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{blocks_topdesign_schematic.png}
+\caption{TopDesign reorganizado por dominios funcionales: frente anal\'ogico,
+referencias, ADC/AMux, entradas auxiliares, gesti\'on de eventos, maestro ESP32 y
+esclavo. Las flechas resaltan las fronteras de datos, control y sincronizaci\'on.}
+\label{fig:topdesign-por-bloques}
+\end{figure}
+
 Desde julio, el bloque \texttt{superMaquina}, descrito en Verilog e implementado en UDB,
 decide en hardware cu\'ando habilitar cada solicitud DMA, cu\'ando comienza y termina una
 captura y qu\'e eventos pueden interrumpir al procesador. La regla de partici\'on es:
@@ -379,6 +627,28 @@ El promediado de $N$ muestras reduce ruido no correlacionado, pero su respuesta 
 capacidad de seleccionar $N$ no implica que los cien valores sean igualmente apropiados:
 para cada configuraci\'on de campo debe verificarse la banda combinada del LP anal\'ogico,
 el FIR y la decimaci\'on.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{medicion_pga_adc.png}
+\caption{Comparaci\'on exploratoria PGA$\rightarrow$ADC: magnitud, fase y
+coherencia frente al modelo y a envolventes de tolerancia. La coherencia alta en
+la banda baja respalda el procedimiento de identificaci\'on; su deterioro fuera
+de esa banda marca el l\'imite de interpretaci\'on de la medici\'on.}
+\label{fig:medicion-pga-adc}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth,height=0.80\textheight,keepaspectratio]{medicion_geo_adc.png}
+\caption{Comparaci\'on exploratoria GEO$\rightarrow$ADC, incorporando el modelo
+del ge\'ofono a la cadena electr\'onica. La separaci\'on entre puntos crudos y
+procesados a frecuencias altas refuerza la necesidad de no extrapolar una
+identificaci\'on fuera de la regi\'on con coherencia suficiente.}
+\label{fig:medicion-geo-adc}
+\end{figure}
+
+\clearpage
 
 \subsection{Hitos dentro del proyecto consolidado}
 
@@ -421,7 +691,13 @@ exclusivamente a la instrumentaci\'on:
     \item margen de saturaci\'on en cada nodo intermedio, no \'unicamente en la salida;
     \item rechazo anti-\emph{aliasing} para las combinaciones de FIR y decimaci\'on que se
     usar\'an;
-    \item repetibilidad de la calibraci\'on luego de la migraci\'on VDAC$\to$IDAC.
+    \item repetibilidad de la calibraci\'on luego de la migraci\'on VDAC$\to$IDAC;
+    \item confirmaci\'on por medici\'on de qu\'e etapa realiza efectivamente la
+    compensaci\'on resonante de la Ec.~\eqref{eq:comp-afe}, dado que los valores
+    poblados de la rama MFB (Secci\'on~\ref{sec:verificacion-cuantitativa-afe}) no
+    ubican sus polos dentro de la banda de campo;
+    \item polaridad de $C_1$ (electrol\'itico de acoplo AC en la rama de entrada del
+    MFB), marcada como pendiente de revisi\'on desde el propio esquem\'atico.
 \end{itemize}
 
 Estas verificaciones no cambian el alcance de la etapa: determinan si el camino entre

@@ -1,0 +1,94 @@
+\section{Acondicionamiento, instrumentación y digitalización}
+\label{sec:acondicionamiento-digitalizacion}
+
+Esta sección comienza en los terminales eléctricos de entrada del nodo, ya con el
+transductor y su fuente definidos. El problema es \textbf{convertir una tensión
+diferencial pequeña en una secuencia digital que aproveche el rango del conversor,
+conserve la fase y pueda adquirirse de forma determinista}, dejando la transmisión de
+esas muestras como etapa independiente.
+
+Si $v_d(t)$ es la tensión diferencial de entrada,
+
+\begin{equation}
+v_{\mathrm{ADC}}(t)=V_{\mathrm{CM}}+\left[h_{\mathrm{AFE}}(t)*v_d(t)\right]
++v_{\mathrm{os}}(t)+n_{\mathrm{AFE}}(t),
+\qquad
+x[n]=Q_{B,V_{\mathrm{span}}}\!\left\{v_{\mathrm{ADC}}(nT_s)\right\}.
+\label{eq:afe-general}
+\end{equation}
+
+Esta ecuación fija seis requisitos simultáneos: entrada diferencial con buen rechazo de
+modo común, ganancia programable, conformación espectral analógica previa al muestreo,
+control del punto de operación (el \emph{offset} acumulado en cascada puede consumir el
+rango del ADC sin señal presente), digitalización con tasa y formato conocidos, y
+movimiento determinista de las muestras hacia memoria.
+
+\subsection{Evolución del circuito y arquitectura vigente}
+
+El diseño no se resolvió en una única iteración: el historial de Git del firmware PSoC
+documenta una sucesión de proyectos entre abril y agosto de 2026, que puede resumirse en
+seis pasos de arquitectura:
+
+\begin{center}
+\small
+\fbox{pasivo inicial} $\rightarrow$
+\fbox{cadena activa diferencial} $\rightarrow$
+\fbox{Sallen--Key vs.\ MFB} $\rightarrow$
+\fbox{referencias por etapa + AMux} $\rightarrow$
+\fbox{diferencial a single-ended} $\rightarrow$
+\fbox{AFE + ADC + DMA}.
+\end{center}
+
+Un filtro RC pasivo inicial se descartó por sensibilidad a tolerancias y fase no lineal
+--- en un arreglo multicanal importa que todos los canales tengan fase reproducible, no
+sólo la magnitud correcta---, lo que fijó la regla de diseño vigente: todo lo que debe
+ocurrir antes de cuantizar (ganancia, punto de operación, compensación, anti-\emph{aliasing})
+se resuelve en analógico, y la selección reconfigurable de banda en digital. Entre las
+topologías de compensación se comparó Sallen--Key/VCVS contra realimentación múltiple
+(MFB); se adoptó MFB por menor sensibilidad de su factor de calidad y frecuencia central
+a las tolerancias de componentes. La entrada se instrumenta con dos PGA internos del
+PSoC y se convierte a single-ended para reducir recursos analógicos; el costo de esa
+alimentación simple es la acumulación de \emph{offset} entre etapas, corregida con
+referencias independientes por bloque y un multiplexor de observación (AMux) que permite
+medir cada nodo intermedio con el mismo ADC.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.92\textwidth,trim=115 115 0 105,clip]{Schematic-images-0.jpg}
+\caption{Arquitectura analógica vigente: PGA diferencial, ganancia adicional, MFB,
+sumador, pasa-bajos, referencias independientes, AMux y ADC $\Delta\Sigma$.}
+\label{fig:topdesign-analogico}
+\end{figure}
+
+\subsection{Digitalización y camino a memoria}
+
+El conversor es un $\Delta\Sigma$ de 18 bits nominales del PSoC~5LP, con tasa nativa
+$F_{s,0}=\SI{2604}{SPS}$ y cuatro rangos bipolares seleccionables entre
+$\pm\SI{0.512}{\volt}$ y $\pm\SI{2.5}{\volt}$: el rango más angosto da mejor resolución
+pero menos margen antes del recorte, por lo que PGA y rango se configuran en conjunto
+buscando el más angosto que no sature. Un bloque DFB ejecuta un FIR en hardware y dos
+canales DMA trasladan crudo y filtrado a RAM sin intervención del Cortex-M3, mientras un
+bloque \texttt{superMaquina} en Verilog/UDB controla en hardware los instantes críticos
+(inicio, habilitación del ADC, conteo y fin de captura), dejando en software sólo lo
+lento: calibración, persistencia y protocolo de comandos. La decimación programable
+$F_s=\SI{2604}{SPS}/N$ permite reducir ruido no correlacionado, aunque su respuesta
+\emph{sinc} no sustituye por sí sola al filtro anti-\emph{aliasing}.
+
+La calibración se automatizó con un controlador PI que ajusta secuencialmente la
+referencia de cada etapa (PGA, BP, sumador, LP) y retira el lazo antes de adquirir; los
+valores aceptados se conservan en EEPROM. La revisión de hardware de agosto reemplazó
+las referencias VDAC por IDAC y agregó una etapa \texttt{PGAout}, sin cambiar este
+principio.
+
+\subsection{Estado de verificación}
+
+La arquitectura ya está definida y justificada por alternativas concretas descartadas,
+no sólo descrita a posteriori. Falta todavía, y pertenece a la instrumentación más que
+al diseño: respuesta en magnitud y fase extremo a extremo por ganancia y rango, ruido
+referido a la entrada y número efectivo de bits, tolerancias entre placas, y
+repetibilidad de la calibración tras la migración VDAC$\to$IDAC. En particular, una
+verificación preliminar con los valores de componentes realmente poblados en la rama MFB
+sugiere que esa etapa no está operando como el pasa-banda resonante previsto en la banda
+de campo (10--50~Hz), sino cerca de un inversor de ganancia casi unitaria; esto no
+invalida la arquitectura, pero es exactamente el tipo de discrepancia entre diseño e
+implementación que se revisará con mediciones directas sobre la placa.

@@ -1,0 +1,140 @@
+\begin{thebibliography}{10}
+
+\bibitem{PINV01317}
+{Convocatoria PINV01-317}.
+\newblock Sistema electrónico multicanal para generación y captación de
+  ondas sísmicas orientado a la caracterización geotécnica del suelo hasta
+  50 metros de profundidad.
+\newblock Technical report, Propuesta de proyecto de investigación (formulario
+  PINV01-317B), 2024.
+\newblock Propuesta de financiación no aceptada; antecedente directo de esta
+  tesis.
+
+\bibitem{Crook2017}
+N.~Crook, S.~Calendine, and M.~Levitt.
+\newblock Site characterization of an abandoned gold mine using the
+  multi-channel analysis of the surface waves method.
+\newblock In {\em Geotechnical Frontiers 2017}, pages 596--603, 2017.
+
+\bibitem{DMTSummitXOne}
+{DMT Group}.
+\newblock {SUMMIT X One} seismic data acquisition system, 2026.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem{Foti2018}
+S.~Foti et~al.
+\newblock Guidelines for the good practice of surface wave analysis: a product
+  of the {InterPACIFIC} project.
+\newblock {\em Bulletin of Earthquake Engineering}, 16(6):2367--2420, 2018.
+
+\bibitem{Foti2014}
+S.~Foti, C.~G. Lai, G.~J. Rix, and C.~Strobbia.
+\newblock {\em Surface Wave Methods for Near-Surface Site Characterization}.
+\newblock CRC Press, Boca Raton, FL, USA, 2014.
+
+\bibitem{Gautam2020}
+R.~Gautam, A.~K. Shrivastava, S.~Gupta, and V.~Sharma.
+\newblock In situ shear wave velocity from multichannel analysis of surface
+  waves ({MASW}) tests at six sites of {Delhi Technological University}.
+\newblock In {\em International Conference on Innovative Advancement in
+  Engineering and Technology}, 2020.
+
+\bibitem{GeoDeviceSummitPrice}
+{GeoDevice}.
+\newblock {SUMMIT X One}.
+\newblock \url{https://geodevice.co/product/summit-x-one/}, 2026.
+\newblock Distribuidor; precio por solicitud. Consulta: 18 de agosto de 2026.
+
+\bibitem{GeometricsPrice2023}
+{Geometrics}.
+\newblock Seismic price list 2023.
+\newblock Lista del fabricante, revisión junio de 2023:
+  \url{https://www.geometrics.com/wp-content/uploads/2023/07/Seismic_Pricelist_2023_rev0623.pdf},
+  2023.
+\newblock Referencia histórica; el archivo ya no se encontraba disponible en
+  la consulta de 2026.
+
+\bibitem{GeometricsAtom3C}
+{Geometrics}.
+\newblock {Atom-3C} seismograph, 2026.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem{GeometricsGeodeFlex}
+{Geometrics}.
+\newblock {GeodeFlex}, 2026.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem{Kafadar2020}
+O.~Kafadar.
+\newblock A geophone-based and low-cost data acquisition and analysis system
+  designed for microtremor measurements.
+\newblock {\em Geoscientific Instrumentation, Methods and Data Systems},
+  9:365--373, 2020.
+
+\bibitem{Kramer1996}
+S.~L. Kramer.
+\newblock {\em Geotechnical Earthquake Engineering}.
+\newblock Prentice Hall, 1996.
+
+\bibitem{Llorens2016}
+C.~D. Llorens, J.~Molina, J.~A. Giner, S.~Ivorra, and P.~R. Zornoza.
+\newblock Development and programming of {Geophonino}: A low cost
+  {Arduino}-based seismic recorder for vertical geophones.
+\newblock {\em Computers \& Geosciences}, 94:1--10, 2016.
+
+\bibitem{Monjardin2023}
+C.~E.~F. Monjardin and A.~B. Medina.
+\newblock Comparative analysis of geotechnical and geophysical investigations
+  for average shear wave velocity in {Metro Manila}.
+\newblock {\em Energy Reports}, 9(S2):38--47, 2023.
+
+\bibitem{Park2013}
+C.~B. Park.
+\newblock {MASW} for geotechnical site investigation.
+\newblock {\em The Leading Edge}, 32(6):656--662, 2013.
+
+\bibitem{Park1998}
+C.~B. Park, R.~D. Miller, and J.~Xia.
+\newblock Imaging dispersion curves of surface waves on multi-channel record.
+\newblock In {\em SEG Technical Program Expanded Abstracts 1998}, pages
+  1377--1380, 1998.
+
+\bibitem{Park1999}
+C.~B. Park, R.~D. Miller, and J.~Xia.
+\newblock Multichannel analysis of surface waves.
+\newblock {\em Geophysics}, 64(3):800--808, 1999.
+
+\bibitem{Park2018Roads}
+C.~B. Park, J.~Richter, R.~Rodrigues, and A.~Cirone.
+\newblock {MASW} applications for road construction and maintenance.
+\newblock {\em The Leading Edge}, 37(10):724--730, 2018.
+
+\bibitem{PASIPrice2022}
+{PASI srl}.
+\newblock {GEA24 Price List --- January 2022}.
+\newblock Copia pública de la lista del fabricante:
+  \url{https://es.scribd.com/document/602682047/GEA-24-PRICE-LIST-JANUARY-2022},
+  2022.
+\newblock Referencia histórica; precios ex works Turín.
+
+\bibitem{PASIGEA24}
+{PASI srl}.
+\newblock {GEA24}: 24-channel seismograph, 2026.
+\newblock Consulta: 18 de agosto de 2026.
+
+\bibitem{Vantassel2018}
+J.~P. Vantassel, B.~R. Cox, L.~Wotherspoon, and A.~Stolte.
+\newblock Mapping depth to bedrock, shear stiffness, and fundamental site
+  period at {CentrePort}, {Wellington}, using surface-wave methods:
+  Implications for local seismic site amplification.
+\newblock {\em Bulletin of the Seismological Society of America},
+  108(3B):1709--1721, 2018.
+\newblock Prepublicación de acceso abierto consultada para las figuras.
+
+\bibitem{Xia1999}
+J.~Xia, R.~D. Miller, and C.~B. Park.
+\newblock Estimation of near-surface shear-wave velocity by inversion of
+  {Rayleigh} waves.
+\newblock {\em Geophysics}, 64(3):691--700, 1999.
+
+\end{thebibliography}
