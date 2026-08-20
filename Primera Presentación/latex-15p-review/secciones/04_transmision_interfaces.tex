@@ -1,9 +1,8 @@
 \section{Transmisión, ingesta e interfaces}
 \label{sec:transmision-interfaces}
 
-Una vez acondicionada y digitalizada, la señal debe abandonar cada nodo, llegar sin
-ambigüedades a un punto común, conservar su contexto de adquisición y quedar disponible
-para revisión y procesamiento:
+Tras digitalizarse, cada captura debe llegar a un punto común, conservar su contexto y
+quedar disponible para revisión:
 
 \begin{equation}
 \text{nodos de medida}
@@ -15,44 +14,25 @@ para revisión y procesamiento:
 \text{revisión y MASW}.
 \end{equation}
 
-La primera interfaz controla la adquisición (armar nodos, ajustar parámetros, iniciar o
-detener una captura, observar el enlace, exportar); la segunda controla el conjunto de
-datos (validar, filtrar, agrupar, alinear, promediar, invertir). Esta separación evita
-que el microcontrolador ejecute tareas pesadas y permite seguir trabajando en campo sin
-conexión a Internet.
+La interfaz de campo arma nodos, configura, captura y exporta; la de análisis valida,
+filtra, agrupa, alinea, promedia e invierte. Así el microcontrolador no ejecuta tareas
+pesadas y la adquisición funciona sin Internet.
 
-\subsection{Plataforma de comunicación}
+\subsection{Comunicación}
 
-Se eligió la familia ESP32 por accesibilidad local, bajo costo, documentación abundante
-e integración de Wi-Fi; no se lo usa como instrumento de medida, sino después de la
-digitalización: el nodo esclavo empaqueta los datos del frente analógico y los entrega
-al maestro. El enlace entre nodos usa ESP-NOW, que da una red directa de baja sobrecarga
-sin depender de un \emph{router} en el sitio, a cambio de carga útil limitada por
-paquete y entrega no confiable por sí sola; el diseño compensa esto con fragmentación,
-numeración de mensajes, confirmaciones, reintentos y almacenamiento local previo a la
-subida. El maestro concentra los enlaces ESP-NOW y expone además una red Wi-Fi propia
-con una interfaz web embebida accesible desde cualquier teléfono o computadora sin
-instalar software; cuando hay conectividad disponible pasa a una fase de enlace,
-se asocia a una red externa y transfiere la cola de capturas pendientes.
+Se eligió ESP32 por disponibilidad, costo y Wi-Fi integrado. Actúa después del ADC: cada
+esclavo empaqueta las muestras y las envía al maestro por ESP-NOW, sin \emph{router}.
+Como el enlace limita el tamaño de paquete y no garantiza entrega, se agregaron
+fragmentación, numeración, confirmaciones, reintentos y respaldo local. El maestro sirve
+una red Wi-Fi y la interfaz web; cuando encuentra conectividad externa transfiere la cola
+pendiente.
 
-\subsection{Por qué se desarrollaron varias interfaces}
+\subsection{Evolución de las interfaces}
 
-Cada interfaz resolvió una pregunta de una etapa distinta y dejó funciones que se
-trasladaron a la siguiente versión. Se empezó por un osciloscopio MATLAB de un solo
-canal para fijar las variables que debían quedar controladas (puerto, referencia DC,
-ganancia, filtro) antes de comparar capturas; al incorporar varios nodos, una segunda
-aplicación MATLAB agregó una vista de estado global y una pestaña por esclavo, tratando
-ya la adquisición como un sistema y no como un canal aislado. Una versión de escritorio
-en PyQt reorganizó esto en una herramienta multi-nodo con temas claro/oscuro, útil tanto
-en laboratorio como a la intemperie. El paso siguiente fue eliminar la dependencia de
-una computadora con MATLAB o Python instalado: la interfaz se embebió como una \emph{SPA}
-servida directamente por el maestro, operable desde cualquier navegador y funcional sin
-conexión a Internet, con menús de Captura, Esclavos, Preservados, Enlace y Log. En
-paralelo se prototipó en PyQt, y luego en un servidor web, el flujo de posprocesado
-completo (filtros, agrupamiento, enfase, promedios, \emph{waterfall}, dispersión e
-inversión MASW), migrando finalmente a un servidor FastAPI para tener una dirección
-conocida, estado persistente entre campañas y acceso remoto sin reinstalar nada en cada
-equipo de campo.
+La evolución fue incremental: MATLAB validó primero un canal y después el control
+multinodo; PyQt organizó la adquisición y el análisis; la SPA embebida eliminó la
+dependencia de software instalado en campo; y FastAPI aportó ingesta, persistencia y
+acceso remoto. La Tabla resume qué se conservó de cada etapa.
 
 \begin{table}[ht]
 \centering
@@ -75,39 +55,69 @@ Servidor FastAPI & Ingestar y procesar en una dirección conocida & Acceso remot
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.8\textwidth,height=0.62\textheight,keepaspectratio]{esp_historico/07_pga_pgaout/01_captura_completa.png}
-\caption{Estado vigente de la SPA embebida: cinco menús (Captura, Esclavos,
-Preservados, Enlace, Log), decimación, límites de RAM/SD, selección PGA/PGAout y
-subida al servidor. Frente a la primera versión ejecutable, la interfaz pasó de
-exponer sólo transporte a exponer una operación de campo completa.}
+\includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{spa_captura_real.jpg}
+\caption{SPA embebida con una captura real de Canchita a \SI{2929}{\hertz}. Arriba se
+observa el disparo del martillo a \SI{780}{\milli\second}; abajo, la respuesta del
+geófono. La interfaz reúne captura, nodos, almacenamiento, enlace y registro.}
 \label{fig:spa-hito7-resumen}
 \end{figure}
 
-\subsection{Resultados reproducibles: estado actual y límites}
+\subsection{Lo que queda por resolver en el flujo de análisis}
 
-Además de las interfaces, el repositorio conserva salidas numéricas generadas por los
-scripts de análisis sobre 21 trazas reales entre 10 y \SI{50}{\meter}, muestreadas a
-\SI{1020}{\hertz}. Comparando el seguimiento automático de cresta previo contra un
-seguidor Kalman+RTS, el error respecto de una referencia externa en la banda
-8--\SI{29.83}{\hertz} bajó de aproximadamente 138--148 a \SI{16}{\meter\per\second}: es
-evidencia de mejora del \emph{picking} en este conjunto, no una validación general del
-sistema. Una inversión preliminar con esa curva (25 puntos entre 8 y \SI{21.71}{\hertz})
-alcanza un RMSE de \SI{0.463}{\meter\per\second} contra el \emph{pick}, resolviendo la
-banda disponible hasta aproximadamente \SI{5.4}{\meter}: la cadena completa
-trazas~$\to$~dispersión~$\to$~inversión~$\to$~$V_S(z)$ ya funciona de punta a punta,
-pero todavía falta evaluar repetibilidad entre grupos y campañas, sensibilidad a la
-geometría, incertidumbre del \emph{picking}, no unicidad de la inversión y comparación
-con información independiente del sitio.
+La cadena trazas~$\to$~dispersión~$\to$~selección~$\to$~inversión~$\to$~$V_S(z)$ ya
+corre de punta a punta. La Fig.~\ref{fig:masw-campo} muestra el registro y la dispersión
+obtenidos directamente de datos de campo.
 
-\subsection{Acceso remoto y conclusión}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{masw_campo.png}
+\caption{Campaña Canchita. (a) Registro \emph{wiggle} sintetizado entre \SI{10}{} y
+\SI{50}{\meter}, con lóbulos positivos sombreados y paso de \SI{2}{\meter}. (b)
+Dispersión de 1 a \SI{100}{\hertz} por desplazamiento de fase
+(Ec.~\ref{eq:phase-shift}). (c) Detalle lineal de 5 a \SI{50}{\hertz}. Las líneas
+indican aliasing espacial, $c=2\Delta x f$, y longitud de onda igual a la apertura,
+$\lambda=L$.}
+\label{fig:masw-campo}
+\end{figure}
 
-Como el equipo de campo opera sin Internet pero la ingesta remota necesita una dirección
-alcanzable, se combina una VPN de malla con tunelamiento para publicar el servidor bajo
-una dirección conocida, sin exigir configuración manual de puertos en cada red visitada;
-esta capa no reemplaza el respaldo local, que se libera recién después de confirmar la
-transferencia. La evolución MATLAB~$\rightarrow$~PyQt~$\rightarrow$~SPA embebida y
-servidor web separó responsabilidades ---adquisición local tolerante a desconexiones,
-transporte verificable, ingesta persistente y procesamiento reproducible--- en lugar de
-concentrar toda la operación en un script único. Quedan pendientes pruebas integrales
-con todos los nodos conectados, medición de pérdida y latencia bajo interferencia, y
-verificación de recuperación ante cortes de energía o de red.
+Para separar contenido espectral de amplitud, se calculó además la autopotencia
+unilateral de las 21 trazas sobre una ventana común de \SI{2}{\second}, después de
+quitar la media y aplicar una ventana Hann. Cada resultado se normalizó por su propio
+máximo:
+
+\begin{equation}
+    P_{xx,N}(f)=\frac{P_{xx}(f)}{\max_f P_{xx}(f)}.
+\end{equation}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{autopotencia_normalizada_multicanal.png}
+\caption{Análisis espectral de las 21 señales del registro multicanal. (a) Espectros
+de autopotencia normalizados. (b) La misma información ordenada por distancia. La
+normalización permite comparar la forma espectral, pero elimina la comparación de
+amplitud absoluta entre receptores.}
+\label{fig:autopotencia-multicanal}
+\end{figure}
+
+Los máximos individuales se ubican entre \SIrange{13.57}{23.16}{\hertz}, con
+mediana de \SI{17.68}{\hertz}. Antes de normalizar, la mediana por traza concentra
+el \SI{54.3}{\percent} de la autopotencia integrada entre 5 y \SI{20}{\hertz} y el
+\SI{43.2}{\percent} entre 20 y \SI{50}{\hertz}; por debajo de \SI{5}{\hertz} queda
+aproximadamente \SI{0.1}{\percent}.
+
+La lectura conjunta acota la banda: bajo unos \SI{5}{\hertz} no aparece energía
+organizada; entre \SI{6}{} y \SI{20}{\hertz} se observa una cresta coherente alrededor
+de \SIrange{70}{110}{\meter\per\second}; por encima, la cresta cruza la cota de aliasing
+y se fragmenta. Antes de aceptar un perfil $V_S(z)$ falta validar la separación de
+ruido, el \emph{picking}, la incertidumbre de inversión, la repetibilidad entre grupos y
+campañas, la sensibilidad a la geometría y la comparación con información independiente.
+Ninguna estrategia de preprocesado o selección se presenta todavía como definitiva.
+
+\clearpage
+\subsection{Acceso remoto y pendientes}
+
+Una VPN de malla y un túnel publican el servidor sin configurar puertos en cada red; el
+respaldo local sólo se libera tras confirmar la transferencia. La arquitectura separa
+adquisición tolerante a desconexiones, transporte verificable, ingesta persistente y
+procesamiento reproducible. Faltan pruebas con todos los nodos, pérdida y latencia bajo
+interferencia, y recuperación ante cortes de energía o red.

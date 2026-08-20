@@ -237,8 +237,12 @@ se mide directamente la $V_S$ de una profundidad determinada.
 \subsubsection{Del registro espacio--tiempo a la velocidad de fase aparente}
 
 Sea $u(x_j,t)$ el desplazamiento o, en la práctica, la señal proporcional a velocidad
-registrada por el geófono ubicado en $x_j$. Para cada canal se calcula la transformada
-temporal de Fourier
+registrada por el geófono ubicado en $x_j$. El dato multicanal completo $u(x,t)$ vive en
+el dominio espacio--tiempo, y extraer la dispersión requiere, en el fondo, una
+transformada bidimensional que lo lleve al dominio frecuencia--número de onda (o,
+equivalentemente, frecuencia--velocidad de fase). En la práctica esa transformada 2D se
+calcula en dos pasos separables en vez de una única FFT-2D: primero, para cada canal por
+separado, la transformada temporal (1D) de Fourier
 
 \begin{equation}
     U(x_j,\omega)=\int_{-\infty}^{\infty}u(x_j,t)
@@ -260,9 +264,13 @@ entonces
 
 El problema práctico de esta expresión es que la fase está definida módulo $2\pi$,
 puede contaminarse con ruido y puede contener simultáneamente varios modos. MASW utiliza
-todos los canales para reducir esa ambigüedad. En el método de desplazamiento de fase
-se prueba una velocidad $c$ y se corrige la fase esperada en cada posición. Una forma
-normalizada del espectro es~\cite{Park1998}
+todos los canales para reducir esa ambigüedad, completando así la segunda mitad de la
+transformada 2D: el método de desplazamiento de fase~\cite{Park1998} recorre las
+posiciones $x_j$ probando una velocidad $c$ y corrigiendo la fase esperada en cada una
+--- el paso espacial que, junto con la transformada temporal anterior, lleva a
+$u(x,t)$ del dominio espacio--tiempo al dominio frecuencia--velocidad de fase, sin pasar
+por una grilla espacial regular como exigiría una FFT-2D convencional. Una forma
+normalizada del espectro resultante es
 
 \begin{equation}
     S(\omega,c)=\frac{1}{N}\left|
@@ -337,11 +345,38 @@ dependen de la frecuencia y del modelo completo:
 \end{equation}
 
 Aquí $\boldsymbol{h}$ contiene los espesores y $\boldsymbol{V}_S$,
-$\boldsymbol{V}_P$ y $\boldsymbol{\rho}$ las propiedades de cada estrato. Para cada
-frecuencia, las raíces de la ecuación~\eqref{eq:forward-rayleigh} son las velocidades
-de fase teóricas de los distintos modos. En el rango habitual de ingeniería la
-dispersión de Rayleigh es especialmente sensible a $V_S$ y, después, a los espesores;
-por eso $V_P$ y $\rho$ suelen fijarse o restringirse con información auxiliar
+$\boldsymbol{V}_P$ y $\boldsymbol{\rho}$ las propiedades de cada estrato.
+
+Conviene detenerse en qué representa físicamente esta ecuación, porque no es una
+fórmula cerrada como la Ec.~\eqref{eq:rayleigh-homogeneo}, sino un problema de
+autovalores. Cada interfaz entre capas impone dos condiciones: el desplazamiento y el
+esfuerzo (tracción) deben ser continuos a ambos lados. Para un modelo de $L$ capas sobre
+un semiespacio, escribir esas condiciones en cada una de las $L$ interfaces --- más la
+condición de superficie libre arriba y la de radiación (energía que se aleja, no que
+llega, desde infinito) abajo--- produce un sistema lineal homogéneo cuya matriz depende
+de $f$, de $c_R$ ensayada y de todas las propiedades del modelo. Ese sistema sólo admite
+una solución distinta de la trivial (es decir, una onda que realmente se propague, no
+amplitud cero en todas partes) cuando el determinante de la matriz se anula; esa
+condición de determinante nulo \emph{es} $F(f,c_R;\cdot)=0$, y por eso se la llama
+ecuación \emph{característica}, en el mismo sentido que un problema de autovalores. Para
+cada frecuencia $f$, existen en general varios valores de $c_R$ que anulan $F$: son las
+raíces o \emph{modos} de esa frecuencia. El modo con mayor velocidad de fase --- el que
+no exige que el desplazamiento cambie de signo con la profundidad dentro del rango de
+interés--- es el modo fundamental, que domina la energía en la mayoría de los suelos
+normalmente dispersivos (rigidez creciente con la profundidad) y es el que MASW procura
+extraer; los modos superiores corresponden a raíces adicionales, con al menos un cambio
+de signo en la forma de la deformación con la profundidad, y pueden confundirse con el
+fundamental si el arreglo o el procesamiento no los separa bien.
+
+La Ec.~\eqref{eq:forward-rayleigh} también explica una limitación práctica de la
+inversión: el vector de incógnitas $\boldsymbol{m}$ (más adelante) tiene hasta cuatro
+propiedades por capa ($h,V_S,V_P,\rho$), pero los datos disponibles son una sola curva
+$c_R^{\mathrm{obs}}(f)$. En el rango habitual de ingeniería, la dispersión de Rayleigh es
+mucho más sensible a $V_S$ que a $V_P$ o $\rho$ --- puede verificarse derivando
+numéricamente $F$ respecto de cada propiedad--- por lo que $V_P$ y $\rho$ suelen fijarse
+mediante una relación de Poisson supuesta y rangos típicos de densidad, en lugar de
+tratarse como incógnitas libres; esto reduce la dimensión del problema inverso a algo
+compatible con la información realmente contenida en una curva de dispersión
 ~\cite{Xia1999}.
 
 \subsubsection{De la curva de dispersión a una familia de modelos}

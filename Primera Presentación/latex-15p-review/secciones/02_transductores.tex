@@ -1,31 +1,18 @@
 \section{Transducción sísmica: alternativas y restricción impuesta por el SM-24}
 \label{sec:transductores}
 
-La cadena instrumental comienza antes del amplificador. El transductor decide qué
-componente del movimiento del suelo se convierte en señal eléctrica, con qué
-sensibilidad, en qué banda y con qué ruido propio. Una electrónica posterior puede
-amplificar, filtrar o corregir parcialmente la respuesta, pero no modifica la frecuencia
-natural ni la dinámica mecánica del sensor.
+El transductor fija la componente observada, sensibilidad, banda y ruido antes de que
+intervenga el amplificador. La electrónica puede amplificar, filtrar o compensar
+parcialmente su respuesta, pero no cambia la dinámica mecánica. Esta sección compara las
+familias aplicables a Rayleigh y cuantifica el desajuste entre el SM-24 disponible, de
+\SI{10}{\hertz}, y la banda requerida para investigar hasta \SI{50}{\meter}.
 
-Esta sección responde cuatro preguntas:
+\subsection{Qué debe preservar el transductor}
 
-\begin{itemize}
-    \item ¿qué debe medir un receptor para un ensayo MASW de ondas Rayleigh?;
-    \item ¿qué familias de transductores podían considerarse?;
-    \item ¿por qué se utilizó el geófono SM-24 de \SI{10}{\hertz} aunque su banda no
-    coincide con la requerida?;
-    \item ¿qué distancia existe entre su banda nominal y el objetivo original de
-    investigar hasta \SI{50}{\meter}?
-\end{itemize}
-
-\subsection{Qué observa realmente el transductor}
-
-Una onda Rayleigh produce movimiento elíptico en el plano vertical. Por eso, para un
-MASW activo convencional se emplean receptores verticales: registran la componente
-vertical del movimiento de partícula, que suele dominar la energía superficial útil.
-Los receptores horizontales o triaxiales adquieren importancia cuando se estudian ondas
-Love, elipticidad, HVSR o arreglos pasivos, pero no son indispensables para extraer una
-curva Rayleigh básica~\cite{Foti2014,Park1999}.
+Una onda Rayleigh produce movimiento elíptico en el plano vertical; un MASW activo
+convencional usa receptores verticales para captar su componente dominante. Los sensores
+horizontales o triaxiales son necesarios para Love, elipticidad, HVSR o ciertos arreglos
+pasivos, no para una curva Rayleigh básica~\cite{Foti2014,Park1999}.
 
 El registro de un canal puede representarse como
 
@@ -36,137 +23,62 @@ El registro de un canal puede representarse como
     \label{eq:transductor-medicion}
 \end{equation}
 
-donde $q_j$ es la magnitud física ---desplazamiento, velocidad o aceleración---,
-$H_{s,j}$ la respuesta del sensor y su acoplamiento, y $N_j$ el ruido. MASW estima
-diferencias de fase entre posiciones. Si todos los receptores poseen exactamente la
-misma $H_s(f)$, su fase común se cancela al comparar canales; la atenuación del sensor
-afecta principalmente la relación señal--ruido. En cambio, diferencias entre sensores,
-amortiguamientos, inclinaciones o acoplamientos introducen una fase diferencial que sí
-puede sesgar la velocidad aparente.
+donde $q_j$ es desplazamiento, velocidad o aceleración; $H_{s,j}$ incluye sensor y
+acoplamiento; y $N_j$ es ruido. MASW usa diferencias de fase: una respuesta idéntica en
+todos los canales se cancela, mientras diferencias de amortiguamiento, inclinación o
+acoplamiento introducen fase diferencial y sesgan la velocidad aparente.
 
-La variable de salida también importa. En frecuencia,
+Para obtener la dispersión importa principalmente que cada frecuencia conserve una
+relación de fase coherente entre canales y una relación señal--ruido útil. La variable
+física medida es secundaria mientras la respuesta del sensor sea conocida y uniforme
+en todo el arreglo.
 
-\begin{equation}
-    A(j\omega)=j\omega V(j\omega)
-    =-\omega^2X(j\omega).
-\end{equation}
+\subsection{Alternativas y costos de referencia}
 
-Por tanto, un geófono de velocidad y un acelerómetro pueden describir el mismo movimiento
-después de una integración o derivación ideal, pero no tienen el mismo ruido ni la misma
-sensibilidad práctica en bajas frecuencias.
-
-\subsection{Familias de sensores que podían utilizarse}
-
-La comparación útil no es simplemente ``analógico contra digital''. Deben considerarse
-la magnitud medida, la banda, el piso de ruido, la alimentación, el número de ejes, la
-sincronización y el costo multiplicado por todos los puntos del arreglo.
+La comparación reúne magnitud, banda, ruido, alimentación, ejes y precio del elemento;
+no incluye cableado, carcasa, PCB, digitalización, importación ni impuestos. Los precios
+se consultaron el 18 de agosto de 2026 y sólo indican órdenes de magnitud.
 
 \begin{table}[ht]
 \centering
 \footnotesize
-\caption{Alternativas de transducción para ondas superficiales.}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth} Y Y@{}}
+\caption{Alternativas de transducción y costo del elemento sensor.}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}p{0.23\textwidth} >{\raggedright\arraybackslash}p{0.19\textwidth} Y@{}}
 \toprule
-\textbf{Familia} & \textbf{Magnitud y banda} & \textbf{Ventaja para el proyecto} & \textbf{Limitación principal} \\
+\textbf{Referencia} & \textbf{Magnitud y banda} & \textbf{Precio publicado} &
+\textbf{Evaluación para el arreglo} \\
 \midrule
-Geófono de bobina móvil & Velocidad por encima de su frecuencia natural; versiones típicas de 4,5, 10, 14 y 28 Hz & Pasivo, robusto, sensible y estándar en MASW; acondicionamiento relativamente sencillo & La respuesta cae con rapidez bajo $f_n$; un eje por elemento y salida analógica de baja amplitud \\
-MEMS de bajo ruido & Aceleración desde continua; salida analógica o digital, normalmente triaxial & Pequeño, de bajo consumo, fácil de integrar y sin resonancia de 10 Hz & El ruido de aceleración puede dominar las señales sísmicas débiles; debe validarse el modelo concreto, no la categoría ``MEMS'' en general \\
-Acelerómetro piezoeléctrico sísmico & Aceleración; modelos especiales cubren aproximadamente 0,1--200 Hz & Muy bajo ruido, buena estabilidad y calibración industrial & Requiere excitación IEPE y acondicionamiento dedicado; costo y consumo altos para un arreglo numeroso \\
-Sismómetro de realimentación & Velocidad triaxial en banda ancha; por ejemplo 60 s--100 Hz & Cubre directamente microtremores y bajas frecuencias con bajo ruido & Instrumento profesional por cotización, activo y mucho más complejo que un elemento de geófono \\
+SM-24, \SI{10}{\hertz} & Geófono vertical; velocidad; respuesta plana sobre $f_n$ &
+69,95 USD con disco aislante & Pasivo y estándar en MASW; 24 elementos cuestan
+aproximadamente 1.679 USD, pero la respuesta cae bajo $f_n$~\cite{SparkFunSM24} \\
+RTC, \SI{4.5}{\hertz} & Geófono vertical; velocidad; mayor extensión hacia bajas
+frecuencias & 92--154 USD según carcasa & Sustitución directa: 2.208--3.696 USD para 24
+puntos~\cite{RTClark45} \\
+ADXL355 & Aceleración desde continua; triaxial, ADC de 20 bits & 70,93 USD por unidad;
+41,84 USD a 1.000 & Integración simple, pero deben validarse ruido, sincronización y
+acoplamiento del nodo completo~\cite{DigiKeyADXL355,AnalogDevicesADXL355} \\
+PCB 393B31 & Aceleración, \SIrange{0.1}{200}{\hertz}; $1~\mu g$ RMS & Por cotización &
+Muy bajo ruido, pero requiere IEPE de \SIrange{24}{28}{\volt} y adquisición compatible
+~\cite{PCB393B31} \\
+Güralp 3ESPC & Velocidad triaxial, 60 s--\SI{100}{\hertz} & Por cotización & Cubre bajas
+frecuencias con bajo ruido; es un instrumento profesional completo~\cite{Guralp3ESPC} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\subsubsection{Geófonos de bobina móvil}
+Los geófonos siguen siendo la opción natural para MASW activo por sensibilidad,
+robustez y pasividad. Reducir $f_n$ conserva mejor las longitudes de onda grandes, pero
+aumenta el costo. Un MEMS tampoco es automáticamente más económico: en el ADXL355 la
+densidad de ruido especificada es $22{,}5~\mu g/\sqrt{\mathrm{Hz}}$, y el costo real
+depende además de encapsulado, calibración y comunicación~\cite{AnalogDevicesADXL355}.
 
-Son la alternativa natural para MASW activo. No consumen energía en el elemento sensor,
-toleran despliegues repetidos y entregan una señal de velocidad con sensibilidad elevada
-en su banda útil. La frecuencia natural permite especializar el arreglo: valores altos
-favorecen resolución somera; valores bajos conservan más sensibilidad para longitudes de
-onda grandes. Bajar $f_n$, sin embargo, suele aumentar tamaño, costo y sensibilidad a la
-instalación.
+\subsection{SM-24: restricción de partida}
 
-Para ondas Rayleigh basta un elemento vertical. Un arreglo triaxial triplica elementos,
-canales y volumen de datos, pero permite registrar simultáneamente Rayleigh, Love y
-movimiento ambiental en tres componentes.
-
-\subsubsection{Acelerómetros MEMS}
-
-Un MEMS serio para esta aplicación debe evaluarse por densidad de ruido y estabilidad,
-no sólo por resolución digital. Como referencia, el ADXL355 integra tres ejes, ADC de 20
-bits, SPI/I$^2$C y filtros programables; el fabricante especifica una densidad de ruido
-de $22{,}5~\mu g/\sqrt{\mathrm{Hz}}$ y lo incluye entre sus aplicaciones de imagen
-sísmica~\cite{AnalogDevicesADXL355}. Su integración en un nodo IoT es atractiva, pero que
-su respuesta llegue a continua no significa que una señal de \SIrange{1}{5}{\hertz}
-supere automáticamente su ruido.
-
-Además, MASW exige coherencia temporal entre nodos. Una interfaz digital elimina el
-amplificador analógico externo, pero no elimina la necesidad de un reloj común, latencia
-determinista, calibración entre ejes y acoplamiento mecánico repetible.
-
-\subsubsection{Acelerómetros piezoeléctricos y sismómetros de banda ancha}
-
-Existen acelerómetros piezoeléctricos diseñados específicamente para vibración sísmica.
-El PCB 393B31, por ejemplo, declara respuesta de \SIrange{0.1}{200}{\hertz}, resolución
-de $1~\mu g$ RMS y sensibilidad de $10~\mathrm{V}/g$, pero necesita alimentación
-IEPE de \SIrange{24}{28}{\volt} y \SIrange{2}{10}{\milli\ampere} por canal
-~\cite{PCB393B31}. Es técnicamente capaz, aunque se aleja de la premisa de nodos simples
-y económicos.
-
-En el extremo de máximo desempeño, un sismómetro de realimentación como el Güralp 3ESPC
-cubre de 60 s a \SI{100}{\hertz}, es triaxial y posee un piso de ruido apropiado para
-monitoreo débil y microseísmos~\cite{Guralp3ESPC}. Resuelve la banda, pero corresponde a
-otra categoría de instrumento, alimentación y presupuesto.
-
-\subsection{Precios de referencia del elemento sensor}
-
-Los precios siguientes sirven para comparar órdenes de magnitud, no sistemas completos.
-No incluyen carcasa, punta, cable, conector, protección ambiental, PCB, alimentación,
-digitalización, importación ni impuestos. Se consultaron el 18 de agosto de 2026.
-
-\begin{table}[ht]
-\centering
-\small
-\caption{Costo de referencia de alternativas de transducción.}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.22\textwidth} Y@{}}
-\toprule
-\textbf{Referencia} & \textbf{Precio publicado} & \textbf{Interpretación para un arreglo} \\
-\midrule
-SM-24 de 10 Hz & 69,95 USD por elemento con disco aislante & Veinticuatro elementos: aproximadamente 1.679 USD antes de todo el resto del nodo~\cite{SparkFunSM24} \\
-RTC vertical de 4,5 Hz & 92--154 USD según carcasa y conexión & Veinticuatro puntos: 2.208--3.696 USD; es la sustitución directa más cercana para extender la banda baja~\cite{RTClark45} \\
-ADXL355 & 70,93 USD por circuito en cantidad uno; 41,84 USD de lista a 1.000 unidades & Es triaxial y ya digitaliza, pero todavía requiere PCB, encapsulado y prueba de ruido del nodo completo~\cite{DigiKeyADXL355,AnalogDevicesADXL355} \\
-PCB 393B31 & Precio por cotización & Debe sumarse alimentación IEPE, cable y adquisición compatible; no es una alternativa de bajo costo~\cite{PCB393B31} \\
-Güralp 3ESPC & Precio por cotización & Instrumento triaxial de banda ancha para redes profesionales, no un elemento desnudo~\cite{Guralp3ESPC} \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-La comparación muestra algo importante: cambiar de \SI{10}{\hertz} a
-\SI{4.5}{\hertz} incrementa el costo de los sensores, pero no cambia por sí solo la
-arquitectura completa. Un MEMS de precisión tampoco es necesariamente más barato por
-canal que el SM-24. El ahorro depende de integrar digitalización, carcasa, calibración y
-comunicación, no únicamente de comprar el transductor más económico.
-
-\subsection{El sensor disponible: una restricción de partida}
-
-El proyecto empleó el SM-24 de \SI{10}{\hertz} porque era el transductor disponible en
-la Facultad. Por tanto, no existió una selección del sensor a partir de los requisitos de
-profundidad ni de una comparación técnica entre alternativas: la accesibilidad del
-SM-24 constituyó una condición inicial del proyecto. Como se mostrará, su frecuencia
-natural no está bien adaptada a la banda de pocos hertz asociada al objetivo de
-\SI{50}{\meter} y hace más difícil recuperar esas componentes.
-
-Esto no vuelve inútil al elemento disponible. El SM-24 ofrece condiciones prácticas para
-construir la primera plataforma y estudiar hasta dónde puede extenderse su banda útil:
-
-\begin{itemize}
-    \item es un geófono vertical compatible con la componente dominante de Rayleigh;
-    \item es pasivo y robusto para despliegues repetidos;
-    \item su sensibilidad y modelo dinámico están documentados;
-    \item su salida analógica permite investigar técnicas de acondicionamiento,
-    compensación e instrumentación como parte central del proyecto electrónico;
-    \item su costo unitario hace concebible un arreglo académico ampliable.
-\end{itemize}
+El SM-24 de \SI{10}{\hertz} se empleó porque estaba disponible en la Facultad, no porque
+resultara de optimizar la profundidad. Su $f_n$ dificulta recuperar los pocos hertz
+asociados a \SI{50}{\meter}; aun así, es vertical, pasivo, robusto, documentado y de
+costo compatible con un arreglo académico. Su salida analógica permite además estudiar
+el acondicionamiento como parte central del proyecto.
 
 \begin{figure}[ht]
 \centering
@@ -178,12 +90,8 @@ construir la primera plataforma y estudiar hasta dónde puede extenderse su band
     \centering
     \includegraphics[width=\textwidth]{sm24_funcion_transferencia_previa.png}
 \end{minipage}
-\caption{El transductor disponible y su respuesta publicada. A la izquierda se muestra
-un SM-24 montado en carcasa con punta de acoplamiento~\cite{WikimediaSM24Photo}; a la
-derecha, las curvas de sensibilidad del folleto del fabricante para distintas
-condiciones de amortiguamiento~\cite{SM24}. La imagen permite separar dos conceptos que
-luego se modelan matemáticamente: el montaje mecánico del receptor y la dinámica del
-elemento interno.}
+\caption{SM-24 en carcasa con punta de acoplamiento~\cite{WikimediaSM24Photo} y curvas
+de sensibilidad para distintos amortiguamientos~\cite{SM24}.}
 \label{fig:sm24-fisico-respuesta}
 \end{figure}
 
@@ -208,7 +116,7 @@ Frecuencia espuria típica & $>\SI{240}{\hertz}$ & No limita la banda MASW de in
 \end{tabular}
 \end{table}
 
-\subsection{Modelo dinámico del SM-24}
+\subsection{Modelo dinámico del SM-24: velocidad y aceleración}
 
 Sea $x_g$ el desplazamiento de la carcasa unida al suelo, $x_m$ el de la masa móvil y
 $z=x_m-x_g$ el desplazamiento relativo. El sistema masa--resorte--amortiguador satisface
@@ -222,7 +130,7 @@ $z=x_m-x_g$ el desplazamiento relativo. El sistema masa--resorte--amortiguador s
     \label{eq:sm24-mecanico}
 \end{equation}
 
-La bobina genera una fuerza electromotriz proporcional a la velocidad relativa,
+La bobina genera una fuerza electromotriz proporcional a la velocidad relativa:
 
 \begin{equation}
     v_o(t)=G_0\dot z(t),
@@ -244,8 +152,6 @@ Con $r=\omega/\omega_n$, la magnitud normalizada es
     \label{eq:sm24-magnitud}
 \end{equation}
 
-\subsubsection{El mismo modelo referido a aceleración}
-
 La aceleración del suelo es $A_g(s)=s^2X_g(s)=s\dot X_g(s)$. Por tanto, la misma salida
 del SM-24 puede expresarse respecto de la aceleración como
 
@@ -264,15 +170,15 @@ Su magnitud, normalizada por $G_0/\omega_n$, es
     \label{eq:sm24-magnitud-aceleracion}
 \end{equation}
 
-Esto no convierte al SM-24 en un acelerómetro de respuesta plana. Referido a aceleración,
-su comportamiento es pasabanda: la sensibilidad crece por debajo de la resonancia y
-vuelve a caer por encima de ella. Las dos formas de describir el mismo transductor se
-resumen en el cuadro siguiente.
+El geófono sin compensar se usa habitualmente referido a velocidad porque
+$H_v\rightarrow-G_0$ por encima de $f_n$: allí su respuesta es aproximadamente plana.
+Referido a aceleración, $H_a$ es pasabanda y no presenta una meseta con el
+amortiguamiento nominal.
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Comportamiento asintótico del SM-24 según la magnitud de entrada elegida.}
+\caption{Comportamiento asintótico del SM-24 sin compensar según la magnitud de entrada.}
 \begin{tabular}{@{}lll@{}}
 \toprule
 \textbf{Régimen} & \textbf{Referido a velocidad, $|H_v|$} &
@@ -287,92 +193,65 @@ $G_0/\omega$; pendiente $-20$ dB/década \\
 \end{tabular}
 \end{table}
 
-Por encima de $f_n$, la tensión reproduce aproximadamente la velocidad del suelo. Por
-debajo de $f_n$, la respuesta referida a velocidad cae como $r^2$, es decir,
-\SI{40}{\decibel\per decade}. Referida a aceleración, cae como $r$ al disminuir la
-frecuencia. En ambos casos, alejarse hacia frecuencias inferiores reduce la amplitud
-eléctrica disponible a la salida del sensor.
+Por debajo de $f_n$, $|H_v|$ cae como $r^2$ (\SI{40}{\decibel\per decade}) y $|H_a|$
+como $r$ (\SI{20}{\decibel\per decade}); son dos referencias de una misma tensión de
+salida, no dos modos de funcionamiento distintos.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../latex-historial/figuras/respuesta_sm24_modelo.png}
-\caption{Modelo nominal del SM-24 referido a velocidad del suelo. La carga resistiva
-aumenta el amortiguamiento y aplana la resonancia, pero no elimina la caída de segundo
-orden por debajo de \SI{10}{\hertz}. Figura generada con los parámetros de la hoja de
-datos.}
+\caption{Modelo nominal del SM-24 en circuito abierto referido a velocidad y
+aceleración del suelo. En baja frecuencia, las magnitudes normalizadas caen
+\SI{40}{\decibel\per decade} y \SI{20}{\decibel\per decade}, respectivamente.}
 \label{fig:sm24-modelo}
 \end{figure}
 
 \subsection{La banda exigida por el objetivo de profundidad}
 
-La propuesta original planteó caracterizar hasta \SI{50}{\meter}. La profundidad no se
-convierte en una frecuencia mediante una igualdad universal, pero el diseño preliminar
-utiliza la longitud de onda
+La propuesta original planteó caracterizar hasta \SI{50}{\meter}. Como estimación de
+diseño se usa
 
 \begin{equation}
     \lambda_R=\frac{c_R}{f}.
 \end{equation}
 
-Para aportar sensibilidad a decenas de metros se necesitan longitudes de onda del orden
-de \SIrange{100}{150}{\meter}. Con velocidades Rayleigh plausibles de
-\SIrange{150}{500}{\meter\per\second}, la información profunda aparece en el orden de
-\SIrange{1}{5}{\hertz}. Es una estimación de diseño, no una igualdad universal; aquí se
-utiliza solamente para comparar la banda requerida con la respuesta nominal del sensor.
+Longitudes de \SIrange{100}{150}{\meter} y velocidades Rayleigh de
+\SIrange{150}{500}{\meter\per\second} sitúan la información profunda en
+\SIrange{1}{5}{\hertz}. No es una conversión universal profundidad--frecuencia, sino una
+comparación preliminar con la respuesta del sensor.
 
 El conflicto queda cuantificado al evaluar la ecuación~\eqref{eq:sm24-magnitud}:
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Respuesta nominal del SM-24 respecto de su sensibilidad en banda.}
+\caption{Respuesta nominal del SM-24 en circuito abierto, normalizada respecto de
+velocidad y aceleración.}
 \begin{tabular}{@{}cccc@{}}
 \toprule
-\textbf{Frecuencia} & $f/f_n$ & \textbf{Circuito abierto, $\zeta=0{,}25$} & \textbf{Shunt, $\zeta=0{,}60$} \\
+\textbf{Frecuencia} & $f/f_n$ &
+\textbf{Velocidad, $|H_v|/G_0$} &
+\textbf{Aceleración, $\omega_n|H_a|/G_0$} \\
 \midrule
-\SI{1}{\hertz}  & 0,10 & aproximadamente $-40$ dB & aproximadamente $-40$ dB \\
-\SI{2}{\hertz}  & 0,20 & $-27{,}6$ dB & $-27{,}7$ dB \\
-\SI{5}{\hertz}  & 0,50 & $-10{,}0$ dB & $-11{,}7$ dB \\
-\SI{10}{\hertz} & 1,00 & $+6{,}0$ dB & $-1{,}6$ dB \\
-\SI{20}{\hertz} & 2,00 & $+2{,}0$ dB & $+0{,}4$ dB \\
+\SI{1}{\hertz}  & 0,10 & $-40{,}0$ dB & $-19{,}9$ dB \\
+\SI{2}{\hertz}  & 0,20 & $-27{,}6$ dB & $-13{,}7$ dB \\
+\SI{5}{\hertz}  & 0,50 & $-10{,}0$ dB & $-4{,}0$ dB \\
+\SI{10}{\hertz} & 1,00 & $+6{,}0$ dB & $+6{,}0$ dB \\
+\SI{20}{\hertz} & 2,00 & $+2{,}0$ dB & $-4{,}0$ dB \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-A \SI{2}{\hertz}, el transductor entrega aproximadamente una veinticuatroava parte de
-la amplitud de tensión que entregaría en banda; a \SI{1}{\hertz}, aproximadamente una
-centésima. La señal de baja frecuencia no desaparece, pero llega fuertemente atenuada y
-se vuelve más difícil de separar del ruido. Éste es el punto en el que interviene la
-instrumentación: un acondicionamiento de bajo ruido puede aportar ganancia, ecualización,
-filtrado y aprovechamiento del rango dinámico antes de digitalizar. Su eficacia debe
-comprobarse sobre la cadena completa, porque sólo puede recuperar contenido que todavía
-esté presente en los terminales del sensor con una relación señal--ruido aprovechable. El
-amortiguamiento corrige el pico de resonancia; no desplaza por sí mismo la frecuencia
-natural.
+En la referencia a velocidad, la salida cae \SI{27.6}{\decibel} a \SI{2}{\hertz} y
+\SI{40}{\decibel} a \SI{1}{\hertz}; normalizada respecto de aceleración, cae
+\SI{13.7}{\decibel} y \SI{19.9}{\decibel}. La diferencia refleja pendientes de
+\SI{40}{\decibel\per decade} y \SI{20}{\decibel\per decade}; no crea señal adicional
+en los terminales.
 
-\subsection{Consecuencia de la restricción impuesta}
+\subsection{Implicación para el acondicionamiento}
 
-El SM-24 no fue el resultado de una selección entre sensores: fue el elemento al que se
-tenía acceso. Al compararlo posteriormente con los requisitos aparece el desajuste: su
-frecuencia natural de \SI{10}{\hertz} está por encima de la banda de mayor interés para
-\SI{50}{\meter}. Esta restricción impuesta dificulta el objetivo porque, según el modelo
-nominal, la salida cae aproximadamente \SI{27.7}{\decibel} a \SI{2}{\hertz} y
-\SI{40}{\decibel} a \SI{1}{\hertz} respecto de la sensibilidad en banda.
-
-La tesis asume esa limitación y la convierte en parte del problema de instrumentación. No
-se plantea afirmar que el SM-24 es el sensor óptimo ni que la electrónica puede eliminar
-su límite mecánico; se plantea determinar cuánto contenido de baja frecuencia puede
-obtenerse del sensor disponible mediante acondicionamiento e instrumentación adecuados.
-Por tanto:
-
-\begin{itemize}
-    \item la cadena analógica debe intentar amplificar y compensar la región atenuada
-    antes de la digitalización sin introducir ruido electrónico excesivo;
-    \item la compensación puede corregir parcialmente la forma de la respuesta eléctrica,
-    pero no desplaza la frecuencia natural del SM-24;
-    \item el diseño debe preservar amplitud, fase y rango dinámico en la banda de interés.
-\end{itemize}
-
-La siguiente sección estudia precisamente esa estrategia: la evolución de los circuitos
-de acondicionamiento e instrumentación desarrollados para el SM-24, los intentos de
-compensar su respuesta de baja frecuencia y el alcance esperado de cada alternativa de
-circuito.
+La tesis asume el desajuste del SM-24 como problema de instrumentación: determinar cuánto
+contenido de baja frecuencia puede conservarse mediante una cadena analógica de bajo
+ruido que compense la región atenuada y preserve fase y rango dinámico. No se considera
+al SM-24 óptimo ni se atribuye a la electrónica la capacidad de eliminar su límite
+mecánico. La siguiente sección desarrolla esa estrategia.

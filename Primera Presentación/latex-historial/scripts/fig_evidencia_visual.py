@@ -175,24 +175,27 @@ w = 2 * np.pi * freq
 s = 1j * w
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 3.8), dpi=220)
-for zeta, color, label in ((0.25, RED, "$\\zeta=0{,}25$ (abierto)"),
-                           (0.60, BLUE, "$\\zeta=0{,}60$ (shunt nominal)")):
-    hv = s ** 2 / (s ** 2 + 2 * zeta * wn * s + wn ** 2)
-    ax1.semilogx(freq, 20 * np.log10(np.abs(hv)), color=color, lw=2, label=label)
-    phase = np.unwrap(np.angle(hv)) * 180 / np.pi
-    ax2.semilogx(freq, phase, color=color, lw=2, label=label)
+zeta = 0.25
+den = s ** 2 + 2 * zeta * wn * s + wn ** 2
+hv = s ** 2 / den
+ha_normalizada = wn * s / den
+ax1.semilogx(freq, 20 * np.log10(np.abs(hv)), color=RED, lw=2)
+ax2.semilogx(freq, 20 * np.log10(np.abs(ha_normalizada)), color=BLUE, lw=2)
 for ax in (ax1, ax2):
     ax.axvline(fn, color=MUTED, lw=1, ls=(0, (4, 3)))
     ax.text(fn * 1.08, ax.get_ylim()[0] + 0.08 * np.diff(ax.get_ylim())[0],
             "$f_n=10$ Hz", fontsize=7.5, color=MUTED)
     ax.set_xlabel("Frecuencia [Hz]", fontsize=9)
+    ax.text(0.04, 0.92, "circuito abierto, $\\zeta=0{,}25$",
+            transform=ax.transAxes, fontsize=8, color=MUTED, va="top")
     clean(ax)
-ax1.set_ylabel("Magnitud relativa [dB]", fontsize=9)
-ax2.set_ylabel("Fase [grados]", fontsize=9)
-ax1.set_title("Respuesta a velocidad del suelo", fontsize=10, loc="left")
-ax2.set_title("Rotacion de fase alrededor de la resonancia", fontsize=10, loc="left")
-ax1.legend(frameon=False, fontsize=8, loc="lower right")
-fig.suptitle("Modelo nominal del geofono SM-24", x=0.04, ha="left",
+ax1.set_ylim(-125, 10)
+ax2.set_ylim(-65, 10)
+ax1.set_ylabel(r"$20\log_{10}(|H_v|/G_0)$ [dB]", fontsize=9)
+ax2.set_ylabel(r"$20\log_{10}(\omega_n|H_a|/G_0)$ [dB]", fontsize=9)
+ax1.set_title("Referido a velocidad del suelo", fontsize=10, loc="left")
+ax2.set_title("Referido a aceleración del suelo", fontsize=10, loc="left")
+fig.suptitle("Modelo nominal del geófono SM-24", x=0.04, ha="left",
              fontsize=12, weight="bold")
 fig.tight_layout(rect=(0, 0, 1, 0.91))
 fig.savefig(os.path.join(OUT, "respuesta_sm24_modelo.png"), bbox_inches="tight",
