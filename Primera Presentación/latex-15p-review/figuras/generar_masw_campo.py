@@ -17,7 +17,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as pe
 
 REPO = Path(__file__).resolve().parents[4]
 PROC = REPO / "data" / "processed" / "Canchita"
@@ -158,7 +157,12 @@ def graficar_autopotencia(
     tmin=0.0, tmax=2.0,
 ):
     f, Pxx, Pdb = autopotencia_normalizada(t, U, tmin=tmin, tmax=tmax)
-    fig, ax = plt.subplots(1, 2, figsize=(11.5, 4.3), width_ratios=[1.0, 1.08])
+    # Composición vertical: permite insertar la figura completa en una sola
+    # columna del documento sin reducir en exceso rótulos ni ejes.
+    fig, ax = plt.subplots(
+        2, 1, figsize=(5.2, 7.1),
+        height_ratios=[1.0, 1.05],
+    )
 
     cmap = plt.get_cmap("turbo")
     normaliza_distancia = matplotlib.colors.Normalize(vmin=float(x.min()), vmax=float(x.max()))
@@ -198,8 +202,8 @@ def graficar_autopotencia(
     cb1 = fig.colorbar(im, ax=ax[1], pad=0.025)
     cb1.set_label("autopotencia normalizada [dB]")
 
-    fig.suptitle(titulo, fontsize=12, weight="bold")
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    fig.suptitle(titulo, fontsize=11, weight="bold")
+    fig.tight_layout(rect=(0, 0, 1, 0.96), h_pad=1.25)
     salida.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(salida, dpi=220, bbox_inches="tight", facecolor="white")
     plt.close(fig)
@@ -228,9 +232,12 @@ def main():
     nucleo = np.array([0.25, 0.5, 0.25])
     S = np.apply_along_axis(lambda v: np.convolve(v, nucleo, mode="same"), 1, S)
 
+    # Los tres paneles se apilan para formar una figura vertical de una
+    # columna. Así el texto puede ocupar la columna contigua y no se fuerza un
+    # flotante panorámico al pie de una página casi vacía.
     fig, ax = plt.subplots(
-        1, 3, figsize=(14.0, 4.2),
-        width_ratios=[1.0, 1.18, 1.18],
+        3, 1, figsize=(5.2, 9.0),
+        height_ratios=[0.82, 1.0, 1.0],
     )
 
     # ── (a) gather real ────────────────────────────────────────────────────
@@ -252,23 +259,10 @@ def main():
     ax[0].set_xlim(-0.05, 2.0)
     ax[0].grid(alpha=0.25, lw=0.4)
 
-    # ── (b) imagen completa: permite reconocer los límites geométricos ─────
+    # ── (b) imagen completa ────────────────────────────────────────────────
     im = ax[1].pcolormesh(
         f, c, S, shading="auto", cmap="turbo",
         vmin=0.0, vmax=1.0, rasterized=True,
-    )
-    # Cotas geométricas del arreglo: por debajo de c = 2*dx*f hay aliasing
-    # espacial; por encima de c = L*f la longitud de onda excede la apertura.
-    halo = [pe.Stroke(linewidth=2.7, foreground="white"), pe.Normal()]
-    ax[1].plot(
-        f, 2.0 * d["dx"] * f, "--", color="#6a1b9a", lw=1.25,
-        path_effects=halo,
-        label=r"$c=2\,\Delta x\,f$  (aliasing espacial)",
-    )
-    ax[1].plot(
-        f, d["L"] * f, ":", color="#005bbb", lw=1.35,
-        path_effects=halo,
-        label=r"$\lambda=L$  (apertura del arreglo)",
     )
     ax[1].set_ylim(CMIN, CMAX)
     ax[1].set_xscale("log")
@@ -278,20 +272,11 @@ def main():
     ax[1].set_xlabel("frecuencia [Hz]")
     ax[1].set_ylabel("velocidad de fase [m/s]")
     ax[1].set_title("(b) Dispersión completa", fontsize=10)
-    ax[1].legend(loc="upper left", fontsize=8, framealpha=0.85)
 
     # ── (c) ampliación 5–50 Hz: recupera la vista usada durante el análisis ─
     ax[2].pcolormesh(
         f, c, S, shading="auto", cmap="turbo",
         vmin=0.0, vmax=1.0, rasterized=True,
-    )
-    ax[2].plot(
-        f, 2.0 * d["dx"] * f, "--", color="#6a1b9a", lw=1.25,
-        path_effects=halo,
-    )
-    ax[2].plot(
-        f, d["L"] * f, ":", color="#005bbb", lw=1.35,
-        path_effects=halo,
     )
     ax[2].set_xlim(5.0, 50.0)
     ax[2].set_ylim(CMIN, CMAX)
@@ -300,8 +285,8 @@ def main():
     ax[2].set_ylabel("velocidad de fase [m/s]")
     ax[2].set_title("(c) Detalle de 5 a 50 Hz", fontsize=10)
 
-    fig.subplots_adjust(left=0.055, right=0.91, bottom=0.15, top=0.89, wspace=0.34)
-    cax = fig.add_axes([0.93, 0.15, 0.012, 0.74])
+    fig.subplots_adjust(left=0.16, right=0.84, bottom=0.065, top=0.97, hspace=0.52)
+    cax = fig.add_axes([0.875, 0.065, 0.025, 0.63])
     fig.colorbar(im, cax=cax, label="energía normalizada")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, dpi=200, bbox_inches="tight")

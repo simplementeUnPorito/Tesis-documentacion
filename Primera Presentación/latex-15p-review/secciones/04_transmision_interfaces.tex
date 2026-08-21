@@ -1,65 +1,78 @@
 \section{Transmisión, ingesta e interfaces}
 \label{sec:transmision-interfaces}
 
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.84\textwidth]{geophone_scope_captura_real_claro.png}
+\caption{Geophone Scope en modo claro sobre una captura real. Permite operar los nodos
+y revisar en campo el impacto y la respuesta del geófono.}
+\label{fig:interfaz-campo}
+
+\vspace{0.7em}
+\includegraphics[width=0.84\textwidth]{servidor_datos_captura_real_claro.png}
+\caption{Servidor de datos en modo claro sobre señales reales. Centraliza las campañas
+y permite validar cada registro antes del análisis MASW.}
+\label{fig:interfaz-servidor}
+\end{figure*}
+
 Tras digitalizarse, cada captura debe llegar a un punto común, conservar su contexto y
-quedar disponible para revisión:
+quedar disponible para revisión. El camino es nodos de medida $\rightarrow$ maestro de
+campo $\rightarrow$ servidor de ingesta $\rightarrow$ revisión y MASW.
 
-\begin{equation}
-\text{nodos de medida}
-\longrightarrow
-\text{maestro de campo}
-\longrightarrow
-\text{servidor de ingesta}
-\longrightarrow
-\text{revisión y MASW}.
-\end{equation}
-
-La interfaz de campo arma nodos, configura, captura y exporta; la de análisis valida,
-filtra, agrupa, alinea, promedia e invierte. Así el microcontrolador no ejecuta tareas
-pesadas y la adquisición funciona sin Internet.
+El trabajo se reparte entre dos interfaces. La de campo se ocupa de armar los nodos,
+configurarlos, capturar y exportar, mientras que la de análisis valida, filtra, agrupa,
+alinea, promedia e invierte. De este modo el microcontrolador no ejecuta tareas pesadas
+y la adquisición puede funcionar sin Internet.
 
 \subsection{Comunicación}
 
 Se eligió ESP32 por disponibilidad, costo y Wi-Fi integrado. Actúa después del ADC: cada
-esclavo empaqueta las muestras y las envía al maestro por ESP-NOW, sin \emph{router}.
-Como el enlace limita el tamaño de paquete y no garantiza entrega, se agregaron
-fragmentación, numeración, confirmaciones, reintentos y respaldo local. El maestro sirve
-una red Wi-Fi y la interfaz web; cuando encuentra conectividad externa transfiere la cola
-pendiente.
+esclavo empaqueta las muestras y las envía al maestro por ESP-NOW, sin \emph{router}, lo
+que evita depender de infraestructura en campo.
+
+El enlace impone dos restricciones que condicionan el protocolo. La primera es el tamaño
+máximo de carga útil, muy inferior a un registro completo, y de ahí la fragmentación con
+numeración de secuencia. La segunda es que no garantiza la entrega, y de ahí las
+confirmaciones y los reintentos. Un fragmento perdido no puede completarse por
+interpolación como se haría con una señal cualquiera, porque el método mide diferencias
+de fase entre canales y cualquier relleno introduce fase falsa; por eso cada esclavo
+conserva además un respaldo local que permite reconstruir el registro después de la
+captura. El maestro sirve una red Wi-Fi propia y la interfaz web, y transfiere la cola
+pendiente cuando encuentra conectividad externa.
+
+La sincronización entre nodos se comprobó con osciloscopio sobre los flancos de inicio de
+los esclavos. En 128 disparos, el retardo relativo observado se mantuvo entre
+\SIrange{100}{200}{\micro\second}. El criterio para juzgar ese número surge del propio
+método: un desfasaje temporal $\Delta t$ entre canales se traduce en un error de fase
+$2\pi f\,\Delta t$, mientras que el desfasaje útil entre geófonos contiguos es
+$2\pi f\,\Delta x/c$. El error relativo de velocidad de fase resulta entonces
+
+\begin{equation}
+    \frac{\Delta c}{c}\simeq\frac{c\,\Delta t}{\Delta x},
+    \label{eq:error-sincronismo}
+\end{equation}
+
+expresión independiente de la frecuencia. Con $c\approx\SI{100}{\meter\per\second}$,
+$\Delta x=\SI{2}{\meter}$ y el peor caso medido de \SI{200}{\micro\second}, el error
+queda en el \SI{1}{\percent}, holgadamente por debajo de la dispersión que introducen el
+acoplamiento de los geófonos y la repetibilidad de la fuente.
 
 \subsection{Evolución de las interfaces}
 
-La evolución fue incremental: MATLAB validó primero un canal y después el control
-multinodo; PyQt organizó la adquisición y el análisis; la SPA embebida eliminó la
-dependencia de software instalado en campo; y FastAPI aportó ingesta, persistencia y
-acceso remoto. La Tabla resume qué se conservó de cada etapa.
+Las primeras pruebas usaron interfaces MATLAB, pero su manejo de múltiples puertos
+seriales resultó poco robusto y motivó la migración a Python. Finalmente, adquisición y
+análisis se trasladaron a interfaces web por las ventajas para IoT: acceso
+multiplataforma, despliegue sin instalación, operación local y conexión directa con el
+servidor.
 
-\begin{table}[ht]
+\begin{figure}[!t]
 \centering
-\small
-\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.23\textwidth}Y@{}}
-\toprule
-\textbf{Interfaz} & \textbf{Uso principal} & \textbf{Aporte al diseño} \\
-\midrule
-MATLAB: alcance USB & Verificar el canal individual & Visualización cruda, referencia DC, FIR, guardado de muestras. \\
-MATLAB: InterfaceESP & Probar maestro y esclavos & Sincronización, lotes, control de PGA/FIR por nodo, depuración. \\
-PyQt: adquisición & Operar varios nodos & Escritorio multipestaña, estado de enlace, gráficos simultáneos. \\
-SPA embebida & Operar en campo sin instalar software & Control desde el navegador, funcionamiento fuera de línea. \\
-PyQt: revisión & Explorar el flujo científico & Filtros, grupos, enfase, promedios, \emph{waterfall} y MASW. \\
-Servidor FastAPI & Ingestar y procesar en una dirección conocida & Acceso remoto, estado persistente entre campañas. \\
-\bottomrule
-\end{tabularx}
-\caption{Funciones y alcance de las interfaces desarrolladas.}
-\label{tab:evolucion-interfaces}
-\end{table}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{spa_captura_real.jpg}
-\caption{SPA embebida con una captura real de Canchita a \SI{2929}{\hertz}. Arriba se
-observa el disparo del martillo a \SI{780}{\milli\second}; abajo, la respuesta del
-geófono. La interfaz reúne captura, nodos, almacenamiento, enlace y registro.}
-\label{fig:spa-hito7-resumen}
+\includegraphics[width=\columnwidth]{masw_campo.png}
+\caption{Campaña Canchita. (a) Registro \emph{wiggle} sintetizado entre \SI{10}{} y
+\SI{50}{\meter}, con lóbulos positivos sombreados y paso de \SI{2}{\meter}. (b)
+Dispersión de 1 a \SI{100}{\hertz} por desplazamiento de fase
+(Ec.~\ref{eq:phase-shift}). (c) Detalle lineal de 5 a \SI{50}{\hertz}.}
+\label{fig:masw-campo}
 \end{figure}
 
 \subsection{Lo que queda por resolver en el flujo de análisis}
@@ -68,34 +81,21 @@ La cadena trazas~$\to$~dispersión~$\to$~selección~$\to$~inversión~$\to$~$V_S(
 corre de punta a punta. La Fig.~\ref{fig:masw-campo} muestra el registro y la dispersión
 obtenidos directamente de datos de campo.
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\textwidth]{masw_campo.png}
-\caption{Campaña Canchita. (a) Registro \emph{wiggle} sintetizado entre \SI{10}{} y
-\SI{50}{\meter}, con lóbulos positivos sombreados y paso de \SI{2}{\meter}. (b)
-Dispersión de 1 a \SI{100}{\hertz} por desplazamiento de fase
-(Ec.~\ref{eq:phase-shift}). (c) Detalle lineal de 5 a \SI{50}{\hertz}. Las líneas
-indican aliasing espacial, $c=2\Delta x f$, y longitud de onda igual a la apertura,
-$\lambda=L$.}
-\label{fig:masw-campo}
-\end{figure}
-
-Para separar contenido espectral de amplitud, se calculó además la autopotencia
-unilateral de las 21 trazas sobre una ventana común de \SI{2}{\second}, después de
+Para separar el contenido espectral de la amplitud se calculó además la autopotencia
+unilateral de las 21 trazas, sobre una ventana común de \SI{2}{\second} y después de
 quitar la media y aplicar una ventana Hann. Cada resultado se normalizó por su propio
-máximo:
+máximo, de modo que la comparación entre trazas es de forma espectral y no de amplitud
+absoluta entre receptores:
 
 \begin{equation}
     P_{xx,N}(f)=\frac{P_{xx}(f)}{\max_f P_{xx}(f)}.
 \end{equation}
 
-\begin{figure}[ht]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth]{autopotencia_normalizada_multicanal.png}
-\caption{Análisis espectral de las 21 señales del registro multicanal. (a) Espectros
-de autopotencia normalizados. (b) La misma información ordenada por distancia. La
-normalización permite comparar la forma espectral, pero elimina la comparación de
-amplitud absoluta entre receptores.}
+\includegraphics[width=\columnwidth]{autopotencia_normalizada_multicanal.png}
+\caption{Análisis espectral de las 21 señales del registro multicanal. (a) Espectros de
+autopotencia normalizados. (b) La misma información ordenada por distancia.}
 \label{fig:autopotencia-multicanal}
 \end{figure}
 
@@ -105,15 +105,85 @@ el \SI{54.3}{\percent} de la autopotencia integrada entre 5 y \SI{20}{\hertz} y 
 \SI{43.2}{\percent} entre 20 y \SI{50}{\hertz}; por debajo de \SI{5}{\hertz} queda
 aproximadamente \SI{0.1}{\percent}.
 
-La lectura conjunta acota la banda: bajo unos \SI{5}{\hertz} no aparece energía
-organizada; entre \SI{6}{} y \SI{20}{\hertz} se observa una cresta coherente alrededor
-de \SIrange{70}{110}{\meter\per\second}; por encima, la cresta cruza la cota de aliasing
-y se fragmenta. Antes de aceptar un perfil $V_S(z)$ falta validar la separación de
-ruido, el \emph{picking}, la incertidumbre de inversión, la repetibilidad entre grupos y
-campañas, la sensibilidad a la geometría y la comparación con información independiente.
-Ninguna estrategia de preprocesado o selección se presenta todavía como definitiva.
+La región de la Fig.~\ref{fig:masw-campo}(b) donde la imagen de dispersión puede
+interpretarse no la fija el procesamiento, sino la geometría del arreglo, y queda
+encerrada entre dos cotas. Por arriba actúa el aliasing espacial: para que el
+desfasaje entre geófonos contiguos sea interpretable de forma unívoca, la separación
+$\Delta x$ no puede superar media longitud de onda, condición que se escribe como
 
-\clearpage
+\begin{equation}
+    \Delta x\le\frac{\lambda}{2}=\frac{c}{2f}
+    \qquad\Longleftrightarrow\qquad
+    c\ge 2\,\Delta x\,f .
+    \label{eq:cota-aliasing}
+\end{equation}
+
+Con $\Delta x=\SI{2}{\meter}$ resulta $c\ge 4f$, de modo que una cresta situada en torno
+a \SI{100}{\meter\per\second} deja de estar libre de aliasing a partir de unos
+\SI{25}{\hertz}. Por abajo actúa la apertura: una longitud de onda mayor que el
+tendido no puede resolverse, y con $\lambda\le L=\SI{40}{\meter}$ la misma velocidad
+impone $f\ge c/L\approx\SI{2.5}{\hertz}$ como piso teórico, todavía optimista frente al
+piso de ruido real.
+
+Ambas cotas están trazadas sobre la figura y explican su lectura. Por debajo de unos
+\SI{5}{\hertz} no aparece energía organizada; entre \SI{6}{} y \SI{20}{\hertz} se observa
+una cresta coherente alrededor de \SIrange{70}{110}{\meter\per\second}; por encima, la
+cresta cruza la cota de la Ec.~\eqref{eq:cota-aliasing} y se fragmenta. La banda
+efectivamente utilizable de estas campañas es, por lo tanto, estrecha, y está limitada
+por la geometría y por la fuente antes que por la electrónica.
+
+Antes de aceptar un perfil $V_S(z)$ falta validar la separación de ruido, el
+\emph{picking}, la incertidumbre de inversión, la repetibilidad entre grupos y campañas,
+la sensibilidad a la geometría y la comparación con información independiente. Ninguna
+estrategia de preprocesado o selección se presenta todavía como definitiva.
+
+\subsection{Energía en la banda baja: estrategia prevista}
+
+El reparto de energía de la Fig.~\ref{fig:autopotencia-multicanal} indica dónde está hoy
+el límite del sistema. Por debajo de \SI{5}{\hertz} queda apenas el \SI{0.1}{\percent} de
+la autopotencia integrada, y ese extremo es justamente el que fija la profundidad
+alcanzable, porque a menor frecuencia corresponde mayor longitud de onda
+(Ec.~\ref{eq:longitud-onda}). El problema no se resuelve aguas abajo: ningún filtro
+digital recupera información que no superó el piso de ruido antes del convertidor. La
+hipótesis de trabajo es, por lo tanto, que falta inyectar energía en la banda baja desde
+la fuente misma.
+
+Un impacto entrega su energía en unos pocos milisegundos y el reparto espectral queda
+fijado por el tiempo de contacto, de modo que repetir el golpe no modifica la forma del
+espectro emitido. Lo que sí cambia es la energía acumulada: al emitir una secuencia de
+impactos durante varios segundos y registrar de forma continua, la contribución de la
+fuente se suma de manera coherente y la del ruido no. Sobre esa idea se construyeron la
+técnica Mini-Sosie y, más tarde, el barrido de la tasa de impacto propuesto en
+\cite{Park1996SIST}, donde la cadencia varía linealmente con el tiempo para cubrir la
+banda de forma continua en lugar de concentrarla en líneas discretas.
+
+Ese esquema fue llevado al análisis de ondas superficiales sobre arreglo lineal
+en \cite{Guan2022}, que es la configuración empleada en este trabajo, obteniendo curvas
+de dispersión utilizables con un pisón mecánico como fuente repetitiva.
+
+Un ensayo preliminar en campo, en el que se emitió un tren de impactos en lugar de un
+golpe aislado y se analizó el registro completo, mostró un aumento del contenido
+espectral en torno a \SI{0.5}{}, \SI{1}{} y \SI{2}{\hertz} según la secuencia de golpes
+empleada. El resultado es consistente con la estructura esperada: una emisión repetida
+con período $T$ concentra la energía en múltiplos de $1/T$, de modo que la cadencia fija
+dónde aparecen esas líneas. La observación es todavía cualitativa. La cadencia se produjo
+a mano y no fue repetible, y no se dispuso de suficientes sensores simultáneos para
+verificar que ese contenido se atenúa con la distancia, que es el control que permitiría
+distinguir una onda que se propaga de un piso de ruido común a todos los canales.
+
+Se prevé, por lo tanto, sustituir el golpe aislado por una secuencia de impactos de
+cadencia controlada e instrumentada. El martillete de leva descrito en la
+Sec.~\ref{sec:excitacion} es el mecanismo previsto para producirla, con dos diferencias
+respecto del martillo PCB. La primera es la masa. El nivel de baja frecuencia del
+espectro de fuerza queda fijado por el impulso transferido en cada golpe,
+$\int\!F\,\mathrm{d}t$, y no por el tiempo de contacto, que sólo determina hasta qué
+frecuencia se extiende ese nivel; una maza más pesada eleva entonces el extremo bajo del
+espectro emitido, que es justamente donde falta energía. La segunda es la
+instrumentación. Al no intervenir el sensor de fuerza del martillo PCB, el mecanismo
+deberá acondicionarse para entregar el instante de cada impacto ---por ejemplo a partir
+del giro de la leva---, porque esa marca temporal es la que oficia de referencia en la
+correlación.
+
 \subsection{Acceso remoto y pendientes}
 
 Una VPN de malla y un túnel publican el servidor sin configurar puertos en cada red; el

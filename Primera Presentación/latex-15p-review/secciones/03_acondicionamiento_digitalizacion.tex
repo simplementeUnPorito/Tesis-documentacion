@@ -8,10 +8,11 @@ se trata después.
 Si $v_d(t)$ es la tensión diferencial de entrada,
 
 \begin{equation}
-v_{\mathrm{ADC}}(t)=V_{\mathrm{CM}}+\left[h_{\mathrm{AFE}}(t)*v_d(t)\right]
-+v_{\mathrm{os}}(t)+n_{\mathrm{AFE}}(t),
-\qquad
-x[n]=Q_{B,V_{\mathrm{span}}}\!\left\{v_{\mathrm{ADC}}(nT_s)\right\}.
+\begin{aligned}
+v_{\mathrm{ADC}}(t)={}&V_{\mathrm{CM}}+\left[h_{\mathrm{AFE}}(t)*v_d(t)\right]\\
+&+v_{\mathrm{os}}(t)+n_{\mathrm{AFE}}(t),\\
+x[n]={}&Q_{B,V_{\mathrm{span}}}\!\left\{v_{\mathrm{ADC}}(nT_s)\right\}.
+\end{aligned}
 \label{eq:afe-general}
 \end{equation}
 
@@ -21,20 +22,28 @@ memoria. El \emph{offset} acumulado puede agotar el rango aun sin señal.
 
 \subsection{Compensador de polos desacoplados}
 
-La caída de \SI{27.7}{\decibel} a \SI{2}{\hertz} exige compensación antes del ADC.
-Ma et al. muestran que conservar $f_n$ y elevar el amortiguamiento efectivo
-produce una respuesta aproximadamente plana a aceleración entre
-$f_1\simeq f_n/(2\zeta_1)$ y $f_2\simeq2\zeta_1f_n$~\cite{Ma2023}. Para
-$f_n=\SI{10.21}{\hertz}$ y $\zeta_1=938$, los límites son
-\SI{5.4}{\milli\hertz} y \SI{19}{\kilo\hertz}. Su ensayo entre 1 y
-\SI{100}{\hertz} valida el principio en otro geófono de \SI{10}{\hertz}; no demuestra
-esa banda en el SM-24 de esta tesis.
+Tras evaluar varias arquitecturas se adoptó la forma $1-\mathrm{BP}$ propuesta e
+implementada en \cite{Ma2023}. En ese trabajo, un pasa-banda Sallen--Key y un
+amplificador diferencial restan la rama BP del camino directo.
 
-Tras probar varias arquitecturas se adoptó el compensador $1-\mathrm{BP}$ de Ma et al.,
-implementado allí con Sallen--Key y un amplificador diferencial. Como los quiebres están
-muy separados, el $Q$ requerido es bajo: Sallen--Key o MFB no aportan en este régimen y
-distribuyen cada polo entre más componentes, una desventaja frente a tolerancias y
-valores disponibles.
+La caída de \SI{27.7}{\decibel} a \SI{2}{\hertz} exige compensación antes del ADC si se
+quiere observar contenido próximo a \SI{1}{\hertz}. Ma et al. muestran que conservar
+$f_n$ y elevar el amortiguamiento efectivo extiende la respuesta aproximadamente plana a
+aceleración entre
+
+\begin{equation}
+f_1\simeq\frac{f_n}{2\zeta_1},
+\qquad
+f_2\simeq2\zeta_1f_n.
+\end{equation}
+
+Por tanto, $\zeta_1$ se elige para llevar $f_1$ hasta la zona de interés. El valor de
+$f_2$ no es un objetivo porque la aplicación no requiere extender la banda superior;
+sólo debe conservarse la simetría logarítmica $f_1f_2=f_n^2$ alrededor de $f_n$.
+
+Como los quiebres quedan muy separados, el $Q$ requerido es bajo: Sallen--Key o MFB no
+aportan en este régimen y distribuyen cada polo entre más componentes, una desventaja
+frente a tolerancias y valores disponibles.
 
 Se desacoplaron los polos: uno en la entrada ($R_1$ serie $C_1$) y otro en la
 realimentación ($R_2$ paralelo $C_2$) de un inversor. Cada uno depende de un solo par
@@ -44,18 +53,18 @@ pareamiento, y su realimentación aporta el primer polo pasa-bajos.
 \subsection{Ajuste y selección de componentes}
 
 La cancelación depende de la proporción entre la rama directa y BP. Un potenciómetro en
-serie con BP permite ajustarla por unidad y reduce el error RMS de
-\SI{0.457}{\decibel} a \SI{0.195}{\decibel}.
+serie con BP permite corregir esa proporción en cada unidad.
 
 La red resultante se diseñó a partir del modelo dinámico del geófono,
 
 \begin{equation}
-H_{\mathrm{geo}}(s)=\frac{\omega_n s}{s^2+2\zeta_0\omega_n s+\omega_n^2},
-\qquad f_n=\SI{10}{\hertz},\ \zeta_0=0{,}25,\ m=\SI{11}{\gram},
+H_{\mathrm{geo}}(s)=\frac{\omega_n s}
+{s^2+2\zeta_0\omega_n s+\omega_n^2},
 \end{equation}
 
-donde $\zeta_0$ es el amortiguamiento del SM-24. Se busca que
-compensador$\times$geófono equivalga a $\zeta_1\approx1000$, cancelando el pico. Entonces
+donde $\zeta_0$ es el amortiguamiento nominal del SM-24. Se busca que la cadena formada
+por el compensador y el geófono presente el amortiguamiento $\zeta_1$ requerido para
+llevar el quiebre inferior a la zona de interés. Entonces
 
 \begin{equation}
 H_{\mathrm{comp}}(s)=
@@ -77,59 +86,71 @@ PSoC: ganancia de continua de
 de entrada de \SI{35}{\mega\ohm} y resistencia de salida de \SI{10}{\ohm}. Con ese modelo
 se resolvió una búsqueda por evolución diferencial sobre la malla de valores comerciales
 para minimizar el error respecto de la Ec.~\eqref{eq:comp-afe}. La búsqueda admitió
-capacitores en paralelo, como los
-\SI{177}{\pico\farad} de realimentación.
+capacitores en paralelo.
 
-La Tabla~\ref{tab:compensador-elegido} muestra la solución efectivamente poblada.
+Los quiebres necesarios para aproximar la banda buscada producen un amortiguamiento
+efectivo muy alto: con los valores poblados se obtiene $f_0=\SI{10.21}{\hertz}$ y
+$\zeta_1\simeq938$. En la zona central, el modelo compensado queda escalado por
+$1/(2\zeta_1)\simeq5.3\times10^{-4}$, una atenuación de 1876 veces. La ganancia
+se repartió para recuperar ese nivel sin concentrar todo el margen en un solo bloque:
+la entrada instrumental
+aporta $\times2$, el PGA es ajustable entre $\times1$ y $\times50$, el sumador aporta
+$\times3.6$ y el pasa-bajos $\times5$. A máxima ganancia el producto es $\times1800$,
+por lo que la señal del geófono llega al ADC con aproximadamente el \SI{96}{\percent}
+de su escala previa a la compensación.
 
-\begin{table}[ht]
+Como comprobación inicial se barrió la electrónica entre la salida monitoreada del PGA
+y la entrada del ADC. La respuesta medida se encadenó en frecuencia con el modelo
+nominal del SM-24 referido a aceleración para estimar la forma de la cadena completa.
+En la realimentación del sumador se incorporó el polo real
+$p_1=-2\pi(393)\,\mathrm{rad/s}$. La sección MFB se dimensionó con
+$f_a=\SI{300}{\hertz}$ y $\zeta_a=0.691$; de
+$p=-\zeta_a\omega_a\pm j\omega_a\sqrt{1-\zeta_a^2}$ resultan
+$p_{2,3}\simeq2\pi(-207\pm j217)\,\mathrm{rad/s}$. El polo del sumador y este par
+conjugado forman el antialias Bessel de tercer orden, elegido por su fase
+aproximadamente lineal.
+
+Las ganancias se mantuvieron conservadoras porque, al aumentarlas, cada paso del VDAC
+también se amplifica: la calibración pierde resolución y la deriva, especialmente en el
+sumador, se vuelve difícil de controlar. Como revisión pendiente se agregó una etapa
+PGA de salida ajustable hasta $\times50$ y se sustituyeron las cuatro referencias VDAC
+de \SIrange{0}{4.08}{\volt} por IDAC usados como DAC de tensión. Con la resistencia de
+conversión propuesta, el ajuste se concentra aproximadamente entre
+\SIrange{2.06}{3.02}{\volt}, en lugar de desperdiciar códigos fuera de la región útil.
+La arquitectura permitiría otros $\times50$ de ganancia, pero aún requiere pruebas en
+placa.
+
+\begin{figure*}[p]
 \centering
-\footnotesize
-\caption{Compensador adoptado y valores poblados en la placa.}
-\label{tab:compensador-elegido}
-\begin{tabularx}{\textwidth}{@{}p{0.27\textwidth}p{0.31\textwidth}Y@{}}
-\toprule
-\textbf{Bloque} & \textbf{Valores} & \textbf{Función} \\
-\midrule
-Rama de entrada & $R=\SI{43}{\kilo\ohm}$, $C=\SI{680}{\micro\farad}$ &
-Polo en \SI{5.4}{\milli\hertz}: acopla en AC y fija el quiebre inferior. \\
-Rama de realimentación & $R=\SI{47}{\kilo\ohm}$,
-$C=\SI{27}{\pico\farad}\parallel\SI{150}{\pico\farad}=\SI{177}{\pico\farad}$ &
-Polo en \SI{19}{\kilo\hertz}: quiebre superior, independiente del anterior. \\
-Sumador & Rama directa \SI{6.8}{\kilo\ohm}; rama BP a través del potenciómetro de
-ajuste; realimentación \SI{27}{\kilo\ohm}$\parallel$\SI{15}{\nano\farad} &
-Realiza $1-\mathrm{BP}$ con proporción ajustable y aporta un polo en
-\SI{393}{\hertz}. \\
-Pasa-bajos MFB & \SI{12}{\kilo\ohm}, \SI{150}{\kilo\ohm},
-\SI{47}{\nano\farad}, \SI{3.3}{\nano\farad} &
-Par de polos complejos que completa el antialias. \\
-\midrule
-\textbf{Desempeño calculado} & $f_0=\SI{10.21}{\hertz}$
-(error \SI{2.1}{\percent}); $\zeta_1=938$ efectivo & Error RMS
-\SI{0.457}{\decibel} nominal y \SI{0.195}{\decibel} tras el ajuste. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\includegraphics[width=0.97\textwidth,height=0.285\textheight,keepaspectratio]
+{respuesta_geofono_afe_medida.png}
+\caption{Cadena geófono--ADC: respuesta electrónica medida encadenada con el SM-24,
+margen de ajuste y coherencia del barrido. La pérdida de coherencia próxima a
+\SI{1}{\kilo\hertz} limita la interpretación superior; es una verificación de forma,
+no una medición sísmica calibrada extremo a extremo.}
+\label{fig:respuesta-geofono-afe}
 
-En \SIrange{10}{50}{\hertz}, la rama BP opera como inversor casi unitario entre sus
-quiebres, no como resonador. Es la consecuencia prevista del bajo $Q$ y de los polos
-desacoplados.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.92\textwidth,trim=115 115 0 105,clip]{Schematic-images-0.jpg}
-\caption{Arquitectura analógica vigente: entrada diferencial, polo de entrada y de
-realimentación (compensador de polos desacoplados), sumador inversor con proporción
-ajustable, pasa-bajos, referencias independientes por etapa, AMux y ADC $\Delta\Sigma$.}
+\vspace{0.25em}
+\textbf{(a) Ruta analógica empleada}\par
+\includegraphics[width=0.99\textwidth,height=0.255\textheight,keepaspectratio]
+{arquitectura_analogica_psoc.png}\par
+\textbf{(b) Arquitectura digital}\par
+\includegraphics[width=0.99\textwidth,height=0.255\textheight,keepaspectratio]
+{arquitectura_digital_psoc.png}
+\caption{Arquitectura utilizada en las mediciones: acondicionamiento, referencias,
+AMux y ADC $\Delta\Sigma$; captura, filtrado, DMA, memoria y temporización.}
 \label{fig:topdesign-analogico}
-\end{figure}
+\end{figure*}
 
-\subsection{Antialias Bessel de tercer orden}
-
-El polo del sumador se combinó con una sección MFB de segundo orden, diseñada con
-$\zeta=0{,}691$ y corte en \SI{300}{\hertz}. El polo real y el par complejo forman un
-Bessel de tercer orden, elegido por su fase lineal. Aquí la MFB sí está justificada
-porque se requiere un par conjugado.
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.99\textwidth,height=0.29\textheight,keepaspectratio]
+{propuesta_idac_pgaout_nueva.png}
+\caption{Nueva propuesta para el frente GEO: PGA de salida y cuatro IDAC concentrados
+en la región útil de ajuste. Aporta hasta $\times50$ adicionales y aún no fue empleada
+en las mediciones.}
+\label{fig:propuesta-idac-pgaout}
+\end{figure*}
 
 \subsection{Acople DC y calibración}
 
@@ -157,3 +178,12 @@ El software queda para calibración, persistencia y comandos.
 Queda medir magnitud y fase extremo a extremo para cada ganancia y rango, ruido referido
 a entrada y bits efectivos, dispersión entre placas, deriva térmica y repetibilidad de
 la calibración tras migrar las referencias VDAC a IDAC.
+
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\columnwidth,keepaspectratio]
+{flujo_calibracion_horizontal_usuario.png}
+\caption{Máquina de estados de la calibración \emph{foreground}: valida los códigos,
+ajusta PGA, BP, sumador y pasa-bajos, y restaura la adquisición con códigos fijos.}
+\label{fig:maquina-estados-calibracion}
+\end{figure}

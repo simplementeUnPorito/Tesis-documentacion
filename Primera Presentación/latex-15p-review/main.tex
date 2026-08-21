@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[10pt,a4paper,twocolumn]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -14,10 +14,17 @@
 \usepackage{enumitem}
 \usepackage{siunitx}
 \usepackage{graphicx}
+\usepackage{float}
+\usepackage{dblfloatfix}
+\usepackage{placeins}
 \usepackage{xcolor}
 \usepackage{hyperref}
 
 \geometry{margin=2.5cm}
+\setlength{\columnsep}{0.7cm}
+% Evita que LaTeX estire el espacio vertical para igualar columnas cortas:
+% con figuras grandes eso dejaba huecos enormes entre subsecciones.
+\raggedbottom
 \setlist[itemize]{itemsep=0.2em}
 \sisetup{output-decimal-marker={,}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
@@ -39,12 +46,17 @@ caracterización geotécnica del suelo mediante ondas sísmicas\\[0.5em]
 
 \maketitle
 
+% Los \FloatBarrier explícitos entre secciones eran redundantes con la opción
+% [section] de placeins y forzaban cortes de columna con huecos grandes.
 \input{secciones/01_problema_modelado}
+\input{secciones/03_excitacion}
 \input{secciones/02_transductores}
 \input{secciones/03_acondicionamiento_digitalizacion}
 \input{secciones/04_transmision_interfaces}
 
+\FloatBarrier
 \bibliographystyle{apalike}
-\bibliography{referencias}
+{\footnotesize
+\bibliography{referencias}}
 
 \end{document}

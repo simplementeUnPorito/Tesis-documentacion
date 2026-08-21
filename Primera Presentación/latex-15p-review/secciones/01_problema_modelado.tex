@@ -3,14 +3,17 @@
 
 \subsection{El problema de ingeniería}
 
-La composición, rigidez, compactación, saturación y espesor del suelo varían con la
-profundidad y lateralmente, pero sólo pueden observarse de forma parcial. Antes de
-construir o rehabilitar una obra interesa localizar cambios de rigidez, rellenos,
-cavidades y contactos con roca; estimar la representatividad de los sondeos; y reconocer
-zonas donde conviene investigar con mayor detalle. Modelar el subsuelo consiste en
-convertir esas observaciones en una hipótesis cuantitativa de capas o zonas, compatible
-con los datos, la geología conocida y la resolución del método. No es una fotografía del
-terreno.
+Las propiedades del suelo que interesan a una obra ---composición, rigidez,
+compactación, saturación y espesor de las capas--- varían tanto con la profundidad como
+lateralmente, y sólo pueden observarse de forma parcial. Antes de construir o rehabilitar,
+lo que se busca es localizar los cambios de rigidez, los rellenos, las cavidades y el
+contacto con la roca. Interesa además saber hasta qué punto los sondeos disponibles
+representan al terreno y en qué zonas conviene investigar con mayor detalle.
+
+Modelar el subsuelo consiste en convertir esas observaciones en una hipótesis
+cuantitativa de capas o zonas, compatible con los datos, con la geología conocida y con
+la resolución del método empleado. Conviene aclarar desde el principio que el resultado
+no es una fotografía del terreno.
 
 En este trabajo interesa especialmente la velocidad de onda de corte, $V_S$, porque se
 relaciona con el módulo de corte a pequeñas deformaciones mediante
@@ -25,8 +28,9 @@ sísmica y el análisis de respuesta de sitio~\cite{Kramer1996,Foti2014}. Cuando
 repiten perfiles a lo largo de una línea o sobre una grilla, la información deja de ser
 puramente puntual y puede convertirse en una sección 2D o en un modelo 3D.
 
-La señal sísmica es, por tanto, el dato crudo; el producto de ingeniería es un modelo
-del subsuelo con alcance, supuestos e incertidumbre declarados.
+La señal sísmica es, por lo tanto, el dato crudo. El producto de ingeniería no es esa
+señal, sino el modelo del subsuelo que se construye a partir de ella, con su alcance,
+sus supuestos y su incertidumbre declarados.
 
 \subsection{Ondas de cuerpo y de superficie}
 
@@ -39,9 +43,10 @@ desplazamiento paralelo a la propagación y las S, perpendicular. Sus velocidade
     V_S=\sqrt{\frac{G}{\rho}},
 \end{equation}
 
-con $K$ el módulo volumétrico, $G$ el módulo de corte y $\rho$ la densidad. Como los
-fluidos no resisten corte, no transmiten ondas S; $V_S$ describe así de forma directa la
-rigidez al corte del esqueleto del suelo.
+donde $K$ es el módulo volumétrico, $G$ el módulo de corte y $\rho$ la densidad. Como los
+fluidos no resisten esfuerzos de corte, tampoco transmiten ondas S. Esto hace que $V_S$
+describa de forma directa la rigidez al corte del esqueleto del suelo, sin que el agua
+contenida en los poros la enmascare.
 
 La superficie libre origina además ondas de superficie. La interferencia de ondas P y
 SV produce ondas Rayleigh, con movimiento elíptico en el plano vertical y amplitud que
@@ -51,9 +56,10 @@ transportar hasta dos tercios de la energía sísmica~\cite{Foti2014,Kramer1996}
 ondas Love provienen de ondas SH atrapadas en una capa somera de menor velocidad y sólo
 producen movimiento horizontal transversal; un geófono vertical no las registra.
 
-Por ello, un MASW activo con geófonos verticales observa sólo una parte del campo de
-ondas, pero captura la componente superficial dominante y vinculada a $V_S$: la
-Rayleigh vertical.
+Por este motivo, un ensayo MASW activo con geófonos verticales observa sólo una parte
+del campo de ondas. Lo que sí captura es la componente que interesa, que es la vertical
+de la onda Rayleigh: la dominante cerca de un impacto superficial y la que está
+vinculada a $V_S$.
 
 \subsection{Aplicaciones documentadas}
 
@@ -113,7 +119,7 @@ La elección depende de la propiedad buscada, profundidad, resolución, cobertur
 e incertidumbre admisible. La Tabla siguiente compara ensayos intrusivos con métodos que
 infieren propiedades desde la superficie.
 
-\begin{table}[ht]
+\begin{table*}[ht]
 \centering
 \footnotesize
 \caption{Comparación funcional de métodos de caracterización.}
@@ -131,7 +137,7 @@ HVSR & Frecuencia o período fundamental del sitio & Una estación triaxial y de
 ERT & Distribución de resistividad eléctrica & Sensible a saturación, arcillas, cavidades y cambios litológicos & La resistividad no es una medida directa de rigidez mecánica \\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{table*}
 
 SPT, CPT, downhole y crosshole aportan contacto directo, pero representan un volumen
 local. Refracción, resistividad y ondas superficiales ganan cobertura espacial a cambio
@@ -161,15 +167,10 @@ trazables; no puede eliminar la no unicidad del subsuelo.
 
 \subsection{Del registro al perfil \texorpdfstring{$V_S(z)$}{Vs(z)}}
 
-La cadena
-
-\begin{center}
-$V_{R,\mathrm{aparente}}\longrightarrow V_S\longrightarrow\text{modelo}$
-\end{center}
-
-separa dos problemas: estimar la dispersión Rayleigh a partir de señales multicanal y
-buscar después un medio estratificado que la reproduzca. En un suelo por capas no se
-mide directamente la $V_S$ de una profundidad.
+La cadena $V_{R,\mathrm{aparente}}\rightarrow V_S\rightarrow\text{modelo}$ separa dos
+problemas: estimar la dispersión Rayleigh a partir de señales multicanal y buscar
+después un medio estratificado que la reproduzca. En un suelo por capas no se mide
+directamente la $V_S$ de una profundidad.
 
 \subsubsection{Velocidad de fase aparente}
 

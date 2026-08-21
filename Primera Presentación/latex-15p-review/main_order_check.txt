@@ -1,0 +1,935 @@
+Diseño e implementación de un sistema electrónico multicanal del
+tipo IoT para caracterización geotécnica del suelo mediante ondas
+                             sísmicas
+                      Proyecto final de carrera – Primera presentación
+
+                                Elías David Álvarez Martínez
+
+
+1.     Utilidad del modelado del subsuelo, métodos disponibles y
+       brecha de acceso
+1.1.   El problema de ingeniería
+    La composición, rigidez, compactación, saturación y espesor del suelo varían con la profundidad
+y lateralmente, pero sólo pueden observarse de forma parcial. Antes de construir o rehabilitar una
+obra interesa localizar cambios de rigidez, rellenos, cavidades y contactos con roca; estimar la
+representatividad de los sondeos; y reconocer zonas donde conviene investigar con mayor detalle.
+Modelar el subsuelo consiste en convertir esas observaciones en una hipótesis cuantitativa de
+capas o zonas, compatible con los datos, la geología conocida y la resolución del método. No es
+una fotografía del terreno.
+    En este trabajo interesa especialmente la velocidad de onda de corte, VS , porque se relaciona
+con el módulo de corte a pequeñas deformaciones mediante
+
+                                            Gmáx = ρVS2 ,                                     (1)
+   donde ρ es la densidad del material. Un perfil VS (z) permite reconocer cambios de rigidez
+con la profundidad y aporta una entrada fundamental para la clasificación sísmica y el análisis
+de respuesta de sitio [Kramer, 1996, Foti et al., 2014]. Cuando se repiten perfiles a lo largo de
+una línea o sobre una grilla, la información deja de ser puramente puntual y puede convertirse
+en una sección 2D o en un modelo 3D.
+   La señal sísmica es, por tanto, el dato crudo; el producto de ingeniería es un modelo del
+subsuelo con alcance, supuestos e incertidumbre declarados.
+
+1.2.   Ondas de cuerpo y de superficie
+   Las ondas de cuerpo se propagan por el volumen del medio. Las ondas P producen
+desplazamiento paralelo a la propagación y las S, perpendicular. Sus velocidades son
+                                       s                        s
+                                           K + 43 G                 G
+                                VP =                ,    VS =         ,                        (2)
+                                             ρ                      ρ
+    con K el módulo volumétrico, G el módulo de corte y ρ la densidad. Como los fluidos no
+resisten corte, no transmiten ondas S; VS describe así de forma directa la rigidez al corte del
+esqueleto del suelo.
+    La superficie libre origina además ondas de superficie. La interferencia de ondas P y SV
+produce ondas Rayleigh, con movimiento elíptico en el plano vertical y amplitud que decrece
+                                                                    √
+con la profundidad. Su atenuación geométrica, aproximadamente 1/ r, es menor que la de las
+ondas de cuerpo, de modo que cerca de un impacto superficial pueden transportar hasta dos
+
+                                                   1
+tercios de la energía sísmica [Foti et al., 2014, Kramer, 1996]. Las ondas Love provienen de ondas
+SH atrapadas en una capa somera de menor velocidad y sólo producen movimiento horizontal
+transversal; un geófono vertical no las registra.
+    Por ello, un MASW activo con geófonos verticales observa sólo una parte del campo de ondas,
+pero captura la componente superficial dominante y vinculada a VS : la Rayleigh vertical.
+
+1.3.   Aplicaciones documentadas
+    Los siguientes casos vinculan la medición con decisiones de construcción, rehabilitación,
+clasificación de sitio e investigación.
+    CentrePort, Wellington. El puerto de Wellington, Nueva Zelanda, sufrió licuefacción,
+desplazamiento lateral y daños estructurales durante el terremoto de Kaikōura (Mw = 7,8). Se
+combinaron 114 mediciones HVSR con MASW activo y arreglos pasivos MAM para obtener, en
+seis ubicaciones, perfiles VS de más de 200 m de profundidad y un mapa de período fundamental
+de sitio, usados para explicar por qué la amplificación varió en distancias cortas y para orientar
+medidas de mitigación [Vantassel et al., 2018]. El caso muestra que combinar métodos activos,
+pasivos y de sondeo produce una interpretación más fuerte que cualquiera por separado.
+    Mina abandonada en Colorado. Antes de construir un estanque industrial sobre una
+antigua mina de oro, se adquirieron 40 perfiles MASW para investigar los primeros 9 m a 15 m
+del subsuelo y localizar pozos colapsados y labores someras mal documentadas. El mapa de
+zonas anómalas resultante se usó para concentrar la investigación adicional y el movimiento
+de suelo donde el riesgo era mayor, sin pretender “fotografiar” la geometría exacta de cada
+labor [Crook et al., 2017].
+    Campus de Delhi Technological University. Con un sismógrafo comercial PASI GEA24
+de 24 canales, geófonos de 4,5 Hz y maza como fuente, se realizaron 30 ensayos MASW en seis
+sectores del campus, obteniendo una VS media de 285 m s−1 y clasificando el sitio como clase
+D según NEHRP. Este caso conecta directamente una aplicación real con uno de los equipos
+comerciales analizados más adelante, mostrando el flujo industrial completo: arreglo, fuente,
+adquisición, dispersión, inversión y clasificación [Gautam et al., 2020].
+    Metro Manila. En tres sitios se comparó VS,30 obtenida por vía geotécnica (SPT y calidad
+de roca) con la obtenida por MASW. Aunque los valores numéricos difirieron, ambos caminos
+produjeron la misma clasificación sísmica NEHRP, mostrando que MASW no reemplaza al SPT
+sino que lo complementa: el sondeo aporta muestra y detalle local, la geofísica aporta cobertura
+y una estimación dinámica [Monjardin and Medina, 2023].
+    Construcción y mantenimiento de carreteras. MASW se emplea rutinariamente en dos
+extremos de la ingeniería vial: ensayos rápidos de poca profundidad (30 cm) para controlar la
+rigidez de cada capa del pavimento —asfáltica, base, subbase y subrasante— tras la compactación,
+y estudios de mayor profundidad (30 m) durante la planificación de una carretera nueva, donde
+interesa el contacto con el lecho rocoso. Park et al. documentan casos de ambos extremos
+ejecutados durante el inicio, el cierre y el mantenimiento de una obra vial [Park et al., 2018];
+esta misma aplicación motivó, en una propuesta de financiación previa a este proyecto, evaluar
+MASW como alternativa no destructiva para caracterización de pavimentos y suelos de fundación
+viales [Convocatoria PINV01-317, 2024].
+    Park documenta además el mapeo del lecho rocoso, la evaluación de licuefacción y la ca-
+racterización previa a instalar maquinaria de gran amplitud [Park, 2013]. En conjunto, los
+casos muestran el papel complementario de MASW: aporta continuidad espacial y propiedades
+dinámicas, mientras los sondeos y antecedentes geológicos restringen la interpretación.
+
+1.4.   Métodos disponibles
+    La elección depende de la propiedad buscada, profundidad, resolución, cobertura, acceso e
+incertidumbre admisible. La Tabla siguiente compara ensayos intrusivos con métodos que infieren
+
+
+                                                2
+propiedades desde la superficie.
+
+               Cuadro 1: Comparación funcional de métodos de caracterización.
+Método         Información              Fortaleza                              Limitación relevante
+               principal
+SPT            Resistencia a            Práctica extendida, contacto           Información puntual; requiere
+               penetración y            directo y correlaciones geotécnicas    sondeo; VS se obtiene sólo
+               muestra alterada         conocidas                              mediante correlaciones empíricas
+CPT/CPTu       Resistencia de           Perfil casi continuo y buena           Intrusivo; no recupera muestra;
+               punta, fricción y,       resolución estratigráfica              dificultad en gravas o materiales
+               con CPTu, presión                                               muy duros
+               de poros
+Downhole /     Tiempos de viaje y       Alta resolución local y referencia     Requiere uno o varios pozos y
+crosshole      VP /VS en                valiosa para validar otros métodos     representa un volumen limitado
+               profundidad
+Refracción /   Velocidad de             Buena lectura lateral de contactos     Las capas de baja velocidad bajo
+tomografía     primeras llegadas,       y profundidad a roca                   capas rígidas pueden quedar
+               usualmente VP                                                   ocultas; no entrega directamente
+                                                                               VS salvo configuración específica
+MASW activo    Curva de dispersión      No invasivo, multicanal y repetible;   Requiere fuente, arreglo
+               y perfil VS (z)          permite perfiles 1D y secciones        sincronizado e inversión; existe
+                                        pseudo-2D                              compromiso entre resolución y
+                                                                               profundidad
+MAM / ReMi     Dispersión del ruido     Extiende la investigación a            Depende del campo de ruido, la
+/ SPAC         ambiental                frecuencias bajas y mayores            geometría y registros más largos
+                                        profundidades sin fuente
+                                        controlada
+HVSR           Frecuencia o período     Una estación triaxial y despliegue     Por sí solo no determina un perfil
+               fundamental del          rápido                                 VS único
+               sitio
+ERT            Distribución de          Sensible a saturación, arcillas,       La resistividad no es una medida
+               resistividad eléctrica   cavidades y cambios litológicos        directa de rigidez mecánica
+
+
+   SPT, CPT, downhole y crosshole aportan contacto directo, pero representan un volumen local.
+Refracción, resistividad y ondas superficiales ganan cobertura espacial a cambio de resolver un
+problema inverso no único. No se trata de elegir sondeo o geofísica: CentrePort, por ejemplo, usó
+CPT y perforaciones para restringir la inversión de ondas superficiales [Vantassel et al., 2018]. La
+combinación reduce la extrapolación entre puntos sin presentar la geofísica como una radiografía
+exacta.
+
+1.5.    Elección de MASW
+    En un medio estratificado, cada longitud de onda Rayleigh muestrea un volumen distinto y
+se propaga con diferente velocidad de fase. MASW explota esa dispersión mediante tres etapas:
+adquisición multicanal con fuente controlada, transformación al dominio frecuencia–velocidad e
+inversión de la curva modal. Frente a SASW, el registro simultáneo de varios receptores reduce
+ambigüedades de fase y mejora la productividad [Park et al., 1999]; MAM, ReMi o SPAC pueden
+complementar el ensayo hacia frecuencias más bajas.
+    Se eligió MASW activo porque ofrece una excitación repetible, geometría conocida y una
+prueba directa de la cadena multicanal desarrollada. La profundidad depende de las longitudes de
+onda observables; apertura, espaciamiento y offset limitan la banda; los modos pueden confundirse;
+y cualquier error de fase altera la velocidad estimada. InterPACIFIC mostró reproducibilidad
+entre equipos cuando se documentan geometría, banda, procesamiento e incertidumbre, aunque
+el perfil final sigue dependiendo de la parametrización [Foti et al., 2018]. El instrumento debe
+entregar datos sincronizados y trazables; no puede eliminar la no unicidad del subsuelo.
+
+
+
+                                                       3
+1.6.     Del registro al perfil VS (z)
+   La cadena
+
+                                  VR,aparente −→ VS −→ modelo
+
+    separa dos problemas: estimar la dispersión Rayleigh a partir de señales multicanal y buscar
+después un medio estratificado que la reproduzca. En un suelo por capas no se mide directamente
+la VS de una profundidad.
+
+1.6.1.    Velocidad de fase aparente
+   Sea u(xj , t) la señal del geófono situado en xj . La dispersión requiere transformar el registro
+espacio–tiempo al dominio frecuencia–número de onda, o frecuencia–velocidad. En lugar de una
+FFT-2D, se aplican dos pasos separables. Primero, la transformada temporal de cada canal:
+                                       Z ∞
+                        U (xj , ω) =         u(xj , t)eiωt dt = A(xj , ω)eiϕ(xj ,ω) .            (3)
+                                       −∞
+
+   Para una onda plana, ϕ(x, ω) = ϕ0 − kx y k = ω/cR ; entre dos receptores separados ∆x:
+
+                                                     ω ∆x      2πf ∆x
+                               cR,aparente (f ) =            =          .                        (4)
+                                                    |∆ϕ(f )|   |∆ϕ(f )|
+    Como la fase está definida módulo 2π y puede contener ruido y varios modos, MASW usa
+todos los canales. El desplazamiento de fase [Park et al., 1998] prueba velocidades c y compensa
+la fase esperada en cada posición; este barrido espacial completa la transformación 2D sin exigir
+una grilla regular. El espectro normalizado es
+
+                                         N
+                                      1 X    U (xj , ω)        ωxj
+                                                                           
+                            S(ω, c) =                    exp i                  .                (5)
+                                      N j=1 |U (xj , ω)|        c
+
+   Cuando la velocidad probada coincide con una onda presente, los canales se alinean y S
+presenta un máximo. Seleccionar esos máximos produce
+
+                                    R (f ) = arg max S(2πf, c).
+                                   cobs                                                          (6)
+                                                      c
+
+    Es aparente porque un arreglo finito incorpora ruido, modos, geometría y posible variación
+lateral. Bajo la hipótesis de estratos horizontales, esta curva alimenta la inversión.
+
+1.6.2.    Longitud de onda y profundidad
+   Cada punto de la curva tiene asociada una longitud de onda
+
+                                                          cR (f )
+                                             λR (f ) =            .                              (7)
+                                                            f
+    Las longitudes de onda cortas son más sensibles a capas someras y las largas, a un volumen
+más profundo. No existe una igualdad universal como z = λ/2: las funciones de sensibilidad son
+distribuidas y se solapan. Esa regla sólo orienta el diseño y la interpretación preliminar.
+    Por ejemplo, 240 m s−1 a 20 Hz implica λR = 12 m y restringe las capas someras, pero no
+asigna esa velocidad a 6 m. En cambio, 500 m s−1 a 5 Hz implica λR = 100 m y aporta información
+integrada a mayor profundidad.
+
+
+
+
+                                                      4
+1.6.3.   Relación física entre cR y VS
+   En un semiespacio elástico, homogéneo e isótropo, la velocidad de Rayleigh se relaciona con
+VS y VP . Si ξ = cR /VS y κ = (VS /VP )2 , la raíz física satisface
+
+                            ξ 6 − 8ξ 4 + (24 − 16κ)ξ 2 − 16(1 − κ) = 0.                       (8)
+    Para ν = 0,25, κ = 1/3 y cR ≃ 0,9194VS [Xia et al., 1999]. La relación VS ≃ cR /0,9194 sólo
+vale para ese modelo homogéneo; no asigna velocidades a capas de un terreno estratificado.
+    En un terreno estratificado, las condiciones de continuidad de esfuerzos y desplazamientos en
+cada interfaz producen una ecuación característica cuyos ceros dependen de la frecuencia y del
+modelo completo:
+
+                                   F (f, cR ; V S , V P , ρ, h) = 0.                          (9)
+    Aquí h contiene los espesores y V S , V P y ρ las propiedades de cada estrato.
+    Esta ecuación es un problema de autovalores, no una fórmula cerrada. En cada interfaz deben
+ser continuos los desplazamientos y esfuerzos; se agregan la condición de superficie libre y la de
+radiación en el semiespacio. El sistema lineal homogéneo resultante sólo admite una onda de
+amplitud no nula cuando su determinante se anula: ésa es la condición F (f, cR ; ·) = 0. Para una
+misma frecuencia pueden existir varias raíces cR , cada una asociada a un modo. El fundamental
+es el modo de orden cero, sin nodos internos en su forma propia; los modos superiores incorporan
+nodos adicionales y pueden confundirse con él si la adquisición o el procesamiento no los separan.
+    La misma ecuación muestra la limitación inversa: cada capa puede aportar h, VS , VP y
+ρ, mientras los datos forman una sola curva. Como la dispersión Rayleigh es mucho más
+sensible a VS , suele invertirse h y VS y fijarse VP y ρ mediante relaciones de Poisson y rangos
+plausibles [Xia et al., 1999]. Así se ajusta el número de incógnitas a la información disponible.
+
+1.6.4.   Inversión y no unicidad
+
+                                         R (f1 ), . . . , cR (fM )] y propone un modelo
+   La inversión parte de los datos d = [cobs               obs
+
+
+
+                               m = [h1 , . . . , hL−1 , VS,1 , . . . , VS,L ,
+                                                                                             (10)
+                                       VP,1 , . . . , VP,L , ρ1 , . . . , ρL ].
+
+   El problema directo calcula g(m) = ccalc
+                                       R    con la Ec. (9); la inversión modifica m para
+minimizar
+
+                             Φ(m) = ∥W d [d − g(m)]∥22 + λ R(m),                             (11)
+   donde W d pondera la incertidumbre y R regulariza el modelo, por ejemplo penalizando
+cambios excesivamente abruptos. Una actualización linealizada es
+
+                          (J T W J + λLT L) ∆m = J T W [d − g(m)],                           (12)
+   con Jij = ∂cR (fi )/∂mj y W = W Td W d . La iteración usa mk+1 = mk +∆m, aunque también
+puede emplearse una búsqueda global. Como distintos modelos reproducen curvas semejantes, el
+resultado debe expresarse como una familia aceptable y sus bandas de variación, no como una
+fotografía única.
+    Del perfil VS (z) se derivan magnitudes de ingeniería; para los primeros 30 m,
+                                           30
+                            VS,30 = X                 ,       Gmáx,i = ρi VS,i
+                                                                            2
+                                                                                .            (13)
+                                           hi /VS,i
+                                       i
+   La cadena física completa queda, por tanto,
+
+                                                          5
+                              R (f ) → inversión estratificada → {hi , VS,i , VP,i , ρi } → VS (z), VS,30 , Gmáx .
+uj (t) → Uj (f ) → S(f, c) → cobs
+
+   Errores de fase, una banda recortada o una geometría mal documentada alteran la curva
+antes de que la inversión pueda intervenir.
+
+1.7.    Soluciones comerciales: evidencia de interés industrial
+    Los equipos comerciales resuelven con distintas arquitecturas los mismos problemas de
+campo. Geometrics GeodeFlex centraliza 24 canales de 24 bits y agrega Linux, GPS, Wi-Fi
+y control web [Geometrics, 2026b]; PASI GEA24 compacta 24 canales USB, ampliables a 48,
+para MASW, refracción, tomografía y ensayos de pozo [PASI srl, 2026], con uso en campo
+documentado en Delhi [Gautam et al., 2020]. DMT SUMMIT X One distribuye la conversión
+en unidades remotas sobre un cable ligero que transporta datos y energía, desde decenas
+hasta miles de canales [DMT Group, 2026]. Geometrics Atom-3C, orientado a pasivo, elimina
+el tendido mediante estaciones triaxiales autónomas sincronizadas por GPS y descargables por
+Wi-Fi [Geometrics, 2026a].
+    Estas soluciones son maduras; su comparación no pretende señalar una carencia técnica.
+Muestra que sincronización, escalabilidad, reducción de cableado e interfaz de campo son parte
+del valor industrial. Las referencias disponibles sitúan un MASW activo completo de 24 canales
+entre miles y decenas de miles de euros o dólares, según fabricante y año [PASI srl, 2022,
+Geometrics, 2023, GeoDevice, 2026].
+
+1.8.    Brecha de acceso e integración
+    La industria ya resolvió buena parte de la adquisición. La brecha que motiva esta tesis es
+otra:
+
+       Existe instrumentación profesional capaz, pero falta una plataforma eco-
+       nómica, reproducible y modificable que integre adquisición multicanal
+       sincronizada, operación de campo y procesamiento para investigación local.
+
+    El acceso incluye sismógrafo, sensores, cables, disparo, software, importación, soporte y
+reparación. Una empresa especializada puede justificarlo por productividad; un laboratorio
+pequeño o una etapa exploratoria requiere una plataforma inspeccionable y reparable localmente.
+    MicDAC demuestra adquisición HVSR abierta de tres componentes, a 200 Hz y 12 bits, con
+componentes estimados en 255 EUR en 2020 [Kafadar, 2020]; Geophonino hace lo propio con un
+registrador económico de un canal [Llorens et al., 2016]. El salto pendiente para MASW activo es
+coordinar varios nodos y una fuente impulsiva, controlar ganancia y calibración, preservar datos y
+geometría, operar sin infraestructura externa e integrar dispersión e inversión de manera auditable.
+Una propuesta previa para financiar esa plataforma y caracterizar hasta 50 m no fue aceptada;
+esta tesis retoma el objetivo con recursos de la Facultad [Convocatoria PINV01-317, 2024].
+    El prototipo no pretende sustituir equipos profesionales en confiabilidad o soporte. Su aporte
+es construir y evaluar una plataforma accesible donde puedan inspeccionarse las decisiones de
+transducción, acondicionamiento, digitalización, sincronización, transmisión, interfaz y procesa-
+miento.
+
+1.9.    Alcance del proyecto
+   El proyecto abarca la cadena
+
+  Generación de señal −→ transductor −→ acondicionamiento e instrumentación −→ digitalización
+−→ transmisión e interfaz de campo −→ ingesta −→ procesamiento e inversión con interfaz de análisis.
+
+
+
+
+                                                        6
+    El transductor define la banda observable; el acondicionamiento, ruido y rango dinámico;
+la digitalización y sincronización, la coherencia entre canales; la transmisión, el despliegue; las
+interfaces, la operación y trazabilidad; y el procesamiento, el modelo y su incertidumbre.
+    La pregunta que abre el resto de la presentación puede formularse así:
+
+       ¿Cómo integrar, con componentes accesibles, una cadena multicanal de
+       adquisición y análisis para ondas superficiales que sea operable en campo,
+       conserve la trazabilidad de los datos y permita evaluar honestamente sus
+       limitaciones?
+
+     Las secciones siguientes recorren esos bloques desde el transductor hasta el análisis.
+
+
+2.     Transducción sísmica: alternativas y restricción impuesta por
+       el SM-24
+    El transductor fija la componente observada, sensibilidad, banda y ruido antes de que
+intervenga el amplificador. La electrónica puede amplificar, filtrar o compensar parcialmente su
+respuesta, pero no cambia la dinámica mecánica. Esta sección compara las familias aplicables a
+Rayleigh y cuantifica el desajuste entre el SM-24 disponible, de 10 Hz, y la banda requerida para
+investigar hasta 50 m.
+
+2.1.    Qué debe preservar el transductor
+   Una onda Rayleigh produce movimiento elíptico en el plano vertical; un MASW activo
+convencional usa receptores verticales para captar su componente dominante. Los sensores
+horizontales o triaxiales son necesarios para Love, elipticidad, HVSR o ciertos arreglos pasivos,
+no para una curva Rayleigh básica [Foti et al., 2014, Park et al., 1999].
+   El registro de un canal puede representarse como
+
+                yj (t) = hs,j (t) ∗ qj (t) + nj (t),       Yj (f ) = Hs,j (f )Qj (f ) + Nj (f ),   (14)
+    donde qj es desplazamiento, velocidad o aceleración; Hs,j incluye sensor y acoplamiento; y Nj
+es ruido. MASW usa diferencias de fase: una respuesta idéntica en todos los canales se cancela,
+mientras diferencias de amortiguamiento, inclinación o acoplamiento introducen fase diferencial
+y sesgan la velocidad aparente.
+    Para obtener la dispersión importa principalmente que cada frecuencia conserve una relación
+de fase coherente entre canales y una relación señal–ruido útil. La variable física medida es
+secundaria mientras la respuesta del sensor sea conocida y uniforme en todo el arreglo.
+
+2.2.    Alternativas y costos de referencia
+   La comparación reúne magnitud, banda, ruido, alimentación, ejes y precio del elemento;
+no incluye cableado, carcasa, PCB, digitalización, importación ni impuestos. Los precios se
+consultaron el 18 de agosto de 2026 y sólo indican órdenes de magnitud.
+   Los geófonos siguen siendo la opción natural para MASW activo por sensibilidad, robustez
+y pasividad. Reducir fn conserva mejor las longitudes de onda grandes, pero aumenta el costo.
+Un MEMS tampoco es automáticamente
+                        √                 más económico: en el ADXL355 la densidad de ruido
+especificada es 22,5 µg/ Hz, y el costo real depende además de encapsulado, calibración y
+comunicación [Analog Devices, 2026].
+
+
+
+
+                                                       7
+               Cuadro 2: Alternativas de transducción y costo del elemento sensor.
+Referencia        Magnitud y banda             Precio publicado           Evaluación para el arreglo
+SM-24, 10 Hz      Geófono vertical;            69,95 USD con disco        Pasivo y estándar en MASW; 24
+                  velocidad; respuesta plana   aislante                   elementos cuestan aproximadamente
+                  sobre fn                                                1.679 USD, pero la respuesta cae bajo
+                                                                          fn [SparkFun Electronics, 2026]
+RTC, 4,5 Hz       Geófono vertical;            92–154 USD según           Sustitución directa: 2.208–3.696 USD
+                  velocidad; mayor             carcasa                    para 24 puntos [R. T. Clark, 2026]
+                  extensión hacia bajas
+                  frecuencias
+ADXL355           Aceleración desde            70,93 USD por              Integración simple, pero deben validarse
+                  continua; triaxial, ADC      unidad; 41,84 USD a        ruido, sincronización y acoplamiento del
+                  de 20 bits                   1.000                      nodo completo [DigiKey, 2026,
+                                                                          Analog Devices, 2026]
+PCB 393B31        Aceleración, 0,1 Hz a        Por cotización             Muy bajo ruido, pero requiere IEPE de
+                  200 Hz; 1 µg RMS                                        24 V a 28 V y adquisición compatible
+                                                                          [PCB Piezotronics, 2026a]
+Güralp 3ESPC      Velocidad triaxial, 60       Por cotización             Cubre bajas frecuencias con bajo ruido;
+                  s–100 Hz                                                es un instrumento profesional
+                                                                          completo [Güralp Systems, 2026]
+
+
+
+2.3.   SM-24: restricción de partida
+    El SM-24 de 10 Hz se empleó porque estaba disponible en la Facultad, no porque resultara de
+optimizar la profundidad. Su fn dificulta recuperar los pocos hertz asociados a 50 m; aun así,
+es vertical, pasivo, robusto, documentado y de costo compatible con un arreglo académico. Su
+salida analógica permite además estudiar el acondicionamiento como parte central del proyecto.
+
+
+
+
+Figura 1: Principio constructivo de un geófono electromagnético y SM-24 encapsulado con cable
+y punta de acoplamiento al terreno.
+
+   Sus parámetros nominales principales son [Sensor Nederland B.V., 2006]:
+
+2.4.   Modelo dinámico del SM-24: velocidad y aceleración
+    Sea xg el desplazamiento de la carcasa unida al suelo, xm el de la masa móvil y z = xm − xg
+el desplazamiento relativo. El sistema masa–resorte–amortiguador satisface
+                                                                s
+                                                                    k           c
+                     mz̈ + cż + kz = −mẍg ,         ωn =            ,     ζ= √   .                         (15)
+                                                                    m         2 km
+   La bobina genera una fuerza electromotriz proporcional a la velocidad relativa:
+
+                                                     8
+                          Cuadro 3: Parámetros nominales del SM-24.
+       Parámetro                      Valor                     Consecuencia
+       Frecuencia natural             10 Hz ±2,5 %              Define la transición de la respuesta
+       Sensibilidad                   28,8 V s m−1 ±2,5 %       Escala tensión/velocidad en banda
+       Amortiguamiento abierto        ζ = 0,25                  Pico resonante pronunciado
+       Amortiguamiento con 1339 Ω     ζ = 0,60                  Respuesta más plana cerca de fn
+       Resistencia de bobina          375 Ω ±2,5 %              Condiciona ruido y carga eléctrica
+       Masa móvil                     11 g                      Elemento inercial compacto
+       Frecuencia espuria típica      > 240 Hz                  No limita la banda MASW de interés
+
+
+
+
+                                           vo (t) = G0 ż(t),                                          (16)
+   por lo que, tomando como entrada la velocidad del suelo,
+
+                                        Vo (s)             s2
+                             Hv (s) =           = −G0 2               .                                (17)
+                                        Ẋg (s)      s + 2ζωn s + ωn2
+   Con r = ω/ωn , la magnitud normalizada es
+
+                                   |Hv (jω)|          r2
+                                             =p                    .                                   (18)
+                                     G0        (1 − r2 )2 + (2ζr)2
+   La aceleración del suelo es Ag (s) = s2 Xg (s) = sẊg (s). Por tanto, la misma salida del SM-24
+puede expresarse respecto de la aceleración como
+
+                                   Vo (s)   Hv (s)            s
+                        Ha (s) =          =        = −G0 2               .                             (19)
+                                   Ag (s)     s         s + 2ζωn s + ωn2
+   Su magnitud, normalizada por G0 /ωn , es
+
+                               ωn |Ha (jω)|            r
+                                            =p                     .                                   (20)
+                                    G0         (1 − r2 )2 + (2ζr)2
+   El geófono sin compensar se usa habitualmente referido a velocidad porque Hv → −G0
+por encima de fn : allí su respuesta es aproximadamente plana. Referido a aceleración, Ha es
+pasabanda y no presenta una meseta con el amortiguamiento nominal.
+
+Cuadro 4: Comportamiento asintótico del SM-24 sin compensar según la magnitud de entrada.
+       Régimen     Referido a velocidad, |Hv |                  Referido a aceleración, |Ha |
+       f ≪ fn      G0 r2 ; pendiente +40 dB/década        (G0 /ωn )r; pendiente +20 dB/década
+       f ≈ fn      La amplitud y la fase dependen fuertemente del amortiguamiento
+       f ≫ fn      G0 ; respuesta aproximadamente plana G0 /ω; pendiente −20 dB/década
+
+    Por debajo de fn , |Hv | cae como r2 (40 dB/decade) y |Ha | como r (20 dB/decade); son dos
+referencias de una misma tensión de salida, no dos modos de funcionamiento distintos.
+
+2.5.    La banda exigida por el objetivo de profundidad
+   La propuesta original planteó caracterizar hasta 50 m. Como estimación de diseño se usa
+                                                       cR
+                                              λR =        .                                            (21)
+                                                        f
+
+
+
+                                                   9
+Figura 2: Modelo nominal del SM-24 en circuito abierto referido a velocidad y aceleración
+del suelo. En baja frecuencia, las magnitudes normalizadas caen 40 dB/decade y 20 dB/decade,
+respectivamente.
+
+
+    Longitudes de 100 m a 150 m y velocidades Rayleigh de 150 m s−1 a 500 m s−1 sitúan la
+información profunda en 1 Hz a 5 Hz. No es una conversión universal profundidad–frecuencia,
+sino una comparación preliminar con la respuesta del sensor.
+    El conflicto queda cuantificado al evaluar la ecuación (18):
+
+Cuadro 5: Respuesta nominal del SM-24 en circuito abierto, normalizada respecto de velocidad y
+aceleración.
+               Frecuencia    f /fn   Velocidad, |Hv |/G0   Aceleración, ωn |Ha |/G0
+                  1 Hz       0,10         −40,0 dB                 −19,9 dB
+                  2 Hz       0,20         −27,6 dB                 −13,7 dB
+                  5 Hz       0,50         −10,0 dB                 −4,0 dB
+                  10 Hz      1,00         +6,0 dB                  +6,0 dB
+                  20 Hz      2,00         +2,0 dB                  −4,0 dB
+
+    En la referencia a velocidad, la salida cae 27,6 dB a 2 Hz y 40 dB a 1 Hz; normalizada
+respecto de aceleración, cae 13,7 dB y 19,9 dB. La diferencia refleja pendientes de 40 dB/decade
+y 20 dB/decade; no crea señal adicional en los terminales.
+
+2.6.   Implicación para el acondicionamiento
+    La tesis asume el desajuste del SM-24 como problema de instrumentación: determinar cuánto
+contenido de baja frecuencia puede conservarse mediante una cadena analógica de bajo ruido
+que compense la región atenuada y preserve fase y rango dinámico. No se considera al SM-24
+óptimo ni se atribuye a la electrónica la capacidad de eliminar su límite mecánico. La siguiente
+sección desarrolla esa estrategia.
+
+
+3.     Excitación sísmica
+    Hasta esta etapa se utilizó un martillo instrumentado PCB 086D20 como fuente y como
+referencia temporal del impacto. Su elemento de cuarzo ICP entrega 0,23 mV N−1 , admite picos de
+22,24 kN y presenta una resonancia igual o superior a 12 kHz. Estas prestaciones permiten registrar
+la fuerza aplicada sin introducir otro sensor en la interfaz mecánica [PCB Piezotronics, 2025].
+    El 086D20 requiere entre 20 V a 30 V y una excitación de corriente constante de 2 mA a
+20 mA; su salida queda superpuesta a una polarización de 8 V a 14 V. PCB recomienda una
+
+                                                10
+fuente regulada, un elemento de corriente constante y un capacitor de desacople que elimine esa
+componente continua antes de la adquisición [PCB Piezotronics, 2026b].
+    El acondicionador se integró en el PSoC. Un convertidor eleva los 5 V de USB a 21 V; el
+LM7805, usado como regulador de corriente con 1 kΩ, entrega del orden de 5 mA al martillo.
+Un capacitor de 47 µF bloquea la polarización ICP y la señal alterna pasa por PGA, pasa-bajos
+y ADC ∆Σ. De esta forma la fuerza de impacto se registra en la misma plataforma y puede
+alinearse con las respuestas de los geófonos.
+    En paralelo se desarrolla un martillete inspirado en el mecanismo de Da Vinci. La leva eleva
+y libera repetidamente la masa para producir trenes de impulsos con repetición controlada.
+El objetivo es concentrar energía en frecuencias inferiores a las de un único golpe manual y
+mejorar su repetibilidad; por ahora es una propuesta mecánica y no se presentan resultados
+experimentales.
+
+
+4.     Acondicionamiento, instrumentación y digitalización
+   El frente analógico debe convertir una tensión diferencial pequeña en una secuencia que
+aproveche el ADC, preserve la fase y se adquiera de forma determinista; la transmisión se trata
+después.
+   Si vd (t) es la tensión diferencial de entrada,
+
+
+  vADC (t) = VCM + [hAFE (t) ∗ vd (t)] + vos (t) + nAFE (t),   x[n] = QB,Vspan {vADC (nTs )} . (22)
+
+    La ecuación reúne rechazo de modo común, ganancia programable, conformación espectral,
+control del punto de operación, digitalización conocida y transferencia determinista a memoria.
+El offset acumulado puede agotar el rango aun sin señal.
+
+4.1.   Compensador de polos desacoplados
+    Tras evaluar varias arquitecturas se adoptó la forma 1 − BP propuesta e implementada en
+[K. Ma et al., 2023]. En ese trabajo, un pasa-banda Sallen–Key y un amplificador diferencial
+restan la rama BP del camino directo.
+    La caída de 27,7 dB a 2 Hz exige compensación antes del ADC si se quiere observar contenido
+próximo a 1 Hz. Ma et al. muestran que conservar fn y elevar el amortiguamiento efectivo extiende
+la respuesta aproximadamente plana a aceleración entre
+
+                                           fn
+                                     f1 ≃      ,    f2 ≃ 2ζ1 fn .                               (23)
+                                           2ζ1
+    Por tanto, ζ1 se elige para llevar f1 hasta la zona de interés. El valor de f2 no es un objetivo
+porque la aplicación no requiere extender la banda superior; sólo debe conservarse la simetría
+logarítmica f1 f2 = fn2 alrededor de fn .
+    Como los quiebres quedan muy separados, el Q requerido es bajo: Sallen–Key o MFB no
+aportan en este régimen y distribuyen cada polo entre más componentes, una desventaja frente a
+tolerancias y valores disponibles.
+    Se desacoplaron los polos: uno en la entrada (R1 serie C1 ) y otro en la realimentación (R2
+paralelo C2 ) de un inversor. Cada uno depende de un solo par RC. La inversión se reutiliza para
+combinar las ramas con un sumador inversor, sin pareamiento, y su realimentación aporta el
+primer polo pasa-bajos.
+
+4.2.   Ajuste y selección de componentes
+    La cancelación depende de la proporción entre la rama directa y BP. Un potenciómetro en
+serie con BP permite corregir esa proporción en cada unidad.
+
+                                                  11
+                                                    (b) Principio ICP
+
+
+(a) 086D20 empleado
+
+
+
+
+                   (c) Acondicionamiento implementado en el PSoC
+
+
+
+
+                    (d) Concepto del martillete de baja frecuencia
+
+
+
+
+Figura 3: Excitación sísmica. (a) Martillo instrumentado utilizado. (b) Alimentación y desacople
+ICP recomendados por PCB. (c) Fuente de corriente con LM7805, acondicionamiento y ADC
+implementados. (d) Propuesta de martillete de Da Vinci para trenes de impulsos; desarrollo y
+validación pendientes.
+
+
+
+
+                                              12
+   La red resultante se diseñó a partir del modelo dinámico del geófono,
+                                                     ωn s
+                                  Hgeo (s) =                      ,                           (24)
+                                               s + 2ζ0 ωn s + ωn2
+                                                2
+
+    donde ζ0 es el amortiguamiento nominal del SM-24. Se busca que la cadena formada por el
+compensador y el geófono presente el amortiguamiento ζ1 requerido para llevar el quiebre inferior
+a la zona de interés. Entonces
+
+                                               s2 + 2ζ0 ωn s + ωn2
+                                 Hcomp (s) =                       ,                          (25)
+                                               s2 + 2ζ1 ωn s + ωn2
+    y separar el término constante da la forma que se implementa en el circuito, un camino
+directo menos un pasa-banda:
+
+                                                    2(ζ1 − ζ0 )ωn s
+                               Hcomp (s) = 1 −                       .                        (26)
+                                                  s + 2ζ1 ωn s + ωn2
+                                                   2
+
+    Se relevaron los pasivos disponibles y se incluyó el modelo no ideal del operacional del PSoC:
+ganancia de continua de 90 dB, producto ganancia–ancho de banda de 8 MHz, impedancia de
+entrada de 35 MΩ y resistencia de salida de 10 Ω. Con ese modelo se resolvió una búsqueda por
+evolución diferencial sobre la malla de valores comerciales para minimizar el error respecto de la
+Ec. (26). La búsqueda admitió capacitores en paralelo.
+    Los quiebres necesarios para aproximar la banda buscada producen un amortiguamiento
+efectivo muy alto: con los valores poblados se obtiene f0 = 10,21 Hz y ζ1 ≃ 938. En la zona
+central, el modelo compensado queda escalado por 1/(2ζ1 ) ≃ 5.3 × 10−4 , una atenuación de 1.876
+veces. La ganancia se repartió para recuperar ese nivel sin concentrar todo el margen en un solo
+bloque: la entrada instrumental aporta ×2, el PGA es ajustable entre ×1 y ×50, el sumador
+aporta ×3.6 y el pasa-bajos ×5. A máxima ganancia el producto es ×1800, por lo que la señal
+del geófono llega al ADC con aproximadamente el 96 % de su escala previa a la compensación.
+    Como comprobación inicial se barrió la electrónica entre la salida monitoreada del PGA y la
+entrada del ADC. La respuesta medida se encadenó en frecuencia con el modelo nominal del
+SM-24 referido a aceleración para estimar la forma de la cadena completa. En la realimentación
+del sumador se incorporó el polo real p1 = −2π(393)     rad/s. La sección MFB se dimensionó con
+fa = 300 Hz y ζa = 0.691; de p = −ζa ωa ± jωa 1 − ζa2 resultan p2,3 ≃ 2π(−207 ± j217) rad/s.
+                                                  p
+
+El polo del sumador y este par conjugado forman el antialias Bessel de tercer orden, elegido por
+su fase aproximadamente lineal.
+    Las ganancias se mantuvieron conservadoras porque, al aumentarlas, cada paso del VDAC
+también se amplifica: la calibración pierde resolución y la deriva, especialmente en el sumador,
+se vuelve difícil de controlar. Como revisión pendiente se agregó una etapa PGA de salida
+ajustable hasta ×50 y se sustituyeron las cuatro referencias VDAC de 0 V a 4,08 V por IDAC
+usados como DAC de tensión. Con la resistencia de conversión propuesta, el ajuste se concentra
+aproximadamente entre 2,06 V a 3,02 V, en lugar de desperdiciar códigos fuera de la región útil.
+La arquitectura permitiría otros ×50 de ganancia, pero aún requiere pruebas en placa.
+
+4.3.   Acople DC y calibración
+    Al extender la compensación hacia 1 Hz, el offset y la deriva térmica, en especial del sumador,
+consumieron el margen del ADC aun sin señal.
+    Un multiplexor observa cada nodo con el mismo ADC y cada etapa posee referencia progra-
+mable. La calibración foreground recorre PGA, BP, sumador y pasa-bajos; un FIR de 128 taps
+estima el residuo y un PI con banda muerta, saturación y anti-windup corrige la referencia. El
+orden evita propagar el residuo aguas abajo. Los códigos se guardan en EEPROM por ganancia,
+con CRC. Durante la captura el lazo se desactiva y los códigos quedan fijos.
+
+
+
+                                                 13
+4.4.   Digitalización y memoria
+   El ADC ∆Σ del PSoC 5LP entrega 18 bits nominales a Fs,0 = 2604 SPS y cuatro rangos
+bipolares entre ±0,512 V y ±2,5 V. PGA y rango se eligen juntos para usar el menor rango sin
+saturar. El DFB filtra por FIR; dos DMA trasladan crudo y filtrado a RAM; y un bloque de
+control implementado en Verilog/UDB coordina inicio, ADC, conteo y fin. El software queda
+para calibración, persistencia y comandos.
+
+4.5.   Estado de verificación
+    Queda medir magnitud y fase extremo a extremo para cada ganancia y rango, ruido referido
+a entrada y bits efectivos, dispersión entre placas, deriva térmica y repetibilidad de la calibración
+tras migrar las referencias VDAC a IDAC.
+
+
+5.     Transmisión, ingesta e interfaces
+    Tras digitalizarse, cada captura debe llegar a un punto común, conservar su contexto y quedar
+disponible para revisión:
+
+
+  nodos de medida −→ maestro de campo −→ servidor de ingesta −→ revisión y MASW. (27)
+
+   La interfaz de campo arma nodos, configura, captura y exporta; la de análisis valida, filtra,
+agrupa, alinea, promedia e invierte. Así el microcontrolador no ejecuta tareas pesadas y la
+adquisición funciona sin Internet.
+
+5.1.   Comunicación
+    Se eligió ESP32 por disponibilidad, costo y Wi-Fi integrado. Actúa después del ADC: cada
+esclavo empaqueta las muestras y las envía al maestro por ESP-NOW, sin router. Como el enlace
+limita el tamaño de paquete y no garantiza entrega, se agregaron fragmentación, numeración,
+confirmaciones, reintentos y respaldo local. El maestro sirve una red Wi-Fi y la interfaz web;
+cuando encuentra conectividad externa transfiere la cola pendiente.
+    La sincronización se comprobó con osciloscopio sobre los flancos de inicio de los esclavos. En
+128 disparos, el retardo relativo observado se mantuvo entre 100 µs a 200 µs.
+
+5.2.   Evolución de las interfaces
+    Las primeras pruebas usaron interfaces MATLAB, pero su manejo de múltiples puertos
+seriales resultó poco robusto y motivó la migración a Python. Finalmente, adquisición y análisis
+se trasladaron a interfaces web por las ventajas para IoT: acceso multiplataforma, despliegue sin
+instalación, operación local y conexión directa con el servidor.
+
+5.3.   Lo que queda por resolver en el flujo de análisis
+    La cadena trazas → dispersión → selección → inversión → VS (z) ya corre de punta a punta.
+La Fig. 9 muestra el registro y la dispersión obtenidos directamente de datos de campo.
+    Para separar contenido espectral de amplitud, se calculó además la autopotencia unilateral de
+las 21 trazas sobre una ventana común de 2 s, después de quitar la media y aplicar una ventana
+Hann. Cada resultado se normalizó por su propio máximo:
+
+                                                      Pxx (f )
+                                    Pxx,N (f ) =                  .                             (28)
+                                                   máxf Pxx (f )
+
+
+                                                   14
+    Los máximos individuales se ubican entre 13,57 Hz a 23,16 Hz, con mediana de 17,68 Hz.
+Antes de normalizar, la mediana por traza concentra el 54,3 % de la autopotencia integrada entre
+5 y 20 Hz y el 43,2 % entre 20 y 50 Hz; por debajo de 5 Hz queda aproximadamente 0,1 %.
+    La lectura conjunta acota la banda: bajo unos 5 Hz no aparece energía organizada; entre
+6 y 20 Hz se observa una cresta coherente alrededor de 70 m s−1 a 110 m s−1 ; por encima, la
+cresta cruza la cota de aliasing y se fragmenta. Antes de aceptar un perfil VS (z) falta validar
+la separación de ruido, el picking, la incertidumbre de inversión, la repetibilidad entre grupos
+y campañas, la sensibilidad a la geometría y la comparación con información independiente.
+Ninguna estrategia de preprocesado o selección se presenta todavía como definitiva.
+
+5.4.   Acceso remoto y pendientes
+    Una VPN de malla y un túnel publican el servidor sin configurar puertos en cada red; el
+respaldo local sólo se libera tras confirmar la transferencia. La arquitectura separa adquisición
+tolerante a desconexiones, transporte verificable, ingesta persistente y procesamiento reproducible.
+Faltan pruebas con todos los nodos, pérdida y latencia bajo interferencia, y recuperación ante
+cortes de energía o red.
+
+
+
+
+                                                15
+Figura 4: Comprobación de la cadena geófono–ADC. Arriba: respuesta normalizada del camino
+electrónico medido, encadenada con el modelo nominal del SM-24; se incluyen la respuesta ideal,
+el margen de ajuste del potenciómetro y las respuestas aisladas del sensor. Abajo: coherencia
+local del barrido. La caída de coherencia próxima a 1 kHz limita la interpretación por encima de
+esa frecuencia. Es una verificación de forma, no una medición extremo a extremo con excitación
+sísmica calibrada.
+
+
+
+
+                                              16
+                     (a) Ruta analógica utilizada en las mediciones
+
+
+
+
+                                  (b) Arquitectura digital
+
+
+
+
+Figura 5: Arquitectura con la que se realizaron las mediciones. (a) Entrada diferencial, acondicio-
+namiento, compensador, sumador, pasa-bajos, referencias VDAC, AMux y ADC ∆Σ. (b) Control
+digital de captura, filtrado, DMA, memoria, temporización y supervisión.
+
+
+
+
+                                                17
+Figura 6: Nueva propuesta para el frente GEO: PGA adicional después del sumador y cuatro
+IDAC convertidos a tensión alrededor de la región útil de ajuste. Esta revisión puede aportar hasta
+×50 adicionales, pero aún no fue empleada en las mediciones y queda pendiente de verificación
+en placa.
+
+
+
+
+Figura 7: Máquina de estados de la calibración foreground. Al iniciar, cambiar la ganancia o
+recibir una orden, se verifican los códigos almacenados; si el punto de operación no es válido se
+ajustan secuencialmente PGA, BP, sumador y pasa-bajos. Al terminar se restaura la ruta de
+adquisición y los códigos quedan fijos.
+
+
+                                                18
+Figura 8: Interfaces sobre una captura real de Canchita. (a) La SPA embebida permite operar
+los nodos y revisar la adquisición desde el navegador en campo. (b) El servidor centraliza las
+campañas y permite validar cada señal antes del filtrado, agrupamiento y análisis MASW.
+
+
+
+
+Figura 9: Campaña Canchita. (a) Registro wiggle sintetizado entre 10 y 50 m, con lóbulos positivos
+sombreados y paso de 2 m. (b) Dispersión de 1 a 100 Hz por desplazamiento de fase (Ec. 5). (c)
+Detalle lineal de 5 a 50 Hz. Las líneas indican aliasing espacial, c = 2∆xf , y longitud de onda
+igual a la apertura, λ = L.
+
+
+
+
+Figura 10: Análisis espectral de las 21 señales del registro multicanal. (a) Espectros de autopotencia
+normalizados. (b) La misma información ordenada por distancia. La normalización permite
+comparar la forma espectral, pero elimina la comparación de amplitud absoluta entre receptores.
+
+
+                                                 19
+Referencias
+[Analog Devices, 2026] Analog Devices (2026). ADXL355: Low-noise, low-drift, low-power 3-axis
+  MEMS accelerometer. https://www.analog.com/en/products/ADXL355.html. Consulta: 18
+  de agosto de 2026.
+
+[Convocatoria PINV01-317, 2024] Convocatoria PINV01-317 (2024). Sistema electrónico multi-
+  canal para generación y captación de ondas sísmicas orientado a la caracterización geotécnica
+  del suelo hasta 50 metros de profundidad. Technical report, Propuesta de proyecto de investi-
+  gación (formulario PINV01-317B). Propuesta de financiación no aceptada; antecedente directo
+  de esta tesis.
+
+[Crook et al., 2017] Crook, N., Calendine, S., and Levitt, M. (2017). Site characterization of
+  an abandoned gold mine using the multi-channel analysis of the surface waves method. In
+  Geotechnical Frontiers 2017, pages 596–603.
+
+[DigiKey, 2026] DigiKey (2026). ADXL355BEZ-RL7 pricing and availability. https://www.
+  digikey.com/en/products/detail/analog-devices-inc/ADXL355BEZ-RL7/6490627. Pre-
+  cio unitario consultado el 18 de agosto de 2026.
+
+[DMT Group, 2026] DMT Group (2026). SUMMIT X One seismic data acquisition system.
+  Consulta: 18 de agosto de 2026.
+
+[Foti et al., 2018] Foti, S. et al. (2018). Guidelines for the good practice of surface wave analysis:
+  a product of the InterPACIFIC project. Bulletin of Earthquake Engineering, 16(6):2367–2420.
+
+[Foti et al., 2014] Foti, S., Lai, C. G., Rix, G. J., and Strobbia, C. (2014). Surface Wave Methods
+  for Near-Surface Site Characterization. CRC Press, Boca Raton, FL, USA.
+
+[Gautam et al., 2020] Gautam, R., Shrivastava, A. K., Gupta, S., and Sharma, V. (2020). In
+  situ shear wave velocity from multichannel analysis of surface waves (MASW) tests at six sites
+  of Delhi Technological University. In International Conference on Innovative Advancement in
+  Engineering and Technology.
+
+[GeoDevice, 2026] GeoDevice (2026). SUMMIT X One. https://geodevice.co/product/
+  summit-x-one/. Distribuidor; precio por solicitud. Consulta: 18 de agosto de 2026.
+
+[Geometrics, 2023] Geometrics (2023). Seismic price list 2023. Lista del fabricante, revi-
+  sión junio de 2023: https://www.geometrics.com/wp-content/uploads/2023/07/Seismic_
+  Pricelist_2023_rev0623.pdf. Referencia histórica; el archivo ya no se encontraba disponible
+  en la consulta de 2026.
+
+[Geometrics, 2026a] Geometrics (2026a). Atom-3C seismograph. Consulta: 18 de agosto de 2026.
+
+[Geometrics, 2026b] Geometrics (2026b). GeodeFlex. Consulta: 18 de agosto de 2026.
+
+[Güralp Systems, 2026] Güralp Systems (2026). 3ESPC portable broadband seismometer. https:
+  //guralp.com/products/3espc-series. Precio por solicitud. Consulta: 18 de agosto de 2026.
+
+[K. Ma et al., 2023] K. Ma et al. (2023). An effective method for improving low-frequency
+  response of geophone. Sensors, 23(6). Art. no. 3082, doi: 10.3390/s23063082.
+
+[Kafadar, 2020] Kafadar, O. (2020). A geophone-based and low-cost data acquisition and analysis
+  system designed for microtremor measurements. Geoscientific Instrumentation, Methods and
+  Data Systems, 9:365–373.
+
+[Kramer, 1996] Kramer, S. L. (1996). Geotechnical Earthquake Engineering. Prentice Hall.
+
+                                                 20
+[Llorens et al., 2016] Llorens, C. D., Molina, J., Giner, J. A., Ivorra, S., and Zornoza, P. R.
+  (2016). Development and programming of Geophonino: A low cost Arduino-based seismic
+   recorder for vertical geophones. Computers & Geosciences, 94:1–10.
+
+[Monjardin and Medina, 2023] Monjardin, C. E. F. and Medina, A. B. (2023). Comparative
+  analysis of geotechnical and geophysical investigations for average shear wave velocity in Metro
+  Manila. Energy Reports, 9(S2):38–47.
+
+[Park, 2013] Park, C. B. (2013). MASW for geotechnical site investigation. The Leading Edge,
+  32(6):656–662.
+
+[Park et al., 1998] Park, C. B., Miller, R. D., and Xia, J. (1998). Imaging dispersion curves of
+  surface waves on multi-channel record. In SEG Technical Program Expanded Abstracts 1998,
+  pages 1377–1380.
+
+[Park et al., 1999] Park, C. B., Miller, R. D., and Xia, J. (1999). Multichannel analysis of surface
+  waves. Geophysics, 64(3):800–808.
+
+[Park et al., 2018] Park, C. B., Richter, J., Rodrigues, R., and Cirone, A. (2018). MASW
+  applications for road construction and maintenance. The Leading Edge, 37(10):724–730.
+
+[PASI srl, 2022] PASI srl (2022).     GEA24 Price List — January 2022.          Co-
+  pia pública de la lista del fabricante: https://es.scribd.com/document/602682047/
+  GEA-24-PRICE-LIST-JANUARY-2022. Referencia histórica; precios ex works Turín.
+
+[PASI srl, 2026] PASI srl (2026). GEA24: 24-channel seismograph. Consulta: 18 de agosto de
+  2026.
+
+[PCB Piezotronics, 2025] PCB Piezotronics (2025). Model 086d20 icp impact hammer: Spe-
+  cification sheet, revision j. https://www.pcb.com/contentstore/docs/pcb_corporate/
+  vibration/products/specsheets/086d20_j.pdf. Consulta: 20 de agosto de 2026.
+
+[PCB Piezotronics, 2026a] PCB Piezotronics (2026a). Model 393b31 high-sensitivity seismic
+  ICP accelerometer. https://www.pcb.com/products?m=393B31. Consulta: 18 de agosto de
+  2026.
+
+[PCB Piezotronics, 2026b] PCB Piezotronics (2026b). Signal conditioning basics for icp
+  and charge output sensors. https://www.pcb.com/resources/technical-information/
+  signal-conditioning-basics. Consulta: 20 de agosto de 2026.
+
+[R. T. Clark, 2026] R. T. Clark (2026). RTC 4.5 Hz 375 Ohm Vertical Geophone. https:
+  //rtclark.com/product/rtc-4-5hz-375ohm-vertical-geophone/. Precio consultado el 18
+  de agosto de 2026.
+
+[Sensor Nederland B.V., 2006] Sensor Nederland B.V. (2006). SM-24 Geophone Element. Pro-
+  duct brochure: https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/SM-24%
+  20Brochure.pdf.
+
+[SparkFun Electronics, 2026] SparkFun Electronics (2026). Geophone — SM-24, with insulating
+  disc. https://www.sparkfun.com/sensors/environmental-sensors/seismograph.html.
+  Precio consultado el 18 de agosto de 2026.
+
+[Vantassel et al., 2018] Vantassel, J. P., Cox, B. R., Wotherspoon, L., and Stolte, A. (2018).
+  Mapping depth to bedrock, shear stiffness, and fundamental site period at CentrePort, We-
+  llington, using surface-wave methods: Implications for local seismic site amplification. Bulletin
+  of the Seismological Society of America, 108(3B):1709–1721. Prepublicación de acceso abierto
+  consultada para las figuras.
+
+                                                21
+[Xia et al., 1999] Xia, J., Miller, R. D., and Park, C. B. (1999). Estimation of near-surface
+  shear-wave velocity by inversion of Rayleigh waves. Geophysics, 64(3):691–700.
+
+
+
+
+                                             22
+

@@ -17,9 +17,10 @@ pasivos, no para una curva Rayleigh básica~\cite{Foti2014,Park1999}.
 El registro de un canal puede representarse como
 
 \begin{equation}
-    y_j(t)=h_{s,j}(t)*q_j(t)+n_j(t),
-    \qquad
-    Y_j(f)=H_{s,j}(f)Q_j(f)+N_j(f),
+\begin{aligned}
+    y_j(t)&=h_{s,j}(t)*q_j(t)+n_j(t),\\
+    Y_j(f)&=H_{s,j}(f)Q_j(f)+N_j(f),
+\end{aligned}
     \label{eq:transductor-medicion}
 \end{equation}
 
@@ -39,7 +40,7 @@ La comparación reúne magnitud, banda, ruido, alimentación, ejes y precio del 
 no incluye cableado, carcasa, PCB, digitalización, importación ni impuestos. Los precios
 se consultaron el 18 de agosto de 2026 y sólo indican órdenes de magnitud.
 
-\begin{table}[ht]
+\begin{table*}[ht]
 \centering
 \footnotesize
 \caption{Alternativas de transducción y costo del elemento sensor.}
@@ -64,7 +65,7 @@ Güralp 3ESPC & Velocidad triaxial, 60 s--\SI{100}{\hertz} & Por cotización & C
 frecuencias con bajo ruido; es un instrumento profesional completo~\cite{Guralp3ESPC} \\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{table*}
 
 Los geófonos siguen siendo la opción natural para MASW activo por sensibilidad,
 robustez y pasividad. Reducir $f_n$ conserva mejor las longitudes de onda grandes, pero
@@ -80,40 +81,34 @@ asociados a \SI{50}{\meter}; aun así, es vertical, pasivo, robusto, documentado
 costo compatible con un arreglo académico. Su salida analógica permite además estudiar
 el acondicionamiento como parte central del proyecto.
 
-\begin{figure}[ht]
+\begin{figure}[!ht]
 \centering
-\begin{minipage}[c]{0.27\textwidth}
-    \centering
-    \includegraphics[height=0.31\textheight]{sm24_fotografia_cc_by_sa.jpg}
-\end{minipage}\hfill
-\begin{minipage}[c]{0.68\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{sm24_funcion_transferencia_previa.png}
-\end{minipage}
-\caption{SM-24 en carcasa con punta de acoplamiento~\cite{WikimediaSM24Photo} y curvas
-de sensibilidad para distintos amortiguamientos~\cite{SM24}.}
+\includegraphics[width=\columnwidth]{sm24_esquema_interno.png}\par\smallskip
+\includegraphics[width=0.80\columnwidth]{sm24_fotografia_cableado.png}
+\caption{Principio constructivo de un geófono electromagnético y SM-24 encapsulado
+con cable y punta de acoplamiento al terreno.}
 \label{fig:sm24-fisico-respuesta}
 \end{figure}
 
 Sus parámetros nominales principales son~\cite{SM24}:
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \centering
-\small
+\scriptsize
 \caption{Parámetros nominales del SM-24.}
-\begin{tabular}{@{}lll@{}}
+\begin{tabularx}{\columnwidth}{@{}Y>{\raggedleft\arraybackslash}p{0.36\columnwidth}@{}}
 \toprule
-\textbf{Parámetro} & \textbf{Valor} & \textbf{Consecuencia} \\
+\textbf{Parámetro} & \textbf{Valor} \\
 \midrule
-Frecuencia natural & \SI{10}{\hertz} $\pm2{,}5\%$ & Define la transición de la respuesta \\
-Sensibilidad & \SI{28.8}{\volt\second\per\meter} $\pm2{,}5\%$ & Escala tensión/velocidad en banda \\
-Amortiguamiento abierto & $\zeta=0{,}25$ & Pico resonante pronunciado \\
-Amortiguamiento con \SI{1339}{\ohm} & $\zeta=0{,}60$ & Respuesta más plana cerca de $f_n$ \\
-Resistencia de bobina & \SI{375}{\ohm} $\pm2{,}5\%$ & Condiciona ruido y carga eléctrica \\
-Masa móvil & \SI{11}{\gram} & Elemento inercial compacto \\
-Frecuencia espuria típica & $>\SI{240}{\hertz}$ & No limita la banda MASW de interés \\
+Frecuencia natural & \SI{10}{\hertz} $\pm2{,}5\%$ \\
+Sensibilidad & \SI{28.8}{\volt\second\per\meter} $\pm2{,}5\%$ \\
+Amortiguamiento abierto & $\zeta=0{,}25$ \\
+Amortiguamiento con \SI{1339}{\ohm} & $\zeta=0{,}60$ \\
+Resistencia de bobina & \SI{375}{\ohm} $\pm2{,}5\%$ \\
+Masa móvil & \SI{11}{\gram} \\
+Frecuencia espuria típica & $>\SI{240}{\hertz}$ \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection{Modelo dinámico del SM-24: velocidad y aceleración}
@@ -122,11 +117,11 @@ Sea $x_g$ el desplazamiento de la carcasa unida al suelo, $x_m$ el de la masa m�
 $z=x_m-x_g$ el desplazamiento relativo. El sistema masa--resorte--amortiguador satisface
 
 \begin{equation}
-    m\ddot z+c\dot z+kz=-m\ddot x_g,
-    \qquad
-    \omega_n=\sqrt{\frac{k}{m}},
-    \qquad
-    \zeta=\frac{c}{2\sqrt{km}}.
+\begin{aligned}
+    m\ddot z+c\dot z+kz&=-m\ddot x_g,\\
+    \omega_n&=\sqrt{\frac{k}{m}},
+    &\zeta&=\frac{c}{2\sqrt{km}}.
+\end{aligned}
     \label{eq:sm24-mecanico}
 \end{equation}
 
@@ -175,34 +170,17 @@ $H_v\rightarrow-G_0$ por encima de $f_n$: allí su respuesta es aproximadamente 
 Referido a aceleración, $H_a$ es pasabanda y no presenta una meseta con el
 amortiguamiento nominal.
 
-\begin{table}[ht]
-\centering
-\small
-\caption{Comportamiento asintótico del SM-24 sin compensar según la magnitud de entrada.}
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Régimen} & \textbf{Referido a velocidad, $|H_v|$} &
-\textbf{Referido a aceleración, $|H_a|$} \\
-\midrule
-$f\ll f_n$ & $G_0r^2$; pendiente $+40$ dB/década &
-$(G_0/\omega_n)r$; pendiente $+20$ dB/década \\
-$f\approx f_n$ & \multicolumn{2}{l}{La amplitud y la fase dependen fuertemente del amortiguamiento} \\
-$f\gg f_n$ & $G_0$; respuesta aproximadamente plana &
-$G_0/\omega$; pendiente $-20$ dB/década \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 Por debajo de $f_n$, $|H_v|$ cae como $r^2$ (\SI{40}{\decibel\per decade}) y $|H_a|$
 como $r$ (\SI{20}{\decibel\per decade}); son dos referencias de una misma tensión de
 salida, no dos modos de funcionamiento distintos.
 
-\begin{figure}[ht]
+\begin{figure}[!ht]
 \centering
-\includegraphics[width=\textwidth]{../latex-historial/figuras/respuesta_sm24_modelo.png}
-\caption{Modelo nominal del SM-24 en circuito abierto referido a velocidad y
-aceleración del suelo. En baja frecuencia, las magnitudes normalizadas caen
-\SI{40}{\decibel\per decade} y \SI{20}{\decibel\per decade}, respectivamente.}
+\includegraphics[width=\columnwidth]{respuesta_sm24_vel_acel.png}
+\caption{Modelo nominal del SM-24 en circuito abierto. Ambas referencias se muestran
+en los mismos ejes: bajo $f_n$ caen \SI{40}{\decibel\per decade} y
+\SI{20}{\decibel\per decade}; sobre $f_n$, la referencia a velocidad se aplana y la
+referencia a aceleración cae \SI{20}{\decibel\per decade}.}
 \label{fig:sm24-modelo}
 \end{figure}
 
@@ -222,16 +200,14 @@ comparación preliminar con la respuesta del sensor.
 
 El conflicto queda cuantificado al evaluar la ecuación~\eqref{eq:sm24-magnitud}:
 
-\begin{table}[ht]
+\begin{table}[!ht]
 \centering
-\small
+\scriptsize
 \caption{Respuesta nominal del SM-24 en circuito abierto, normalizada respecto de
 velocidad y aceleración.}
-\begin{tabular}{@{}cccc@{}}
+\begin{tabular}{@{}rrrr@{}}
 \toprule
-\textbf{Frecuencia} & $f/f_n$ &
-\textbf{Velocidad, $|H_v|/G_0$} &
-\textbf{Aceleración, $\omega_n|H_a|/G_0$} \\
+$f$ & $f/f_n$ & $|H_v|/G_0$ & $\omega_n|H_a|/G_0$ \\
 \midrule
 \SI{1}{\hertz}  & 0,10 & $-40{,}0$ dB & $-19{,}9$ dB \\
 \SI{2}{\hertz}  & 0,20 & $-27{,}6$ dB & $-13{,}7$ dB \\

@@ -77,18 +77,17 @@ Gautam, R., Shrivastava, A.~K., Gupta, S., and Sharma, V. (2020).
 \newblock {GeodeFlex}.
 \newblock Consulta: 18 de agosto de 2026.
 
+\bibitem[Guan et~al., 2022]{Guan2022}
+Guan, J., Li, Y., Yan, Y., Yang, Z., and Liu, G. (2022).
+\newblock Linear array analysis of passive surface waves combined with
+  mini-{S}osie technique.
+\newblock {\em Geophysical Journal International}, 230(3):2131--2146.
+
 \bibitem[{Güralp Systems}, 2026]{Guralp3ESPC}
 {Güralp Systems} (2026).
 \newblock {3ESPC} portable broadband seismometer.
 \newblock \url{https://guralp.com/products/3espc-series}.
 \newblock Precio por solicitud. Consulta: 18 de agosto de 2026.
-
-\bibitem[Jagadesh, 2012]{WikimediaSM24Photo}
-Jagadesh, B. (2012).
-\newblock Geophone {SM-24}.
-\newblock Wikimedia Commons, licencia CC BY-SA 3.0:
-  \url{https://commons.wikimedia.org/wiki/File:Geophone_SM-24.jpg}.
-\newblock Consulta: 18 de agosto de 2026.
 
 \bibitem[{K. Ma et al.}, 2023]{Ma2023}
 {K. Ma et al.} (2023).
@@ -126,6 +125,11 @@ Park, C.~B. (2013).
 \newblock {MASW} for geotechnical site investigation.
 \newblock {\em The Leading Edge}, 32(6):656--662.
 
+\bibitem[Park et~al., 1996]{Park1996SIST}
+Park, C.~B., Miller, R.~D., Steeples, D.~W., and Black, R.~A. (1996).
+\newblock Swept impact seismic technique ({SIST}).
+\newblock {\em Geophysics}, 61(6):1789--1803.
+
 \bibitem[Park et~al., 1998]{Park1998}
 Park, C.~B., Miller, R.~D., and Xia, J. (1998).
 \newblock Imaging dispersion curves of surface waves on multi-channel record.
@@ -154,11 +158,25 @@ Park, C.~B., Richter, J., Rodrigues, R., and Cirone, A. (2018).
 \newblock {GEA24}: 24-channel seismograph.
 \newblock Consulta: 18 de agosto de 2026.
 
-\bibitem[{PCB Piezotronics}, 2026]{PCB393B31}
-{PCB Piezotronics} (2026).
+\bibitem[{PCB Piezotronics}, 2025]{PCB086D20}
+{PCB Piezotronics} (2025).
+\newblock Model 086d20 icp impact hammer: Specification sheet, revision j.
+\newblock
+  \url{https://www.pcb.com/contentstore/docs/pcb_corporate/vibration/products/specsheets/086d20_j.pdf}.
+\newblock Consulta: 20 de agosto de 2026.
+
+\bibitem[{PCB Piezotronics}, 2026a]{PCB393B31}
+{PCB Piezotronics} (2026a).
 \newblock Model 393b31 high-sensitivity seismic {ICP} accelerometer.
 \newblock \url{https://www.pcb.com/products?m=393B31}.
 \newblock Consulta: 18 de agosto de 2026.
+
+\bibitem[{PCB Piezotronics}, 2026b]{PCBSignalConditioning}
+{PCB Piezotronics} (2026b).
+\newblock Signal conditioning basics for icp and charge output sensors.
+\newblock
+  \url{https://www.pcb.com/resources/technical-information/signal-conditioning-basics}.
+\newblock Consulta: 20 de agosto de 2026.
 
 \bibitem[{R. T. Clark}, 2026]{RTClark45}
 {R. T. Clark} (2026).
