@@ -1,0 +1,864 @@
+{"kind":"deck","id":"pr/1zu6fp","name":"Deck"}
+{"kind":"layout","layoutId":"07603029-d418-4cce-bd48-ce3848d6b9c4","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"77f3b98c-95a0-4811-9785-0a10ab2c67c2","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/7t4tjh","slide":1,"title":"PROYECTO FINAL DE CARRERA · PRIMERA PRESENTACIÓN","textShapes":5}
+{"kind":"shape","id":"sh/lkjm1cfa","slide":1,"bbox":[0,0,34,720]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":1,"text":"PROYECTO FINAL DE CARRERA · PRIMERA PRESENTACIÓN","textPreview":"PROYECTO FINAL DE CARRERA · PRIMERA PRESENTACIÓN","textChars":48,"textLines":1,"bbox":[70,55,650,28]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":1,"text":"Sistema IoT multicanal\npara estudios MASW","textPreview":"Sistema IoT multicanal | para estudios MASW","textChars":41,"textLines":2,"bbox":[70,128,670,185]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":1,"text":"De la física de ondas superficiales a una cadena de medición auditable","textPreview":"De la física de ondas superficiales a una cadena de medición auditable","textChars":70,"textLines":1,"bbox":[72,343,625,78]}
+{"kind":"shape","id":"sh/l87ed8ba","slide":1,"bbox":[72,455,540,3]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":1,"text":"Elías David Álvarez Martínez\nIngeniería Electrónica · 2026","textPreview":"Elías David Álvarez Martínez | Ingeniería Electrónica · 2026","textChars":58,"textLines":2,"bbox":[72,481,510,70]}
+{"kind":"shape","id":"sh/32lszqtc","slide":1,"bbox":[780,0,500,720]}
+{"kind":"textbox","id":"sh/lwval87e","slide":1,"text":"FUENTE → SENSOR → AFE → ADC → RED → MASW → Vs(z)","textPreview":"FUENTE → SENSOR → AFE → ADC → RED → MASW → Vs(z)","textChars":48,"textLines":1,"bbox":[815,607,395,54]}
+{"kind":"image","id":"im/5wjudg7a","slide":1,"name":"","alt":"Diseño electrónico del sistema basado en PSoC","bbox":[810,90,410,485]}
+{"kind":"notes","id":"nt/7t4tjh","slide":1,"text":"Esta presentación recorre el proyecto como una cadena causal: la física fija requisitos, los requisitos fijan la implementación y el experimento revela el límite dominante.\nEl objetivo no es defender un instrumento comercial terminado, sino una primera plataforma integrada, accesible y auditable para investigación MASW.\nLa tesis se evalúa por la coherencia entre medición, procesamiento, incertidumbre y decisiones de diseño.\nTransición: primero establezco qué magnitud geotécnica buscamos y por qué la fase multicanal es el dato esencial."}
+{"kind":"slide","id":"sl/x8jze8","slide":2,"title":"MAGNITUD OBJETIVO","textShapes":10}
+{"kind":"textbox","id":"sh/58z25kb6","slide":2,"text":"MAGNITUD OBJETIVO","textPreview":"MAGNITUD OBJETIVO","textChars":17,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":2,"text":"La rigidez que buscamos se observa a través de Vs","textPreview":"La rigidez que buscamos se observa a través de Vs","textChars":49,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":2,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":2,"text":"Gₘₐₓ = ρ · Vₛ²","textPreview":"Gₘₐₓ = ρ · Vₛ²","textChars":14,"textLines":1,"bbox":[80,190,480,90]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":2,"text":"Un error pequeño en Vs se amplifica al estimar la rigidez. Por eso la cadena debe preservar la información que gobierna la velocidad de propagación.","textPreview":"Un error pequeño en Vs se amplifica al estimar la rigidez. Por eso la cadena debe preservar la información que gobierna la velocidad de p...","textChars":148,"textLines":1,"bbox":[86,305,480,150]}
+{"kind":"shape","id":"sh/nuxc3ylc","slide":2,"bbox":[706,172,430,125]}
+{"kind":"shape","id":"sh/cbulwval","slide":2,"bbox":[706,297,430,125]}
+{"kind":"shape","id":"sh/5sneloj2","slide":2,"bbox":[706,422,430,160]}
+{"kind":"textbox","id":"sh/tcj6tova","slide":2,"text":"capa 1 · Vs₁","textPreview":"capa 1 · Vs₁","textChars":12,"textLines":1,"bbox":[732,212,200,38]}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":2,"text":"capa 2 · Vs₂","textPreview":"capa 2 · Vs₂","textChars":12,"textLines":1,"bbox":[732,337,200,38]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":2,"text":"semiespacio · Vs₃","textPreview":"semiespacio · Vs₃","textChars":17,"textLines":1,"bbox":[732,477,260,38]}
+{"kind":"shape","id":"sh/il0rqd4v","slide":2,"bbox":[1107.5,205,5,330]}
+{"kind":"shape","id":"sh/t47y1kre","slide":2,"bbox":[1101,191,18,18]}
+{"kind":"textbox","id":"sh/0je9cvix","slide":2,"text":"profundidad z","textPreview":"profundidad z","textChars":13,"textLines":1,"bbox":[1030,555,160,26]}
+{"kind":"textbox","id":"sh/byhgn29g","slide":2,"text":"Fuente: main.pdf · relación elástica y alcance del perfil Vs(z)","textPreview":"Fuente: main.pdf · relación elástica y alcance del perfil Vs(z)","textChars":63,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"notes","id":"nt/x8jze8","slide":2,"text":"La magnitud geotécnica de interés es la velocidad de onda de corte Vs y su relación con el módulo de corte máximo Gmax igual a rho por Vs al cuadrado.\nEl producto final no es una imagen directa del terreno: es un modelo estratificado compatible con los datos y con la resolución del ensayo.\nEsto obliga a distinguir desde el inicio qué observamos de manera robusta y qué inferimos mediante inversión.\nTransición: MASW explota ondas Rayleigh porque su propagación superficial concentra energía medible a distintas longitudes de onda."}
+{"kind":"slide","id":"sl/284s5j","slide":3,"title":"FÍSICA","textShapes":8}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":3,"text":"FÍSICA","textPreview":"FÍSICA","textChars":6,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/xc3ylc7u","slide":3,"text":"Las ondas Rayleigh convierten la superficie en una sonda","textPreview":"Las ondas Rayleigh convierten la superficie en una sonda","textChars":56,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/4r65wjud","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/fepkzupw","slide":3,"bbox":[52,145,1176,2]}
+{"kind":"shape","id":"sh/xkf6dcbu","slide":3,"bbox":[778,172,220,28]}
+{"kind":"textbox","id":"sh/4zidonyd","slide":3,"text":"ONDAS SUPERFICIALES","textPreview":"ONDAS SUPERFICIALES","textChars":19,"textLines":1,"bbox":[786,176,204,20]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":3,"text":"El movimiento elíptico decae con la profundidad, pero no desaparece de inmediato.","textPreview":"El movimiento elíptico decae con la profundidad, pero no desaparece de inmediato.","textChars":81,"textLines":1,"bbox":[778,225,390,90]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":3,"text":"Cada frecuencia concentra sensibilidad en una zona distinta del subsuelo. La dispersión geométrica aparece cuando esas zonas tienen propiedades diferentes.","textPreview":"Cada frecuencia concentra sensibilidad en una zona distinta del subsuelo. La dispersión geométrica aparece cuando esas zonas tienen propi...","textChars":155,"textLines":1,"bbox":[778,338,390,155]}
+{"kind":"shape","id":"sh/0bi9s36h","slide":3,"bbox":[778,518,390,5]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":3,"text":"La profundidad se infiere por sensibilidad, no por una regla universal.","textPreview":"La profundidad se infiere por sensibilidad, no por una regla universal.","textChars":71,"textLines":1,"bbox":[778,540,390,62]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":3,"text":"Fuente visual: investigación de tesis · propagación de ondas Rayleigh","textPreview":"Fuente visual: investigación de tesis · propagación de ondas Rayleigh","textChars":69,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"image","id":"im/b2hwfyxo","slide":3,"name":"","alt":"Patrón de radiación y movimiento de partículas de una onda Rayleigh","bbox":[58,150,650,455]}
+{"kind":"notes","id":"nt/284s5j","slide":3,"text":"Las ondas Rayleigh combinan desplazamientos verticales y horizontales y transportan una fracción importante de la energía cerca de la superficie.\nEn un medio estratificado, la velocidad aparente depende de la frecuencia porque cada longitud de onda muestrea un volumen diferente.\nLa profundidad de investigación no se obtiene con z igual a lambda sobre dos como una identidad universal; depende de sensibilidad, modo y estructura.\nTransición: la relación entre longitud de onda, frecuencia y profundidad explica por qué necesitamos energía de baja frecuencia."}
+{"kind":"slide","id":"sl/iwt9u5","slide":4,"title":"REQUISITO ESPECTRAL","textShapes":9}
+{"kind":"textbox","id":"sh/94fu18jq","slide":4,"text":"REQUISITO ESPECTRAL","textPreview":"REQUISITO ESPECTRAL","textChars":19,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/2hwfyxob","slide":4,"text":"Para mirar más profundo necesitamos longitudes de onda mayores","textPreview":"Para mirar más profundo necesitamos longitudes de onda mayores","textChars":62,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/gvy90je9","slide":4,"bbox":[52,145,1176,2]}
+{"kind":"textbox","id":"sh/2p8nqxs7","slide":4,"text":"λ = cᴿ / f","textPreview":"λ = cᴿ / f","textChars":10,"textLines":1,"bbox":[750,178,390,70]}
+{"kind":"textbox","id":"sh/ra5gbq1o","slide":4,"text":"↓ frecuencia","textPreview":"↓ frecuencia","textChars":12,"textLines":1,"bbox":[764,280,160,38]}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":4,"text":"↑ longitud de onda","textPreview":"↑ longitud de onda","textChars":18,"textLines":1,"bbox":[955,280,205,38]}
+{"kind":"shape","id":"sh/9knih4by","slide":4,"bbox":[922,298,23,4]}
+{"kind":"shape","id":"sh/p8nqxs72","slide":4,"bbox":[941,291,18,18]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":4,"text":"La fuente, el sensor y el AFE deben conservar la banda baja antes del ADC. Ningún filtro digital puede reconstruir señal que quedó por debajo del ruido analógico.","textPreview":"La fuente, el sensor y el AFE deben conservar la banda baja antes del ADC. Ningún filtro digital puede reconstruir señal que quedó por de...","textChars":162,"textLines":1,"bbox":[748,360,410,150]}
+{"kind":"shape","id":"sh/72x4nap4","slide":4,"bbox":[865,548,180,28]}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":4,"text":"REQUISITO FÍSICO","textPreview":"REQUISITO FÍSICO","textChars":16,"textLines":1,"bbox":[873,553,164,18]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":4,"text":"Fuente: main.pdf · longitud de onda y profundidad de investigación","textPreview":"Fuente: main.pdf · longitud de onda y profundidad de investigación","textChars":66,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"image","id":"im/w7mp0bi9","slide":4,"name":"","alt":"Dispersión geométrica de ondas Rayleigh en un medio estratificado","bbox":[55,152,640,455]}
+{"kind":"notes","id":"nt/iwt9u5","slide":4,"text":"La longitud de onda Rayleigh se obtiene como velocidad de fase dividida por frecuencia.\nPara una velocidad dada, reducir la frecuencia aumenta la longitud de onda y desplaza la sensibilidad a mayor profundidad.\nPor eso el requisito de baja frecuencia nace de la física y debe resolverse antes de la digitalización: principalmente en la fuente, el acoplamiento y el ruido del frente analógico.\nTransición: la velocidad de fase se estima a partir de diferencias de fase entre receptores, no de amplitud absoluta."}
+{"kind":"slide","id":"sl/adf1tw","slide":5,"title":"OBSERVABLE","textShapes":7}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":5,"text":"OBSERVABLE","textPreview":"OBSERVABLE","textChars":10,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":5,"text":"MASW mide cómo cambia la fase entre receptores","textPreview":"MASW mide cómo cambia la fase entre receptores","textChars":46,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/o7qpg3ex","slide":5,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/61032lsz","slide":5,"text":"cᴿ(f) = ω · Δx / |Δφ(f)|","textPreview":"cᴿ(f) = ω · Δx / |Δφ(f)|","textChars":24,"textLines":1,"bbox":[716,205,475,80]}
+{"kind":"textbox","id":"sh/vmtwra5g","slide":5,"text":"La sincronización temporal y la geometría entran directamente en la estimación de velocidad.","textPreview":"La sincronización temporal y la geometría entran directamente en la estimación de velocidad.","textChars":92,"textLines":1,"bbox":[760,338,390,100]}
+{"kind":"textbox","id":"sh/ovahoza1","slide":5,"text":"Amplitud ayuda al control de calidad; fase y espaciamiento fijan c(f).","textPreview":"Amplitud ayuda al control de calidad; fase y espaciamiento fijan c(f).","textChars":70,"textLines":1,"bbox":[760,465,390,85]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":5,"text":"Fuente: main.pdf · velocidad de fase por diferencia de fase","textPreview":"Fuente: main.pdf · velocidad de fase por diferencia de fase","textChars":59,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"image","id":"im/s72x4nap","slide":5,"name":"","alt":"Dos señales medidas en receptores vecinos a 30 y 32 metros, con retardo aparente","bbox":[52,158,655,440]}
+{"kind":"notes","id":"nt/adf1tw","slide":5,"text":"Las dos señales mostradas corresponden a receptores vecinos de la campaña Canchita, ubicados a treinta y treinta y dos metros.\nLa correlación de esta ventana produce un retardo aparente cercano a cincuenta y cinco milisegundos; no debe interpretarse por sí solo como velocidad de fase.\nEn MASW la velocidad se obtiene por diferencia de fase para cada frecuencia y usando el espaciamiento conocido entre receptores.\nEsto conecta directamente errores de sincronización y geometría con el error en c de f.\nTransición: el método de Park extiende esta idea a todos los canales y busca coherencia para cada velocidad candidata."}
+{"kind":"slide","id":"sl/dqbpbf","slide":6,"title":"TRANSFORMACIÓN MASW","textShapes":7}
+{"kind":"textbox","id":"sh/tcj6tova","slide":6,"text":"TRANSFORMACIÓN MASW","textPreview":"TRANSFORMACIÓN MASW","textChars":19,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":6,"text":"Park enfoca la energía donde la fase es coherente","textPreview":"Park enfoca la energía donde la fase es coherente","textChars":49,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/0je9cvix","slide":6,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/t47y1kre","slide":6,"text":"S(ω,c) = | Σⱼ Xⱼ(ω) · eⁱωxʲᐟᶜ |","textPreview":"S(ω,c) = | Σⱼ Xⱼ(ω) · eⁱωxʲᐟᶜ |","textChars":31,"textLines":1,"bbox":[130,143,1020,66]}
+{"kind":"shape","id":"sh/byhgn29g","slide":6,"bbox":[575,390.5,105,5]}
+{"kind":"shape","id":"sh/0fepkzup","slide":6,"bbox":[676,384,18,18]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":6,"text":"trazas xⱼ(t)","textPreview":"trazas xⱼ(t)","textChars":12,"textLines":1,"bbox":[230,574,180,28]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":6,"text":"imagen S(f,c)","textPreview":"imagen S(f,c)","textChars":13,"textLines":1,"bbox":[870,574,180,28]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":6,"text":"Fuente: main.pdf e INFORME_COMPLETO.pdf · formulación Park y benchmark","textPreview":"Fuente: main.pdf e INFORME_COMPLETO.pdf · formulación Park y benchmark","textChars":70,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"image","id":"im/3itgfmlk","slide":6,"name":"","alt":"Registro multicanal usado como entrada del procesamiento MASW","bbox":[60,230,500,330]}
+{"kind":"image","id":"im/szqtcj6t","slide":6,"name":"","alt":"Imágenes de dispersión producidas por transformaciones MASW","bbox":[710,230,500,330]}
+{"kind":"notes","id":"nt/dqbpbf","slide":6,"text":"La transformación de Park compensa la fase esperada para una velocidad candidata y suma los canales.\nCuando la velocidad candidata coincide con la propagación observada, las contribuciones se alinean y la energía aumenta.\nLa curva de dispersión se selecciona sobre esta imagen; esa selección necesita criterios de continuidad, soporte y control de calidad.\nTransición: aun con una curva robusta, convertir c de f en Vs de z sigue siendo un problema inverso no único."}
+{"kind":"slide","id":"sl/v543p3","slide":7,"title":"PROBLEMA INVERSO","textShapes":10}
+{"kind":"textbox","id":"sh/tcj6tova","slide":7,"text":"PROBLEMA INVERSO","textPreview":"PROBLEMA INVERSO","textChars":16,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/il0rqd4v","slide":7,"text":"La inversión produce modelos compatibles, no una solución única","textPreview":"La inversión produce modelos compatibles, no una solución única","textChars":63,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/b6xkf6dc","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/0je9cvix","slide":7,"bbox":[52,145,1176,2]}
+{"kind":"textbox","id":"sh/idonyd0z","slide":7,"text":"F(c, f, h, Vₛ, Vₚ, ρ) = 0","textPreview":"F(c, f, h, Vₛ, Vₚ, ρ) = 0","textChars":25,"textLines":1,"bbox":[660,170,520,60]}
+{"kind":"textbox","id":"sh/byhgn29g","slide":7,"text":"m* = arg minₘ [‖W(dobs−g(m))‖² + λR(m)]","textPreview":"m* = arg minₘ [‖W(dobs−g(m))‖² + λR(m)]","textChars":39,"textLines":1,"bbox":[637,260,572,90]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":7,"text":"Lo robusto","textPreview":"Lo robusto","textChars":10,"textLines":1,"bbox":[695,386,185,34]}
+{"kind":"textbox","id":"sh/p0bi9s36","slide":7,"text":"c(f) y su soporte observado","textPreview":"c(f) y su soporte observado","textChars":27,"textLines":1,"bbox":[695,427,420,38]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":7,"text":"Lo sensible","textPreview":"Lo sensible","textChars":11,"textLines":1,"bbox":[695,493,185,34]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":7,"text":"número de capas, regularización y Vs(z)","textPreview":"número de capas, regularización y Vs(z)","textChars":39,"textLines":1,"bbox":[695,534,440,38]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":7,"text":"Fuente: main.pdf e INFORME_COMPLETO.pdf · inversión y no unicidad","textPreview":"Fuente: main.pdf e INFORME_COMPLETO.pdf · inversión y no unicidad","textChars":65,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"image","id":"im/8nqxs72x","slide":7,"name":"","alt":"Ejemplo conceptual de inversión de curva de dispersión a perfil estratificado","bbox":[58,154,545,445]}
+{"kind":"notes","id":"nt/v543p3","slide":7,"text":"La inversión busca un modelo cuya curva teórica reproduzca la curva observada, con regularización para controlar soluciones físicamente poco plausibles.\nDistintos perfiles pueden explicar datos similares; por eso el número de capas, los límites y la incertidumbre deben declararse.\nEl benchmark confirmó que c de f es más estable que Vs de z y que cinco capas no son defendibles como valor por defecto con los datos actuales.\nTransición: estos hechos físicos se traducen en requisitos concretos para toda la plataforma."}
+{"kind":"slide","id":"sl/41b4dy","slide":8,"title":"ARQUITECTURA","textShapes":24}
+{"kind":"textbox","id":"sh/ovahoza1","slide":8,"text":"ARQUITECTURA","textPreview":"ARQUITECTURA","textChars":12,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":8,"text":"La física se traduce en cuatro requisitos de sistema","textPreview":"La física se traduce en cuatro requisitos de sistema","textChars":52,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/6tovahoz","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/d8v6psfi","slide":8,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/onyd0z61","slide":8,"bbox":[70,160,66,66]}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":8,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[80,177,46,28]}
+{"kind":"textbox","id":"sh/6hcrmhk3","slide":8,"text":"BANDA","textPreview":"BANDA","textChars":5,"textLines":1,"bbox":[160,162,230,32]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":8,"text":"inyectar y conservar baja frecuencia","textPreview":"inyectar y conservar baja frecuencia","textChars":36,"textLines":1,"bbox":[160,198,720,40]}
+{"kind":"shape","id":"sh/oj2t83it","slide":8,"bbox":[925,192,230,4]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":8,"bbox":[70,265,66,66]}
+{"kind":"textbox","id":"sh/vixczed8","slide":8,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[80,282,46,28]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":8,"text":"FASE","textPreview":"FASE","textChars":4,"textLines":1,"bbox":[160,267,230,32]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":8,"text":"sincronizar y conocer la geometría","textPreview":"sincronizar y conocer la geometría","textChars":34,"textLines":1,"bbox":[160,303,720,40]}
+{"kind":"shape","id":"sh/6psfil0r","slide":8,"bbox":[925,297,230,4]}
+{"kind":"shape","id":"sh/val87ed8","slide":8,"bbox":[70,370,66,66]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":8,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[80,387,46,28]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":8,"text":"INTEGRIDAD","textPreview":"INTEGRIDAD","textChars":10,"textLines":1,"bbox":[160,372,230,32]}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":8,"text":"transportar sin inventar muestras","textPreview":"transportar sin inventar muestras","textChars":33,"textLines":1,"bbox":[160,408,720,40]}
+{"kind":"shape","id":"sh/v6psfil0","slide":8,"bbox":[925,402,230,4]}
+{"kind":"shape","id":"sh/nuxc3ylc","slide":8,"bbox":[70,475,66,66]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":8,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[80,492,46,28]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":8,"text":"AUDITORÍA","textPreview":"AUDITORÍA","textChars":9,"textLines":1,"bbox":[160,477,230,32]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":8,"text":"guardar metadatos, QC e incertidumbre","textPreview":"guardar metadatos, QC e incertidumbre","textChars":37,"textLines":1,"bbox":[160,513,720,40]}
+{"kind":"shape","id":"sh/n29gr2p8","slide":8,"bbox":[925,507,230,4]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":8,"text":"Síntesis de requisitos derivada de la física y del alcance de la tesis","textPreview":"Síntesis de requisitos derivada de la física y del alcance de la tesis","textChars":70,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/58z25kb6","slide":8,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":8,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/neloj2t8","slide":8,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/ytsvu9kn","slide":8,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/4zidonyd","slide":8,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":8,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/mtwra5gb","slide":8,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/fepkzupw","slide":8,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/4r65wjud","slide":8,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/xc3ylc7u","slide":8,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/mlkjm1cf","slide":8,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/f6dcbulw","slide":8,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/4fu18jqh","slide":8,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":8,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/pwb2hwfy","slide":8,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":8,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/7qpg3ex0","slide":8,"bbox":[1016,688,212,2]}
+{"kind":"notes","id":"nt/41b4dy","slide":8,"text":"La banda observable depende de fuente, sensor y frente analógico; la fase depende de sincronización y geometría.\nLa integridad exige no completar silenciosamente paquetes perdidos, porque una muestra inventada altera fase y amplitud.\nLa auditoría exige conservar configuración, coordenadas, calidad del picking e incertidumbre de la inversión.\nTransición: recorro ahora la implementación siguiendo la misma cadena física, comenzando por la fuente actual."}
+{"kind":"slide","id":"sl/umxekm","slide":9,"title":"IMPLEMENTACIÓN · FUENTE","textShapes":20}
+{"kind":"textbox","id":"sh/5kb6xkf6","slide":9,"text":"IMPLEMENTACIÓN · FUENTE","textPreview":"IMPLEMENTACIÓN · FUENTE","textChars":23,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/ytsvu9kn","slide":9,"text":"La fuente actual mide el golpe y fija el tiempo cero","textPreview":"La fuente actual mide el golpe y fija el tiempo cero","textChars":52,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/neloj2t8","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/cbulwval","slide":9,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/u54zidon","slide":9,"bbox":[690,176,164,28]}
+{"kind":"textbox","id":"sh/nqxs72x4","slide":9,"text":"PCB 086D20","textPreview":"PCB 086D20","textChars":10,"textLines":1,"bbox":[698,180,148,20]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":9,"bbox":[870,176,165,28]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":9,"text":"IMPLEMENTADO","textPreview":"IMPLEMENTADO","textChars":12,"textLines":1,"bbox":[878,181,149,18]}
+{"kind":"textbox","id":"sh/54zidony","slide":9,"text":"Salida ICP","textPreview":"Salida ICP","textChars":10,"textLines":1,"bbox":[694,240,240,34]}
+{"kind":"textbox","id":"sh/cj6tovah","slide":9,"text":"El impacto se registra como canal de referencia y genera el disparo de adquisición.","textPreview":"El impacto se registra como canal de referencia y genera el disparo de adquisición.","textChars":83,"textLines":1,"bbox":[694,282,420,84]}
+{"kind":"shape","id":"sh/nyd0z610","slide":9,"bbox":[694,395,420,2]}
+{"kind":"textbox","id":"sh/udg7adsj","slide":9,"text":"Fortaleza","textPreview":"Fortaleza","textChars":9,"textLines":1,"bbox":[694,420,160,30]}
+{"kind":"textbox","id":"sh/5gbq1ory","slide":9,"text":"evento temporal observable","textPreview":"evento temporal observable","textChars":26,"textLines":1,"bbox":[860,420,260,30]}
+{"kind":"textbox","id":"sh/cvixczed","slide":9,"text":"Límite","textPreview":"Límite","textChars":6,"textLines":1,"bbox":[694,474,160,30]}
+{"kind":"textbox","id":"sh/nap4r65w","slide":9,"text":"energía baja poco repetible","textPreview":"energía baja poco repetible","textChars":27,"textLines":1,"bbox":[860,474,270,50]}
+{"kind":"textbox","id":"sh/upwb2hwf","slide":9,"text":"Fuente: main.pdf · excitación instrumentada","textPreview":"Fuente: main.pdf · excitación instrumentada","textChars":43,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/1orytsvu","slide":9,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/c7u54zid","slide":9,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/oza1gvy9","slide":9,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":9,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/6xkf6dcb","slide":9,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":9,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/obm58z25","slide":9,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":9,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/65wjudg7","slide":9,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":9,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/sfil0rqd","slide":9,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/h0fepkzu","slide":9,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/36hcrmhk","slide":9,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/eloj2t83","slide":9,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/lc7u54zi","slide":9,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":9,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/7u54zido","slide":9,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/sfil0rqd","slide":9,"name":"","alt":"Martillo instrumentado PCB 086D20 usado en la campaña","bbox":[65,155,535,450]}
+{"kind":"notes","id":"nt/umxekm","slide":9,"text":"La campaña actual usa un martillo instrumentado PCB 086D20 con salida ICP.\nEl golpe cumple dos funciones: excita el terreno y proporciona una referencia temporal medida para alinear la captura.\nLa limitación no es detectar el impacto, sino repetir suficiente energía en baja frecuencia de forma controlada.\nTransición: el segundo límite de banda aparece en el transductor disponible."}
+{"kind":"slide","id":"sl/df8w5l","slide":10,"title":"IMPLEMENTACIÓN · SENSOR","textShapes":21}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":10,"text":"IMPLEMENTACIÓN · SENSOR","textPreview":"IMPLEMENTACIÓN · SENSOR","textChars":23,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/val87ed8","slide":10,"text":"El SM-24 es funcional, pero limita la profundidad","textPreview":"El SM-24 es funcional, pero limita la profundidad","textChars":49,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/donyd0z6","slide":10,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/vixczed8","slide":10,"text":"SM-24","textPreview":"SM-24","textChars":5,"textLines":1,"bbox":[668,170,360,54]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":10,"bbox":[999,179,160,28]}
+{"kind":"textbox","id":"sh/d0z61032","slide":10,"text":"DISPONIBLE","textPreview":"DISPONIBLE","textChars":10,"textLines":1,"bbox":[1007,184,144,18]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":10,"text":"Frecuencia natural","textPreview":"Frecuencia natural","textChars":18,"textLines":1,"bbox":[672,267,260,30]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":10,"text":"10 Hz","textPreview":"10 Hz","textChars":5,"textLines":1,"bbox":[980,260,160,44]}
+{"kind":"shape","id":"sh/r65wjudg","slide":10,"bbox":[672,321,470,2]}
+{"kind":"textbox","id":"sh/gr2p8nqx","slide":10,"text":"Uso","textPreview":"Uso","textChars":3,"textLines":1,"bbox":[672,350,200,30]}
+{"kind":"textbox","id":"sh/9cvixcze","slide":10,"text":"movimiento vertical","textPreview":"movimiento vertical","textChars":19,"textLines":1,"bbox":[910,345,230,38]}
+{"kind":"shape","id":"sh/yxobm58z","slide":10,"bbox":[672,403,470,2]}
+{"kind":"textbox","id":"sh/nih4byhg","slide":10,"text":"Decisión","textPreview":"Decisión","textChars":8,"textLines":1,"bbox":[672,433,200,30]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":10,"text":"compensar la caída,\nsin ocultar el ruido","textPreview":"compensar la caída, | sin ocultar el ruido","textChars":40,"textLines":2,"bbox":[874,428,268,74]}
+{"kind":"textbox","id":"sh/5o7qpg3e","slide":10,"text":"La disponibilidad justificó el prototipo; la banda profunda exige validar otra fuente o sensor.","textPreview":"La disponibilidad justificó el prototipo; la banda profunda exige validar otra fuente o sensor.","textChars":95,"textLines":1,"bbox":[672,540,470,62]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":10,"text":"Fuente: main.pdf · transductor SM-24","textPreview":"Fuente: main.pdf · transductor SM-24","textChars":36,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/rmhk3q5o","slide":10,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/3ylc7u54","slide":10,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/adsji5sn","slide":10,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/h4byhgn2","slide":10,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/sji5snel","slide":10,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":10,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/a5gbq1or","slide":10,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":10,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/s72x4nap","slide":10,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/zidonyd0","slide":10,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/a1gvy90j","slide":10,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":10,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/dcbulwva","slide":10,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":10,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/val87ed8","slide":10,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":10,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/donyd0z6","slide":10,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/d0z61032","slide":10,"name":"","alt":"Geófono SM-24 con cableado y punta de acoplamiento","bbox":[72,160,500,445]}
+{"kind":"notes","id":"nt/df8w5l","slide":10,"text":"Se utilizó el SM-24 de 10 hertz porque estaba disponible en la Facultad, no porque optimizara un objetivo de 50 metros.\nDebajo de su frecuencia natural la sensibilidad cae con rapidez, de modo que amplificar también eleva ruido y offset.\nLa decisión de ingeniería fue compensar de manera controlada y medir el costo en rango dinámico.\nTransición: la respuesta puede expresarse respecto de velocidad o aceleración; ambas referencias explican la pendiente observada."}
+{"kind":"slide","id":"sl/9nectk","slide":11,"title":"MODELO DEL SENSOR","textShapes":19}
+{"kind":"textbox","id":"sh/8z25kb6x","slide":11,"text":"MODELO DEL SENSOR","textPreview":"MODELO DEL SENSOR","textChars":17,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":11,"text":"La misma mecánica se ve distinta según la variable de entrada","textPreview":"La misma mecánica se ve distinta según la variable de entrada","textChars":61,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/qtcj6tov","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/xs72x4na","slide":11,"bbox":[52,145,1176,2]}
+{"kind":"textbox","id":"sh/fmlkjm1c","slide":11,"text":"referida a velocidad","textPreview":"referida a velocidad","textChars":20,"textLines":1,"bbox":[735,164,390,32]}
+{"kind":"textbox","id":"sh/q1orytsv","slide":11,"text":"Hᵥ(s) ∝ s² / (s² + 2ζωₙs + ωₙ²)","textPreview":"Hᵥ(s) ∝ s² / (s² + 2ζωₙs + ωₙ²)","textChars":31,"textLines":1,"bbox":[720,205,475,70]}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":11,"text":"≈ 40 dB/década debajo de fₙ","textPreview":"≈ 40 dB/década debajo de fₙ","textChars":27,"textLines":1,"bbox":[760,276,390,32]}
+{"kind":"shape","id":"sh/8jqh0fep","slide":11,"bbox":[735,330,440,2]}
+{"kind":"textbox","id":"sh/mp0bi9s3","slide":11,"text":"referida a aceleración","textPreview":"referida a aceleración","textChars":22,"textLines":1,"bbox":[735,358,390,32]}
+{"kind":"textbox","id":"sh/bat47y1k","slide":11,"text":"Hₐ(s) ∝ s / (s² + 2ζωₙs + ωₙ²)","textPreview":"Hₐ(s) ∝ s / (s² + 2ζωₙs + ωₙ²)","textChars":30,"textLines":1,"bbox":[720,400,475,70]}
+{"kind":"textbox","id":"sh/4vmtwra5","slide":11,"text":"≈ 20 dB/década debajo de fₙ","textPreview":"≈ 20 dB/década debajo de fₙ","textChars":27,"textLines":1,"bbox":[760,471,390,32]}
+{"kind":"textbox","id":"sh/tgfmlkjm","slide":11,"text":"Compensar no cambia la información física: sólo redistribuye ganancia y ruido.","textPreview":"Compensar no cambia la información física: sólo redistribuye ganancia y ruido.","textChars":78,"textLines":1,"bbox":[735,537,440,55]}
+{"kind":"textbox","id":"sh/m1cfa9w3","slide":11,"text":"Fuente: main.pdf · funciones de transferencia del geófono","textPreview":"Fuente: main.pdf · funciones de transferencia del geófono","textChars":57,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/bm58z25k","slide":11,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/47y1kre1","slide":11,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/tsvu9kni","slide":11,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":11,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/bq1oryts","slide":11,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":11,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/e1w7mp0b","slide":11,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/psfil0rq","slide":11,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/w7mp0bi9","slide":11,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/7adsji5s","slide":11,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/epkzupwb","slide":11,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/pg3ex0nu","slide":11,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/wval87ed","slide":11,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/36hcrmhk","slide":11,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/eloj2t83","slide":11,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":11,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/h0fepkzu","slide":11,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/donyd0z6","slide":11,"name":"","alt":"Respuesta nominal del geófono SM-24 referida a velocidad y aceleración","bbox":[62,155,620,450]}
+{"kind":"notes","id":"nt/9nectk","slide":11,"text":"La respuesta respecto de velocidad presenta dos ceros en el origen y cae aproximadamente cuarenta decibeles por década debajo de la resonancia.\nRespecto de aceleración aparece un cero y la pendiente es aproximadamente veinte decibeles por década.\nEstas dos expresiones no son contradictorias: dependen de qué magnitud se usa como entrada del modelo.\nTransición: el acondicionamiento usa una compensación de fase mínima para recuperar parte de esa banda sin una inversión inestable."}
+{"kind":"slide","id":"sl/ztyam8","slide":12,"title":"IMPLEMENTACIÓN · AFE","textShapes":16}
+{"kind":"textbox","id":"sh/donyd0z6","slide":12,"text":"IMPLEMENTACIÓN · AFE","textPreview":"IMPLEMENTACIÓN · AFE","textChars":20,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":12,"text":"Compensación Ma para recuperar banda","textPreview":"Compensación Ma para recuperar banda","textChars":36,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/vixczed8","slide":12,"text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/kre1w7mp","slide":12,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":12,"text":"ζ₁ ≈ 938","textPreview":"ζ₁ ≈ 938","textChars":8,"textLines":1,"bbox":[690,167,400,55]}
+{"kind":"textbox","id":"sh/val87ed8","slide":12,"text":"1 / (2ζ₁) ≈ 5,3 × 10⁻⁴","textPreview":"1 / (2ζ₁) ≈ 5,3 × 10⁻⁴","textChars":22,"textLines":1,"bbox":[650,250,500,65]}
+{"kind":"textbox","id":"sh/knih4byh","slide":12,"text":"La red genera una respuesta complementaria a la caída del sensor y distribuye la ganancia entre bloques.","textPreview":"La red genera una respuesta complementaria a la caída del sensor y distribuye la ganancia entre bloques.","textChars":104,"textLines":1,"bbox":[690,342,425,105]}
+{"kind":"shape","id":"sh/d8bat47y","slide":12,"bbox":[748,486,310,28]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":12,"text":"GANANCIA TOTAL ≈ 1800","textPreview":"GANANCIA TOTAL ≈ 1800","textChars":21,"textLines":1,"bbox":[756,490,294,20]}
+{"kind":"textbox","id":"sh/0z61032l","slide":12,"text":"Fuente: main.pdf · compensación Ma y frente analógico","textPreview":"Fuente: main.pdf · compensación Ma y frente analógico","textChars":53,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/7ed8bat4","slide":12,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":12,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/p8nqxs72","slide":12,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":12,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/72x4nap4","slide":12,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":12,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/p4r65wju","slide":12,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/wjudg7ad","slide":12,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/szqtcj6t","slide":12,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/lkjm1cfa","slide":12,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/at47y1kr","slide":12,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":12,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/sneloj2t","slide":12,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/l87ed8ba","slide":12,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/ahoza1gv","slide":12,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/32lszqtc","slide":12,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/wb2hwfyx","slide":12,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/wjudg7ad","slide":12,"name":"","alt":"Diagrama de bloques de compensación Ma con rama directa y pasa-banda sustraída","bbox":[52,178,620,365]}
+{"kind":"notes","id":"nt/ztyam8","slide":12,"text":"La estructura uno menos pasa banda implementa una compensación complementaria de fase mínima.\nEl parámetro zeta uno es aproximadamente novecientos treinta y ocho, con un factor de atenuación cercano a mil ochocientos setenta y seis.\nLa ganancia máxima total de la cadena es del orden de mil ochocientos y está repartida para evitar saturación localizada.\nTransición: esa recuperación de banda tiene un costo medible en sensibilidad, ruido y margen de offset."}
+{"kind":"slide","id":"sl/nxtf22","slide":13,"title":"RESULTADO MEDIDO · AFE","textShapes":18}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":13,"text":"RESULTADO MEDIDO · AFE","textPreview":"RESULTADO MEDIDO · AFE","textChars":22,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":13,"text":"Recuperar baja frecuencia consume rango dinámico","textPreview":"Recuperar baja frecuencia consume rango dinámico","textChars":48,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":13,"text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/j6tovaho","slide":13,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/1cfa9w3m","slide":13,"bbox":[1000,155,145,28]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":13,"text":"MEDIDO","textPreview":"MEDIDO","textChars":6,"textLines":1,"bbox":[1008,160,129,18]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":13,"text":"≈ 1876×","textPreview":"≈ 1876×","textChars":7,"textLines":1,"bbox":[805,218,335,60]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":13,"text":"compensación requerida","textPreview":"compensación requerida","textChars":22,"textLines":1,"bbox":[815,280,315,35]}
+{"kind":"shape","id":"sh/s36hcrmh","slide":13,"bbox":[815,342,315,2]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":13,"text":"≈ 1800×","textPreview":"≈ 1800×","textChars":7,"textLines":1,"bbox":[805,375,335,60]}
+{"kind":"textbox","id":"sh/a1gvy90j","slide":13,"text":"ganancia total disponible","textPreview":"ganancia total disponible","textChars":25,"textLines":1,"bbox":[815,437,315,35]}
+{"kind":"textbox","id":"sh/zidonyd0","slide":13,"text":"La forma del barrido está verificada; la calibración sísmica extremo a extremo aún está abierta.","textPreview":"La forma del barrido está verificada; la calibración sísmica extremo a extremo aún está abierta.","textChars":96,"textLines":1,"bbox":[805,506,335,86]}
+{"kind":"textbox","id":"sh/svu9knih","slide":13,"text":"Fuente: main.pdf · respuesta medida del AFE","textPreview":"Fuente: main.pdf · respuesta medida del AFE","textChars":43,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/hgn29gr2","slide":13,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/ap4r65wj","slide":13,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/za1gvy90","slide":13,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/sji5snel","slide":13,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/h4byhgn2","slide":13,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/psfil0rq","slide":13,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/w7mp0bi9","slide":13,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":13,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/e1w7mp0b","slide":13,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/pg3ex0nu","slide":13,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/wval87ed","slide":13,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/7adsji5s","slide":13,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/epkzupwb","slide":13,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/lc7u54zi","slide":13,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/wra5gbq1","slide":13,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/al87ed8b","slide":13,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/z61032ls","slide":13,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/z25kb6xk","slide":13,"name":"","alt":"Respuesta medida de la cadena geófono a ADC","bbox":[55,150,690,470]}
+{"kind":"notes","id":"nt/nxtf22","slide":13,"text":"El barrido medido verifica la forma esperada de la cadena y su continuidad funcional.\nSin embargo, la alta ganancia también amplifica ruido, deriva y errores de offset; no equivale a recuperar información inexistente.\nLa figura no debe presentarse como calibración sísmica absoluta extremo a extremo, porque ese ensayo aún está pendiente.\nTransición: el offset es especialmente crítico porque desplaza toda la señal dentro de una ventana ADC finita."}
+{"kind":"slide","id":"sl/leyqpn","slide":14,"title":"RIESGO DE MEDICIÓN","textShapes":17}
+{"kind":"textbox","id":"sh/v6psfil0","slide":14,"text":"RIESGO DE MEDICIÓN","textPreview":"RIESGO DE MEDICIÓN","textChars":18,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/knih4byh","slide":14,"text":"El offset reduce el margen útil del ADC","textPreview":"El offset reduce el margen útil del ADC","textChars":39,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":14,"text":"14","textPreview":"14","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/29gr2p8n","slide":14,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":14,"text":"Sin corrección","textPreview":"Sin corrección","textChars":14,"textLines":1,"bbox":[842,183,300,34]}
+{"kind":"textbox","id":"sh/d0z61032","slide":14,"text":"el offset consume margen y produce recorte en los rieles del ADC.","textPreview":"el offset consume margen y produce recorte en los rieles del ADC.","textChars":65,"textLines":1,"bbox":[842,228,330,90]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":14,"bbox":[842,349,330,2]}
+{"kind":"textbox","id":"sh/vixczed8","slide":14,"text":"Con corrección","textPreview":"Con corrección","textChars":14,"textLines":1,"bbox":[842,380,300,34]}
+{"kind":"textbox","id":"sh/vmtwra5g","slide":14,"text":"la señal queda centrada y la ganancia disponible se aprovecha mejor.","textPreview":"la señal queda centrada y la ganancia disponible se aprovecha mejor.","textChars":68,"textLines":1,"bbox":[842,425,330,90]}
+{"kind":"textbox","id":"sh/61032lsz","slide":14,"text":"La corrección se congela durante la adquisición para no modular la fase.","textPreview":"La corrección se congela durante la adquisición para no modular la fase.","textChars":72,"textLines":1,"bbox":[842,548,330,66]}
+{"kind":"textbox","id":"sh/dsji5sne","slide":14,"text":"Fuente: main.pdf · motivación de la calibración de offset","textPreview":"Fuente: main.pdf · motivación de la calibración de offset","textChars":57,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/o7qpg3ex","slide":14,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":14,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/6dcbulwv","slide":14,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":14,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/oj2t83it","slide":14,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":14,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/6hcrmhk3","slide":14,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":14,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/3ex0nuxc","slide":14,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/szqtcj6t","slide":14,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/lkjm1cfa","slide":14,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/ahoza1gv","slide":14,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/32lszqtc","slide":14,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":14,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/l87ed8ba","slide":14,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/e9cvixcz","slide":14,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/3q5o7qpg","slide":14,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/e9cvixcz","slide":14,"name":"","alt":"Una captura de Canchita con offset sintético y la misma captura centrada","bbox":[52,164,750,420]}
+{"kind":"notes","id":"nt/leyqpn","slide":14,"text":"La morfología mostrada proviene de una captura real de Canchita; para hacer visible el mecanismo se añadió un offset sintético sobre la misma señal.\nUn offset grande desplaza la señal y reduce el rango disponible antes de saturar el convertidor.\nLa calibración busca centrar cada etapa para aprovechar la ganancia sin introducir una corrección dinámica durante la captura.\nModificar el código de compensación mientras se mide podría alterar amplitud y fase, por eso la calibración es foreground.\nTransición: el firmware implementa esa calibración como una secuencia auditable con control PI y persistencia."}
+{"kind":"slide","id":"sl/biu1mv","slide":15,"title":"FIRMWARE REAL","textShapes":22}
+{"kind":"textbox","id":"sh/6tovahoz","slide":15,"text":"FIRMWARE REAL","textPreview":"FIRMWARE REAL","textChars":13,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":15,"text":"Calibración foreground implementada y auditable","textPreview":"Calibración foreground implementada y auditable","textChars":47,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/ovahoza1","slide":15,"text":"15","textPreview":"15","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/z25kb6xk","slide":15,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/d8v6psfi","slide":15,"bbox":[994,152,170,28]}
+{"kind":"textbox","id":"sh/onyd0z61","slide":15,"text":"IMPLEMENTADO","textPreview":"IMPLEMENTADO","textChars":12,"textLines":1,"bbox":[1002,157,154,18]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":15,"text":"128 taps","textPreview":"128 taps","textChars":8,"textLines":1,"bbox":[805,220,135,30]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":15,"text":"FIR para estimar offset","textPreview":"FIR para estimar offset","textChars":23,"textLines":1,"bbox":[950,220,240,48]}
+{"kind":"shape","id":"sh/4zidonyd","slide":15,"bbox":[805,278,365,2]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":15,"text":"PI","textPreview":"PI","textChars":2,"textLines":1,"bbox":[805,308,135,30]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":15,"text":"deadband + anti-windup","textPreview":"deadband + anti-windup","textChars":22,"textLines":1,"bbox":[950,308,240,48]}
+{"kind":"shape","id":"sh/fepkzupw","slide":15,"bbox":[805,366,365,2]}
+{"kind":"textbox","id":"sh/4r65wjud","slide":15,"text":"EEPROM","textPreview":"EEPROM","textChars":6,"textLines":1,"bbox":[805,396,135,30]}
+{"kind":"textbox","id":"sh/xc3ylc7u","slide":15,"text":"códigos por ganancia + CRC","textPreview":"códigos por ganancia + CRC","textChars":26,"textLines":1,"bbox":[950,396,240,48]}
+{"kind":"shape","id":"sh/mlkjm1cf","slide":15,"bbox":[805,454,365,2]}
+{"kind":"textbox","id":"sh/f6dcbulw","slide":15,"text":"CAPTURA","textPreview":"CAPTURA","textChars":7,"textLines":1,"bbox":[805,484,135,30]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":15,"text":"control congelado","textPreview":"control congelado","textChars":17,"textLines":1,"bbox":[950,484,240,48]}
+{"kind":"shape","id":"sh/x0nuxc3y","slide":15,"bbox":[805,542,365,2]}
+{"kind":"textbox","id":"sh/h4byhgn2","slide":15,"text":"El grafo confirma las rutinas cal_pi_* y las etapas de servicio en calibration.c.","textPreview":"El grafo confirma las rutinas cal_pi_* y las etapas de servicio en calibration.c.","textChars":81,"textLines":1,"bbox":[805,565,365,48]}
+{"kind":"textbox","id":"sh/sji5snel","slide":15,"text":"Fuente: main.pdf + código indexado · calibration.c","textPreview":"Fuente: main.pdf + código indexado · calibration.c","textChars":50,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/3ylc7u54","slide":15,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/adsji5sn","slide":15,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/lszqtcj6","slide":15,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":15,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/3m94fu18","slide":15,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":15,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/hoza1gvy","slide":15,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/s36hcrmh","slide":15,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":15,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/vixczed8","slide":15,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/k3q5o7qp","slide":15,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":15,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/6psfil0r","slide":15,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/val87ed8","slide":15,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/kre1w7mp","slide":15,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":15,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/2lszqtcj","slide":15,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/36hcrmhk","slide":15,"name":"","alt":"Flujo de calibración foreground del sistema PSoC","bbox":[52,150,710,470]}
+{"kind":"notes","id":"nt/biu1mv","slide":15,"text":"La calibración recorre las etapas del frente analógico y estima offset con un FIR de ciento veintiocho taps.\nEl control PI incorpora banda muerta y anti-windup; los códigos se conservan por ganancia en EEPROM con CRC.\nEl grafo del repositorio confirma funciones cal pi start, service y límites de integral en calibration.c, por lo que esto no es sólo diseño documental.\nDurante la adquisición el lazo queda desactivado y los códigos permanecen fijos.\nTransición: existe además una revisión candidata del AFE que amplía margen, pero todavía no debe confundirse con hardware validado."}
+{"kind":"slide","id":"sl/z4edpq","slide":16,"title":"DECISIÓN DE DISEÑO","textShapes":20}
+{"kind":"textbox","id":"sh/65wjudg7","slide":16,"text":"DECISIÓN DE DISEÑO","textPreview":"DECISIÓN DE DISEÑO","textChars":18,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":16,"text":"La revisión candidata amplía margen, pero aún no es resultado","textPreview":"La revisión candidata amplía margen, pero aún no es resultado","textChars":61,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/obm58z25","slide":16,"text":"16","textPreview":"16","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/zed8v6ps","slide":16,"bbox":[52,145,1176,2]}
+{"kind":"shape","id":"sh/hk3q5o7q","slide":16,"bbox":[936,153,150,28]}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":16,"text":"CANDIDATO","textPreview":"CANDIDATO","textChars":9,"textLines":1,"bbox":[944,158,134,18]}
+{"kind":"shape","id":"sh/z61032ls","slide":16,"bbox":[1092,153,135,28]}
+{"kind":"textbox","id":"sh/al87ed8b","slide":16,"text":"PENDIENTE","textPreview":"PENDIENTE","textChars":9,"textLines":1,"bbox":[1100,158,119,18]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":16,"text":"PGA output","textPreview":"PGA output","textChars":10,"textLines":1,"bbox":[835,225,330,36]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":16,"text":"rango aproximado 2,06–3,02 V","textPreview":"rango aproximado 2,06–3,02 V","textChars":28,"textLines":1,"bbox":[835,270,350,56]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":16,"bbox":[835,345,350,2]}
+{"kind":"textbox","id":"sh/vixczed8","slide":16,"text":"IDAC","textPreview":"IDAC","textChars":4,"textLines":1,"bbox":[835,374,330,36]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":16,"text":"reemplaza VDAC para corrección fina","textPreview":"reemplaza VDAC para corrección fina","textChars":35,"textLines":1,"bbox":[835,419,350,56]}
+{"kind":"shape","id":"sh/dcbulwva","slide":16,"bbox":[835,493,350,2]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":16,"text":"Hasta ×50","textPreview":"Hasta ×50","textChars":9,"textLines":1,"bbox":[835,522,350,38]}
+{"kind":"textbox","id":"sh/val87ed8","slide":16,"text":"requiere prototipo y barrido completo","textPreview":"requiere prototipo y barrido completo","textChars":37,"textLines":1,"bbox":[835,565,350,46]}
+{"kind":"textbox","id":"sh/knih4byh","slide":16,"text":"Fuente: main.pdf · propuesta IDAC + PGAout","textPreview":"Fuente: main.pdf · propuesta IDAC + PGAout","textChars":42,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/d8bat47y","slide":16,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":16,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/oj2t83it","slide":16,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":16,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/6dcbulwv","slide":16,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/dsji5sne","slide":16,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/o7qpg3ex","slide":16,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/vmtwra5g","slide":16,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/61032lsz","slide":16,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":16,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/ovahoza1","slide":16,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/yxobm58z","slide":16,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/nih4byhg","slide":16,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":16,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/5o7qpg3e","slide":16,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":16,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/r65wjudg","slide":16,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/z25kb6xk","slide":16,"name":"","alt":"Propuesta de frente analógico con IDAC y salida PGA","bbox":[50,150,750,470]}
+{"kind":"notes","id":"nt/z4edpq","slide":16,"text":"La propuesta sustituye VDAC por IDAC y usa la salida del PGA para ampliar el margen de centrado y ganancia.\nEl rango estimado es aproximadamente dos coma cero seis a tres coma cero dos voltios, con ganancia de hasta cincuenta.\nDebe etiquetarse como candidato porque todavía no existe validación de prototipo, ruido, fase y saturación extremo a extremo.\nTransición: la versión implementada ya dispone de una ruta digital determinista desde ADC hasta memoria."}
+{"kind":"slide","id":"sl/bzm2jm","slide":17,"title":"IMPLEMENTACIÓN · ADQUISICIÓN","textShapes":22}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":17,"text":"IMPLEMENTACIÓN · ADQUISICIÓN","textPreview":"IMPLEMENTACIÓN · ADQUISICIÓN","textChars":28,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/rytsvu9k","slide":17,"text":"La captura digital separa timing y transporte","textPreview":"La captura digital separa timing y transporte","textChars":45,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/yd0z6103","slide":17,"text":"17","textPreview":"17","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/9s36hcrm","slide":17,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/rmhk3q5o","slide":17,"bbox":[1011,153,170,28]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":17,"text":"IMPLEMENTADO","textPreview":"IMPLEMENTADO","textChars":12,"textLines":1,"bbox":[1019,158,154,18]}
+{"kind":"textbox","id":"sh/5o7qpg3e","slide":17,"text":"18 bits","textPreview":"18 bits","textChars":7,"textLines":1,"bbox":[862,225,170,36]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":17,"text":"ADC ΔΣ nominal","textPreview":"ADC ΔΣ nominal","textChars":14,"textLines":1,"bbox":[1030,227,160,52]}
+{"kind":"shape","id":"sh/m94fu18j","slide":17,"bbox":[862,285,325,2]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":17,"text":"2604 SPS","textPreview":"2604 SPS","textChars":8,"textLines":1,"bbox":[862,313,170,36]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":17,"text":"tasa de muestreo","textPreview":"tasa de muestreo","textChars":16,"textLines":1,"bbox":[1030,315,160,52]}
+{"kind":"shape","id":"sh/x0nuxc3y","slide":17,"bbox":[862,373,325,2]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":17,"text":"DMA ×2","textPreview":"DMA ×2","textChars":6,"textLines":1,"bbox":[862,401,170,36]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":17,"text":"RAM filtrada + cruda","textPreview":"RAM filtrada + cruda","textChars":20,"textLines":1,"bbox":[1030,403,160,52]}
+{"kind":"shape","id":"sh/83itgfml","slide":17,"bbox":[862,461,325,2]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":17,"text":"UDB","textPreview":"UDB","textChars":3,"textLines":1,"bbox":[862,489,170,36]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":17,"text":"timing en hardware","textPreview":"timing en hardware","textChars":18,"textLines":1,"bbox":[1030,491,160,52]}
+{"kind":"shape","id":"sh/fepkzupw","slide":17,"bbox":[862,549,325,2]}
+{"kind":"textbox","id":"sh/72x4nap4","slide":17,"text":"El grafo confirma DMA para RAM filtrada y cruda, además de estados psoc_arm y psoc_enter_sampling.","textPreview":"El grafo confirma DMA para RAM filtrada y cruda, además de estados psoc_arm y psoc_enter_sampling.","textChars":98,"textLines":1,"bbox":[862,575,330,42]}
+{"kind":"textbox","id":"sh/ih4byhgn","slide":17,"text":"Fuente: main.pdf + código indexado · PSoC firmware","textPreview":"Fuente: main.pdf + código indexado · PSoC firmware","textChars":50,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/p8nqxs72","slide":17,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/0nuxc3yl","slide":17,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/7ed8bat4","slide":17,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/itgfmlkj","slide":17,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/pkzupwb2","slide":17,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/0z61032l","slide":17,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/7qpg3ex0","slide":17,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":17,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/obm58z25","slide":17,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":17,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/65wjudg7","slide":17,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":17,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/oza1gvy9","slide":17,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":17,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/6xkf6dcb","slide":17,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":17,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/orytsvu9","slide":17,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/1032lszq","slide":17,"name":"","alt":"Arquitectura digital implementada en PSoC para captura y memoria","bbox":[52,152,770,468]}
+{"kind":"notes","id":"nt/bzm2jm","slide":17,"text":"El ADC Delta-Sigma opera con dieciocho bits nominales y una tasa de dos mil seiscientas cuatro muestras por segundo.\nLa temporización se lleva a hardware UDB y dos canales DMA trasladan datos filtrados y crudos a RAM.\nEl grafo confirma las rutas DMA y los estados de armado y muestreo del PSoC, lo que respalda la arquitectura documentada.\nSeparar captura determinista de comunicación evita que la latencia de red module el instante de muestreo.\nTransición: el transporte inalámbrico se eligió por operación de campo, con una decisión explícita sobre integridad."}
+{"kind":"slide","id":"sl/q263uz","slide":18,"title":"DECISIÓN · COMUNICACIÓN","textShapes":21}
+{"kind":"textbox","id":"sh/vahoza1g","slide":18,"text":"DECISIÓN · COMUNICACIÓN","textPreview":"DECISIÓN · COMUNICACIÓN","textChars":23,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/ovahoza1","slide":18,"text":"La red inalámbrica prioriza campo autónomo e integridad","textPreview":"La red inalámbrica prioriza campo autónomo e integridad","textChars":55,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":18,"text":"18","textPreview":"18","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/6hcrmhk3","slide":18,"bbox":[52,145,1176,2]}
+{"kind":"shape","id":"sh/z25kb6xk","slide":18,"bbox":[90,175,310,270]}
+{"kind":"textbox","id":"sh/onyd0z61","slide":18,"text":"Wi-Fi","textPreview":"Wi-Fi","textChars":5,"textLines":1,"bbox":[115,205,260,45]}
+{"kind":"textbox","id":"sh/d8v6psfi","slide":18,"text":"infraestructura\ny mayor complejidad","textPreview":"infraestructura | y mayor complejidad","textChars":35,"textLines":2,"bbox":[118,280,254,74]}
+{"kind":"shape","id":"sh/6dcbulwv","slide":18,"bbox":[455,175,310,270]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":18,"text":"ESP-NOW","textPreview":"ESP-NOW","textChars":7,"textLines":1,"bbox":[480,205,260,45]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":18,"text":"sin router\ny baja sobrecarga","textPreview":"sin router | y baja sobrecarga","textChars":28,"textLines":2,"bbox":[483,280,254,74]}
+{"kind":"shape","id":"sh/y90je9cv","slide":18,"bbox":[527,380,165,28]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":18,"text":"SELECCIONADO","textPreview":"SELECCIONADO","textChars":12,"textLines":1,"bbox":[535,385,149,18]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":18,"bbox":[820,175,310,270]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":18,"text":"cable","textPreview":"cable","textChars":5,"textLines":1,"bbox":[845,205,260,45]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":18,"text":"robusto\npero menos desplegable","textPreview":"robusto | pero menos desplegable","textChars":30,"textLines":2,"bbox":[848,280,254,74]}
+{"kind":"shape","id":"sh/58z25kb6","slide":18,"bbox":[607.5,474,5,56]}
+{"kind":"shape","id":"sh/gn29gr2p","slide":18,"bbox":[601,526,18,18]}
+{"kind":"textbox","id":"sh/neloj2t8","slide":18,"text":"Decisión: ESP-NOW + maestro con Wi-Fi propia + respaldo local","textPreview":"Decisión: ESP-NOW + maestro con Wi-Fi propia + respaldo local","textChars":61,"textLines":1,"bbox":[180,550,860,38]}
+{"kind":"textbox","id":"sh/ytsvu9kn","slide":18,"text":"La red transporta capturas completas; no gobierna el reloj de muestreo.","textPreview":"La red transporta capturas completas; no gobierna el reloj de muestreo.","textChars":71,"textLines":1,"bbox":[275,610,670,30]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":18,"text":"Fuente: main.pdf · arquitectura ESP32/ESP-NOW","textPreview":"Fuente: main.pdf · arquitectura ESP32/ESP-NOW","textChars":45,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/vixczed8","slide":18,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":18,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/donyd0z6","slide":18,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":18,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/val87ed8","slide":18,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":18,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/dcbulwva","slide":18,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":18,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/v6psfil0","slide":18,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/h4byhgn2","slide":18,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/sji5snel","slide":18,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/3ylc7u54","slide":18,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/adsji5sn","slide":18,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/lszqtcj6","slide":18,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/s72x4nap","slide":18,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":18,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/a5gbq1or","slide":18,"bbox":[1016,688,212,2]}
+{"kind":"notes","id":"nt/q263uz","slide":18,"text":"ESP-NOW se eligió por disponibilidad, costo, baja sobrecarga y operación sin router externo.\nEl maestro crea su propia red Wi-Fi para la interfaz, mientras los esclavos conservan respaldo local de la captura.\nLa comunicación no controla el instante de muestreo; transporta datos ya adquiridos por una ruta determinista.\nTransición: aun así, el error de sincronización debe expresarse como error físico de fase y velocidad."}
+{"kind":"slide","id":"sl/l3i3lo","slide":19,"title":"SINCRONIZACIÓN MEDIDA","textShapes":22}
+{"kind":"textbox","id":"sh/m94fu18j","slide":19,"text":"SINCRONIZACIÓN MEDIDA","textPreview":"SINCRONIZACIÓN MEDIDA","textChars":21,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/x0nuxc3y","slide":19,"text":"El error temporal se traduce en error de velocidad","textPreview":"El error temporal se traduce en error de velocidad","textChars":50,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/4fu18jqh","slide":19,"text":"19","textPreview":"19","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/fil0rqd4","slide":19,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/qxs72x4n","slide":19,"bbox":[1010,151,145,28]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":19,"text":"MEDIDO","textPreview":"MEDIDO","textChars":6,"textLines":1,"bbox":[1018,156,129,18]}
+{"kind":"textbox","id":"sh/83itgfml","slide":19,"text":"Δc / c ≈ c · Δt / Δx","textPreview":"Δc / c ≈ c · Δt / Δx","textChars":20,"textLines":1,"bbox":[80,173,600,75]}
+{"kind":"shape","id":"sh/fepkzupw","slide":19,"bbox":[86,285,570,240]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":19,"text":"CASO DE REFERENCIA","textPreview":"CASO DE REFERENCIA","textChars":18,"textLines":1,"bbox":[112,308,250,28]}
+{"kind":"textbox","id":"sh/oj2t83it","slide":19,"text":"c = 100 m/s","textPreview":"c = 100 m/s","textChars":11,"textLines":1,"bbox":[112,360,220,36]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":19,"text":"Δx = 2 m","textPreview":"Δx = 2 m","textChars":8,"textLines":1,"bbox":[112,411,220,36]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":19,"text":"Δt = 200 µs","textPreview":"Δt = 200 µs","textChars":11,"textLines":1,"bbox":[112,462,240,36]}
+{"kind":"shape","id":"sh/vy90je9c","slide":19,"bbox":[686,397.5,84,5]}
+{"kind":"shape","id":"sh/o7qpg3ex","slide":19,"bbox":[766,391,18,18]}
+{"kind":"textbox","id":"sh/dsji5sne","slide":19,"text":"≈ 1%","textPreview":"≈ 1%","textChars":4,"textLines":1,"bbox":[818,300,330,95]}
+{"kind":"textbox","id":"sh/61032lsz","slide":19,"text":"error relativo de velocidad","textPreview":"error relativo de velocidad","textChars":27,"textLines":1,"bbox":[834,401,300,35]}
+{"kind":"shape","id":"sh/vmtwra5g","slide":19,"bbox":[830,472,310,2]}
+{"kind":"textbox","id":"sh/ovahoza1","slide":19,"text":"100 µs a 100 Hz = 3,6°","textPreview":"100 µs a 100 Hz = 3,6°","textChars":22,"textLines":1,"bbox":[830,500,310,40]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":19,"text":"128 disparos: 100–200 µs","textPreview":"128 disparos: 100–200 µs","textChars":24,"textLines":1,"bbox":[830,558,310,36]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":19,"text":"Fuente: main.pdf · medición de sincronismo y propagación de error","textPreview":"Fuente: main.pdf · medición de sincronismo y propagación de error","textChars":65,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/c3ylc7u5","slide":19,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":19,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/uxc3ylc7","slide":19,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/1cfa9w3m","slide":19,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/crmhk3q5","slide":19,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/j6tovaho","slide":19,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/ulwval87","slide":19,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":19,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/8nqxs72x","slide":19,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/mhk3q5o7","slide":19,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/b2hwfyxo","slide":19,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/4nap4r65","slide":19,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/t83itgfm","slide":19,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/m58z25kb","slide":19,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/bq1oryts","slide":19,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/4byhgn29","slide":19,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/twra5gbq","slide":19,"bbox":[1016,688,212,2]}
+{"kind":"notes","id":"nt/l3i3lo","slide":19,"text":"En ciento veintiocho disparos se midió una dispersión temporal del orden de cien a doscientos microsegundos.\nUsando cien metros por segundo, dos metros de separación y doscientos microsegundos, la aproximación da cerca de uno por ciento de error relativo en velocidad.\nA cien hertz, cien microsegundos equivalen a uno por ciento del período o tres coma seis grados de fase.\nLa cifra debe expresarse en estos términos físicos y no como porcentaje ambiguo de una muestra.\nTransición: el segundo requisito de red es poder demostrar que ningún fragmento perdido se sustituyó silenciosamente."}
+{"kind":"slide","id":"sl/ehhyvi","slide":20,"title":"INTEGRIDAD AUDITABLE","textShapes":31}
+{"kind":"textbox","id":"sh/zed8v6ps","slide":20,"text":"INTEGRIDAD AUDITABLE","textPreview":"INTEGRIDAD AUDITABLE","textChars":20,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":20,"text":"Secuencia, ACK y respaldo hacen auditable cada captura","textPreview":"Secuencia, ACK y respaldo hacen auditable cada captura","textChars":54,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":20,"text":"20","textPreview":"20","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/65wjudg7","slide":20,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/zqtcj6to","slide":20,"text":"ESCLAVO","textPreview":"ESCLAVO","textChars":7,"textLines":1,"bbox":[70,180,130,30]}
+{"kind":"shape","id":"sh/obm58z25","slide":20,"bbox":[205,170,108,70]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":20,"text":"frag 1","textPreview":"frag 1","textChars":6,"textLines":1,"bbox":[213,188,92,24]}
+{"kind":"shape","id":"sh/a9w3m94f","slide":20,"bbox":[335,170,108,70]}
+{"kind":"textbox","id":"sh/zupwb2hw","slide":20,"text":"frag 2","textPreview":"frag 2","textChars":6,"textLines":1,"bbox":[343,188,92,24]}
+{"kind":"shape","id":"sh/7y1kre1w","slide":20,"bbox":[465,170,108,70]}
+{"kind":"textbox","id":"sh/ed8v6psf","slide":20,"text":"frag 3","textPreview":"frag 3","textChars":6,"textLines":1,"bbox":[473,188,92,24]}
+{"kind":"shape","id":"sh/p4r65wju","slide":20,"bbox":[595,170,108,70]}
+{"kind":"textbox","id":"sh/wjudg7ad","slide":20,"text":"frag 4","textPreview":"frag 4","textChars":6,"textLines":1,"bbox":[603,188,92,24]}
+{"kind":"shape","id":"sh/7qpg3ex0","slide":20,"bbox":[710,202.5,140,5]}
+{"kind":"shape","id":"sh/i5sneloj","slide":20,"bbox":[846,196,18,18]}
+{"kind":"shape","id":"sh/pwb2hwfy","slide":20,"bbox":[875,165,280,80]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":20,"text":"MAESTRO","textPreview":"MAESTRO","textChars":7,"textLines":1,"bbox":[900,180,230,26]}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":20,"text":"reensambla + valida","textPreview":"reensambla + valida","textChars":19,"textLines":1,"bbox":[900,211,230,24]}
+{"kind":"shape","id":"sh/itgfmlkj","slide":20,"bbox":[570,260,440,4]}
+{"kind":"shape","id":"sh/qtcj6tov","slide":20,"bbox":[556,323,18,18]}
+{"kind":"textbox","id":"sh/je9cvixc","slide":20,"text":"NACK / fragmento faltante","textPreview":"NACK / fragmento faltante","textChars":25,"textLines":1,"bbox":[660,278,300,30]}
+{"kind":"shape","id":"sh/8z25kb6x","slide":20,"bbox":[120,360,1020,130]}
+{"kind":"textbox","id":"sh/1gvy90je","slide":20,"text":"REGLA DE INTEGRIDAD","textPreview":"REGLA DE INTEGRIDAD","textChars":19,"textLines":1,"bbox":[150,385,260,28]}
+{"kind":"textbox","id":"sh/q1orytsv","slide":20,"text":"No interpolar. Reintentar. Conservar respaldo local. Liberar memoria sólo después de confirmar.","textPreview":"No interpolar. Reintentar. Conservar respaldo local. Liberar memoria sólo después de confirmar.","textChars":95,"textLines":1,"bbox":[150,423,930,60]}
+{"kind":"shape","id":"sh/fmlkjm1c","slide":20,"bbox":[180,535,28,28]}
+{"kind":"textbox","id":"sh/87ed8bat","slide":20,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[183,537,22,20]}
+{"kind":"textbox","id":"sh/xs72x4na","slide":20,"text":"secuencia","textPreview":"secuencia","textChars":9,"textLines":1,"bbox":[218,536,150,26]}
+{"kind":"shape","id":"sh/qd4vmtwr","slide":20,"bbox":[430,535,28,28]}
+{"kind":"textbox","id":"sh/fyxobm58","slide":20,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[433,537,22,20]}
+{"kind":"textbox","id":"sh/5wjudg7a","slide":20,"text":"CRC / tamaño","textPreview":"CRC / tamaño","textChars":12,"textLines":1,"bbox":[468,536,150,26]}
+{"kind":"shape","id":"sh/gbq1oryt","slide":20,"bbox":[700,535,28,28]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":20,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[703,537,22,20]}
+{"kind":"textbox","id":"sh/y90je9cv","slide":20,"text":"ACK","textPreview":"ACK","textChars":3,"textLines":1,"bbox":[738,536,150,26]}
+{"kind":"shape","id":"sh/58z25kb6","slide":20,"bbox":[900,535,28,28]}
+{"kind":"textbox","id":"sh/gn29gr2p","slide":20,"text":"✓","textPreview":"✓","textChars":1,"textLines":1,"bbox":[903,537,22,20]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":20,"text":"reintento","textPreview":"reintento","textChars":9,"textLines":1,"bbox":[938,536,150,26]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":20,"text":"El grafo confirma sendCompletionAckWithRetry y serviceCompletionAckRetry en el firmware ESP32.","textPreview":"El grafo confirma sendCompletionAckWithRetry y serviceCompletionAckRetry en el firmware ESP32.","textChars":94,"textLines":1,"bbox":[150,594,980,30]}
+{"kind":"textbox","id":"sh/5kb6xkf6","slide":20,"text":"Fuente: main.pdf + código indexado · transporte ESP32","textPreview":"Fuente: main.pdf + código indexado · transporte ESP32","textChars":53,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/czed8v6p","slide":20,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":20,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/donyd0z6","slide":20,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":20,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/vixczed8","slide":20,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":20,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/dcbulwva","slide":20,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":20,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/val87ed8","slide":20,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/knih4byh","slide":20,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/d8bat47y","slide":20,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/za1gvy90","slide":20,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/ap4r65wj","slide":20,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/hgn29gr2","slide":20,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/svu9knih","slide":20,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/zidonyd0","slide":20,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/a1gvy90j","slide":20,"bbox":[1016,688,212,2]}
+{"kind":"notes","id":"nt/ehhyvi","slide":20,"text":"Las capturas se fragmentan y numeran; el maestro reensambla, valida tamaño e integridad y confirma la recepción.\nSi falta un fragmento no se interpola, porque completar una muestra puede fabricar fase; se reintenta y se conserva respaldo local.\nEl grafo confirma las funciones de ACK con reintento y servicio de reintento en el firmware ESP32.\nLa memoria se libera solamente después de confirmación, de modo que la pérdida de red no se convierte en pérdida silenciosa de datos.\nTransición: esta arquitectura alimenta dos interfaces con responsabilidades diferentes."}
+{"kind":"slide","id":"sl/s00f1u","slide":21,"title":"INTERFACES","textShapes":16}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":21,"text":"INTERFACES","textPreview":"INTERFACES","textChars":10,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/0z61032l","slide":21,"text":"Campo y servidor: datos compartidos, roles distintos","textPreview":"Campo y servidor: datos compartidos, roles distintos","textChars":52,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":21,"text":"21","textPreview":"21","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/ih4byhgn","slide":21,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/p8nqxs72","slide":21,"bbox":[84,184,120,28]}
+{"kind":"textbox","id":"sh/ed8v6psf","slide":21,"text":"CAMPO","textPreview":"CAMPO","textChars":5,"textLines":1,"bbox":[92,188,104,20]}
+{"kind":"shape","id":"sh/7y1kre1w","slide":21,"bbox":[690,184,145,28]}
+{"kind":"textbox","id":"sh/rmhk3q5o","slide":21,"text":"SERVIDOR","textPreview":"SERVIDOR","textChars":8,"textLines":1,"bbox":[698,188,129,20]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":21,"text":"armar · configurar · capturar · exportar","textPreview":"armar · configurar · capturar · exportar","textChars":40,"textLines":1,"bbox":[72,580,530,30]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":21,"text":"validar · agrupar · promediar · invertir","textPreview":"validar · agrupar · promediar · invertir","textChars":40,"textLines":1,"bbox":[678,580,530,30]}
+{"kind":"textbox","id":"sh/g7adsji5","slide":21,"text":"Fuente: main.pdf + interfaces reales del repositorio","textPreview":"Fuente: main.pdf + interfaces reales del repositorio","textChars":52,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/rytsvu9k","slide":21,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/yd0z6103","slide":21,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/90je9cvi","slide":21,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":21,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/r65wjudg","slide":21,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":21,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/6tovahoz","slide":21,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":21,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/ovahoza1","slide":21,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":21,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/6hcrmhk3","slide":21,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":21,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/onyd0z61","slide":21,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/d8v6psfi","slide":21,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/6dcbulwv","slide":21,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":21,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/lwval87e","slide":21,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/upwb2hwf","slide":21,"name":"","alt":"Interfaz Geophone Scope para operación de campo","bbox":[52,190,570,360]}
+{"kind":"image","id":"im/5gbq1ory","slide":21,"name":"","alt":"Servidor de datos para campañas y procesamiento","bbox":[658,190,570,360]}
+{"kind":"notes","id":"nt/s00f1u","slide":21,"text":"La interfaz de campo Geophone Scope arma nodos, configura, captura y exporta sin requerir Internet.\nEl servidor conserva campañas y metadatos, valida, agrupa, alinea, promedia, genera dispersión e invierte.\nEl grafo muestra rutas reales para dispersion, auto-pick, inversions, waterfall, averages, jobs y exports.\nLa separación evita sobrecargar la operación de campo y mantiene trazabilidad para el análisis posterior.\nTransición: la campaña Canchita demuestra que la cadena ya produce un registro multicanal y una imagen de dispersión reales."}
+{"kind":"slide","id":"sl/5iubp6","slide":22,"title":"CAMPAÑA CANCHITA","textShapes":20}
+{"kind":"textbox","id":"sh/vy90je9c","slide":22,"text":"CAMPAÑA CANCHITA","textPreview":"CAMPAÑA CANCHITA","textChars":16,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/oj2t83it","slide":22,"text":"La cadena completa ya corre con datos de campo","textPreview":"La cadena completa ya corre con datos de campo","textChars":46,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":22,"text":"22","textPreview":"22","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/61032lsz","slide":22,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/dsji5sne","slide":22,"bbox":[1030,148,145,28]}
+{"kind":"textbox","id":"sh/6tovahoz","slide":22,"text":"MEDIDO","textPreview":"MEDIDO","textChars":6,"textLines":1,"bbox":[1038,153,129,18]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":22,"text":"21","textPreview":"21","textChars":2,"textLines":1,"bbox":[985,218,235,66]}
+{"kind":"textbox","id":"sh/7qpg3ex0","slide":22,"text":"posiciones","textPreview":"posiciones","textChars":10,"textLines":1,"bbox":[985,285,235,30]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":22,"text":"2 m","textPreview":"2 m","textChars":3,"textLines":1,"bbox":[985,350,235,58]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":22,"text":"paso","textPreview":"paso","textChars":4,"textLines":1,"bbox":[985,410,235,30]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":22,"text":"40 m","textPreview":"40 m","textChars":4,"textLines":1,"bbox":[985,475,235,58]}
+{"kind":"textbox","id":"sh/7y1kre1w","slide":22,"text":"apertura","textPreview":"apertura","textChars":8,"textLines":1,"bbox":[985,535,235,30]}
+{"kind":"textbox","id":"sh/ed8v6psf","slide":22,"text":"Registro → dispersión → selección → inversión","textPreview":"Registro → dispersión → selección → inversión","textChars":45,"textLines":1,"bbox":[970,588,260,45]}
+{"kind":"textbox","id":"sh/p4r65wju","slide":22,"text":"Fuente: main.pdf · campaña real Canchita","textPreview":"Fuente: main.pdf · campaña real Canchita","textChars":40,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/wjudg7ad","slide":22,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/72x4nap4","slide":22,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/ih4byhgn","slide":22,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/mtwra5gb","slide":22,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/fepkzupw","slide":22,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/4zidonyd","slide":22,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/xkf6dcbu","slide":22,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/mlkjm1cf","slide":22,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/f6dcbulw","slide":22,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/4r65wjud","slide":22,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/xc3ylc7u","slide":22,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":22,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/fu18jqh0","slide":22,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/1032lszq","slide":22,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/cfa9w3m9","slide":22,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/judg7ads","slide":22,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/u9knih4b","slide":22,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/2hwfyxob","slide":22,"name":"","alt":"Registro multicanal de la campaña Canchita","bbox":[32,164,455,382]}
+{"kind":"image","id":"im/94fu18jq","slide":22,"name":"","alt":"Imagen de dispersión completa de la campaña Canchita","bbox":[492,148,465,414]}
+{"kind":"notes","id":"nt/5iubp6","slide":22,"text":"La campaña Canchita utiliza veintiuna posiciones, dos metros de paso y cuarenta metros de apertura.\nLa figura reúne el registro wiggle y las imágenes de dispersión obtenidas con datos reales.\nEsto demuestra funcionamiento de punta a punta de la cadena de análisis, pero todavía no valida por sí solo un perfil Vs final.\nTransición: antes de interpretar la cresta debemos imponer los límites geométricos del arreglo."}
+{"kind":"slide","id":"sl/w8i9fi","slide":23,"title":"LÍMITE EXPERIMENTAL","textShapes":20}
+{"kind":"textbox","id":"sh/65wjudg7","slide":23,"text":"LÍMITE EXPERIMENTAL","textPreview":"LÍMITE EXPERIMENTAL","textChars":19,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":23,"text":"La geometría define qué parte de la dispersión es observable","textPreview":"La geometría define qué parte de la dispersión es observable","textChars":60,"textLines":1,"bbox":[52,57,1080,88]}
+{"kind":"textbox","id":"sh/obm58z25","slide":23,"text":"23","textPreview":"23","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/zed8v6ps","slide":23,"bbox":[52,145,1176,2]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":23,"text":"c ≥ 2 · Δx · f","textPreview":"c ≥ 2 · Δx · f","textChars":14,"textLines":1,"bbox":[796,180,380,60]}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":23,"text":"Con Δx = 2 m","textPreview":"Con Δx = 2 m","textChars":12,"textLines":1,"bbox":[850,259,270,36]}
+{"kind":"textbox","id":"sh/z61032ls","slide":23,"text":"cₐₗᵢₐₛ = 4f","textPreview":"cₐₗᵢₐₛ = 4f","textChars":11,"textLines":1,"bbox":[822,310,330,55]}
+{"kind":"shape","id":"sh/al87ed8b","slide":23,"bbox":[808,390,360,172]}
+{"kind":"textbox","id":"sh/k3q5o7qp","slide":23,"text":"CRESTA ÚTIL","textPreview":"CRESTA ÚTIL","textChars":11,"textLines":1,"bbox":[830,410,160,25]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":23,"text":"6–20 Hz","textPreview":"6–20 Hz","textChars":7,"textLines":1,"bbox":[830,446,145,42]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":23,"text":"70–110 m/s","textPreview":"70–110 m/s","textChars":10,"textLines":1,"bbox":[982,446,165,42]}
+{"kind":"textbox","id":"sh/vixczed8","slide":23,"text":"La cresta de 100 m/s cruza la cota cerca de 25 Hz.","textPreview":"La cresta de 100 m/s cruza la cota cerca de 25 Hz.","textChars":50,"textLines":1,"bbox":[830,498,310,55]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":23,"text":"La apertura de 40 m condiciona el extremo bajo; el paso de 2 m condiciona el alto.","textPreview":"La apertura de 40 m condiciona el extremo bajo; el paso de 2 m condiciona el alto.","textChars":82,"textLines":1,"bbox":[806,575,365,48]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":23,"text":"Fuente: main.pdf · geometría y aliasing espacial","textPreview":"Fuente: main.pdf · geometría y aliasing espacial","textChars":48,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/6psfil0r","slide":23,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/val87ed8","slide":23,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/knih4byh","slide":23,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":23,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/d4vmtwra","slide":23,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/oj2t83it","slide":23,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/vy90je9c","slide":23,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":23,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/dsji5sne","slide":23,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/o7qpg3ex","slide":23,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/vmtwra5g","slide":23,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/61032lsz","slide":23,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/dg7adsji","slide":23,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/ovahoza1","slide":23,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/yxobm58z","slide":23,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/nih4byhg","slide":23,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/g3ex0nux","slide":23,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/jqh0fepk","slide":23,"name":"","alt":"Geometría de las campañas con 21 posiciones y paso de dos metros","bbox":[50,155,700,455]}
+{"kind":"notes","id":"nt/w8i9fi","slide":23,"text":"El paso entre receptores fija una cota de aliasing espacial: la velocidad observable debe ser al menos dos veces delta x por frecuencia.\nCon dos metros de paso, la cota es cuatro veces la frecuencia; una cresta de cien metros por segundo cruza esa cota cerca de veinticinco hertz.\nLa apertura de cuarenta metros limita las longitudes de onda mayores y el extremo bajo de frecuencia.\nLa banda coherente observada está aproximadamente entre seis y veinte hertz y setenta a ciento diez metros por segundo.\nTransición: la autopotencia muestra que el problema principal está precisamente debajo de esa banda."}
+{"kind":"slide","id":"sl/uklt1r","slide":24,"title":"CWT / MORLET · EXPLORATORIO","textShapes":12}
+{"kind":"textbox","id":"sh/bi9s36hc","slide":24,"text":"CWT / MORLET · EXPLORATORIO","textPreview":"CWT / MORLET · EXPLORATORIO","textChars":27,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/032lszqt","slide":24,"text":"Wavelet estabiliza la imagen con los mismos datos","textPreview":"Wavelet estabiliza la imagen con los mismos datos","textChars":49,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/tovahoza","slide":24,"text":"24","textPreview":"24","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/i9s36hcr","slide":24,"bbox":[52,126,1176,2]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":24,"text":"Fuente: investigación CWT-Morlet · comparación Canchita","textPreview":"Fuente: investigación CWT-Morlet · comparación Canchita","textChars":55,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/p0bi9s36","slide":24,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/idonyd0z","slide":24,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/byhgn29g","slide":24,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/ra5gbq1o","slide":24,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/2p8nqxs7","slide":24,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/9gr2p8nq","slide":24,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/gvy90je9","slide":24,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/r2p8nqxs","slide":24,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/2hwfyxob","slide":24,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/94fu18jq","slide":24,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/kjm1cfa9","slide":24,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/rqd4vmtw","slide":24,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/25kb6xkf","slide":24,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":24,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/3m94fu18","slide":24,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":24,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/lszqtcj6","slide":24,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/at47y1kr","slide":24,"name":"","alt":"Comparación de imágenes de dispersión FFT Park, CWT Morlet y S-transform sobre Canchita","bbox":[42,145,1196,468]}
+{"kind":"notes","id":"nt/uklt1r","slide":24,"text":"La comparación usa el mismo gather real de Canchita: veintiún canales entre diez y cincuenta metros.\nLa CWT Morlet y la S-transform producen una cresta más continua y estable que FFT Park, especialmente fuera de veinte a treinta y cinco hertz.\nLa mejora cambia la calidad de la imagen, no la información física disponible: no elimina el aliasing espacial ni recupera energía ausente.\nEl costo medido fue aproximadamente ciento treinta y nueve segundos para CWT y ciento cinco para Stockwell, frente a menos de un segundo para FFT Park.\nPor eso se conserva FFT Park como línea base operativa y wavelet como ruta exploratoria y de contraste.\nTransición: incluso con una imagen más estable, la profundidad sigue limitada por la energía medida en baja frecuencia."}
+{"kind":"slide","id":"sl/1bej6f","slide":25,"title":"HALLAZGO EXPERIMENTAL","textShapes":20}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":25,"text":"HALLAZGO EXPERIMENTAL","textPreview":"HALLAZGO EXPERIMENTAL","textChars":21,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":25,"text":"La profundidad está limitada por energía","textPreview":"La profundidad está limitada por energía","textChars":40,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/knih4byh","slide":25,"text":"25","textPreview":"25","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/vu9knih4","slide":25,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/d0z61032","slide":25,"bbox":[1030,151,145,28]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":25,"text":"MEDIDO","textPreview":"MEDIDO","textChars":6,"textLines":1,"bbox":[1038,156,129,18]}
+{"kind":"textbox","id":"sh/vixczed8","slide":25,"text":"< 5 Hz","textPreview":"< 5 Hz","textChars":6,"textLines":1,"bbox":[830,215,150,30]}
+{"kind":"textbox","id":"sh/2x4nap4r","slide":25,"text":"0,1%","textPreview":"0,1%","textChars":4,"textLines":1,"bbox":[990,210,175,47]}
+{"kind":"shape","id":"sh/gfmlkjm1","slide":25,"bbox":[830,270,335,2]}
+{"kind":"textbox","id":"sh/90je9cvi","slide":25,"text":"5–20 Hz","textPreview":"5–20 Hz","textChars":7,"textLines":1,"bbox":[830,320,150,30]}
+{"kind":"textbox","id":"sh/yd0z6103","slide":25,"text":"54,3%","textPreview":"54,3%","textChars":5,"textLines":1,"bbox":[990,315,175,47]}
+{"kind":"shape","id":"sh/rytsvu9k","slide":25,"bbox":[830,375,335,2]}
+{"kind":"textbox","id":"sh/g7adsji5","slide":25,"text":"20–50 Hz","textPreview":"20–50 Hz","textChars":8,"textLines":1,"bbox":[830,425,150,30]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":25,"text":"43,2%","textPreview":"43,2%","textChars":5,"textLines":1,"bbox":[990,420,175,47]}
+{"kind":"shape","id":"sh/y1kre1w7","slide":25,"bbox":[830,480,335,2]}
+{"kind":"shape","id":"sh/rmhk3q5o","slide":25,"bbox":[820,525,355,104]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":25,"text":"Un filtro no recupera señal que nunca superó el ruido antes del ADC.","textPreview":"Un filtro no recupera señal que nunca superó el ruido antes del ADC.","textChars":68,"textLines":1,"bbox":[838,543,320,76]}
+{"kind":"textbox","id":"sh/5o7qpg3e","slide":25,"text":"Fuente: main.pdf · autopotencia multicanal de Canchita","textPreview":"Fuente: main.pdf · autopotencia multicanal de Canchita","textChars":54,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/p0bi9s36","slide":25,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/0fepkzup","slide":25,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/bulwval8","slide":25,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/i9s36hcr","slide":25,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/tovahoza","slide":25,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/032lszqt","slide":25,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/bi9s36hc","slide":25,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/ixczed8v","slide":25,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/tcj6tova","slide":25,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/0rqd4vmt","slide":25,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/at47y1kr","slide":25,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":25,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/szqtcj6t","slide":25,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/lkjm1cfa","slide":25,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/ahoza1gv","slide":25,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/32lszqtc","slide":25,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/sneloj2t","slide":25,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/vahoza1g","slide":25,"name":"","alt":"Autopotencia normalizada de las señales de la campaña Canchita","bbox":[52,150,720,470]}
+{"kind":"notes","id":"nt/1bej6f","slide":25,"text":"Por debajo de cinco hertz aparece apenas cero coma uno por ciento de la autopotencia integrada.\nEntre cinco y veinte hertz se concentra cincuenta y cuatro coma tres por ciento, y entre veinte y cincuenta hertz, cuarenta y tres coma dos por ciento.\nLa banda que gobierna mayor profundidad casi no tiene energía útil, de modo que el procesamiento no puede crear información que no superó el ruido analógico.\nEl benchmark resume esta situación como sobra apertura y falta baja frecuencia.\nTransición: la decisión de diseño vuelve entonces al primer bloque de la cadena: una fuente repetitiva e instrumentada."}
+{"kind":"slide","id":"sl/ghcw1i","slide":26,"title":"PRUEBA DE IMPACTOS EN SECUENCIA","textShapes":18}
+{"kind":"textbox","id":"sh/7ed8bat4","slide":26,"text":"PRUEBA DE IMPACTOS EN SECUENCIA","textPreview":"PRUEBA DE IMPACTOS EN SECUENCIA","textChars":31,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/0z61032l","slide":26,"text":"El apilado confirma respuesta en baja frecuencia","textPreview":"El apilado confirma respuesta en baja frecuencia","textChars":48,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/pkzupwb2","slide":26,"text":"26","textPreview":"26","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/ih4byhgn","slide":26,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/0nuxc3yl","slide":26,"bbox":[1025,151,145,28]}
+{"kind":"textbox","id":"sh/p8nqxs72","slide":26,"text":"PROBADO","textPreview":"PROBADO","textChars":7,"textLines":1,"bbox":[1033,156,129,18]}
+{"kind":"textbox","id":"sh/ed8v6psf","slide":26,"text":"La secuencia","textPreview":"La secuencia","textChars":12,"textLines":1,"bbox":[842,220,330,36]}
+{"kind":"textbox","id":"sh/7y1kre1w","slide":26,"text":"permite apilar impactos y elevar la componente coherente sobre el ruido.","textPreview":"permite apilar impactos y elevar la componente coherente sobre el ruido.","textChars":72,"textLines":1,"bbox":[842,266,330,90]}
+{"kind":"shape","id":"sh/rmhk3q5o","slide":26,"bbox":[842,380,330,2]}
+{"kind":"textbox","id":"sh/y1kre1w7","slide":26,"text":"El espectro","textPreview":"El espectro","textChars":11,"textLines":1,"bbox":[842,410,330,36]}
+{"kind":"textbox","id":"sh/9s36hcrm","slide":26,"text":"muestra respuesta en baja frecuencia compatible con el pasa-bandas estimado.","textPreview":"muestra respuesta en baja frecuencia compatible con el pasa-bandas estimado.","textChars":76,"textLines":1,"bbox":[842,456,330,90]}
+{"kind":"shape","id":"sh/g7adsji5","slide":26,"bbox":[884,575,245,28]}
+{"kind":"textbox","id":"sh/rytsvu9k","slide":26,"text":"MARTILLETE PENDIENTE","textPreview":"MARTILLETE PENDIENTE","textChars":20,"textLines":1,"bbox":[892,580,229,18]}
+{"kind":"textbox","id":"sh/yd0z6103","slide":26,"text":"Fuente: capturas reales Canchita · secuencia y espectro","textPreview":"Fuente: capturas reales Canchita · secuencia y espectro","textChars":55,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/90je9cvi","slide":26,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":26,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/r65wjudg","slide":26,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":26,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/6tovahoz","slide":26,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/vahoza1g","slide":26,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/ovahoza1","slide":26,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/dg7adsji","slide":26,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/6hcrmhk3","slide":26,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/z25kb6xk","slide":26,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/onyd0z61","slide":26,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/d8v6psfi","slide":26,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/6dcbulwv","slide":26,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":26,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/lwval87e","slide":26,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/wb2hwfyx","slide":26,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/3q5o7qpg","slide":26,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/a1gvy90j","slide":26,"name":"","alt":"Secuencia real de impactos y espectro observado durante el apilado","bbox":[52,150,750,470]}
+{"kind":"notes","id":"nt/ghcw1i","slide":26,"text":"Se generó una secuencia de impactos y se apilaron las señales para comprobar si la baja frecuencia emergía de forma coherente.\nLa prueba sí muestra componente de baja frecuencia y un comportamiento compatible con el pasa-bandas estimado para el conjunto sensor más acondicionamiento.\nLa figura concatena capturas reales del receptor a treinta metros hasta completar sesenta segundos y muestra su espectro observado.\nPara la visualización se aplicó primero la resta armónica de red y luego el pasa-bajos de fase cero, en el mismo orden corregido para el pipeline.\nEsto verifica que el sensor puede captar esa banda cuando la excitación repetitiva mejora la relación señal a ruido; no implica que un único golpe ya tenga energía suficiente.\nSigue pendiente cuantificar ganancia por número de impactos, repetibilidad, fase y comparación bajo una geometría controlada con el martillete definitivo.\nTransición: el benchmark computacional ayuda a priorizar esta mejora por encima de seguir sofisticando el algoritmo."}
+{"kind":"slide","id":"sl/f60frs","slide":27,"title":"1640 EJECUCIONES","textShapes":22}
+{"kind":"textbox","id":"sh/dcbulwva","slide":27,"text":"1640 EJECUCIONES","textPreview":"1640 EJECUCIONES","textChars":16,"textLines":1,"bbox":[52,30,800,24]}
+{"kind":"textbox","id":"sh/6psfil0r","slide":27,"text":"Benchmark: incertidumbre de datos vs. modelo","textPreview":"Benchmark: incertidumbre de datos vs. modelo","textChars":44,"textLines":1,"bbox":[52,57,1080,64]}
+{"kind":"textbox","id":"sh/val87ed8","slide":27,"text":"27","textPreview":"27","textChars":2,"textLines":1,"bbox":[1170,39,58,32]}
+{"kind":"shape","id":"sh/k3q5o7qp","slide":27,"bbox":[52,126,1176,2]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":27,"bbox":[1050,151,145,28]}
+{"kind":"textbox","id":"sh/vixczed8","slide":27,"text":"MEDIDO","textPreview":"MEDIDO","textChars":6,"textLines":1,"bbox":[1058,156,129,18]}
+{"kind":"textbox","id":"sh/kf6dcbul","slide":27,"text":"Park + DP","textPreview":"Park + DP","textChars":9,"textLines":1,"bbox":[800,205,390,34]}
+{"kind":"textbox","id":"sh/d0z61032","slide":27,"text":"línea base real: 25/48 admisibles · misfit mediano 4,09%","textPreview":"línea base real: 25/48 admisibles · misfit mediano 4,09%","textChars":56,"textLines":1,"bbox":[800,244,390,52]}
+{"kind":"shape","id":"sh/dsji5sne","slide":27,"bbox":[800,293,390,2]}
+{"kind":"textbox","id":"sh/o7qpg3ex","slide":27,"text":"29,76 vs 2,28 m/s","textPreview":"29,76 vs 2,28 m/s","textChars":17,"textLines":1,"bbox":[800,305,390,34]}
+{"kind":"textbox","id":"sh/vmtwra5g","slide":27,"text":"retirar offsets mueve c(f) ≈13× más que cambiar transformada","textPreview":"retirar offsets mueve c(f) ≈13× más que cambiar transformada","textChars":60,"textLines":1,"bbox":[800,344,390,52]}
+{"kind":"shape","id":"sh/61032lsz","slide":27,"bbox":[800,393,390,2]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":27,"text":"3 capas · CV ≈3,0%","textPreview":"3 capas · CV ≈3,0%","textChars":18,"textLines":1,"bbox":[800,405,390,34]}
+{"kind":"textbox","id":"sh/oj2t83it","slide":27,"text":"mejor condicionadas; cinco capas elevan sensibilidad al optimizador","textPreview":"mejor condicionadas; cinco capas elevan sensibilidad al optimizador","textChars":67,"textLines":1,"bbox":[800,444,390,52]}
+{"kind":"shape","id":"sh/vy90je9c","slide":27,"bbox":[800,493,390,2]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":27,"text":"QC + bootstrap","textPreview":"QC + bootstrap","textChars":14,"textLines":1,"bbox":[800,505,390,34]}
+{"kind":"textbox","id":"sh/d8v6psfi","slide":27,"text":"DP puede inventar curva sin energía; censura no reemplaza señal","textPreview":"DP puede inventar curva sin energía; censura no reemplaza señal","textChars":63,"textLines":1,"bbox":[800,544,390,52]}
+{"kind":"shape","id":"sh/onyd0z61","slide":27,"bbox":[800,593,390,2]}
+{"kind":"textbox","id":"sh/kre1w7mp","slide":27,"text":"432 ejecuciones comparables en el balance final","textPreview":"432 ejecuciones comparables en el balance final","textChars":47,"textLines":1,"bbox":[820,602,350,28]}
+{"kind":"textbox","id":"sh/dcbulwva","slide":27,"text":"Fuente: INFORME_COMPLETO.pdf · benchmark consolidado 2026-08-23","textPreview":"Fuente: INFORME_COMPLETO.pdf · benchmark consolidado 2026-08-23","textChars":63,"textLines":1,"bbox":[52,645,980,18]}
+{"kind":"shape","id":"sh/6psfil0r","slide":27,"bbox":[52,674,118,30]}
+{"kind":"textbox","id":"sh/val87ed8","slide":27,"text":"FUENTE","textPreview":"FUENTE","textChars":6,"textLines":1,"bbox":[56,681,110,17]}
+{"kind":"shape","id":"sh/k3q5o7qp","slide":27,"bbox":[175,674,112,30]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":27,"text":"SENSOR","textPreview":"SENSOR","textChars":6,"textLines":1,"bbox":[179,681,104,17]}
+{"kind":"shape","id":"sh/2x4nap4r","slide":27,"bbox":[292,674,93,30]}
+{"kind":"textbox","id":"sh/vixczed8","slide":27,"text":"AFE","textPreview":"AFE","textChars":3,"textLines":1,"bbox":[296,681,85,17]}
+{"kind":"shape","id":"sh/kf6dcbul","slide":27,"bbox":[390,674,90,30]}
+{"kind":"textbox","id":"sh/d0z61032","slide":27,"text":"ADC","textPreview":"ADC","textChars":3,"textLines":1,"bbox":[394,681,82,17]}
+{"kind":"shape","id":"sh/3ylc7u54","slide":27,"bbox":[485,674,179,30]}
+{"kind":"textbox","id":"sh/adsji5sn","slide":27,"text":"SINCRONÍA / RED","textPreview":"SINCRONÍA / RED","textChars":15,"textLines":1,"bbox":[489,681,171,17]}
+{"kind":"shape","id":"sh/h4byhgn2","slide":27,"bbox":[669,674,110,30]}
+{"kind":"textbox","id":"sh/sji5snel","slide":27,"text":"INGESTA","textPreview":"INGESTA","textChars":7,"textLines":1,"bbox":[673,681,102,17]}
+{"kind":"shape","id":"sh/3m94fu18","slide":27,"bbox":[784,674,99,30]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":27,"text":"MASW","textPreview":"MASW","textChars":4,"textLines":1,"bbox":[788,681,91,17]}
+{"kind":"shape","id":"sh/lszqtcj6","slide":27,"bbox":[888,674,123,30]}
+{"kind":"textbox","id":"sh/s72x4nap","slide":27,"text":"INVERSIÓN","textPreview":"INVERSIÓN","textChars":9,"textLines":1,"bbox":[892,681,115,17]}
+{"kind":"shape","id":"sh/zidonyd0","slide":27,"bbox":[1016,688,212,2]}
+{"kind":"image","id":"im/0fepkzup","slide":27,"name":"","alt":"Benchmark balanceado de familias de procesamiento MASW","bbox":[48,150,710,470]}
+{"kind":"notes","id":"nt/f60frs","slide":27,"text":"El informe consolidado reúne mil seiscientas cuarenta ejecuciones; el balance final usa cuatrocientas treinta y dos comparables.\nPark más dynamic programming es la línea base en datos reales: veinticinco de cuarenta y ocho casos admisibles y misfit mediano de cuatro coma cero nueve por ciento.\nEliminar dos offsets desplaza c de f unos veintinueve coma setenta y seis metros por segundo, contra dos coma veintiocho al cambiar transformada: la geometría pesa cerca de trece veces más.\nTres capas muestran coeficiente de variación cercano a tres por ciento; cinco capas suben a alrededor de ocho por ciento y aumentan la varianza atribuible al optimizador.\nDP puede proponer curva incluso sin energía sintética, por lo que soporte, censura y bootstrap son control de calidad obligatorio.\nTransición: cierro la cadena mostrando qué está medido, implementado y pendiente sin mezclar niveles de evidencia."}
+{"kind":"slide","id":"sl/iwbhy1","slide":28,"title":"CIERRE","textShapes":15}
+{"kind":"textbox","id":"sh/e9cvixcz","slide":28,"text":"CIERRE","textPreview":"CIERRE","textChars":6,"textLines":1,"bbox":[55,35,180,24]}
+{"kind":"textbox","id":"sh/lwval87e","slide":28,"text":"La cadena funciona; el próximo avance depende de mejorar el dato","textPreview":"La cadena funciona; el próximo avance depende de mejorar el dato","textChars":64,"textLines":1,"bbox":[55,70,1100,120]}
+{"kind":"shape","id":"sh/wb2hwfyx","slide":28,"bbox":[55,198,1170,2]}
+{"kind":"shape","id":"sh/3itgfmlk","slide":28,"bbox":[60,218,180,52]}
+{"kind":"textbox","id":"sh/ex0nuxc3","slide":28,"text":"MEDIDO","textPreview":"MEDIDO","textChars":6,"textLines":1,"bbox":[75,232,150,24]}
+{"kind":"textbox","id":"sh/loj2t83i","slide":28,"text":"sincronismo · respuesta AFE · campaña · espectro · apilado","textPreview":"sincronismo · respuesta AFE · campaña · espectro · apilado","textChars":58,"textLines":1,"bbox":[275,227,860,42]}
+{"kind":"shape","id":"sh/w3m94fu1","slide":28,"bbox":[60,308,180,52]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":28,"text":"IMPLEMENTADO","textPreview":"IMPLEMENTADO","textChars":12,"textLines":1,"bbox":[75,322,150,24]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":28,"text":"calibración · ADC/DMA · transporte · interfaces · MASW","textPreview":"calibración · ADC/DMA · transporte · interfaces · MASW","textChars":54,"textLines":1,"bbox":[275,317,860,42]}
+{"kind":"shape","id":"sh/knih4byh","slide":28,"bbox":[60,398,180,52]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":28,"text":"PENDIENTE","textPreview":"PENDIENTE","textChars":9,"textLines":1,"bbox":[75,412,150,24]}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":28,"text":"fuente repetitiva instrumentada · validación extremo a extremo · bootstrap","textPreview":"fuente repetitiva instrumentada · validación extremo a extremo · bootstrap","textChars":74,"textLines":1,"bbox":[275,407,860,42]}
+{"kind":"textbox","id":"sh/v6psfil0","slide":28,"text":"FÍSICA","textPreview":"FÍSICA","textChars":6,"textLines":1,"bbox":[68,530,120,28]}
+{"kind":"shape","id":"sh/kf6dcbul","slide":28,"bbox":[185,543,90,4]}
+{"kind":"shape","id":"sh/d0z61032","slide":28,"bbox":[271,536,18,18]}
+{"kind":"textbox","id":"sh/29gr2p8n","slide":28,"text":"REQUISITOS","textPreview":"REQUISITOS","textChars":10,"textLines":1,"bbox":[300,530,155,28]}
+{"kind":"shape","id":"sh/vu9knih4","slide":28,"bbox":[460,543,90,4]}
+{"kind":"shape","id":"sh/k3q5o7qp","slide":28,"bbox":[546,536,18,18]}
+{"kind":"textbox","id":"sh/donyd0z6","slide":28,"text":"IMPLEMENTACIÓN","textPreview":"IMPLEMENTACIÓN","textChars":14,"textLines":1,"bbox":[575,530,190,28]}
+{"kind":"shape","id":"sh/hcrmhk3q","slide":28,"bbox":[770,543,90,4]}
+{"kind":"shape","id":"sh/orytsvu9","slide":28,"bbox":[856,536,18,18]}
+{"kind":"textbox","id":"sh/z61032ls","slide":28,"text":"EVIDENCIA","textPreview":"EVIDENCIA","textChars":9,"textLines":1,"bbox":[885,530,150,28]}
+{"kind":"shape","id":"sh/al87ed8b","slide":28,"bbox":[1035,543,90,4]}
+{"kind":"shape","id":"sh/h0fepkzu","slide":28,"bbox":[1121,536,18,18]}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":28,"text":"DECISIÓN","textPreview":"DECISIÓN","textChars":8,"textLines":1,"bbox":[1110,580,120,28]}
+{"kind":"textbox","id":"sh/zupwb2hw","slide":28,"text":"Prioridad: más energía útil de baja frecuencia, misma geometría y validación repetible.","textPreview":"Prioridad: más energía útil de baja frecuencia, misma geometría y validación repetible.","textChars":87,"textLines":1,"bbox":[110,625,1060,44]}
+{"kind":"textbox","id":"sh/a9w3m94f","slide":28,"text":"28","textPreview":"28","textChars":2,"textLines":1,"bbox":[1170,40,58,32]}
+{"kind":"notes","id":"nt/iwbhy1","slide":28,"text":"La plataforma ya integra adquisición, transporte auditable, interfaces, dispersión e inversión sobre datos reales.\nLa evidencia medida incluye sincronismo, respuesta funcional del AFE, campaña multicanal y distribución espectral.\nLa principal limitación es la falta de energía útil debajo de cinco hertz, reforzada por las restricciones geométricas y por la no unicidad de la inversión.\nEl siguiente experimento defendible es mejorar la fuente, mantener geometría comparable y cuantificar repetibilidad, soporte de c de f e incertidumbre de Vs de z.\nMensaje final: el proyecto avanzó de una colección de bloques a una cadena causal y auditable; ahora la prioridad es mejorar el dato antes de complejizar el modelo."}
