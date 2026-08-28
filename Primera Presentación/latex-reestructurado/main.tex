@@ -1,0 +1,80 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{dblfloatfix}
+\usepackage[section]{placeins}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit}
+\usepackage[round,authoryear]{natbib}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\setlength{\columnsep}{0.7cm}
+\raggedbottom
+\setlist[itemize]{itemsep=0.2em}
+\sisetup{output-decimal-marker={,}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\graphicspath{{../latex-historial/figuras/}{../latex-15p-review/figuras/transductores/}{../latex-15p-review/figuras/acondicionamiento/}{../latex-15p-review/figuras/excitacion/}{../latex-15p-review/figuras/interfaces/}{../../Urucom_2026_compact/imagenes/}{../../Propuesta Urucom/Imagenes/}}
+
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+
+% Marco de figura pendiente: reserva el espacio real que ocupara la lamina.
+% Al incorporar las figuras definitivas se reemplaza por \includegraphics.
+\newcommand{\figpendiente}[2][0.42]{%
+  \setlength{\fboxsep}{6pt}%
+  \fbox{\parbox[c][#1\columnwidth][c]{\dimexpr\columnwidth-2\fboxsep-2\fboxrule\relax}{%
+    \centering\footnotesize\itshape #2}}%
+}
+
+%\title{Diseño e implementación de un sistema electrónico multicanal del tipo IoT
+%para caracterización geotécnica del suelo mediante ondas sísmicas}
+\author{}
+\date{}
+
+\begin{document}
+
+\twocolumn[
+  \begin{center}
+    {\LARGE\bfseries Diseño e implementación de un sistema electrónico
+     multicanal del tipo IoT para caracterización geotécnica del suelo
+     mediante ondas sísmicas\par}
+    \vspace{0.9em}
+    {\large\itshape Proyecto final de carrera -- Primera presentación\par}
+    \vspace{1.1em}
+    {\footnotesize
+     \begin{tabular}{@{}ll@{\hspace{3em}}ll@{}}
+       \textbf{Alumno:} & Elías David Álvarez Martínez &
+       \textbf{Carrera:} & Ingeniería Electrónica.\\
+       \textbf{Matrícula:} & Y24127 &
+       \textbf{Tutor:} & Enrique A. Vargas Cabral, Ph.D.\\
+     \end{tabular}\par}
+    \vspace{1.8em}
+  \end{center}
+]
+
+\input{secciones/01_contexto}
+\input{secciones/02_requerimientos}
+\input{secciones/03_diseno}
+\input{secciones/04_validacion}
+
+\FloatBarrier
+\bibliographystyle{apalike}
+{\footnotesize
+\bibliography{referencias}}
+
+\end{document}

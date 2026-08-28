@@ -1,0 +1,78 @@
+\begin{thebibliography}{}
+
+\bibitem[Barbier et~al., 1976]{Barbier1976}
+Barbier, M.~G., Bondon, P., Mellinger, R., and Viallix, J.~R. (1976).
+\newblock Mini-sosie for land seismology.
+\newblock {\em Geophysical Prospecting}, 24(3):518--527.
+
+\bibitem[Foti et~al., 2018]{Foti2018}
+Foti, S. et~al. (2018).
+\newblock Guidelines for the good practice of surface wave analysis: a product
+  of the {InterPACIFIC} project.
+\newblock {\em Bulletin of Earthquake Engineering}, 16(6):2367--2420.
+
+\bibitem[Foti et~al., 2014]{Foti2014}
+Foti, S., Lai, C.~G., Rix, G.~J., and Strobbia, C. (2014).
+\newblock {\em Surface Wave Methods for Near-Surface Site Characterization}.
+\newblock CRC Press, Boca Raton, FL, USA.
+
+\bibitem[{K. Ma et al.}, 2023]{Ma2023}
+{K. Ma et al.} (2023).
+\newblock An effective method for improving low-frequency response of geophone.
+\newblock {\em Sensors}, 23(6).
+\newblock Art. no. 3082, doi: 10.3390/s23063082.
+
+\bibitem[Kramer, 1996]{Kramer1996}
+Kramer, S.~L. (1996).
+\newblock {\em Geotechnical Earthquake Engineering}.
+\newblock Prentice Hall.
+
+\bibitem[Lin and Ashlock, 2016]{LinAshlock2016}
+Lin, S. and Ashlock, J.~C. (2016).
+\newblock Surface-wave testing of soil sites using multichannel simulation with
+  one-receiver.
+\newblock {\em Soil Dynamics and Earthquake Engineering}, 87:82--92.
+
+\bibitem[Park et~al., 1996]{Park1996SIST}
+Park, C.~B., Miller, R.~D., Steeples, D.~W., and Black, R.~A. (1996).
+\newblock Swept impact seismic technique ({SIST}).
+\newblock {\em Geophysics}, 61(6):1789--1803.
+
+\bibitem[Park et~al., 1998]{Park1998}
+Park, C.~B., Miller, R.~D., and Xia, J. (1998).
+\newblock Imaging dispersion curves of surface waves on multi-channel record.
+\newblock In {\em SEG Technical Program Expanded Abstracts 1998}, pages
+  1377--1380.
+
+\bibitem[Park et~al., 1999]{Park1999}
+Park, C.~B., Miller, R.~D., and Xia, J. (1999).
+\newblock Multichannel analysis of surface waves.
+\newblock {\em Geophysics}, 64(3):800--808.
+
+\bibitem[{PCB Piezotronics}, 2025]{PCB086D20}
+{PCB Piezotronics} (2025).
+\newblock Model 086d20 icp impact hammer: Specification sheet, revision j.
+\newblock
+  \url{https://www.pcb.com/contentstore/docs/pcb_corporate/vibration/products/specsheets/086d20_j.pdf}.
+\newblock Consulta: 20 de agosto de 2026.
+
+\bibitem[{PCB Piezotronics}, 2026]{PCBSignalConditioning}
+{PCB Piezotronics} (2026).
+\newblock Signal conditioning basics for icp and charge output sensors.
+\newblock
+  \url{https://www.pcb.com/resources/technical-information/signal-conditioning-basics}.
+\newblock Consulta: 20 de agosto de 2026.
+
+\bibitem[{Sensor Nederland B.V.}, 2006]{SM24}
+{Sensor Nederland B.V.} (2006).
+\newblock {SM-24 Geophone Element}.
+\newblock Product brochure:
+  \url{https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/SM-24%20Brochure.pdf}.
+
+\bibitem[Xia et~al., 1999]{Xia1999}
+Xia, J., Miller, R.~D., and Park, C.~B. (1999).
+\newblock Estimation of near-surface shear-wave velocity by inversion of
+  {Rayleigh} waves.
+\newblock {\em Geophysics}, 64(3):691--700.
+
+\end{thebibliography}

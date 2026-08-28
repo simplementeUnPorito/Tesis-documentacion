@@ -1,0 +1,184 @@
+\section{Validación experimental}
+
+La validación se organiza en los tres niveles que corresponden a un trabajo de instrumentación: la caracterización electrónica del instrumento, una prueba controlada de adquisición y una campaña de campo representativa. El caso de campo se presenta como demostración de la utilidad del instrumento y no como un estudio geofísico autónomo.
+
+\subsection{Caracterización electrónica del frente analógico}
+
+Se excitaron las rutas relevantes del acondicionamiento con barridos senoidales adquiridos por osciloscopio en cuatro canales simultáneos, identificando magnitud y fase con estimación de coherencia. La cobertura se organizó en bandas superpuestas que van desde los 10 mHz hasta los 200 kHz, de modo que la banda crítica para el objetivo de profundidad quedara efectivamente excitada y no extrapolada. La tanda utilizada aquí es la posterior a la calibración manual del compensador, que incorpora las campañas históricas únicamente a las etapas independientes del potenciómetro. La configuración medida se considera representativa de la cadena empleada en la campaña de campo, porque las modificaciones posteriores se concentraron en la lógica digital, la autocalibración y la ganancia, mientras se conservaron los polos y la topología de la señal.
+
+
+\begin{table*}[!ht]
+\centering
+\footnotesize
+\caption{Identificación de las etapas del acondicionamiento.}
+\begin{tabularx}{\columnwidth}{YYYYYY}
+\toprule
+Ruta medida & Puntos & Banda identificada & Coherencia & Error de magnitud & Error de fase \\
+\midrule
+BP & 85 & 0,21 Hz – 47,5 kHz & 0,9684 & 6,485 dB & 27,77° \\
+COMP & 71 & 0,21 Hz – 4,74 kHz & 0,9643 & 0,379 dB & 2,44° \\
+LP & 33 & 11,75 Hz – 1,11 kHz & 0,9454 & 0,596 dB & 2,48° \\
+\textbf{PGA → ADC (ruta completa)} & \textbf{61} & \textbf{0,21 Hz – 1,11 kHz} & \textbf{0,9946} & \textbf{0,200 dB} & \textbf{1,16°} \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+El resultado central es la última fila. La ruta analógica completa, desde la salida monitoreada de la etapa de ganancia hasta la entrada del convertidor, quedó identificada sobre 61 puntos que abarcan casi cuatro décadas, con coherencia mediana de 0,9946 y errores de 0,200 dB en magnitud y 1,16° en fase. La banda cubierta se extiende hasta 0,21 Hz, es decir, contiene por completo el rango de 1 a 10 Hz del que depende el objetivo de profundidad, y satisface con holgura el requerimiento de respuesta conocida y estable en fase planteado en la sección 8. Este punto merece énfasis porque contradice la expectativa habitual: la limitación de baja frecuencia del sistema no está en el acondicionamiento, que fue medido y resultó predecible allí, sino en la energía que llega a su entrada.
+
+El alcance de esta caracterización tiene, aun así, cuatro límites que deben declararse. El primero es que no cubre la cadena completa desde el movimiento del terreno hasta los códigos almacenados, por lo que no constituye una calibración extremo a extremo: el geófono queda descrito por su modelo nominal y no por una medición propia. El segundo es que, aunque existen puntos por debajo de 1 Hz, la dinámica subsónica del compensador no resulta observable en ellos, de modo que la banda está medida pero el comportamiento del polo inferior no queda resuelto. El tercero se concentra en el compensador: la calibración manual redujo el error de magnitud del compensador respecto del modelo de 26,7 dB a 10,7 dB, una mejora sustancial que sin embargo deja un desajuste remanente en torno a 10 Hz, y el estimador de la posición del potenciómetro no resulta confiable porque ninguna posición fija reproduce toda la forma observada. El cuarto es que la fila de BP mezcla campañas históricas mutuamente inconsistentes, con una dispersión de magnitud mediana de 2,26 dB y de 21,45 dB en el percentil 90, razón por la cual su error de ajuste es mucho mayor que el de las demás etapas y no debe leerse como una degradación del circuito.
+
+Estas mediciones tampoco sustituyen las de ruido referido a entrada, número efectivo de bits, deriva térmica, repetibilidad de la calibración y dispersión entre unidades, ninguna de las cuales fue realizada.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.86\textwidth,keepaspectratio]{mosaico_normalizados.png}
+\caption{Identificación por etapas, curvas normalizadas: rama pasabanda, compensador respecto de la etapa de ganancia, pasa-bajos, cadena PGA$\to$ADC y cadena geófono$\to$ADC. Esta última se calcula con el modelo nominal del sensor y no es una quinta medición.}
+\end{figure*}
+
+\subsection{Prueba controlada de adquisición}
+
+El segundo nivel verifica que el sistema adquiere de forma coordinada antes de exigirle un resultado geofísico. El nodo generador se trata como un esclavo más y comparte el arranque con el nodo receptor, de modo que cada respuesta queda referida al instante de su impacto. Para cuantificar esa referencia se midió, dentro de cada posición, la dispersión entre los instantes de disparo de los golpes individuales una vez alineados a nivel de submuestra, obteniéndose un valor del orden de 1,46 ms. Conviene precisar qué describe y qué no describe ese número. Es el residuo de repetibilidad entre golpes sucesivos de un mismo nodo, y agrupa el jitter mecánico del impacto con el del circuito de disparo. No mide, en cambio, ni la deriva entre jornadas de adquisición ni la incertidumbre de la posición del receptor, que son fuentes de error independientes y se tratan como parte del problema de geometría y repetibilidad de la campaña en las secciones 10.3 y 12.
+
+La capa de coordinación entre nodos sí fue probada de forma independiente. En laboratorio se operaron tres nodos simultáneos, uno de clase HAMMER y dos de clase GEO, que ejecutaron correctamente el arranque conjunto y el reparto de la orden de captura. Este ensayo se realizó sobre los módulos de radio sin el acondicionamiento analógico ni el PSoC asociados, de modo que demuestra que el protocolo de coordinación escala más allá de dos nodos y opera como fue diseñado, pero no aporta una cifra de precisión: no hubo conversión sincrónica de señal ni registros exportados que permitan comparar marcas temporales.
+
+Conviene por eso separar cuatro magnitudes que resulta fácil confundir. La primera es la alineación de golpes recién mencionada, que corresponde al procesamiento de un solo nodo. La segunda es la operación funcional de la coordinación multinodo, demostrada con los tres nodos de laboratorio. La tercera es la sincronización digital medida entre nodos distintos, que exige registros simultáneos y una comparación de marcas temporales entre placas completas, y que no pudo realizarse por no disponerse de un conjunto de nodos GEO íntegros. La cuarta es la verificación instrumental del arranque coordinado mediante osciloscopio, que llegó a observarse durante el desarrollo pero cuyos registros no fueron preservados y que por lo tanto no constituye evidencia reproducible. La tolerancia de 130 µs derivada en la sección 8 permanece, en consecuencia, como requerimiento de diseño cuya capa funcional está demostrada y cuya verificación metrológica está pendiente.
+
+Un ensayo exploratorio adicional, realizado frente al Laboratorio LED a una distancia estimada entre 20 y 27 m, registró de forma conjunta los nodos HAMMER y GEO durante 60 s bajo una secuencia de impactos manuales de cadencia aproximadamente constante. El ensayo confirma la operación conjunta de ambos nodos y motivó la línea de trabajo sobre fuentes repetitivas descrita en la sección 12, pero al no haberse conservado los datos crudos no admite cuantificación y se mantiene como observación cualitativa.
+
+\subsection{Campaña de campo}
+
+La campaña se realizó en un predio universitario identificado aproximadamente por el plus code M9F6+Q95, Asunción. El punto de impacto permaneció fijo a varios metros del extremo del campo de fútbol y solamente se desplazó el nodo receptor, siguiendo una línea aproximadamente paralela a los laterales de la cancha. No se conservaron coordenadas ni azimut de los extremos del tendido, limitación que se retoma en la sección 12.
+
+Se relevaron 21 posiciones entre 10 y 50 m de offset, con paso nominal de 2 m y una apertura total de 40 m, valores que corresponden a los límites de aliasing y de apertura establecidos en la sección 8. Del conjunto de 607 registros candidatos, 598 fueron incorporados al conjunto procesado tras la auditoría de calidad, con una mediana cercana a 30 golpes por posición. La decisión de construir el arreglo desplazando un único receptor respondió a que la Facultad dispone solamente de dos geófonos; no fue la geometría prevista por el diseño ni supone que la simultaneidad resulte innecesaria.
+
+Esa restricción define con precisión qué valida la campaña. El conjunto permite construir un \textbf{registro multicanal sintetizado por posiciones con fuente activa repetible}, y sobre él evaluar la adquisición real, formar una imagen de dispersión e invertir un perfil preliminar. No demuestra, en cambio, la operación de 21 canales físicos simultáneos, ni la sincronización entre nodos, ni la igualdad de magnitud y fase entre placas distintas. La expresión «adquisición simultánea de 21 canales» sería incorrecta y no se emplea en ningún punto de este trabajo. Conviene señalar que el uso de un solo receptor no carece de antecedentes formales: Lin y Ashlock demostraron que la simulación multicanal con un receptor puede producir imágenes de dispersión comparables a las de MASW bajo condiciones controladas, si bien su protocolo fija el receptor y desplaza la fuente, es decir, exactamente lo inverso a lo realizado aquí \citep{LinAshlock2016}.
+
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\columnwidth,keepaspectratio]{geometria_campanas.png}
+\caption{Geometría conservada en el estado de procesamiento: 21 posiciones con paso nominal de 2 m y apertura $L=40$ m. El trazado es aproximado por no disponerse de relevamiento de coordenadas.}
+\end{figure}
+
+La ventana de offsets utilizada para el resultado final no se decidió durante la adquisición sino después, sobre el conjunto completo, y ese orden debe declararse para evitar la apariencia de una selección oportunista. El análisis posterior evaluó 26 subarreglos contiguos aplicando el mismo criterio a todos ellos, con el resultado de que las ventanas medio-lejanas superan tanto al arreglo completo como a las cercanas. La interpretación es compatible con una menor contaminación por campo cercano y por modos superiores al retirar los offsets pequeños, y con la pérdida de relación señal a ruido por atenuación en los más lejanos, aunque esta explicación no fue aislada mediante un ensayo independiente.
+
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+\caption{Barrido de subarreglos contiguos.}
+\begin{tabularx}{\columnwidth}{YYYY}
+\toprule
+Ventana de offsets & Desajuste & Soporte de profundidad & Situación \\
+\midrule
+10–50 m (completo) & 2,28 \% & 8,81 m & Referencia \\
+18–46 m & 1,85 \% & 10,06 m & Finalista (alcanza 11,83 m con otra convención) \\
+22–42 m & 1,36 \% & 10,75 m & Base del modelo presentado \\
+30–50 m & 16,5 \% & — & Descartada por desajuste \\
+22–38 m & — & — & Descartada: fracción excesiva de la curva sobre el límite de aliasing \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Resultados preliminares}
+
+Los resultados se presentan en los mismos tres niveles de la sección anterior, distinguiendo en cada uno lo demostrado de lo interpretado.
+
+\subsection{Resultados de la caracterización del instrumento}
+
+La identificación de la tabla 2 verifica el requerimiento de fase de la sección 8 para una unidad y sobre casi cuatro décadas, con tres reservas: no hay medición extremo a extremo que incluya al geófono, la dinámica subsónica del compensador no resulta observable pese a existir puntos allí, y no se midió la dispersión entre placas.
+
+Ese resultado reordena el diagnóstico del sistema. Como el acondicionamiento preserva magnitud y fase por debajo de 10 Hz, la ausencia de señal útil en esa banda que documenta la sección 11.2 no puede atribuirse a la electrónica y debe buscarse en la energía radiada por la fuente, en la respuesta del geófono o en la propagación.
+
+\subsection{Resultados de la adquisición de campo}
+
+La distribución de energía y de relación señal a ruido por bandas caracteriza el desempeño conjunto de la fuente, el terreno y el instrumento sobre las 21 posiciones.
+
+La banda de 10 a 50 Hz concentra prácticamente toda la energía registrada y presenta además una coherencia entre posiciones adyacentes de 0,732 en mediana, lo que confirma que se trata de propagación organizada y no de ruido correlacionado en una sola traza. Por debajo de 10 Hz la situación se invierte: la energía cae a menos del uno por ciento del total y la relación señal a ruido llega a ser negativa en algunas posiciones. Este es el resultado central de la campaña desde el punto de vista instrumental, porque identifica la limitación efectiva del sistema y la sitúa donde la sección 8 anticipaba que estaría, esto es, en la banda que gobierna la profundidad alcanzable.
+
+El espectro registrado es el producto de la firma del impacto, el acoplamiento, la propagación, el geófono y la electrónica, y separar sus contribuciones exige los ensayos que propone la sección 12. Descartado el acondicionamiento por lo expuesto en la sección 11.1, la atención debe dirigirse a la fuente y al transductor.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.86\textwidth,keepaspectratio]{contenido_baja_frecuencia.png}
+\caption{Arriba: densidad espectral de la señal por distancia. Abajo: relación señal a ruido contra el ruido previo al disparo. La banda sombreada es el objetivo de baja frecuencia que hoy no se alcanza.}
+\end{figure*}
+
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\columnwidth,keepaspectratio]{gather_sintetizado.png}
+\caption{Registro multicanal sintetizado por posiciones, ensamblado desde los binarios crudos de la campaña, una traza por posición.}
+\end{figure}
+
+\subsection{Resultados geofísicos preliminares}
+
+Sobre la imagen de dispersión se dibujan los dos límites geométricos derivados en la sección 8. La cresta coherente aparece principalmente en la zona intermedia del plano $f$–$c$, se debilita hacia baja frecuencia a medida que la energía disponible disminuye y se fragmenta en alta frecuencia al aproximarse al límite de aliasing impuesto por el paso de 2 m.
+
+Un procesamiento anterior, restringido a la banda de 8,00 a 21,71 Hz y a una longitud de onda máxima de 10,84 m, había estimado una profundidad de 5,42 m mediante $z\approx\lambda/2$. El análisis posterior sobre el conjunto completo identificó soporte de longitudes de onda del orden de 20 a 22 m en las configuraciones finalistas, lo que conduce a una profundidad de investigación defendible de aproximadamente \textbf{10 a 11 m}. Las dos cifras no se contradicen: describen selecciones de banda y criterios de soporte distintos, y la diferencia entre ambas ilustra hasta qué punto el resultado depende de decisiones de procesamiento que deben declararse.
+
+El modelo presentado emplea la ventana de 22 a 42 m y una parametrización de tres capas. La elección del número de capas no se justifica porque produzca menor dispersión, criterio que favorece mecánicamente a los modelos con menos parámetros, sino mediante la partición de la varianza entre sus dos fuentes posibles. Sobre 24 remuestreos por bootstrap del dato real y 5 semillas del optimizador, es decir 120 inversiones por configuración, con tres capas prácticamente la totalidad de la variabilidad del perfil resulta atribuible al remuestreo de los datos, mientras que a partir de la cuarta capa cerca de la mitad de la dispersión proviene del optimizador. Se adopta por tanto el modelo más complejo cuya incertidumbre sigue estando dominada por la medición: las capas adicionales no quedan determinadas por el dato.
+
+El perfil resultante se comporta esencialmente como un escalón, con una velocidad somera del orden de 78 m/s, una interfaz efectiva próxima a 2,4 m y velocidades del orden de 178 m/s por debajo, dentro de buena parte del soporte disponible. Cuatro reservas acompañan necesariamente a estas cifras. La interfaz es efectiva, es decir, la profundidad a la que el modelo sitúa el cambio de rigidez que reproduce la curva observada, y no un contacto geológico identificado. La inversión impone monotonía creciente de $V_S$, restricción que en pruebas sobre modelos sintéticos ocultó por completo una inversión de velocidad conocida, y liberarla con el dato real no produjo un perfil restringido. El coeficiente de Poisson no fue medido, y su variación afecta poco a la velocidad somera pero ensancha de manera apreciable la incertidumbre en profundidad. Y un desajuste bajo demuestra consistencia con el modelo impuesto, no unicidad de la solución. Por la misma razón, $V_{S,30}$ no puede calcularse: la profundidad sustentada no alcanza los 30 m.
+
+La sensibilidad del resultado a las decisiones de procesamiento fue evaluada de forma sistemática, y el orden de magnitud de los efectos resulta más informativo que cualquiera de las cifras por separado. Cambiar la transformada modifica la curva de dispersión en 2,28 m/s de mediana y cambiar el algoritmo de extracción en 1,89 m/s, mientras que eliminar solamente dos posiciones del tendido, las de 32 y 40 m, la desplaza 29,76 m/s en valor cuadrático medio. La geometría pesa así aproximadamente trece veces más que la elección del algoritmo. Este resultado orienta el trabajo futuro con más claridad que ningún otro: la prioridad no es refinar el procesamiento sino controlar la geometría y ampliar la banda baja.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.86\textwidth,keepaspectratio]{masw_resultado.png}
+\caption{Resultado de la campaña. Izquierda: puntos extraídos de la curva de dispersión contra la curva teórica del modelo invertido. Derecha: perfil $V_S(z)$ con su banda de incertidumbre.}
+\end{figure*}
+
+El informe hidrogeológico de julio de 2023 aporta un contraste de plausibilidad. Sus sondeos eléctricos verticales se ubican en el mismo predio, a una distancia del orden de 120 a 200 m de la línea de adquisición, que no puede precisarse por no haberse registrado las coordenadas de los extremos. El sondeo más próximo presenta interfaces eléctricas a 1,00, 2,06 y 4,15 m, de modo que la interfaz efectiva de 2,4 m obtenida por inversión cae dentro de un intervalo en el que el sondeo eléctrico también detecta contactos. La coincidencia debe leerse como compatibilidad en el intervalo de 2 a 4 m y de ninguna manera como un acuerdo de centímetros, tanto por la distancia entre emplazamientos como porque ambas técnicas miden propiedades distintas: la resistividad no mide rigidez y la velocidad de corte no mide contenido de humedad. El contraste sirve para verificar que el resultado no es físicamente inverosímil, no para validarlo.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.86\textwidth,keepaspectratio]{vs_vs_sev.png}
+\caption{Contraste del perfil $V_S$ invertido contra el modelo geoeléctrico del SEV 01. Las técnicas miden propiedades distintas: la coincidencia debe leerse como compatibilidad en el intervalo de 2 a 4 m, no como acuerdo puntual.}
+\end{figure*}
+
+\subsection{Síntesis: qué está demostrado y qué no}
+
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+\caption{Síntesis del estado de cada afirmación.}
+\begin{tabularx}{\columnwidth}{YYY}
+\toprule
+Afirmación & Estado & Base \\
+\midrule
+La plataforma adquiere de forma conjunta una referencia de impacto y la respuesta del receptor & Demostrado & 598 registros aceptados con referencia temporal \\
+Los datos se almacenan, organizan y procesan mediante un flujo reproducible & Demostrado & Manifiesto, servidor de ingesta y análisis repetible \\
+La ruta analógica preserva magnitud y fase con 0,200 dB y 1,16° entre 0,21 Hz y 1,11 kHz & Demostrado para una unidad & Identificación sobre 61 puntos \\
+La banda útil de campo se concentra entre 10 y 50 Hz & Demostrado & Métricas de energía y SNR sobre 21 posiciones \\
+Un arreglo sintetizado de 21 posiciones permite obtener imagen y curva de dispersión & Demostrado & Procesamiento de la campaña \\
+El soporte de investigación es de aproximadamente 10 a 11 m & Preliminar & Longitud de onda soportada y convención $z\approx\lambda/2$ \\
+El perfil de tres capas describe el sitio & Preliminar & 120 inversiones por configuración; sujeto a monotonía y a $\nu$ supuesto \\
+La interfaz de 2,4 m corresponde a un contacto geológico & No afirmado & Es una interfaz efectiva del modelo \\
+Adquisición simultánea con varios nodos GEO completos & No demostrado & Un solo nodo GEO íntegro operativo por registro \\
+Coordinación de arranque con tres nodos simultáneos & Demostrado funcionalmente & Ensayo de laboratorio sobre los módulos de radio \\
+Sincronización entre nodos dentro de 130 µs & No demostrado & Sin registros comparables entre placas completas \\
+Ruido referido a entrada, ENOB y calibración extremo a extremo & No medidos & Ensayos pendientes \\
+Caracterización hasta 50 m o cálculo de $V_{S,30}$ & Fuera de alcance actual & Banda y apertura insuficientes \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Limitaciones y trabajos futuros}
+
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\columnwidth,keepaspectratio]{roadmap_validacion.png}
+\caption{Hoja de ruta de validación, ordenada por dependencia y por valor de la evidencia que aporta cada ensayo pendiente.}
+\end{figure}
+
+\textbf{Caracterización metrológica del instrumento.} La ruta analógica está identificada desde 0,21 Hz, de modo que el trabajo pendiente no consiste en ampliar la banda medida sino en cerrar la cadena. Debe medirse magnitud y fase extremo a extremo, desde una entrada mecánica trazable hasta los códigos almacenados, para cada combinación de rango y ganancia, incorporando al geófono como elemento medido y no como modelo nominal. Del lado del compensador queda resolver el desajuste remanente en torno a 10 Hz mediante la calibración fina con tono fijo que recomienda el registro de la propia sesión de medida, y esclarecer la dinámica subsónica, que permanece no observable pese a existir puntos por debajo de 1 Hz. A ello se suman las mediciones de ruido referido a entrada, número efectivo de bits, linealidad, saturación, deriva térmica y repetibilidad de la autocalibración, ninguna de las cuales fue realizada.
+
+\textbf{Operación multicanal.} Completar la revisión de placa en curso, fabricar varios nodos equivalentes y medir entre ellos la dispersión de ganancia y de fase es la condición para que el sistema pueda llamarse multicanal en sentido experimental y no sólo arquitectónico. El ensayo de sincronización debe repetirse conservando los registros, para contrastar el desempeño real contra la tolerancia de 130 µs de la sección 8, y cada captura futura deberá incorporar como metadato la revisión de circuito y de firmware que la produjo.
+
+\textbf{Geometría y protocolo de campaña.} El tendido debe relevarse con coordenadas y azimut, dado que la sensibilidad medida en la sección 11.3 sitúa a la geometría como el factor dominante del resultado. Conviene repetir la línea con receptores simultáneos, incorporar una posición de referencia fija que separe la variación temporal de la espacial y contrastar el perfil con una referencia independiente en el mismo punto. Para campañas condicionadas por la disponibilidad de sensores, el esquema de simulación multicanal con un receptor ofrece una alternativa con antecedentes formales \citep{LinAshlock2016}, que no sustituye la validación final del sistema multicanal diseñado.
+
+\textbf{Fuente y extensión de la banda baja.} La sección 11.2 identifica a la energía coherente por debajo de 8 Hz como la limitación efectiva de la profundidad, y de allí se sigue la línea de trabajo sobre fuentes de impacto repetitivo. Repetir impactos y acumularlos de forma coherente mejora idealmente la relación señal a ruido como $\sqrt{N}$ frente a ruido no correlacionado, pero conviene distinguir la repetición de la periodicidad: una cadencia estrictamente fija concentra esa ganancia en un peine espectral formado por la frecuencia de repetición y sus armónicos, y en una cadena lineal refuerza componentes que ya existen sin crear señal donde el producto fuente–suelo–sensor–electrónica es nulo. El diseño de leva desarrollado hasta ahora, con cadencia de 45 impactos por minuto, corresponde a una fundamental de 0,75 Hz y coloca dentro de la banda de 1 a 10 Hz solamente doce líneas, la primera a 1,50 Hz; describirla como una fuente de 1 Hz sería incorrecto. Cabe además una precisión bibliográfica, porque la literatura suele citarse en sentido inverso al que sostiene: el Mini-Sosie original variaba la velocidad del motor para obtener una secuencia aproximadamente aleatoria y registraba el instante real de cada golpe \citep{Barbier1976}, y la técnica de impacto barrido fue desarrollada para reflexión de alta frecuencia, con una secuencia que deliberadamente atenúa las frecuencias inferiores a la tasa inicial de impacto \citep{Park1996SIST}. Ninguna de las dos avala por sí sola una ganancia en baja frecuencia, y la evaluación deberá ser comparativa, con igual número de golpes entre excitación aislada, cadencia fija y secuencia no periódica, juzgando el resultado por la longitud de onda coherente entre offsets y no por la aparición de picos espectrales.
+
+De ese programa se derivan dos requerimientos que sí corresponden a la electrónica de este trabajo. El primero es que el disparo debe sensar el impacto real sobre la placa, mediante un piezoeléctrico o un acelerómetro de banda suficiente, y no la posición angular de la leva, porque el juego mecánico y el rebote introducen entre ambos una diferencia variable. El segundo es que la marca temporal de cada golpe debe generarse con el mismo reloj que muestrea el canal del receptor: la red inalámbrica transporta los datos, no define el instante del impacto. La tolerancia se obtiene del razonamiento de fase de la sección 8: para una dispersión $\sigma_t$ en los instantes de impacto el factor de coherencia del apilamiento decae como $\exp[-\tfrac{1}{2}(2\pi f\sigma_t)^2]$, de modo que una pérdida inferior al 5 \% exige $\sigma_t\lesssim 0{,}051/f$, esto es 5,1 ms a 10 Hz y 1,02 ms a 50 Hz. El valor de 1,46 ms medido en la sección 10.2 resulta holgado en el extremo inferior de la banda, con 0,4 \% de pérdida, y apenas marginal en el superior, con cerca del 10 \%. El requerimiento de temporización lo fija por lo tanto la frecuencia más alta que se pretenda apilar, no la cadencia del martillete.
+
+\textbf{Alcance del objetivo formal.} El objetivo de 50 m permanece como meta de diseño del proyecto y requiere, según la relación derivada en la sección 8, contenido coherente en torno a 1,5 Hz. Alcanzarlo exige actuar sobre los tres factores simultáneamente: un transductor con frecuencia natural menor o una compensación validada en esa banda, una fuente capaz de radiar energía útil allí, y una apertura de arreglo compatible con longitudes de onda de un centenar de metros. Ninguno de los tres está resuelto hoy, y presentarlo de otro modo sería incompatible con la evidencia reunida.
