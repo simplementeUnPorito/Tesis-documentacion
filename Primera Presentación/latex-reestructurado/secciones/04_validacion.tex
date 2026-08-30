@@ -11,7 +11,8 @@ Se excitaron las rutas relevantes del acondicionamiento con barridos senoidales 
 \centering
 \footnotesize
 \caption{Identificación de las etapas del acondicionamiento.}
-\begin{tabularx}{\columnwidth}{YYYYYY}
+\label{tab:identificacion}
+\begin{tabularx}{0.92\textwidth}{YYYYYY}
 \toprule
 Ruta medida & Puntos & Banda identificada & Coherencia & Error de magnitud & Error de fase \\
 \midrule
@@ -31,8 +32,11 @@ Estas mediciones tampoco sustituyen las de ruido referido a entrada, número efe
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.86\textwidth,keepaspectratio]{mosaico_normalizados.png}
-\caption{Identificación por etapas, curvas normalizadas: rama pasabanda, compensador respecto de la etapa de ganancia, pasa-bajos, cadena PGA$\to$ADC y cadena geófono$\to$ADC. Esta última se calcula con el modelo nominal del sensor y no es una quinta medición.}
+\includegraphics[width=\textwidth,keepaspectratio]{normalizado_cadena_pga_adc.png}
+\caption{Identificación de la cadena PGA$\to$ADC, que es la fila destacada de la
+tabla~\ref{tab:identificacion}, con las curvas normalizadas a su propio máximo. De arriba abajo: magnitud,
+fase y coherencia local. Se muestran la medición cruda, la procesada, el modelo
+identificado y el modelo nominal del PSoC con los componentes actuales.}
 \end{figure*}
 
 \subsection{Prueba controlada de adquisición}
@@ -49,24 +53,24 @@ Un ensayo exploratorio adicional, realizado frente al Laboratorio LED a una dist
 
 La campaña se realizó en un predio universitario identificado aproximadamente por el plus code M9F6+Q95, Asunción. El punto de impacto permaneció fijo a varios metros del extremo del campo de fútbol y solamente se desplazó el nodo receptor, siguiendo una línea aproximadamente paralela a los laterales de la cancha. No se conservaron coordenadas ni azimut de los extremos del tendido, limitación que se retoma en la sección 12.
 
-Se relevaron 21 posiciones entre 10 y 50 m de offset, con paso nominal de 2 m y una apertura total de 40 m, valores que corresponden a los límites de aliasing y de apertura establecidos en la sección 8. Del conjunto de 607 registros candidatos, 598 fueron incorporados al conjunto procesado tras la auditoría de calidad, con una mediana cercana a 30 golpes por posición. La decisión de construir el arreglo desplazando un único receptor respondió a que la Facultad dispone solamente de dos geófonos; no fue la geometría prevista por el diseño ni supone que la simultaneidad resulte innecesaria.
+Se relevaron 21 posiciones entre 10 y 50 m de offset, con paso nominal de 2 m y una apertura total de 40 m, valores que corresponden a los límites de aliasing y de apertura establecidos en la sección 8. Del conjunto de 607 registros candidatos, 598 fueron incorporados al conjunto procesado tras la auditoría de calidad, con una mediana cercana a 30 golpes por posición. Debe señalarse que la campaña se adquirió con una configuración de firmware anterior a la descrita en la sección 9.4: la tasa nativa de entonces era de 2929 muestras por segundo, y el conjunto procesado combina registros a 2929 y a 1020 Hz. La decisión de construir el arreglo desplazando un único receptor respondió a que la Facultad dispone solamente de dos geófonos; no fue la geometría prevista por el diseño ni supone que la simultaneidad resulte innecesaria.
 
 Esa restricción define con precisión qué valida la campaña. El conjunto permite construir un \textbf{registro multicanal sintetizado por posiciones con fuente activa repetible}, y sobre él evaluar la adquisición real, formar una imagen de dispersión e invertir un perfil preliminar. No demuestra, en cambio, la operación de 21 canales físicos simultáneos, ni la sincronización entre nodos, ni la igualdad de magnitud y fase entre placas distintas. La expresión «adquisición simultánea de 21 canales» sería incorrecta y no se emplea en ningún punto de este trabajo. Conviene señalar que el uso de un solo receptor no carece de antecedentes formales: Lin y Ashlock demostraron que la simulación multicanal con un receptor puede producir imágenes de dispersión comparables a las de MASW bajo condiciones controladas, si bien su protocolo fija el receptor y desplaza la fuente, es decir, exactamente lo inverso a lo realizado aquí \citep{LinAshlock2016}.
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{geometria_campanas.png}
+\includegraphics[width=\textwidth,keepaspectratio]{geometria_campanas.png}
 \caption{Geometría conservada en el estado de procesamiento: 21 posiciones con paso nominal de 2 m y apertura $L=40$ m. El trazado es aproximado por no disponerse de relevamiento de coordenadas.}
-\end{figure}
+\end{figure*}
 
 La ventana de offsets utilizada para el resultado final no se decidió durante la adquisición sino después, sobre el conjunto completo, y ese orden debe declararse para evitar la apariencia de una selección oportunista. El análisis posterior evaluó 26 subarreglos contiguos aplicando el mismo criterio a todos ellos, con el resultado de que las ventanas medio-lejanas superan tanto al arreglo completo como a las cercanas. La interpretación es compatible con una menor contaminación por campo cercano y por modos superiores al retirar los offsets pequeños, y con la pérdida de relación señal a ruido por atenuación en los más lejanos, aunque esta explicación no fue aislada mediante un ensayo independiente.
 
 
-\begin{table}[!ht]
+\begin{table*}[!ht]
 \centering
 \footnotesize
 \caption{Barrido de subarreglos contiguos.}
-\begin{tabularx}{\columnwidth}{YYYY}
+\begin{tabularx}{0.92\textwidth}{YYYY}
 \toprule
 Ventana de offsets & Desajuste & Soporte de profundidad & Situación \\
 \midrule
@@ -77,7 +81,7 @@ Ventana de offsets & Desajuste & Soporte de profundidad & Situación \\
 22–38 m & — & — & Descartada: fracción excesiva de la curva sobre el límite de aliasing \\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{table*}
 
 \section{Resultados preliminares}
 
@@ -85,13 +89,13 @@ Los resultados se presentan en los mismos tres niveles de la sección anterior, 
 
 \subsection{Resultados de la caracterización del instrumento}
 
-La identificación de la tabla 2 verifica el requerimiento de fase de la sección 8 para una unidad y sobre casi cuatro décadas, con tres reservas: no hay medición extremo a extremo que incluya al geófono, la dinámica subsónica del compensador no resulta observable pese a existir puntos allí, y no se midió la dispersión entre placas.
+La identificación de la tabla~\ref{tab:identificacion} verifica el requerimiento de fase de la sección 8 para una unidad y sobre casi cuatro décadas, con tres reservas: no hay medición extremo a extremo que incluya al geófono, la dinámica subsónica del compensador no resulta observable pese a existir puntos allí, y no se midió la dispersión entre placas.
 
 Ese resultado reordena el diagnóstico del sistema. Como el acondicionamiento preserva magnitud y fase por debajo de 10 Hz, la ausencia de señal útil en esa banda que documenta la sección 11.2 no puede atribuirse a la electrónica y debe buscarse en la energía radiada por la fuente, en la respuesta del geófono o en la propagación.
 
 \subsection{Resultados de la adquisición de campo}
 
-La distribución de energía y de relación señal a ruido por bandas caracteriza el desempeño conjunto de la fuente, el terreno y el instrumento sobre las 21 posiciones.
+La distribución de energía y de relación señal a ruido por bandas caracteriza el desempeño conjunto de la fuente, el terreno y el instrumento. Se calculó sobre 265 golpes repartidos en quince de las distancias relevadas, que es el subconjunto que superó el control de calidad exigido por esta métrica.
 
 La banda de 10 a 50 Hz concentra prácticamente toda la energía registrada y presenta además una coherencia entre posiciones adyacentes de 0,732 en mediana, lo que confirma que se trata de propagación organizada y no de ruido correlacionado en una sola traza. Por debajo de 10 Hz la situación se invierte: la energía cae a menos del uno por ciento del total y la relación señal a ruido llega a ser negativa en algunas posiciones. Este es el resultado central de la campaña desde el punto de vista instrumental, porque identifica la limitación efectiva del sistema y la sitúa donde la sección 8 anticipaba que estaría, esto es, en la banda que gobierna la profundidad alcanzable.
 
@@ -99,15 +103,15 @@ El espectro registrado es el producto de la firma del impacto, el acoplamiento, 
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.86\textwidth,keepaspectratio]{contenido_baja_frecuencia.png}
+\includegraphics[width=\textwidth,keepaspectratio]{contenido_baja_frecuencia.png}
 \caption{Arriba: densidad espectral de la señal por distancia. Abajo: relación señal a ruido contra el ruido previo al disparo. La banda sombreada es el objetivo de baja frecuencia que hoy no se alcanza.}
 \end{figure*}
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{gather_sintetizado.png}
+\includegraphics[width=\textwidth,keepaspectratio]{gather_sintetizado.png}
 \caption{Registro multicanal sintetizado por posiciones, ensamblado desde los binarios crudos de la campaña, una traza por posición.}
-\end{figure}
+\end{figure*}
 
 \subsection{Resultados geofísicos preliminares}
 
@@ -123,33 +127,33 @@ La sensibilidad del resultado a las decisiones de procesamiento fue evaluada de 
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.86\textwidth,keepaspectratio]{masw_resultado.png}
-\caption{Resultado de la campaña. Izquierda: puntos extraídos de la curva de dispersión contra la curva teórica del modelo invertido. Derecha: perfil $V_S(z)$ con su banda de incertidumbre.}
+\includegraphics[width=\textwidth,keepaspectratio]{masw_resultado.png}
+\caption{Resultado de la campaña. Izquierda: puntos extraídos de la curva de dispersión contra la curva teórica del modelo invertido. Derecha: perfil $V_S(z)$ del modelo invertido.}
 \end{figure*}
 
-El informe hidrogeológico de julio de 2023 aporta un contraste de plausibilidad. Sus sondeos eléctricos verticales se ubican en el mismo predio, a una distancia del orden de 120 a 200 m de la línea de adquisición, que no puede precisarse por no haberse registrado las coordenadas de los extremos. El sondeo más próximo presenta interfaces eléctricas a 1,00, 2,06 y 4,15 m, de modo que la interfaz efectiva de 2,4 m obtenida por inversión cae dentro de un intervalo en el que el sondeo eléctrico también detecta contactos. La coincidencia debe leerse como compatibilidad en el intervalo de 2 a 4 m y de ninguna manera como un acuerdo de centímetros, tanto por la distancia entre emplazamientos como porque ambas técnicas miden propiedades distintas: la resistividad no mide rigidez y la velocidad de corte no mide contenido de humedad. El contraste sirve para verificar que el resultado no es físicamente inverosímil, no para validarlo.
+El informe hidrogeológico de julio de 2023 aporta un contraste de plausibilidad. Sus sondeos eléctricos verticales se ubican en el mismo predio, a distancias del orden de 120, 258 y 340 m de la línea de adquisición, que no pueden precisarse por no haberse registrado las coordenadas de los extremos. El sondeo más próximo presenta interfaces eléctricas a 1,00, 2,06 y 4,15 m, de modo que la interfaz efectiva de 2,4 m obtenida por inversión cae dentro de un intervalo en el que el sondeo eléctrico también detecta contactos. La coincidencia debe leerse como compatibilidad en el intervalo de 2 a 4 m y de ninguna manera como un acuerdo de centímetros, tanto por la distancia entre emplazamientos como porque ambas técnicas miden propiedades distintas: la resistividad no mide rigidez y la velocidad de corte no mide contenido de humedad. El contraste sirve para verificar que el resultado no es físicamente inverosímil, no para validarlo.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.86\textwidth,keepaspectratio]{vs_vs_sev.png}
+\includegraphics[width=\textwidth,keepaspectratio]{vs_vs_sev.png}
 \caption{Contraste del perfil $V_S$ invertido contra el modelo geoeléctrico del SEV 01. Las técnicas miden propiedades distintas: la coincidencia debe leerse como compatibilidad en el intervalo de 2 a 4 m, no como acuerdo puntual.}
 \end{figure*}
 
 \subsection{Síntesis: qué está demostrado y qué no}
 
 
-\begin{table}[!ht]
+\begin{table*}[!ht]
 \centering
 \footnotesize
 \caption{Síntesis del estado de cada afirmación.}
-\begin{tabularx}{\columnwidth}{YYY}
+\begin{tabularx}{0.92\textwidth}{YYY}
 \toprule
 Afirmación & Estado & Base \\
 \midrule
 La plataforma adquiere de forma conjunta una referencia de impacto y la respuesta del receptor & Demostrado & 598 registros aceptados con referencia temporal \\
 Los datos se almacenan, organizan y procesan mediante un flujo reproducible & Demostrado & Manifiesto, servidor de ingesta y análisis repetible \\
 La ruta analógica preserva magnitud y fase con 0,200 dB y 1,16° entre 0,21 Hz y 1,11 kHz & Demostrado para una unidad & Identificación sobre 61 puntos \\
-La banda útil de campo se concentra entre 10 y 50 Hz & Demostrado & Métricas de energía y SNR sobre 21 posiciones \\
+La banda útil de campo se concentra entre 10 y 50 Hz & Demostrado & Métricas de energía y SNR sobre 265 golpes en 15 distancias \\
 Un arreglo sintetizado de 21 posiciones permite obtener imagen y curva de dispersión & Demostrado & Procesamiento de la campaña \\
 El soporte de investigación es de aproximadamente 10 a 11 m & Preliminar & Longitud de onda soportada y convención $z\approx\lambda/2$ \\
 El perfil de tres capas describe el sitio & Preliminar & 120 inversiones por configuración; sujeto a monotonía y a $\nu$ supuesto \\
@@ -161,15 +165,15 @@ Ruido referido a entrada, ENOB y calibración extremo a extremo & No medidos & E
 Caracterización hasta 50 m o cálculo de $V_{S,30}$ & Fuera de alcance actual & Banda y apertura insuficientes \\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{table*}
 
 \section{Limitaciones y trabajos futuros}
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{roadmap_validacion.png}
+\includegraphics[width=\textwidth,keepaspectratio]{roadmap_validacion.png}
 \caption{Hoja de ruta de validación, ordenada por dependencia y por valor de la evidencia que aporta cada ensayo pendiente.}
-\end{figure}
+\end{figure*}
 
 \textbf{Caracterización metrológica del instrumento.} La ruta analógica está identificada desde 0,21 Hz, de modo que el trabajo pendiente no consiste en ampliar la banda medida sino en cerrar la cadena. Debe medirse magnitud y fase extremo a extremo, desde una entrada mecánica trazable hasta los códigos almacenados, para cada combinación de rango y ganancia, incorporando al geófono como elemento medido y no como modelo nominal. Del lado del compensador queda resolver el desajuste remanente en torno a 10 Hz mediante la calibración fina con tono fijo que recomienda el registro de la propia sesión de medida, y esclarecer la dinámica subsónica, que permanece no observable pese a existir puntos por debajo de 1 Hz. A ello se suman las mediciones de ruido referido a entrada, número efectivo de bits, linealidad, saturación, deriva térmica y repetibilidad de la autocalibración, ninguna de las cuales fue realizada.
 

@@ -23,24 +23,25 @@ de modo que la tolerancia de sincronización queda determinada por la geometría
 
 \textbf{Relación señal a ruido y rango dinámico.} El registro debe conservar simultáneamente el primer arribo cercano a la fuente y la llegada atenuada en el offset más lejano, cuya diferencia de amplitud abarca varios órdenes de magnitud. De allí la necesidad de ganancia programable por canal y de un convertidor con margen suficiente para evitar tanto la saturación como el enterramiento de la señal lejana en el ruido de cuantificación. La contrapartida es que ninguna ganancia recupera información que nunca superó el piso de ruido de la cadena, lo que devuelve la atención a la energía de la fuente.
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{sincronizacion_fase.png}
+\includegraphics[width=\textwidth,keepaspectratio]{sincronizacion_fase.png}
 \caption{Traducción del desalineamiento temporal entre canales a error de fase y, a través de la geometría, a error de velocidad de fase. El presupuesto fija el criterio de medición de la sincronización.}
-\end{figure}
+\end{figure*}
 
 \textbf{Preservación de fase.} Como la magnitud medida es una velocidad de fase, un error sistemático de fase entre canales se traduce directamente en un error de velocidad. El requerimiento no es que la respuesta del acondicionamiento sea plana, sino que sea conocida y, sobre todo, idéntica entre canales, porque una diferencia común a todos los canales se cancela al estimar la pendiente de fase mientras que una dispersión entre unidades no lo hace.
 
 \textbf{Trazabilidad y operación en campo.} El procesamiento sólo es reproducible si cada registro conserva su geometría, su configuración de ganancia, su referencia temporal y la identificación del hardware que lo produjo. A ello se suma la exigencia operativa de trabajar sin infraestructura, con almacenamiento local y sin depender de conectividad externa durante la adquisición.
 
-La tabla 1 resume esa derivación y funciona además como mapa de lectura del resto del documento: la columna de decisiones anticipa lo que la sección 9 desarrolla, y la de evidencia remite a las secciones 10 y 11, donde cada afirmación se sostiene o se declara pendiente.
+La tabla~\ref{tab:puente} resume esa derivación y funciona además como mapa de lectura del resto del documento: la columna de decisiones anticipa lo que la sección 9 desarrolla, y la de evidencia remite a las secciones 10 y 11, donde cada afirmación se sostiene o se declara pendiente.
 
 
-\begin{table}[!ht]
+\begin{table*}[!ht]
 \centering
 \footnotesize
 \caption{Puente requerimiento → decisión → evidencia → estado. Es la tabla central del documento y no debe recortarse.}
-\begin{tabularx}{\columnwidth}{YYYY}
+\label{tab:puente}
+\begin{tabularx}{0.92\textwidth}{YYYY}
 \toprule
 Necesidad derivada del método & Decisión de diseño adoptada & Evidencia disponible & Estado \\
 \midrule
@@ -55,4 +56,4 @@ Evitar pérdida o corrupción de muestras & Fragmentación con numeración de se
 Conservar trazabilidad del registro & Metadatos de campaña, manifiesto y servidor de ingesta & Conjunto de datos y flujo reproducible & Falta asociar revisión de hardware y firmware a cada registro \\
 \bottomrule
 \end{tabularx}
-\end{table}
+\end{table*}

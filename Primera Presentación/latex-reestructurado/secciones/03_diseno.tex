@@ -8,17 +8,47 @@ Debe señalarse desde ya que la arquitectura es multicanal por diseño, pero que
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.86\textwidth,keepaspectratio]{arquitectura_vigente.png}
-\caption{Arquitectura vigente del sistema y frontera entre el camino determinista de muestra y las funciones de calibración, comunicación y almacenamiento.}
+\begin{tikzpicture}[
+  caja/.style={draw,rounded corners=2pt,align=center,inner sep=3pt,
+               minimum height=12mm,text width=21mm,font=\scriptsize},
+  mues/.style={caja,draw=red!55!black,fill=red!4},
+  det/.style={caja,draw=green!30!black,fill=green!4},
+  com/.style={caja,draw=violet!65,fill=violet!5},
+  sop/.style={caja,draw=blue!60,fill=blue!4},
+  fl/.style={-{Latex[length=1.5mm]},semithick,gray!70!black},
+  et/.style={font=\tiny,color=gray!60!black}]
+
+  \node[mues] (sm) {\textbf{SM-24}\\[1pt]10\,Hz $\cdot$ $\zeta_0=0{,}25$};
+  \node[mues,right=3mm of sm]  (afe) {\textbf{DA-AFE}\\[1pt]PGA\,$\to$\,BP\,$\to$\,SUM\,$\to$\,LP\\4 referencias ajustables};
+  \node[det,right=3mm of afe]  (adc) {\textbf{ADC + DFB}\\[1pt]18 bits $\cdot$ 2604\,SPS\\FIR / estimador DC};
+  \node[det,right=3mm of adc]  (udb) {\textbf{UDB + DMA}\\[1pt]superMaquina\\ruta determinista};
+  \node[com,right=3mm of udb]  (esp) {\textbf{ESP32}\\[1pt]UART $\downarrow$ $\cdot$ I\textsuperscript{2}C $\uparrow$\\flanco local};
+  \node[com,right=3mm of esp]  (mae) {\textbf{Maestro}\\[1pt]ESP-NOW $\cdot$ AP\\SPA + WebSocket};
+
+  \draw[fl] (sm)--(afe); \draw[fl] (afe)--(adc); \draw[fl] (adc)--(udb);
+  \draw[fl] (udb)--(esp); \draw[fl] (esp)--(mae);
+
+  \node[sop,below=13mm of afe] (cal) {\textbf{Calibración \emph{foreground}}\\[1pt]AMUX + ADC + PI $\to$ códigos DAC\\se desactiva al adquirir};
+  \node[sop,right=3mm of cal]  (mem) {\textbf{Memoria}\\[1pt]RAM ESP $\cdot$ RAM PSoC $\cdot$ SD\\crudo preservado};
+  \node[sop,right=3mm of mem]  (rev) {\textbf{Revisión}\\[1pt]FastAPI $\cdot$ alineación\\control de calidad};
+  \node[sop,right=3mm of rev]  (msw) {\textbf{MASW}\\[1pt]dispersión $\cdot$ \emph{backends}\\resultado: modo 0};
+
+  \draw[fl] (cal) -- node[et,right=0.5mm]{antes de medir} (afe);
+  \draw[fl] (udb.south) -- node[et,above right=-1mm and 0mm]{lotes} (mem.north);
+  \draw[fl] (mem)--(rev); \draw[fl] (rev)--(msw);
+\end{tikzpicture}
+\caption{Arquitectura vigente del sistema y frontera entre el camino determinista de
+muestra, en la fila superior, y las funciones de calibración, almacenamiento y análisis
+que quedan fuera del instante crítico.}
 \end{figure*}
 
 \subsection{Transductor y el conflicto de banda}
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{respuesta_sm24_modelo.png}
-\caption{Respuesta nominal del SM-24 en circuito abierto, con las formas referidas a velocidad y a aceleración sobre los mismos ejes. Bajo $f_n$ caen a razón de 40 y 20 dB por década respectivamente; son dos referencias de la misma tensión de salida, no dos modos de funcionamiento.}
-\end{figure}
+\includegraphics[width=\textwidth,keepaspectratio]{respuesta_sm24_modelo.png}
+\caption{Respuesta nominal del SM-24 en circuito abierto, con las formas referidas a velocidad y a aceleración en dos paneles de escala vertical propia. Bajo $f_n$ caen a razón de 40 y 20 dB por década respectivamente; son dos referencias de la misma tensión de salida, no dos modos de funcionamiento.}
+\end{figure*}
 
 El elemento sensor es un geófono vertical pasivo SM-24, de frecuencia natural nominal 10 Hz, sensibilidad 28,8 V·s/m y amortiguamiento dependiente de la carga \citep{SM24}. Su elección respondió a la disponibilidad institucional y no a una optimización de la profundidad objetivo, y es importante presentarla así porque de ella se derivan buena parte de las limitaciones del trabajo.
 
@@ -26,11 +56,18 @@ El conflicto con el requerimiento de banda de la sección 8 es cuantitativo. Un 
 
 \subsection{Frente analógico y calibración}
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{AnalogPathFinal_trim.png}
-\caption{Cadena analógica implementada: entrada instrumental y ganancia programable, rama pasabanda de compensación, sumador y filtrado pasa-bajos previo al convertidor.}
-\end{figure}
+\includegraphics[width=\textwidth,keepaspectratio]{afe_entrada.png}\\[3mm]
+\includegraphics[width=\textwidth,keepaspectratio]{afe_compensa.png}
+\caption{Cadena analógica implementada, en dos mitades del mismo esquemático.
+Arriba: entrada
+instrumental diferencial y etapa de ganancia programable.
+Abajo: rama pasabanda de compensación en torno a \texttt{OPAbp}, con el
+potenciómetro de 2\,k$\Omega$ que ajusta la cancelación, el sumador \texttt{OPAsum}
+de 27\,k$\Omega$ y el pasa-bajos de realimentación múltiple \texttt{OPAlp}
+(30\,k$\Omega$ / 150\,k$\Omega$ / 12\,k$\Omega$, 47\,nF y 3,3\,nF) previo al convertidor.}
+\end{figure*}
 
 El acondicionamiento implementado en el PSoC 5LP encadena una entrada instrumental, una etapa de ganancia programable, una rama de compensación, un sumador y un filtrado pasa-bajos previo a la conversión. La etapa de compensación es la decisión de diseño central del frente analógico y merece desarrollarse con detalle.
 
@@ -70,31 +107,36 @@ y al separar el término constante aparece la forma que da nombre a la arquitect
 H_{\mathrm{comp}}(s)=1-\frac{2(\zeta_1-\zeta_0)\,\omega_n s}{s^{2}+2\zeta_1\omega_n s+\omega_n^{2}}.
 \end{equation}
 
-La estructura $1-\mathrm{BP}$ no es entonces una elección heurística sino una consecuencia algebraica: el camino directo menos un pasabanda centrado en la resonancia del sensor. Su implementación se resolvió desacoplando los dos polos, uno en la entrada y otro en la realimentación de un inversor, de manera que cada uno dependa de un único par $RC$. Se descartaron las topologías Sallen-Key y de realimentación múltiple porque el $Q$ requerido es bajo y ambas reparten cada polo entre más componentes, lo que empeora la sensibilidad a tolerancias. Los valores se resolvieron por búsqueda sobre la malla de componentes comerciales incorporando el modelo no ideal del amplificador del PSoC, y un potenciómetro en serie con la rama pasabanda permite ajustar en cada unidad la proporción de la que depende la cancelación.
+La estructura $1-\mathrm{BP}$ no es entonces una elección heurística sino una consecuencia algebraica: el camino directo menos un pasabanda centrado en la resonancia del sensor. Su implementación se resolvió desacoplando los dos polos, uno en la entrada y otro en la realimentación de un inversor, de manera que cada uno dependa de un único par $RC$. Esa realización se comparó experimentalmente contra una Sallen-Key y contra una de realimentación múltiple. La Sallen-Key quedó descartada porque su realimentación positiva agrava la sensibilidad del $Q$ a las tolerancias y admite oscilación si los componentes se apartan del valor nominal, mientras que la desviación medida respecto de la respuesta objetivo resultó menor en la realimentación múltiple. Conviene precisar que esta última no se abandonó: es la topología con la que está implementado el filtro pasa-bajos antialias que precede al convertidor. Los valores se resolvieron por búsqueda sobre la malla de componentes comerciales incorporando el modelo no ideal del amplificador del PSoC, y un potenciómetro en serie con la rama pasabanda permite ajustar en cada unidad la proporción de la que depende la cancelación.
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{extension_banda.png}
+\includegraphics[width=\textwidth,keepaspectratio]{extension_banda.png}
 \caption{Efecto de la compensación sobre la respuesta referida a aceleración. Al elevar $\zeta_1$ los polos complejos se separan en dos reales, y el inferior desplaza el quiebre $f_1$ hacia la banda de interés.}
-\end{figure}
+\end{figure*}
 
-El precio de la compensación es alto y conviene explicitarlo, porque condiciona todo el resto del frente analógico. Con los valores implementados se obtiene $f_0=10{,}21$ Hz y un amortiguamiento efectivo $\zeta_1\simeq 938$, que es el valor con el que se diseñó la rama pasabanda. En la zona central la respuesta compensada queda escalada por $1/(2\zeta_1)\simeq 5{,}3\times10^{-4}$, esto es, una atenuación cercana a 1876 veces que debe recuperarse íntegramente en ganancia. Esa ganancia se repartió deliberadamente entre etapas para no concentrar el margen en un solo bloque: la entrada instrumental aporta $\times 2$, la etapa programable entre $\times 1$ y $\times 50$, el sumador $\times 3{,}6$ y el pasa-bajos $\times 5$, con un producto máximo de $\times 1800$. El propósito de la compensación no es convertir al SM-24 en un sensor de banda ancha, objetivo inalcanzable por vía puramente electrónica, sino conservar una forma de respuesta predecible en la banda baja y aprovechar el margen del convertidor, aceptando a cambio un compromiso explícito con el ruido: toda la cadena de ganancia que restituye ese factor 1876 amplifica también el ruido propio del frente, y es esa tensión la que vuelve indispensables las mediciones de ruido referido a entrada que la sección 12 declara pendientes.
+El precio de la compensación es alto y conviene explicitarlo, porque condiciona todo el resto del frente analógico. Con los valores implementados se obtiene $f_0=10{,}20$ Hz y un amortiguamiento efectivo $\zeta_1\simeq 937$, que es el valor con el que se diseñó la rama pasabanda. En la zona central la respuesta compensada queda escalada por $1/(2\zeta_1)\simeq 5{,}3\times10^{-4}$, esto es, una atenuación cercana a 1875 veces que debe recuperarse íntegramente en ganancia. Esa ganancia se repartió deliberadamente entre etapas para no concentrar el margen en un solo bloque: la entrada instrumental aporta $\times 2$, la etapa programable entre $\times 1$ y $\times 50$, el sumador $\times 3{,}6$ sobre la rama de compensación y el pasa-bajos $\times 5$, con un producto máximo de $\times 1800$. El propósito de la compensación no es convertir al SM-24 en un sensor de banda ancha, objetivo inalcanzable por vía puramente electrónica, sino conservar una forma de respuesta predecible en la banda baja y aprovechar el margen del convertidor, aceptando a cambio un compromiso explícito con el ruido: toda la cadena de ganancia que restituye ese factor 1875 amplifica también el ruido propio del frente, y es esa tensión la que vuelve indispensables las mediciones de ruido referido a entrada que la sección 12 declara pendientes.
 
 Extender la banda hacia baja frecuencia agrava el problema del offset y de la deriva, que de otro modo consumirían el rango del convertidor sin aportar señal. Para controlarlo, un multiplexor permite observar nodos internos de la cadena con el mismo convertidor, y una rutina de calibración en primer plano ajusta secuencialmente las referencias de la etapa de ganancia, de la rama de compensación, del sumador y del filtro. Durante la captura los lazos se desactivan y se aplican códigos fijos almacenados con verificación de integridad, de manera que ninguna corrección actúe sobre la señal mientras se registra. La revisión posterior del circuito, que sustituye las referencias por fuentes de corriente e incorpora una etapa de ganancia de salida, se encuentra en desarrollo y no participó de la campaña; los resultados de la sección 10 corresponden exclusivamente a la ruta anterior.
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{flujo_calibracion_horizontal_usuario.png}
+\includegraphics[width=0.62\textwidth,keepaspectratio]{flujo_calibracion_horizontal_usuario.png}
 \caption{Flujo de la calibración \emph{foreground}: las etapas se ajustan en orden, cada una hasta entrar en su banda muerta, y la adquisición se restaura con códigos fijos.}
-\end{figure}
+\end{figure*}
 
 \subsection{Digitalización y temporización determinista}
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{DigitalPathFinal_trim.png}
-\caption{Camino digital implementado en el PSoC: convertidor, filtro FIR por hardware, canales DMA y bloque de control descrito en lógica programable.}
-\end{figure}
+\begin{minipage}[t]{0.53\textwidth}\centering\includegraphics[width=\textwidth,keepaspectratio]{dig_control.png}\end{minipage}\hfill
+\begin{minipage}[t]{0.44\textwidth}\centering\includegraphics[width=\textwidth,keepaspectratio]{dig_dma.png}\end{minipage}
+\caption{Camino digital implementado en el PSoC. Izquierda: bloque de control
+\texttt{SignalController} descrito en lógica programable, con los registros de
+configuración, el filtro FIR por hardware y el temporizador de vigilancia.
+Derecha: registros de estado y los tres canales de acceso directo a memoria que
+trasladan la señal cruda y la filtrada sin intervención del procesador.}
+\end{figure*}
 
 La conversión emplea el convertidor delta-sigma del PSoC configurado a una frecuencia de muestreo del orden de 2604 muestras por segundo, con resolución nominal de 18 bits y rangos bipolares seleccionables que se coordinan con la ganancia programable para aprovechar la escala sin saturar. Un filtro FIR implementado en hardware y varios canales de acceso directo a memoria trasladan la señal cruda y la filtrada sin intervención del procesador.
 
@@ -117,8 +159,8 @@ La excitación se aplica con un martillo instrumentado PCB 086D20, cuyo sensor p
 La repetibilidad de la fuente adquiere una importancia particular en el protocolo empleado. Cuando el arreglo se construye desplazando un receptor, cualquier variación de amplitud, punto de golpe o acoplamiento entre posiciones sucesivas se incorpora al registro como si fuera variación espacial. Registrar entre veinte y treinta y siete golpes por posición y seleccionar el subconjunto más consistente reduce ese riesgo pero no lo elimina, y por esa razón la geometría aparece en la sección 11 como la sensibilidad dominante del resultado.
 
 
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\includegraphics[width=\columnwidth,keepaspectratio]{repetibilidad_fuente.png}
+\includegraphics[width=\textwidth,keepaspectratio]{repetibilidad_fuente.png}
 \caption{Repetibilidad del impacto medida sobre el canal del martillo. Los puntos claros son golpes individuales y las líneas la mediana por posición.}
-\end{figure}
+\end{figure*}
