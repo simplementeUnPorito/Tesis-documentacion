@@ -1,0 +1,745 @@
+--- Antes/01_contexto.tex
++++ Recuperado/01_contexto.tex
+@@ -3,14 +3,7 @@
+ 
+ La respuesta de una obra civil frente a cargas estáticas y dinámicas depende de propiedades mecánicas del terreno que varían con la profundidad y, en general, también lateralmente. Reconocer esa variación (espesores, contactos, rellenos y zonas de menor rigidez) es una condición previa al dimensionamiento de fundaciones, a la evaluación de asentamientos y a la estimación de la respuesta sísmica de sitio.
+ 
+-\revsolution{La rigidez relaciona las tensiones con las deformaciones. En el régimen de pequeñas deformaciones, la respuesta local de corte se aproxima por
+-\begin{equation}
+-\tau=G_{\max}\,\gamma,
+-\label{eq:rigidez-corte}
+-\end{equation}
+-donde $\tau$ es la tensión de corte, $\gamma$ la deformación angular y $G_{\max}$ el módulo de corte a pequeñas deformaciones. Conocer su variación con la profundidad permite estudiar la respuesta dinámica del sitio; la relación entre $G_{\max}$ y la velocidad de corte se desarrolla en la sección~\ref{sec:propagacion}. Los asentamientos dependen además del nivel de deformación, el drenaje y la historia de cargas \citep{Kramer1996}.}
+-
+-\rev{creo que es medio al pedo esta relación}
++\revsolution{La variación de la rigidez con la profundidad condiciona la respuesta dinámica del sitio. Su relación con la velocidad de corte se desarrolla en la sección~\ref{sec:propagacion} \citep{Kramer1996}.}
+ 
+ Este proyecto de fin de grado tiene por objetivo el diseño, la implementación y la evaluación experimental de un sistema electrónico multicanal del tipo IoT para la caracterización geotécnica del suelo mediante ondas sísmicas, con el propósito de extender la caracterización hacia capas más profundas que las que alcanza hoy la cadena disponible. Se trata de un trabajo de Ingeniería Electrónica: el objeto de diseño y de validación es el instrumento, mientras que la geofísica aporta el contexto que fija los requerimientos y el criterio con el que se juzga si se cumplen. La contribución de esta primera etapa es de instrumentación, y consiste en la integración y la evaluación con datos reales de la cadena de medida completa, desde la fuente instrumentada y el sensor hasta el acondicionamiento analógico, la conversión, la temporización, el almacenamiento y el procesamiento posterior. El interés de construir esa cadena en lugar de adquirirla no está en suponer que la industria carezca de soluciones, sino en disponer de una plataforma adaptada a las necesidades de nuestro mercado y a un costo acotado.
+ 
+@@ -23,12 +16,12 @@
+ 
+ Estos ensayos entregan resistencia, que no es lo mismo que rigidez. La magnitud que gobierna el asentamiento bajo cargas de servicio y la amplificación del movimiento sísmico es la rigidez del terreno en el rango de pequeñas deformaciones, y no existe forma de medirla por penetración. Sí existe, en cambio, una magnitud cinemática ligada a ella de manera directa: la velocidad con que el suelo transmite una onda de corte, cuya relación con la rigidez se establece en la sección~\ref{sec:propagacion}. De ahí que, cuando el objetivo es la rigidez y no la resistencia, el ensayo se plantee en términos de una velocidad sísmica.
+ 
+-\revsolution{Los ensayos en pozo permiten estimar velocidades a partir del tiempo de propagación. Para un tramo aproximadamente homogéneo de longitud $\Delta\ell$ y un tiempo de tránsito de corte $\Delta t_S$,
++Los ensayos en pozo permiten estimar velocidades a partir del tiempo de propagación. Para un tramo aproximadamente homogéneo de longitud $\Delta\ell$ y un tiempo de tránsito de corte $\Delta t_S$,
+ \begin{equation}
+ V_S\simeq\frac{\Delta\ell}{\Delta t_S}.
+ \label{eq:velocidad-transito}
+ \end{equation}
+-El \emph{downhole} registra a distintas profundidades una excitación superficial y el \emph{crosshole} mide entre perforaciones vecinas. Ambos requieren conocer la trayectoria de propagación y realizar perforaciones, con el costo asociado.}
++El \emph{downhole} registra a distintas profundidades una excitación superficial y el \emph{crosshole} mide entre perforaciones vecinas. Ambos requieren conocer la trayectoria de propagación y realizar perforaciones, con el costo asociado.
+ 
+ De esa comparación se desprende la motivación de los métodos no invasivos. Una obra necesita reconocer la variación lateral de la rigidez en un volumen extenso, y un conjunto de sondeos puntuales resulta costoso de densificar. Los métodos basados en la propagación de ondas mecánicas desde la superficie permiten cubrir esa extensión sin perforar, a cambio de trabajar con una magnitud que se infiere en lugar de medirse por contacto. A ese argumento se agrega un campo de aplicación que el carácter no invasivo habilita de manera casi exclusiva: el control de calidad y el seguimiento de obras ya construidas. Una traza vial, un terraplén o una plataforma pueden recorrerse de forma repetida y sin daño para verificar la uniformidad de la compactación durante la construcción, y para detectar posteriormente la degradación o la pérdida de rigidez que anticipa la necesidad de mantenimiento. Un ensayo destructivo no admite esa repetición sobre la misma obra.
+ 
+@@ -60,7 +53,7 @@
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{b_dispersion_profundidad.png}
+-\caption{\revsolution{Dispersión geométrica de las ondas Rayleigh: movimiento vertical de partícula con la profundidad para dos frecuencias en un medio estratificado. La onda de alta frecuencia queda confinada a la capa superior, mientras que la de baja frecuencia involucra las tres capas y por eso su velocidad depende de la combinación de todas. Reproducida de \citet{Foti2014}, figura 1.2.}}
++\caption{Dispersión geométrica de las ondas Rayleigh: movimiento vertical de partícula con la profundidad para dos frecuencias en un medio estratificado. La onda de alta frecuencia queda confinada a la capa superior, mientras que la de baja frecuencia involucra las tres capas y por eso su velocidad depende de la combinación de todas. Reproducida de \citet{Foti2014}, figura 1.2.}
+ \label{fig:dispersion}
+ \end{figure*}
+ 
+@@ -95,13 +88,13 @@
+ 
+ Las expresiones anteriores suponen un medio homogéneo y perfectamente elástico, y ninguna de las dos condiciones se cumple en el terreno real. El suelo está estratificado, y esa estratificación es justamente lo que el ensayo se propone reconstruir. El suelo tampoco es perfectamente elástico: disipa energía a medida que la onda avanza, por lo que la amplitud registrada en un receptor lejano se reduce tanto por divergencia geométrica como por atenuación material, y esta última crece con la frecuencia.
+ 
+-\revsolution{Para una fuente puntual y fuera del campo cercano, la amplitud $A(r,f)$ a distancia $r$ puede expresarse, respecto de una distancia de referencia $r_0$, como
++Para una fuente puntual y fuera del campo cercano, la amplitud $A(r,f)$ a distancia $r$ puede expresarse, respecto de una distancia de referencia $r_0$, como
+ \begin{equation}
+ \frac{A(r,f)}{A(r_0,f)}
+ =\left(\frac{r_0}{r}\right)^p e^{-\alpha(f)(r-r_0)},
+ \label{eq:atenuacion}
+ \end{equation}
+-donde $p=1$ para ondas de cuerpo y $p=1/2$ para ondas superficiales en el caso ideal. El coeficiente $\alpha(f)$, en m$^{-1}$, representa la atenuación material. La potencia de $r$ describe la divergencia geométrica y el término exponencial la disipación.}
++donde $p=1$ para ondas de cuerpo y $p=1/2$ para ondas superficiales en el caso ideal. El coeficiente $\alpha(f)$, en m$^{-1}$, representa la atenuación material. La potencia de $r$ describe la divergencia geométrica y el término exponencial la disipación.
+ 
+ \subsection{Métodos basados en ondas mecánicas}
+ \label{sec:metodos-ondas}
+@@ -125,16 +118,16 @@
+ 
+ En un medio homogéneo la velocidad Rayleigh no depende de la frecuencia. La dispersión aparece cuando el medio está estratificado, porque cada longitud de onda muestrea una combinación distinta de capas y se propaga con la velocidad de fase que resulta de esa combinación. La curva $c_R(f)$ deja entonces de ser una constante del material y pasa a contener, codificada, la variación de rigidez con la profundidad: ese es el fundamento del método.
+ 
+-\revsolution{El procesamiento transforma las trazas registradas al dominio frecuencia--velocidad y extrae una curva de dispersión. En el método de desplazamiento de fase, el indicador normalizado es
++El procesamiento transforma las trazas registradas al dominio frecuencia--velocidad y extrae una curva de dispersión. En el método de desplazamiento de fase, el indicador normalizado es
+ \begin{equation}
+ P(f,c)=\frac{1}{N_r}\left|
+ \sum_{j=1}^{N_r}\frac{U_j(f)}{|U_j(f)|}
+ e^{\,\mathrm{i}2\pi f x_j/c}\right|,
+ \label{eq:imagen-dispersion}
+ \end{equation}
+-donde $N_r$ es el número de posiciones, $x_j$ su distancia a la fuente, $U_j(f)$ el espectro complejo de la traza, $c$ la velocidad de prueba e $\mathrm{i}$ la unidad imaginaria. Se consideran componentes de amplitud no nula. La compensación de fase refuerza los máximos compatibles entre posiciones, a partir de los cuales se extrae $c_R^{\mathrm{obs}}(f)$ \citep{Park1998,Park1999}.}
++donde $N_r$ es el número de posiciones, $x_j$ su distancia a la fuente, $U_j(f)$ el espectro complejo de la traza, $c$ la velocidad de prueba e $\mathrm{i}$ la unidad imaginaria. Se consideran componentes de amplitud no nula. La compensación de fase refuerza los máximos compatibles entre posiciones, a partir de los cuales se extrae $c_R^{\mathrm{obs}}(f)$ \citep{Park1998,Park1999}.
+ 
+-\revsolution{La inversión busca parámetros de capas $\boldsymbol{\theta}$ que reproduzcan esa curva. Para $N_f$ frecuencias válidas $f_k$, un desajuste relativo es
++La inversión busca parámetros de capas $\boldsymbol{\theta}$ que reproduzcan esa curva. Para $N_f$ frecuencias válidas $f_k$, un desajuste relativo es
+ \begin{equation}
+ J(\boldsymbol{\theta})=
+ \sqrt{\frac{1}{N_f}\sum_{k=1}^{N_f}
+@@ -143,9 +136,9 @@
+ {c_R^{\mathrm{obs}}(f_k)}\right]^2}.
+ \label{eq:desajuste}
+ \end{equation}
+-Aquí $c_R^{\mathrm{mod}}$ es la predicción del modelo; $\boldsymbol{\theta}$ incluye espesores y velocidades de corte, con densidad y coeficiente de Poisson adoptados. La expresión corresponde al caso en que el modelo predice todos los puntos solicitados; el procesamiento penaliza las predicciones faltantes.}
++Aquí $c_R^{\mathrm{mod}}$ es la predicción del modelo; $\boldsymbol{\theta}$ incluye espesores y velocidades de corte, con densidad y coeficiente de Poisson adoptados. La expresión corresponde al caso en que el modelo predice todos los puntos solicitados; el procesamiento penaliza las predicciones faltantes.
+ 
+-\revsolution{Un valor pequeño de $J$ indica compatibilidad entre la curva y el modelo, pero no una solución única: diferentes perfiles pueden reproducir datos similares. La geometría, la banda disponible y los supuestos de inversión delimitan la interpretación presentada en la sección~\ref{sec:resultado-geofisico} \citep{Xia1999}.}
++Un valor pequeño de $J$ indica compatibilidad entre la curva y el modelo, pero no una solución única: diferentes perfiles pueden reproducir datos similares. La geometría, la banda disponible y los supuestos de inversión delimitan la interpretación presentada en la sección~\ref{sec:resultado-geofisico} \citep{Xia1999}.
+ 
+ \section{Revisión y selección del método}
+ \label{sec:seleccion}
+@@ -171,19 +164,19 @@
+ \end{tabularx}
+ \end{table*}
+ 
+-\revsolution{El análisis espectral de ondas superficiales (SASW) estima la velocidad a partir de dos receptores separados una distancia $\Delta x$:
++El análisis espectral de ondas superficiales (SASW) estima la velocidad a partir de dos receptores separados una distancia $\Delta x$:
+ \begin{equation}
+ c_R(f)=\frac{2\pi f\,\Delta x}{|\Delta\phi(f)|},
+ \label{eq:sasw-fase}
+ \end{equation}
+-donde $\Delta\phi(f)$ es la diferencia de fase desenvuelta, en radianes, asociada a la propagación entre receptores. La estimación exige resolver la ambigüedad de fase y separar las contribuciones modales. MASW incorpora múltiples posiciones en la suma de la ecuación~\eqref{eq:imagen-dispersion}, aportando redundancia y permitiendo distinguir máximos asociados a distintos modos \citep{Park1999}.}
++donde $\Delta\phi(f)$ es la diferencia de fase desenvuelta, en radianes, asociada a la propagación entre receptores. La estimación exige resolver la ambigüedad de fase y separar las contribuciones modales. MASW incorpora múltiples posiciones en la suma de la ecuación~\eqref{eq:imagen-dispersion}, aportando redundancia y permitiendo distinguir máximos asociados a distintos modos \citep{Park1999}.
+ 
+ Los métodos pasivos, entre ellos ReMi, SPAC y ESAC, presentan una ventaja complementaria de peso, ya que el ruido ambiental contiene energía en frecuencias inferiores a las que alcanza un impacto manual y permite en principio extender el rango hacia mayores profundidades. Su requisito, sin embargo, resulta incompatible con los medios disponibles: exigen registrar simultáneamente en todas las posiciones del arreglo, porque el campo de ruido no puede reproducirse a voluntad mientras se desplaza un sensor. El número de transductores con que se contó no permite cubrir un arreglo completo de forma simultánea, de modo que estos métodos quedan fuera de alcance por una restricción material y no por una decisión de diseño.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=0.82\textwidth,keepaspectratio]{b_activas_pasivas.png}
+-\caption{\revsolution{Complemento entre fuentes activas y pasivas. El ensayo pasivo aporta la porción de baja frecuencia de la curva de dispersión y el activo la de alta; la inversión se resuelve sobre la curva combinada. Este trabajo sólo dispone de la rama activa. Reproducida de \citet{Foti2014}, figura 1.5.}}
++\caption{Complemento entre fuentes activas y pasivas. El ensayo pasivo aporta la porción de baja frecuencia de la curva de dispersión y el activo la de alta; la inversión se resuelve sobre la curva combinada. Este trabajo sólo dispone de la rama activa. Reproducida de \citet{Foti2014}, figura 1.5.}
+ \label{fig:activapasiva}
+ \end{figure*}
+ 
+--- Antes/02_requerimientos.tex
++++ Recuperado/02_requerimientos.tex
+@@ -11,20 +11,20 @@
+ 
+ Para una velocidad de fase de referencia de 150 m/s, una profundidad de investigación de 10 m requiere contenido coherente en torno a 7,5 Hz. A velocidad constante, duplicar la profundidad exige dividir esa frecuencia por dos. Esta única relación explica por qué el acceso a las capas profundas es, ante todo, un problema de baja frecuencia, y anticipa por qué la elección del transductor y la energía de la fuente, y no la velocidad de conversión, constituyen el cuello de botella del sistema.
+ 
+-\revsolution{\textbf{Separación entre canales y apertura del arreglo.} Para $N_r$ posiciones equiespaciadas, la apertura $L$ y el límite de muestreo espacial satisfacen
++\textbf{Separación entre canales y apertura del arreglo.} Para $N_r$ posiciones equiespaciadas, la apertura $L$ y el límite de muestreo espacial satisfacen
+ \begin{equation}
+ L=(N_r-1)\Delta x,\qquad
+ \lambda_{\min}\gtrsim2\Delta x.
+ \label{eq:geometria-arreglo}
+ \end{equation}
+-La separación $\Delta x$ limita las longitudes de onda cortas; la apertura condiciona la interpretación de las largas. Foti y colaboradores proponen $L\gtrsim\lambda_{\max}$ y un ejemplo conservador con $L\gtrsim1{,}5\lambda_{\max}$ \citep{Foti2018}. Como criterio más estricto de diseño se considera aquí $L\gtrsim2\lambda_{\max}$.}
++La separación $\Delta x$ limita las longitudes de onda cortas; la apertura condiciona la interpretación de las largas. Foti y colaboradores proponen $L\gtrsim\lambda_{\max}$ y un ejemplo conservador con $L\gtrsim1{,}5\lambda_{\max}$ \citep{Foti2018}. Como criterio más estricto de diseño se considera aquí $L\gtrsim2\lambda_{\max}$.
+ 
+-\revsolution{\textbf{Sincronización entre canales.} Para una frecuencia $f$, el error temporal $\Delta t$ introduce un error de fase $\delta\phi_t$:
++\textbf{Sincronización entre canales.} Para una frecuencia $f$, el error temporal $\Delta t$ introduce un error de fase $\delta\phi_t$:
+ \begin{equation}
+ \delta\phi_t=2\pi f\,\Delta t.
+ \label{eq:error-fase-temporal}
+ \end{equation}
+-El procesamiento interpreta este error como una contribución adicional al tiempo de propagación. En una aproximación de primer orden,}
++El procesamiento interpreta este error como una contribución adicional al tiempo de propagación. En una aproximación de primer orden,
+ 
+ \begin{equation}
+ \frac{\Delta c}{c}\simeq\frac{c\,\Delta t}{\Delta x},
+@@ -35,7 +35,7 @@
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=0.86\textwidth,keepaspectratio]{f_presupuesto_sincronizacion.png}
+-\caption{\revsolution{Presupuesto de sincronización. El error relativo sobre la velocidad de fase crece linealmente con el desalineamiento temporal entre nodos y con la velocidad esperada. Para la separación adoptada y la velocidad observada en el sitio, el error admisible del 5 \% se alcanza a unos 670 µs; una velocidad mayor endurece el requisito.}}
++\caption{Presupuesto de sincronización. El error relativo sobre la velocidad de fase crece linealmente con el desalineamiento temporal entre nodos y con la velocidad esperada. Para la separación adoptada y la velocidad observada en el sitio, el error admisible del 5 \% se alcanza a unos 670 µs; una velocidad mayor endurece el requisito.}
+ \label{fig:presupuestosinc}
+ \end{figure*}
+ 
+--- Antes/03_diseno.tex
++++ Recuperado/03_diseno.tex
+@@ -9,7 +9,7 @@
+ \begin{figure}[!tb]
+ \centering
+ \includegraphics[width=0.30\textwidth,keepaspectratio]{f_geofono_interior.png}
+-\caption{\revsolution{Principio constructivo de un geófono de bobina móvil: una masa suspendida por resortes lleva la bobina dentro del entrehierro de un imán solidario al chasis. La tensión inducida es proporcional a la velocidad relativa entre ambos, que es la base del modelo de la sección~\ref{sec:diseno}. Ilustración del principio, no un corte acotado del SM-24.}}
++\caption{Principio constructivo de un geófono de bobina móvil: una masa suspendida por resortes lleva la bobina dentro del entrehierro de un imán solidario al chasis. La tensión inducida es proporcional a la velocidad relativa entre ambos, que es la base del modelo de la sección~\ref{sec:diseno}. Ilustración del principio, no un corte acotado del SM-24.}
+ \label{fig:geofonointerior}
+ \end{figure}
+ 
+@@ -48,32 +48,33 @@
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_arquitectura_nodos.png}
+-\caption{\revsolution{Arquitectura de nodos. Un maestro coordina dos clases de esclavo: los nodos GEO, que acondicionan y digitalizan la señal del geófono, y el nodo HAMMER, que instrumenta la fuente y aporta la referencia temporal. Cada nodo conserva una copia local de lo que capturó.}}
++\caption{Arquitectura de nodos. Un maestro coordina dos clases de esclavo: los nodos GEO, que acondicionan y digitalizan la señal del geófono, y el nodo HAMMER, que instrumenta la fuente y aporta la referencia temporal. Cada nodo conserva una copia local de lo que capturó.}
+ \label{fig:arquitectura}
+ \end{figure*}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_flujo_operativo.png}
+-\caption{\revsolution{Flujo operativo de una sesión de campo, desde el armado de los nodos hasta la descarga de los registros, con el reparto de responsabilidades entre el operador, el maestro, los esclavos y el servidor.}}
++\caption{Flujo operativo de una sesión de campo, desde el armado de los nodos hasta la descarga de los registros, con el reparto de responsabilidades entre el operador, el maestro, los esclavos y el servidor.}
+ \label{fig:flujooperativo}
+ \end{figure*}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_servidor_ingesta.png}
+-\caption{\revsolution{Separación entre adquisición, transporte e ingesta. El servidor preserva la captura original y ejecuta el procesamiento sobre una copia versionada, que es lo que hace reproducible el análisis posterior.}}
++\caption{Separación entre adquisición, transporte e ingesta. El servidor preserva la captura original y ejecuta el procesamiento sobre una copia versionada, que es lo que hace reproducible el análisis posterior.}
+ \label{fig:servidor}
+ \end{figure*}
+ 
+ \subsection{Frente analógico}
++\label{sec:frente-analogico}
+ 
+ El acondicionamiento implementado en el PSoC 5LP encadena una entrada instrumental, una etapa de ganancia programable, una rama de compensación, un sumador y un filtrado pasa-bajos previo a la conversión. La etapa de compensación es la decisión de diseño central del frente analógico y merece desarrollarse con detalle.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_cadena_fuente_geofono.png}
+-\caption{\revsolution{Cadena funcional desde la fuente hasta el convertidor: impacto instrumentado, respuesta del terreno, geófono, acondicionamiento y digitalización. La respuesta del sensor se trata en todo el documento referida a la aceleración del terreno.}}
++\caption{Cadena funcional desde la fuente hasta el convertidor: impacto instrumentado, respuesta del terreno, geófono, acondicionamiento y digitalización. La respuesta del sensor se trata en todo el documento referida a la aceleración del terreno.}
+ \label{fig:cadenafuncional}
+ \end{figure*}
+ 
+@@ -119,9 +120,23 @@
+ H_{\mathrm{comp}}(s)=1-\frac{2(\zeta_1-\zeta_0)\,\omega_n s}{s^{2}+2\zeta_1\omega_n s+\omega_n^{2}}.
+ \end{equation}
+ 
+-La estructura $1-\mathrm{BP}$ es entonces una consecuencia algebraica directa: el camino directo menos un pasabanda centrado en la resonancia del sensor.
+-
+-Ma y colaboradores implementan ese pasabanda con una topología Sallen-Key. Aquí se descartó esa vía, y la razón está en el factor de calidad requerido. El pasabanda que exige la compensación tiene un $Q$ muy bajo, y para un $Q$ de ese orden ni la Sallen-Key ni la de realimentación múltiple aportan ventaja: ambas acoplan el factor de calidad y la frecuencia central a cuatro o más componentes simultáneamente, de manera que, en lugar de facilitar la obtención de los valores buscados, vuelven el resultado más sensible a las tolerancias. Se optó por ello por una realización que desacopla los dos polos, uno en la entrada y otro en la realimentación de un inversor, de modo que cada uno dependa de un único par $RC$ y la tolerancia de cada componente se propague de forma directa y previsible sobre un solo quiebre.
++\revsolution{Ma y colaboradores implementan la rama pasabanda con una topología Sallen-Key. Para el amortiguamiento requerido aquí, el factor de calidad $Q=1/(2\zeta_1)$ es muy bajo y los dos polos quedan muy separados. Se eligió por ello un inversor con un resistor $R_{\mathrm{in}}$ y un capacitor $C_{\mathrm{in}}$ en serie en la entrada, y un resistor $R_{\mathrm{f}}$ en paralelo con un capacitor $C_{\mathrm{f}}$ en la realimentación. En el modelo ideal, el quiebre inferior $f_{\mathrm{low}}$ y el superior $f_{\mathrm{high}}$ se fijan mediante
++
++\begin{equation}
++f_{\mathrm{low}}=\frac{1}{2\pi R_{\mathrm{in}}C_{\mathrm{in}}},
++\qquad
++f_{\mathrm{high}}=\frac{1}{2\pi R_{\mathrm{f}}C_{\mathrm{f}}}.
++\end{equation}
++
++La transferencia ideal de la rama inversora se obtiene del cociente entre las impedancias de realimentación y entrada:
++\begin{equation}
++H_{\mathrm{BP}}(s)=
++-\frac{R_{\mathrm f}C_{\mathrm{in}}s}
++{(1+R_{\mathrm{in}}C_{\mathrm{in}}s)
++(1+R_{\mathrm f}C_{\mathrm f}s)}.
++\label{eq:bp-rc}
++\end{equation}
++La variable $s$ es la frecuencia compleja de Laplace. Los dos pares $RC$ fijan los quiebres, y de ellos se obtienen la frecuencia central $f_0=\sqrt{f_{\mathrm{low}}f_{\mathrm{high}}}$ y el factor de calidad $Q=f_0/(f_{\mathrm{low}}+f_{\mathrm{high}})$.}
+ 
+ Para el filtro antialias que precede al convertidor la decisión fue distinta y también deliberada: allí sí se adoptó una topología activa de realimentación múltiple. El criterio vuelve a ser la sensibilidad a las tolerancias, que en esa configuración favorece claramente a la realimentación múltiple frente a la Sallen-Key. La alta impedancia de entrada que esta última ofrece, que suele ser su argumento principal, no aporta ninguna ventaja en esta cadena, porque todas las etapas que la preceden son activas y presentan baja impedancia de salida.
+ 
+@@ -130,174 +145,217 @@
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_frente_analogico.png}
+-\caption{\revsolution{Frente analógico implementado en el PSoC. De izquierda a derecha: entrada instrumental diferencial, etapa de ganancia programable, rama pasabanda de compensación con el potenciómetro de ajuste, sumador y filtro pasa-bajos de realimentación múltiple previo al convertidor. Se reproduce el esquemático completo, sin recortes.}}
++\caption{Frente analógico implementado en el PSoC. De izquierda a derecha: entrada instrumental diferencial, etapa de ganancia programable, rama pasabanda de compensación con el potenciómetro de ajuste, sumador y filtro pasa-bajos de realimentación múltiple previo al convertidor. Se reproduce el esquemático completo, sin recortes.}
+ \label{fig:frenteanalogico}
+ \end{figure*}
+ 
+ El precio de la compensación es alto y conviene explicitarlo, porque condiciona todo el resto del frente analógico. Con los valores implementados se obtiene $f_0=10{,}20$ Hz y un amortiguamiento efectivo $\zeta_1\simeq 937$, que es el valor con el que se diseñó la rama pasabanda. En la zona central la respuesta compensada queda escalada por $1/(2\zeta_1)\simeq 5{,}3\times10^{-4}$, esto es, una atenuación cercana a 1875 veces que debe recuperarse íntegramente en ganancia. Esa ganancia se repartió deliberadamente entre etapas para no concentrar el margen en un solo bloque: la entrada instrumental aporta $\times 2$, la etapa programable entre $\times 1$ y $\times 50$, el sumador $\times 3{,}6$ sobre la rama de compensación y el pasa-bajos $\times 5$, con un producto máximo de $\times 1800$.
+ 
+-\revsolution{El propósito de la compensación es extender la banda útil del SM-24 por debajo de su resonancia, es decir, convertirlo en un sensor de banda más ancha que el que se tiene de fábrica.}
+-
+-\revsolution{\subsection{Calibración en primer plano}}
+-
+-\revsolution{Extender la banda hacia baja frecuencia agrava el problema del offset y de la deriva. Cada etapa de la cadena aporta una tensión de continua propia, y esa componente atraviesa el mismo camino de ganancia que restituye el factor 1875, de modo que un desbalance de pocos milivolt a la entrada puede consumir por sí solo el rango del convertidor sin aportar señal. La solución adoptada es una rutina de calibración que corre antes de medir y que deja la cadena centrada, con lazos que se apagan durante la captura.}
+-
+-\revsolution{El mecanismo se apoya en dos recursos que el PSoC ya ofrece. El primero es un multiplexor analógico que conecta el mismo convertidor a los nodos internos de la cadena, de manera que la salida de la etapa de ganancia, la de la rama de compensación, la del sumador y la del pasa-bajos pueden observarse una por una sin agregar hardware de medida. El segundo es un conjunto de convertidores digital-analógicos de ocho bits, uno por etapa, que fijan la referencia sobre la que cada bloque trabaja: mover ese código desplaza el punto de reposo de la etapa correspondiente.}
+-
+-\begin{figure*}[!tb]
+-\centering
+-\includegraphics[width=\textwidth,keepaspectratio]{d_calibracion_offset.png}
+-\caption{\revsolution{Secuencia de la calibración en primer plano. Las etapas se recorren en orden, cada una con su lazo proporcional-integral sobre el código del convertidor digital-analógico correspondiente, hasta permanecer dentro de su banda muerta.}}
++El propósito de la compensación es extender la banda útil del SM-24 por debajo de su resonancia, es decir, convertirlo en un sensor de banda más ancha que el que se tiene de fábrica.
++
++\subsection{Calibración en primer plano}
++\label{sec:calibracion}
++
++\revsolution{La ganancia necesaria para recuperar la señal compensada amplifica también los offsets de las etapas y puede consumir el rango del convertidor. Se emplea una calibración en primer plano: el punto de reposo se ajusta antes de adquirir y los códigos de corrección permanecen fijos durante el registro.}
++
++\revsolution{Un multiplexor conecta el convertidor analógico-digital (ADC) a las salidas de la ganancia programable (PGA), la rama pasabanda (BP), el sumador (SUM) y el pasa-bajos (LP). Cada etapa dispone de un convertidor digital-analógico de tensión (VDAC) de ocho bits que modifica su referencia. Durante la calibración, el filtro digital programable se configura como estimador de continua de respuesta impulsional finita (FIR), con 128 coeficientes. La estimación requiere el geófono en reposo y estados internos suficientemente estables.}
++
++\begin{figure*}[!tb]
++\centering
++\includegraphics[width=0.95\textwidth,keepaspectratio]{d_calibracion_offset.png}
++\caption{Secuencia de la calibración en primer plano. Las etapas se recorren en orden, cada una con su lazo proporcional-integral sobre el código del convertidor digital-analógico correspondiente, hasta permanecer dentro de su banda muerta.}
+ \label{fig:calibracion}
+ \end{figure*}
+ 
+-\revsolution{Sobre esos dos recursos se cierra un lazo por etapa. La rutina recorre las cuatro en orden, desde la ganancia hasta el filtro, porque el offset de cada bloque se propaga amplificado a los siguientes y corregirlos en desorden obligaría a repetir el ajuste. Para cada etapa se mide el nodo correspondiente y se compara contra su objetivo, que en el nodo de ganancia es cero, y un controlador proporcional-integral discreto corrige el código del convertidor digital-analógico. Se descartó el término derivativo porque la variable controlada es una continua sin dinámica rápida y su aporte sólo habría amplificado el ruido de medición. Las constantes implementadas son $K_p=10^{-3}$ y $K_i=3\times10^{-4}$, expresadas en el firmware como cocientes enteros para evitar aritmética de punto flotante en el lazo.}
+-
+-\revsolution{El criterio de detención combina una banda muerta con un conteo de permanencia. La banda muerta vale tres códigos del convertidor digital-analógico y evita que el lazo persiga indefinidamente el último bit, que es ruido; la etapa se declara estable cuando el error permanece dentro de esa banda durante 512 muestras consecutivas, y un temporizador de guarda por etapa impide que una unidad averiada bloquee la secuencia completa. La medición no se toma de una muestra aislada sino de la salida del filtro digital implementado en hardware, lo que promedia el ruido de banda ancha sin costo de procesador y hace que cada ventana de calibración equivalga exactamente a un lote de 64 muestras del convertidor.}
+-
+-\revsolution{Al terminar, los cuatro códigos se guardan en la memoria no volátil del dispositivo y se recargan al arranque, de modo que un nodo que se reinicia en campo vuelve a su punto de operación sin repetir la rutina. Durante la captura los lazos quedan desactivados y los códigos se aplican fijos: ninguna corrección actúa sobre la señal mientras se registra, que es la condición que permite tratar la cadena como un sistema lineal e invariante en el tiempo al identificar su respuesta en la sección 10.}
++\revsolution{Al arrancar, cambiar la ganancia o recibir una orden de calibración, se cargan los códigos guardados y se verifica si siguen siendo válidos. Si el punto de operación permanece dentro de tolerancia, se vuelve a adquisición. En caso contrario, se ajustan PGA, BP, SUM y LP en ese orden, porque la corrección de una etapa cambia el offset que reciben las siguientes. Entre etapas se reinicia el filtro y se espera el asentamiento de su salida.}
++
++\revsolution{Para la etapa $i$, la lectura $y_i[n]$ en cuentas del ADC se filtra con coeficientes FIR $h[\ell]$. La referencia de continua es $r_i=0$ y el residuo se convierte a códigos equivalentes del VDAC:
++\begin{equation}
++\begin{aligned}
++\widehat y_i[n]&=\sum_{\ell=0}^{127}h[\ell]\,y_i[n-\ell],\\
++\varepsilon_i[n]&=\operatorname{round}\left[
++(\widehat y_i[n]-r_i)\frac{q_{\mathrm{ADC}}}{q_{\mathrm{DAC}}}\right].
++\end{aligned}
++\label{eq:calibracion-residuo}
++\end{equation}
++Los pasos $q_{\mathrm{ADC}}$ y $q_{\mathrm{DAC}}$ se expresan en volt por código. Se define $\bar\varepsilon_i=0$ dentro de la banda muerta de la etapa y $\bar\varepsilon_i=\varepsilon_i$ fuera de ella.}
++
++\revsolution{La ley proporcional-integral se escribe como
++\begin{equation}
++\begin{aligned}
++d_i^*[n]&=d_{i,0}
++-\frac{\operatorname{sgn}(K_i)}{|K_i|}
++\left(k_{P,i}\bar\varepsilon_i[n]+k_{I,i}I_i[n]\right),\\
++d_i[n]&=\operatorname{sat}_{[0,255]}
++\left(\operatorname{round}(d_i^*[n])\right),
++\end{aligned}
++\label{eq:calibracion-pi}
++\end{equation}
++donde $d_{i,0}$ es el código base, $K_i$ la ganancia de continua desde el VDAC al nodo medido e $I_i[n]$ el acumulado de residuos aceptados hasta la muestra anterior. Los coeficientes $k_{P,i}$ y $k_{I,i}$ son $10^{-3}$ y $3\times10^{-4}$ para PGA, y $10^{-4}$ y $5\times10^{-4}$ para BP, SUM y LP. Se implementan como cocientes enteros. La integración se suspende cuando aumentaría la saturación y se reinicia dentro de la banda muerta.}
++
++\revsolution{La banda muerta se define por etapa en códigos equivalentes del VDAC. Dentro de ella se suprime la corrección integral y se exige permanencia durante 512 muestras en PGA y SUM, y 1024 en BP y LP. Un refinamiento posterior prueba un código vecino y sólo lo conserva si reduce el residuo filtrado. Los límites de muestras y el temporizador de guarda acotan la duración; al agotarse el tiempo, se conserva el mejor código encontrado y se señala la etapa que no convergió.}
++
++\revsolution{Los resultados válidos se guardan por ganancia en la memoria no volátil EEPROM, junto con la máscara de etapas válidas, la versión y un código de redundancia cíclica (CRC). Una calibración fallida no sobrescribe un registro válido. Antes de adquirir se restauran los coeficientes, el estado y la ruta del filtro digital utilizados para la señal, se selecciona la salida LP y se desactivan los controladores. La captura se realiza con los códigos VDAC constantes.}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=0.72\textwidth,keepaspectratio]{f_senales_por_etapa.png}
+-\caption{\revsolution{Salidas de las etapas del acondicionamiento durante una corrida de calibración. Las curvas muestran el transitorio de cada lazo hasta alcanzar su punto de reposo; corresponden al procedimiento de calibración y no a una adquisición sísmica.}}
++\caption{Salidas de las etapas del acondicionamiento durante una corrida de calibración. Las curvas muestran el transitorio de cada lazo hasta alcanzar su punto de reposo; corresponden al procedimiento de calibración y no a una adquisición sísmica.}
+ \label{fig:senalesetapa}
+ \end{figure*}
+ 
+ \subsection{Digitalización}
+-
+-La conversión emplea el convertidor delta-sigma del PSoC configurado a una frecuencia de muestreo nativa de 2604 muestras por segundo, con resolución nominal de 18 bits y cuatro rangos bipolares seleccionables, de $\pm2{,}5$ V, $\pm1{,}024$ V, $\pm0{,}625$ V y $\pm0{,}512$ V, que se coordinan con la ganancia programable para aprovechar la escala sin saturar. \revsolution{Un factor de diezmado con promedio, aplicable de 1 a 100, permite además intercambiar ancho de banda por duración de registro sin tocar la configuración del convertidor.}
+-
+-La elección de una arquitectura delta-sigma frente a una de aproximaciones sucesivas responde a la forma particular del problema. La banda de interés termina por debajo de unos pocos cientos de hertz, de modo que la velocidad de conversión no es una restricción, mientras que el contraste de amplitud entre offsets sí exige margen. Un convertidor delta-sigma explota precisamente ese desbalance, ya que sobremuestrea muy por encima de la banda útil y desplaza el ruido de cuantificación hacia frecuencias altas, donde el diezmado lo elimina; obtiene así una resolución que una arquitectura de aproximaciones sucesivas sólo alcanzaría con un comparador y una referencia considerablemente más costosos. El sobremuestreo aporta una segunda ventaja relevante en campo: relaja la exigencia sobre el filtro antialias analógico, cuyo orden y precisión de componentes habrían tenido que aumentar para proteger una conversión directa a esa velocidad. A ello se suma que el convertidor está integrado en el mismo dispositivo que aloja el acondicionamiento y la lógica de control, lo que evita una interfaz externa y sus problemas asociados de acoplamiento y de temporización.
+-
+-\revsolution{El traslado de las muestras tampoco pasa por el procesador. Tres canales de acceso directo a memoria resuelven el camino completo: uno lleva la salida del convertidor a memoria, otro la lleva al filtro digital implementado en hardware, y un tercero lleva la salida de ese filtro a memoria. El procesador sólo elige cuál de las dos rutas, cruda o filtrada, alimenta la captura.}
++\label{sec:digitalizacion}
++
++La conversión emplea el convertidor delta-sigma del PSoC configurado a una frecuencia de muestreo nativa de 2604 muestras por segundo, con resolución nominal de 18 bits y cuatro rangos bipolares seleccionables, de $\pm2{,}5$ V, $\pm1{,}024$ V, $\pm0{,}625$ V y $\pm0{,}512$ V, que se coordinan con la ganancia programable para aprovechar la escala sin saturar. Un factor de diezmado con promedio, aplicable de 1 a 100, permite además intercambiar ancho de banda por duración de registro sin tocar la configuración del convertidor.
++
++\revsolution{La resolución nominal de $B=18$ bits determina el paso de cuantificación ideal para un rango bipolar $\pm V_R$:
++\begin{equation}
++q_{\mathrm{ADC}}=\frac{2V_R}{2^B};
++\qquad q_{\mathrm{ADC}}\big|_{V_R=2{,}5\,\mathrm V}
++\simeq19{,}1\,\mu\mathrm V.
++\label{eq:cuantificacion}
++\end{equation}
++El convertidor delta-sigma integrado combina sobremuestreo, conformación de ruido y filtrado digital. Su velocidad permite cubrir la banda de interés y su integración con el frente analógico evita una interfaz externa de conversión. El paso nominal no representa una medición de ruido ni del número efectivo de bits.
++
++El promedio y diezmado adicional de factor entero $D$ produce la secuencia $y_D[k]$ a partir de las muestras nativas $x[n]$:
++\begin{equation}
++y_D[k]=\frac{1}{D}\sum_{m=0}^{D-1}x[kD+m],
++\qquad f_{s,\mathrm{sal}}=\frac{2604}{D}\ \mathrm{Hz}.
++\label{eq:diezmado}
++\end{equation}
++El índice $k$ enumera las muestras de salida. La banda de trabajo debe ser menor que $f_{s,\mathrm{sal}}/2$ y la atenuación previa al diezmado debe verificarse para el factor elegido.}
++
++El traslado de las muestras tampoco pasa por el procesador. Tres canales de acceso directo a memoria resuelven el camino completo: uno lleva la salida del convertidor a memoria, otro la lleva al filtro digital implementado en hardware, y un tercero lleva la salida de ese filtro a memoria. El procesador sólo elige cuál de las dos rutas, cruda o filtrada, alimenta la captura.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_hardware_digital.png}
+-\caption{\revsolution{Camino digital implementado en el PSoC: convertidor delta-sigma, filtro por hardware, los tres canales de acceso directo a memoria y el bloque de control descrito en lógica programable, con sus registros de configuración y de estado.}}
++\caption{Camino digital implementado en el PSoC: convertidor delta-sigma, filtro por hardware, los tres canales de acceso directo a memoria y el bloque de control descrito en lógica programable, con sus registros de configuración y de estado.}
+ \label{fig:caminodigital}
+ \end{figure*}
+ 
+-Corresponde una advertencia explícita sobre la resolución. Los 18 bits son una cifra nominal del convertidor y no un número efectivo de bits medido: faltan ensayos de ruido referido a entrada, linealidad, saturación y repetibilidad por rango y por ganancia. Que la campaña haya registrado señales utilizables demuestra que la cadena funciona, no que su desempeño esté cuantificado.
+-
+-\revsolution{\subsection{Temporización determinista}}
+-
+-La temporización de la ventana de captura es el punto donde la sección 8 impone su condición más estricta, y por eso no se delegó al software. Una máquina de estados descrita en lógica programable coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la captura, de modo que la duración y el instante de la ventana no dependen de la latencia variable del firmware.
+-
+-\revsolution{Conviene precisar qué se gana con esa decisión, porque no es que la incertidumbre desaparezca: cambia de origen. Si la ventana la abriera y la cerrara el procesador, cada captura arrastraría la latencia de atención a interrupciones, que varía con la carga instantánea del firmware y no está acotada de forma útil. Al describir el disparo y el conteo en lógica dedicada, esa contribución sale del presupuesto: el procesador configura la ruta antes de empezar y no vuelve a intervenir en el camino de muestra. Lo que queda determinando la desviación entre nodos es entonces solamente el par formado por la deriva relativa entre los relojes de los distintos PSoC y la precisión con que el método de sincronización por radio alinea el instante de arranque de los esclavos. Ambas son magnitudes que pueden medirse y acotarse por separado, cosa que no ocurría mientras la incertidumbre del procesador estaba mezclada con ellas.}
++\subsection{Temporización determinista}
++\label{sec:temporizacion}
++
++\revsolution{La temporización de la ventana de captura es el punto donde la sección~\ref{sec:requerimientos} impone su condición más estricta, y por eso no se delegó al software. Una máquina de estados descrita en lógica programable coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la captura, de modo que la duración y el instante de la ventana no dependen de la latencia variable del firmware.}
++
++\revsolution{Para un reloj de frecuencia $f_{s,i}=f_s(1+\epsilon_i)$, el instante de la muestra $n$ del nodo $i$ se aproxima por
++\begin{equation}
++t_i[n]=t_{0,i}+\frac{n}{f_s(1+\epsilon_i)},
++\qquad T_{\mathrm{capt},i}=\frac{N}{f_{s,i}},
++\label{eq:tiempo-captura}
++\end{equation}
++donde $t_{0,i}$ es el instante de arranque, $\epsilon_i$ el error relativo de frecuencia, $N$ el número de muestras y $T_{\mathrm{capt},i}$ la duración programada. Para errores pequeños, el desfase entre nodos contiene una contribución de arranque y otra acumulativa:
++\begin{equation}
++\Delta t_{ij}(t)\simeq
++\Delta t_{0,ij}-(\epsilon_i-\epsilon_j)t.
++\label{eq:deriva-relojes}
++\end{equation}
++Aquí $t=n/f_s$ es el tiempo nominal desde el arranque. La lógica dedicada retira la latencia del procesador del conteo de muestras; la alineación inicial y la deriva relativa de los relojes se evalúan por separado.}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_fsm_supermaquina.png}
+-\caption{\revsolution{Máquina de estados de captura descrita en lógica programable. Coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la ventana sin intervención del procesador.}}
++\caption{Máquina de estados de captura descrita en lógica programable. Coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la ventana sin intervención del procesador.}
+ \label{fig:fsm}
+ \end{figure*}
+ 
+-\revsolution{De las dos, la que queda abierta como decisión de diseño es la primera. El oscilador interno del dispositivo resulta suficiente para fijar la duración de una captura corta, pero su deriva y su incertidumbre de frecuencia se acumulan sobre registros largos y difieren entre unidades, de modo que evaluar un cristal externo o una referencia compartida es parte del trabajo necesario para acercarse a la tolerancia derivada en la sección 8.}
+-
+-\revsolution{\subsection{Sincronización y comunicaciones}}
+-
+-\revsolution{La coordinación entre nodos y el transporte de los datos se resuelven sobre módulos ESP32 mediante ESP-NOW, un modo de difusión directa entre pares que no requiere asociación a un punto de acceso ni asignación de direcciones, y que por lo tanto evita depender de infraestructura de red en campo. Un nodo maestro coordina; los nodos GEO y HAMMER se comportan como esclavos.}
+-
+-\revsolution{El arranque coordinado se resuelve en dos tiempos, y esa separación es lo que lo hace defendible. El maestro difunde primero una orden de armado, que cada esclavo confirma. Cuando llega la orden de capturar, el maestro no dispara todavía: envía un preaviso con el número de lotes a registrar y espera a que todos los nodos confirmen haber entrado en un estado de espera activa. En ese estado el esclavo ya reservó los buffers, ya configuró su PSoC y ya verificó que el convertidor está armado, de modo que no le queda ninguna tarea de preparación pendiente. Sólo entonces el maestro emite la orden de arranque como una única trama de difusión, que todos los esclavos reciben del mismo envío en lugar de recibir mensajes sucesivos, y cada uno genera localmente el flanco que dispara a su propio PSoC.}
+-
+-\revsolution{El motivo de mantener a los esclavos en espera activa, y no dormidos a la espera de una interrupción, es que en el instante crítico la única latencia que interesa es la de reaccionar a la trama. Todo lo que pueda hacerse antes se hace antes, y lo que queda es una espera cuyo tiempo de respuesta no depende de cuánto trabajo tenía pendiente el nodo. Si algún esclavo no confirma estar listo, rechaza la orden y el maestro aborta la captura completa en lugar de registrar un conjunto parcialmente sincronizado, que sería peor que no registrar nada. Un temporizador de guarda sobre esa espera reintenta el preaviso si el PSoC no llega a confirmar que está armado.}
++\revsolution{De las dos, la que queda abierta como decisión de diseño es la primera. El oscilador interno del dispositivo resulta suficiente para fijar la duración de una captura corta, pero su deriva y su incertidumbre de frecuencia se acumulan sobre registros largos y difieren entre unidades, de modo que evaluar un cristal externo o una referencia compartida es parte del trabajo necesario para acercarse a la tolerancia derivada en la sección~\ref{sec:requerimientos}.}
++
++\subsection{Sincronización y comunicaciones}
++\label{sec:sincronizacion}
++
++La coordinación entre nodos y el transporte de los datos se resuelven sobre módulos ESP32 mediante ESP-NOW, un modo de difusión directa entre pares que no requiere asociación a un punto de acceso ni asignación de direcciones, y que por lo tanto evita depender de infraestructura de red en campo. Un nodo maestro coordina; los nodos GEO y HAMMER se comportan como esclavos.
++
++El arranque coordinado se resuelve en dos tiempos, y esa separación es lo que lo hace defendible. El maestro difunde primero una orden de armado, que cada esclavo confirma. Cuando llega la orden de capturar, el maestro no dispara todavía: envía un preaviso con el número de lotes a registrar y espera a que todos los nodos confirmen haber entrado en un estado de espera activa. En ese estado el esclavo ya reservó los buffers, ya configuró su PSoC y ya verificó que el convertidor está armado, de modo que no le queda ninguna tarea de preparación pendiente. Sólo entonces el maestro emite la orden de arranque como una única trama de difusión, que todos los esclavos reciben del mismo envío en lugar de recibir mensajes sucesivos, y cada uno genera localmente el flanco que dispara a su propio PSoC.
++
++El motivo de mantener a los esclavos en espera activa, y no dormidos a la espera de una interrupción, es que en el instante crítico la única latencia que interesa es la de reaccionar a la trama. Todo lo que pueda hacerse antes se hace antes, y lo que queda es una espera cuyo tiempo de respuesta no depende de cuánto trabajo tenía pendiente el nodo. Si algún esclavo no confirma estar listo, rechaza la orden y el maestro aborta la captura completa en lugar de registrar un conjunto parcialmente sincronizado, que sería peor que no registrar nada. Un temporizador de guarda sobre esa espera reintenta el preaviso si el PSoC no llega a confirmar que está armado.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_sincronizacion_arranque.png}
+-\caption{\revsolution{Arranque coordinado en dos tiempos. El maestro arma los nodos, envía el preaviso y espera la confirmación de que todos entraron en espera activa; sólo entonces emite la orden de arranque como una única trama de difusión, y cada esclavo genera localmente el flanco que dispara a su PSoC.}}
++\caption{Arranque coordinado en dos tiempos. El maestro arma los nodos, envía el preaviso y espera la confirmación de que todos entraron en espera activa; sólo entonces emite la orden de arranque como una única trama de difusión, y cada esclavo genera localmente el flanco que dispara a su PSoC.}
+ \label{fig:arranque}
+ \end{figure*}
+ 
+-\revsolution{El transporte de los datos sigue un criterio distinto al del disparo, y conviene explicitarlo porque suele confundirse. Para la captura no interesa la velocidad de transferencia sino la fidelidad: se implementó por eso un protocolo con garantías de entrega, del estilo de TCP, sobre un enlace que por sí mismo no las ofrece. Cada registro se fragmenta en lotes numerados, el maestro los solicita uno por uno y, si un esclavo responde que todavía no dispone de un lote, la petición se reintenta hasta treinta veces con un intervalo de cien milisegundos antes de darlo por perdido. La razón de exigir la entrega íntegra, y no una reconstrucción aproximada, es que la magnitud que el método estima es una fase: un tramo de muestras faltante no degrada gradualmente el resultado sino que invalida el registro completo para el cálculo de dispersión.}
+-
+-\revsolution{Esa política sólo es sostenible porque cada nodo conserva una copia local de lo que capturó. La jerarquía de almacenamiento tiene tres niveles: la memoria del ESP32, la memoria del PSoC y, cuando la duración lo exige, una tarjeta SD gobernada por el propio PSoC a través de un sistema de archivos, sobre la que la captura se vuelca de forma encadenada. Ese tercer nivel es el que permite superar el límite de lotes que impone la memoria interna y registrar ventanas de decenas de segundos. La consecuencia operativa es que descartar un fragmento corrupto no significa perder la posición: el dato sigue en el nodo y puede volver a pedirse.}
++\revsolution{El transporte de los datos sigue un criterio distinto al del disparo. Para la captura no interesa la velocidad de transferencia sino la fidelidad: se implementó por eso un protocolo con garantías de entrega, del estilo de TCP, sobre un enlace que por sí mismo no las ofrece. Cada registro se fragmenta en lotes numerados, el maestro los solicita uno por uno y, si un esclavo responde que todavía no dispone de un lote, la petición se reintenta hasta treinta veces con un intervalo de cien milisegundos antes de darlo por perdido. Un tramo de muestras faltante no degrada gradualmente el resultado sino que invalida el registro completo para el cálculo de dispersión.}
++
++Esa política sólo es sostenible porque cada nodo conserva una copia local de lo que capturó. La jerarquía de almacenamiento tiene tres niveles: la memoria del ESP32, la memoria del PSoC y, cuando la duración lo exige, una tarjeta SD gobernada por el propio PSoC a través de un sistema de archivos, sobre la que la captura se vuelca de forma encadenada. Ese tercer nivel es el que permite superar el límite de lotes que impone la memoria interna y registrar ventanas de decenas de segundos. La consecuencia operativa es que descartar un fragmento corrupto no significa perder la posición: el dato sigue en el nodo y puede volver a pedirse.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{d_almacenamiento_local.png}
+-\caption{\revsolution{Jerarquía de almacenamiento local en el nodo, desde la memoria del módulo de radio hasta la tarjeta gobernada por el PSoC. Es la que permite que descartar un fragmento corrupto no signifique perder la posición.}}
++\caption{Jerarquía de almacenamiento local en el nodo, desde la memoria del módulo de radio hasta la tarjeta gobernada por el PSoC. Es la que permite que descartar un fragmento corrupto no signifique perder la posición.}
+ \label{fig:almacenamiento}
+ \end{figure*}
+ 
+-\revsolution{\subsection{Interfaz de operación en campo}}
+-
+-\revsolution{Un sistema de adquisición sólo es utilizable si el operador puede
++\subsection{Interfaz de operación en campo}
++
++Un sistema de adquisición sólo es utilizable si el operador puede
+ configurarlo, dispararlo y verificar el resultado en el sitio, antes de mover el
+ sensor. Esa verificación en el lugar es lo que evita descubrir un registro
+ inservible cuando ya se levantó el tendido, y por eso la interfaz de campo forma
+-parte del diseño y no es un accesorio.}
+-
+-\revsolution{El nodo maestro resuelve esa función sin depender de infraestructura
++parte del diseño y no es un accesorio.
++
++El nodo maestro resuelve esa función sin depender de infraestructura
+ externa: levanta su propio punto de acceso inalámbrico y sirve desde su memoria
+ interna una aplicación web de página única, accesible desde un teléfono o una
+ computadora portátil. Desde ella se arman los nodos, se fija la ganancia y el
+ rango del convertidor, se lanza la captura, se sigue la llegada de los lotes y se
+-descargan los registros.}
+-
+-\revsolution{Para el trabajo de banco existe además un osciloscopio de escritorio
++descargan los registros.
++
++Para el trabajo de banco existe además un osciloscopio de escritorio
+ que se conecta al maestro y presenta el flujo de muestras por nodo junto con el
+ registro de eventos del protocolo. Esa herramienta fue la que permitió depurar la
+ secuencia de arranque y observar el comportamiento de la calibración, y sigue
+-siendo la vía habitual para verificar una unidad recién ensamblada.}
++siendo la vía habitual para verificar una unidad recién ensamblada.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{i_web_capturas.png}
+-\caption{\revsolution{Aplicación web servida por el nodo maestro desde su propia
++\caption{Aplicación web servida por el nodo maestro desde su propia
+ memoria y su propio punto de acceso. La vista reúne la lista de capturas de la
+ sesión, los controles de configuración y la inspección de la traza seleccionada.
+-Se reproduce como vista general de la herramienta.}}
++Se reproduce como vista general de la herramienta.}
+ \label{fig:interfazcampo}
+ \end{figure*}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{i_scope_stream.png}
+-\caption{\revsolution{Osciloscopio de escritorio empleado para la verificación de banco: presenta el flujo de muestras de cada nodo junto con el registro de eventos del protocolo. Fue la herramienta con la que se depuró la secuencia de arranque coordinado.}}
++\caption{Osciloscopio de escritorio empleado para la verificación de banco: presenta el flujo de muestras de cada nodo junto con el registro de eventos del protocolo. Fue la herramienta con la que se depuró la secuencia de arranque coordinado.}
+ \label{fig:osciloscopiobanco}
+ \end{figure*}
+ 
+-\begin{figure*}[!tb]
+-\centering
+-\includegraphics[width=\textwidth,keepaspectratio]{i_web_capturas.png}
+-\caption{\revsolution{Aplicación web servida por el nodo maestro desde su propia
+-memoria y su propio punto de acceso. La vista reúne la lista de capturas de la
+-sesión, los controles de configuración y la inspección de la traza seleccionada.
+-Se reproduce como vista general de la herramienta.}}
+-\label{fig:interfazcampo}
+-\end{figure*}
+-
+-\revsolution{\subsection{Servidor de ingesta y flujo de análisis}}
+-
+-\revsolution{El análisis se separa deliberadamente de la adquisición. Los
++\subsection{Servidor de ingesta y flujo de análisis}
++
++El análisis se separa deliberadamente de la adquisición. Los
+ registros descargados se entregan a un servidor que los valida, los agrupa por
+ posición y los preserva junto con su geometría, su configuración de ganancia y su
+ referencia temporal. Esa separación es la que permite reconstruir cualquier
+-resultado a partir de los datos almacenados, sin repetir la campaña.}
+-
+-\revsolution{Sobre ese conjunto opera una aplicación de revisión que recorre el
++resultado a partir de los datos almacenados, sin repetir la campaña.
++
++Sobre ese conjunto opera una aplicación de revisión que recorre el
+ flujo completo en pasos explícitos y reversibles: inspección de las capturas
+ individuales, filtrado, agrupamiento por posición, alineación fina, promediado por
+ posición, construcción del registro multicanal, obtención de la imagen de
+ dispersión, extracción de la curva e inversión hasta el perfil de velocidad de
+ corte. Cada decisión de procesamiento queda registrada junto con el resultado, de
+-modo que la sensibilidad a esas decisiones puede medirse en lugar de suponerse.}
+-
+-\revsolution{La aplicación existe en una versión de escritorio y en otra servida
++modo que la sensibilidad a esas decisiones puede medirse en lugar de suponerse.
++
++La aplicación existe en una versión de escritorio y en otra servida
+ por el mismo servidor desde el navegador. Ambas comparten el motor de
+ procesamiento, de manera que un resultado obtenido en una es reproducible en la
+-otra.}
++otra.
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{i_revision_dispersion.png}
+-\caption{\revsolution{Aplicación de revisión y análisis, en la etapa de obtención
++\caption{Aplicación de revisión y análisis, en la etapa de obtención
+ de la imagen de dispersión. El flujo completo, desde la inspección de capturas
+ hasta la inversión, se recorre en pasos explícitos y cada decisión queda
+-persistida junto con sus parámetros.}}
++persistida junto con sus parámetros.}
+ \label{fig:interfazanalisis}
+ \end{figure*}
+ 
+--- Antes/04_validacion.tex
++++ Recuperado/04_validacion.tex
+@@ -8,7 +8,7 @@
+ 
+ El ensayo buscó evaluar si la respuesta del compensador, combinada con la del geófono, permite extender el ancho de banda del sensor hacia frecuencias inferiores a su resonancia. Se inyectaron barridos senoidales de tensión y se registraron simultáneamente, con cuatro canales de osciloscopio, las salidas de la ganancia programable, la rama pasabanda, el compensador y el filtro pasa-bajos. A partir de las relaciones entre canales se estimaron la magnitud, la fase y la coherencia de cada transferencia. Los barridos cubrieron bandas superpuestas desde 10 mHz hasta 200 kHz.
+ 
+-\revsolution{El estimador empleado opera con las señales analíticas de entrada $u_a[n]$ y salida $y_a[n]$, obtenidas mediante la transformada de Hilbert. Para las muestras $\mathcal B_k$ del intervalo de frecuencia $k$:
++El estimador empleado opera con las señales analíticas de entrada $u_a[n]$ y salida $y_a[n]$, obtenidas mediante la transformada de Hilbert. Para las muestras $\mathcal B_k$ del intervalo de frecuencia $k$:
+ \begin{equation}
+ \begin{aligned}
+ C_k&=\sum_{n\in\mathcal B_k}y_a[n]u_a^*[n],\\
+@@ -19,7 +19,7 @@
+ \end{aligned}
+ \label{eq:estimacion-transferencia}
+ \end{equation}
+-El asterisco indica conjugación compleja, $\widehat H_k$ es la transferencia estimada y $\gamma_k^2$ la coherencia. Se excluyen intervalos saturados o con excitación insuficiente.}
++El asterisco indica conjugación compleja, $\widehat H_k$ es la transferencia estimada y $\gamma_k^2$ la coherencia. Se excluyen intervalos saturados o con excitación insuficiente.
+ 
+ La respuesta conjunta sensor--acondicionamiento se calculó combinando el modelo nominal del geófono con la transferencia electrónica medida. Un ensayo con el sensor sometido a una excitación mecánica conocida permitiría verificar directamente esa respuesta, pero no se dispuso del equipo necesario. La inyección de tensión permitió caracterizar por separado el circuito y evaluar su contribución a la extensión de banda.
+ 
+@@ -49,53 +49,73 @@
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_ruta_pga_adc.png}
+-\caption{\revsolution{Identificación de la cadena completa PGA--ADC. De arriba abajo: magnitud, fase y coherencia local. Se comparan la medición cruda, la procesada, el modelo identificado y el modelo nominal del circuito con los componentes actuales.}}
++\caption{Identificación de la cadena completa PGA--ADC. De arriba abajo: magnitud, fase y coherencia local. Se comparan la medición cruda, la procesada, el modelo identificado y el modelo nominal del circuito con los componentes actuales.}
+ \label{fig:identificacion}
+ \end{figure*}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_identificacion_comp.png}
+-\caption{\revsolution{Identificación de la rama de compensación respecto de la etapa de ganancia. El apartamiento respecto del modelo nominal se explica por la posición del potenciómetro y no por un componente fuera de especificación.}}
++\caption{Identificación de la rama de compensación respecto de la etapa de ganancia. El apartamiento respecto del modelo nominal se explica por la posición del potenciómetro y no por un componente fuera de especificación.}
+ \label{fig:identificacioncomp}
+ \end{figure*}
+ 
+-El aprendizaje principal fue la sensibilidad de la cancelación al valor del potenciómetro. Con los componentes nominales, la posición del cursor que produce la cancelación exacta y la que realiza el amortiguamiento objetivo están separadas por 1,98 $\Omega$ sobre un recorrido total de 2 k$\Omega$, es decir menos de una milésima del recorrido. La estimación a partir de la profundidad de muesca medida sitúa el cursor unos 39 $\Omega$ por encima del objetivo, lo que basta para apartar la respuesta de la forma plana buscada. La calibración manual llevó el error de magnitud del compensador respecto del modelo de 26,7 dB a 10,7 dB, una mejora sustancial que confirma el diagnóstico pero que se agota contra el paso del ajuste disponible.
+-
+-De ahí se sigue una decisión concreta para la próxima revisión de placa: el potenciómetro debe ser de menor valor total y de varias vueltas. Reducir el recorrido de 2 k$\Omega$ a unos cientos de ohm y pasar a un ajuste multivuelta convierte esa milésima de recorrido en una fracción manejable, del orden de una fracción de vuelta, y traslada la cancelación desde el terreno de lo irrepetible al de lo ajustable.
+-
+-Con esa salvedad, la ruta analógica completa quedó identificada sobre 61 puntos que abarcan casi cuatro décadas, con coherencia mediana de 0,9946. La banda cubierta se extiende hasta 0,21 Hz, de modo que contiene por completo el rango de 1 a 10 Hz del que depende el alcance en profundidad. Este punto merece énfasis porque contradice la expectativa habitual: la limitación de baja frecuencia del sistema no está en el acondicionamiento, que fue medido y resultó predecible allí, sino en la energía que llega a su entrada.
+-
+-El alcance de esta caracterización tiene, aun así, límites que deben declararse. El primero es que no cubre la cadena completa desde el movimiento del terreno hasta los códigos almacenados, por lo que no constituye una calibración extremo a extremo: el geófono queda descrito por su modelo nominal y no por una medición propia. El segundo es que, aunque existen puntos por debajo de 1 Hz, la dinámica subsónica del compensador no resulta observable en ellos. El tercero es que no se midió la dispersión entre placas distintas. Estas mediciones tampoco sustituyen las de ruido referido a entrada, número efectivo de bits, deriva térmica y repetibilidad de la calibración, ninguna de las cuales fue realizada.
++\revsolution{El aprendizaje principal fue la sensibilidad de la cancelación al valor del potenciómetro. Con los componentes nominales, la cancelación exacta y el ajuste objetivo están separados por apenas 1,98 $\Omega$ sobre un recorrido de 2 k$\Omega$. La calibración manual redujo el error de magnitud del compensador respecto del modelo de 26,7 a 10,7 dB, pero el ajuste fino resulta difícil con el elemento actual. Se propone mantener la resistencia fija de la rama y utilizar un potenciómetro de menor recorrido y varias vueltas, dimensionado para cubrir la dispersión esperada de los componentes.}
++
++\revsolution{La precisión de ese ajuste adquiere mayor importancia en un arreglo de varios receptores. Diferencias entre componentes o entre posiciones de los potenciómetros modifican la magnitud y la fase de cada canal; la diferencia de fase entre circuitos se incorpora entonces a la que el método utiliza para estimar la propagación. El ajuste multivuelta facilitará igualar las respuestas, que deberán comprobarse experimentalmente entre placas.}
++
++\revsolution{La ruta PGA--ADC quedó identificada sobre 61 puntos, entre 0,21 Hz y 1,11 kHz, con coherencia mediana de 0,9946. El modelo identificado reproduce esos datos con residuos de 0,200 dB y 1,16°; estos valores describen el ajuste a la medición, no el error respecto de la respuesta nominal.}
+ 
+ \subsection{Prueba controlada de adquisición}
+ \label{sec:prueba-controlada}
+ 
+-El segundo nivel verifica que el sistema adquiere de forma coordinada antes de exigirle un resultado geofísico. El nodo generador se trata como un esclavo más y comparte el arranque con el nodo receptor, de modo que cada respuesta queda referida al instante de su impacto. Para cuantificar esa referencia se midió, dentro de cada posición, la dispersión entre los instantes de disparo de los golpes individuales una vez alineados a nivel de submuestra, obteniéndose un valor del orden de 1,46 ms.
+-
+-Conviene precisar qué describe y qué no describe ese número. Es el residuo de repetibilidad entre golpes sucesivos de un mismo nodo, y agrupa el jitter mecánico del impacto con el del circuito de disparo. No mide, en cambio, ni la deriva entre jornadas de adquisición ni la incertidumbre de la posición del receptor, que son fuentes de error independientes.
+-
+-\revsolution{La repetibilidad de la fuente merece un comentario aparte, porque el protocolo empleado la vuelve crítica. Cuando el arreglo se construye desplazando un receptor, cualquier variación de amplitud, de punto de golpe o de acoplamiento entre posiciones sucesivas se incorpora al registro como si fuera variación espacial. Registrar entre veinte y treinta y siete golpes por posición y seleccionar el subconjunto más consistente reduce ese riesgo pero no lo elimina, y por esa razón la geometría aparece más adelante como la sensibilidad dominante del resultado.}
+-
+-La capa de coordinación entre nodos sí fue probada de forma independiente. En laboratorio se operaron tres nodos simultáneos, uno de clase HAMMER y dos de clase GEO, que ejecutaron correctamente el arranque conjunto y el reparto de la orden de captura. Este ensayo se realizó sobre los módulos de radio sin el acondicionamiento analógico ni el PSoC asociados, de modo que demuestra que el protocolo de coordinación escala más allá de dos nodos y opera como fue diseñado, pero no aporta una cifra de precisión.
+-
+-Conviene por eso separar cuatro magnitudes que resulta fácil confundir. La primera es la alineación de golpes recién mencionada, que corresponde al procesamiento de un solo nodo. La segunda es la operación funcional de la coordinación multinodo, demostrada con los tres nodos de laboratorio. La tercera es la sincronización digital medida entre nodos distintos, que exige registros simultáneos y una comparación de marcas temporales entre placas completas, y que no pudo realizarse por no disponerse de un conjunto de nodos GEO íntegros. La cuarta es la verificación instrumental del arranque coordinado mediante osciloscopio, que llegó a observarse durante el desarrollo pero cuyos registros no fueron preservados. La tolerancia de unos 670 µs permanece, en consecuencia, como requerimiento de diseño cuya capa funcional está demostrada y cuya verificación metrológica está pendiente.
++\revsolution{El segundo nivel verifica que el sistema adquiere de forma coordinada antes de exigirle un resultado geofísico. El nodo generador se trata como un esclavo más y comparte el arranque con el nodo receptor, de modo que cada respuesta queda referida al instante de su impacto. Para cuantificar esa referencia se midió, dentro de cada posición, la dispersión entre los instantes de disparo de los golpes individuales una vez alineados a nivel de submuestra, obteniéndose un valor del orden de 1,46 ms. Conviene precisar qué describe y qué no describe ese número. Es el residuo de repetibilidad entre golpes sucesivos de un mismo nodo, y agrupa el jitter mecánico del impacto con el del circuito de disparo. No mide, en cambio, ni la deriva entre jornadas de adquisición ni la incertidumbre de la posición del receptor, que son fuentes de error independientes y se tratan como parte del problema de geometría y repetibilidad de la campaña en las secciones~\ref{sec:campana} y~\ref{sec:limitaciones}.}
++
++\revsolution{Para $M$ golpes alineados, la traza promedio $\bar x[n]$ se obtiene de los registros $x_m[n]$ y sus desplazamientos estimados $\delta_m$:
++\begin{equation}
++\bar x[n]=\frac{1}{M}\sum_{m=1}^{M}x_m[n+\delta_m].
++\label{eq:apilamiento}
++\end{equation}
++Los desplazamientos pueden ser fraccionarios y requerir interpolación. Si la señal se repite y el ruido es independiente entre golpes, su desviación estándar se reduce idealmente como $\sigma_{\bar n}=\sigma_n/\sqrt M$. Se registraron entre 20 y 37 golpes por posición; el apilamiento no elimina las variaciones de posición o de acoplamiento entre registros.}
++
++\revsolution{La capa de coordinación entre nodos sí fue probada de forma independiente. En laboratorio se operaron tres nodos simultáneos, uno de clase HAMMER y dos de clase GEO, que ejecutaron correctamente el arranque conjunto y el reparto de la orden de captura. Este ensayo se realizó sobre los módulos de radio sin el acondicionamiento analógico ni el PSoC asociados, de modo que demuestra que el protocolo de coordinación escala más allá de dos nodos y opera como fue diseñado, pero no aporta una cifra de precisión: no hubo conversión sincrónica de señal ni registros exportados que permitan comparar marcas temporales.}
++
++\revsolution{Conviene por eso separar cuatro magnitudes que resulta fácil confundir. La primera es la alineación de golpes recién mencionada, que corresponde al procesamiento de un solo nodo. La segunda es la operación funcional de la coordinación multinodo, demostrada con los tres nodos de laboratorio. La tercera es la sincronización digital medida entre nodos distintos, que exige registros simultáneos y una comparación de marcas temporales entre placas completas, y que no pudo realizarse por no disponerse de un conjunto de nodos GEO íntegros. La cuarta es la verificación instrumental del arranque coordinado mediante osciloscopio, que llegó a observarse durante el desarrollo pero cuyos registros no fueron preservados y que por lo tanto no constituye evidencia reproducible. La tolerancia de unos 670 µs derivada en la sección~\ref{sec:requerimientos} permanece, en consecuencia, como requerimiento de diseño cuya capa funcional está demostrada y cuya verificación metrológica está pendiente.}
+ 
+ \subsection{Campaña de campo}
+ \label{sec:campana}
+ 
+-La campaña se realizó junto a una cancha de fútbol del predio de la universidad. El punto de impacto permaneció fijo y solamente se desplazó el nodo receptor, siguiendo una línea aproximadamente paralela a los laterales de la cancha. No se conservaron coordenadas ni azimut de los extremos del tendido.
+-
+-Se relevaron 21 posiciones entre 10 y 50 m de offset, con paso nominal de 2 m y una apertura total de 40 m. Del conjunto de 607 registros candidatos, 598 fueron incorporados al conjunto procesado tras la auditoría de calidad, con una mediana cercana a 30 golpes por posición. Debe señalarse que la campaña se adquirió con una configuración de firmware anterior a la descrita en la sección~\ref{sec:diseno}: la tasa nativa de entonces era de 2929 muestras por segundo, y el conjunto procesado combina registros a 2929 y a 1020 Hz. La decisión de construir el arreglo desplazando un único receptor respondió al número de transductores disponibles; no fue la geometría prevista por el diseño ni supone que la simultaneidad resulte innecesaria.
++\revsolution{La campaña se realizó junto a una cancha de fútbol del predio de la Universidad Católica, sede Santa Librada, en Asunción. El punto de impacto permaneció fijo a varios metros del extremo del campo de fútbol y solamente se desplazó el nodo receptor, siguiendo una línea aproximadamente paralela a los laterales de la cancha. No se conservaron coordenadas ni azimut de los extremos del tendido, limitación que se retoma en la sección~\ref{sec:limitaciones}.}
++
++\revsolution{Se relevaron 21 posiciones entre 10 y 50 m de offset, con paso nominal de 2 m y una apertura total de 40 m, valores que corresponden a los límites de aliasing y de apertura establecidos en la sección~\ref{sec:requerimientos}. Del conjunto de 607 registros candidatos, 598 fueron incorporados al conjunto procesado tras la auditoría de calidad, con una mediana cercana a 30 golpes por posición. El arreglo se construyó desplazando un único receptor entre posiciones debido al número de transductores disponibles.}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_geometria_campanas.png}
+-\caption{\revsolution{Geometría de la campaña: 21 posiciones entre 10 y 50 m de offset con paso nominal de 2 m, lo que da una apertura total de 40 m. El arreglo se construyó desplazando un único receptor entre posiciones sucesivas.}}
++\caption{Geometría de la campaña: 21 posiciones entre 10 y 50 m de offset con paso nominal de 2 m, lo que da una apertura total de 40 m. El arreglo se construyó desplazando un único receptor entre posiciones sucesivas.}
+ \label{fig:geometria}
+ \end{figure*}
+ 
+ Esa restricción define con precisión qué valida la campaña. El conjunto permite construir un \textbf{registro multicanal sintetizado por posiciones con fuente activa repetible}, y sobre él evaluar la adquisición real, formar una imagen de dispersión e invertir un perfil preliminar. No demuestra, en cambio, la operación de 21 canales físicos simultáneos, ni la sincronización entre nodos, ni la igualdad de magnitud y fase entre placas distintas. La expresión «adquisición simultánea de 21 canales» sería incorrecta y no se emplea en ningún punto de este trabajo. Conviene señalar que el uso de un solo receptor no carece de antecedentes formales: Lin y Ashlock demostraron que la simulación multicanal con un receptor puede producir imágenes de dispersión comparables a las de MASW bajo condiciones controladas, si bien su protocolo fija el receptor y desplaza la fuente, es decir, exactamente lo inverso a lo realizado aquí \citep{LinAshlock2016}.
++
++\revsolution{La ventana de offsets utilizada para el resultado final no se decidió durante la adquisición sino después, sobre el conjunto completo, y ese orden debe declararse para evitar la apariencia de una selección oportunista. El análisis posterior evaluó 26 subarreglos contiguos aplicando el mismo criterio a todos ellos, con el resultado de que las ventanas medio-lejanas superan tanto al arreglo completo como a las cercanas. La interpretación es compatible con una menor contaminación por campo cercano y por modos superiores al retirar los offsets pequeños, y con la pérdida de relación señal a ruido por atenuación en los más lejanos, aunque esta explicación no fue aislada mediante un ensayo independiente.}
++
++\begin{table*}[!ht]
++\centering
++\footnotesize
++\caption{\revsolution{Barrido de subarreglos contiguos.}}\label{tab:subarreglos}
++{\color{revverde}\begin{tabularx}{0.92\textwidth}{YYYY}
++\toprule
++Ventana de offsets & Desajuste & Soporte de profundidad & Situación \\
++\midrule
++10–50 m (completo) & 2,28 \% & 8,81 m & Referencia \\
++18–46 m & 1,85 \% & 10,06 m & Finalista (alcanza 11,83 m con otra convención) \\
++22–42 m & 1,36 \% & 10,75 m & Base del modelo presentado \\
++30–50 m & 16,5 \% & — & Descartada por desajuste \\
++22–38 m & — & — & Descartada: fracción excesiva de la curva sobre el límite de aliasing \\
++\bottomrule
++\end{tabularx}}
++\end{table*}
+ 
+ \section{Resultados preliminares}
+ \label{sec:resultados}
+@@ -103,19 +123,25 @@
+ Los resultados se presentan en los mismos tres niveles de la sección anterior, distinguiendo en cada uno lo demostrado de lo interpretado.
+ 
+ \subsection{Resultados de la caracterización del instrumento}
+-
+-Con los límites ya declarados, el resultado de la identificación admite una lectura única y es la que reordena el diagnóstico del sistema: como el acondicionamiento preserva magnitud y fase por debajo de 10 Hz, la ausencia de señal útil en esa banda no puede atribuirse a la electrónica y debe buscarse en la energía radiada por la fuente, en la respuesta del geófono o en la propagación.
++\label{sec:resultado-instrumento}
++
++\revsolution{La caracterización eléctrica cubre frecuencias inferiores a la resonancia del geófono y permite estudiar la respuesta del compensador en la banda que se busca recuperar. La transferencia medida, combinada con el modelo del sensor, proporciona una base para ajustar y evaluar esa extensión. El ensayo identificó también una mejora concreta del circuito: aumentar la resolución del ajuste del potenciómetro. La banda de campo se evalúa por separado, porque depende además de la excitación, del acoplamiento y del terreno.}
+ 
+ \subsection{Resultados de la adquisición de campo}
++\label{sec:resultado-campo}
+ 
+ La distribución de energía y de relación señal a ruido por bandas caracteriza el desempeño conjunto de la fuente, el terreno y el instrumento. Se calculó sobre 265 golpes repartidos en quince de las distancias relevadas, que es el subconjunto que superó el control de calidad exigido por esta métrica.
+ 
+-La banda de 10 a 50 Hz concentra prácticamente toda la energía registrada y presenta además una coherencia entre posiciones adyacentes de 0,732 en mediana, lo que confirma que se trata de propagación organizada y no de ruido correlacionado en una sola traza. Por debajo de 10 Hz la situación se invierte: la energía cae a menos del uno por ciento del total y la relación señal a ruido llega a ser negativa en algunas posiciones. Este es el resultado central de la campaña desde el punto de vista instrumental, porque identifica la limitación efectiva del sistema y la sitúa donde los requerimientos anticipaban que estaría, esto es, en la banda que gobierna la profundidad alcanzable.
+-
+-\begin{figure*}[!tb]
+-\centering
+-\includegraphics[width=0.86\textwidth,keepaspectratio]{contenido_baja_frecuencia.png}
+-\caption{\revsolution{Contenido espectral del canal de geófono en campo. Arriba: densidad espectral de la señal por distancia fuente--receptor. Abajo: relación señal a ruido contra el ruido previo al disparo. La banda sombreada es el extremo de baja frecuencia que hoy no se alcanza, y es la que gobierna la profundidad accesible.}}
++\revsolution{La banda de 10 a 50 Hz concentra la mayor parte de la energía registrada y presenta una coherencia mediana entre posiciones adyacentes de 0,732. Esa banda resume las métricas globales por frecuencia, pero no constituye un corte inferior absoluto: el procesamiento de dispersión utilizado conserva una curva desde aproximadamente 8 Hz. Se dispone así de resultados por debajo de los 10 Hz nominales del geófono, aunque con menor margen que en la banda de mayor energía.}
++
++\revsolution{El experimento permite identificar la ampliación de la apertura efectiva como un requerimiento para investigar frecuencias menores y capas más profundas. En el subarreglo de 22 a 42 m, cuya apertura es de 20 m, el punto de 8 Hz tiene una velocidad de fase de 172 m/s y una longitud de onda de 21,5 m, ya comparable con la extensión del arreglo. Su inclusión corresponde al criterio de análisis que admite longitudes de onda de hasta 1,5 veces la apertura. Para seguir la rama hacia frecuencias menores, con velocidades de fase similares o mayores, se necesitan longitudes de onda más grandes y un arreglo de mayor extensión que sostenga su interpretación.}
++
++\revsolution{La ampliación debe acompañarse de señal coherente en la banda de interés. Un tendido más extenso aporta soporte espacial, pero su aprovechamiento depende también de la energía de la fuente, el acoplamiento y la respuesta sensor--acondicionamiento. Los 8 Hz se conservan como extremo inferior de la curva utilizada, sin interpretarlos como el corte físico del instrumento.}
++
++\begin{figure*}[!tb]
++\centering
++\includegraphics[width=0.80\textwidth,keepaspectratio]{contenido_baja_frecuencia.png}
++\caption{Contenido espectral del canal de geófono en campo. Arriba: densidad espectral de la señal por distancia fuente--receptor. Abajo: relación señal a ruido contra el ruido previo al disparo. \revsolution{El rótulo de 50 m corresponde a una meta histórica, retirada del proyecto. La curva de dispersión utilizada parte de 8 Hz; la mayor energía se concentra entre 10 y 50 Hz.}}
+ \label{fig:contenidobaja}
+ \end{figure*}
+ 
+@@ -124,29 +150,29 @@
+ 
+ \subsubsection{Curva de dispersión y alcance}
+ 
+-Sobre la imagen de dispersión se dibujan los dos límites geométricos derivados de la geometría del tendido. La cresta coherente aparece principalmente en la zona intermedia del plano $f$--$c$, se debilita hacia baja frecuencia a medida que la energía disponible disminuye y se fragmenta en alta frecuencia al aproximarse al límite de aliasing impuesto por el paso de 2 m.
++\revsolution{La limitación geométrica para extender la interpretación hacia frecuencias menores está dada por la apertura efectiva del subarreglo, que condiciona la estimación de longitudes de onda grandes. Para estudiar capas más profundas se requiere una mayor apertura, acompañada de señal coherente en la banda de interés.}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_imagenes_dispersion.png}
+-\caption{\revsolution{Imágenes de dispersión en el plano frecuencia--velocidad de fase, normalizadas por frecuencia, de modo que los colores no comparan energía entre bandas. La línea dibujada es el límite de apertura del criterio de análisis adoptado.}}
++\caption{Imágenes de dispersión en el plano frecuencia--velocidad de fase, normalizadas por frecuencia, de modo que los colores no comparan energía entre bandas. La línea dibujada es el límite de apertura del criterio de análisis adoptado.}
+ \label{fig:dispersionimagenes}
+ \end{figure*}
+ 
+ \begin{figure*}[!tb]
+ \centering
+ \includegraphics[width=\textwidth,keepaspectratio]{f_curvas_dispersion.png}
+-\caption{\revsolution{Curvas de dispersión extraídas y su longitud de onda asociada, con la banda de incertidumbre obtenida por remuestreo. La curva empleada para el modelo presentado es la del subarreglo de 22 a 42 m.}}
++\caption{Curvas de dispersión extraídas y su longitud de onda asociada, con la banda de incertidumbre obtenida por remuestreo. La curva empleada para el modelo presentado es la del subarreglo de 22 a 42 m.}
+ \label{fig:dispersioncurvas}
+ \end{figure*}
+ 
+-\revsolution{El análisis y la selección de subconjuntos de las mediciones permitieron identificar longitudes de onda de 20 a 22 m. Para el punto de 8 Hz y 172 m/s del subarreglo de 22 a 42 m,
++El análisis y la selección de subconjuntos de las mediciones permitieron identificar longitudes de onda de 20 a 22 m. Para el punto de 8 Hz y 172 m/s del subarreglo de 22 a 42 m,
+ \begin{equation}
+ \lambda_R=\frac{172}{8}=21{,}5\ \mathrm m,
+ \qquad z_{\mathrm{sop}}\simeq\frac{\lambda_R}{2}=10{,}75\ \mathrm m.
+ \label{eq:alcance-campo}
+ \end{equation}
+-La variable $z_{\mathrm{sop}}$ representa el alcance estimado con esta convención, que se informa como aproximadamente \textbf{10 a 11 m}.}
++La variable $z_{\mathrm{sop}}$ representa el alcance estimado con esta convención, que se informa como aproximadamente \textbf{10 a 11 m}.
+ 
+ \subsubsection{Perfil e incertidumbre de la inversión}
+ 
+@@ -189,7 +215,7 @@
+ Adquisición simultánea con varios nodos GEO completos & No demostrado & Un solo nodo GEO íntegro operativo por registro \\
+ Coordinación de arranque con tres nodos simultáneos & Demostrado funcionalmente & Ensayo de laboratorio sobre los módulos de radio \\
+ Sincronización entre nodos dentro de unos 670 µs & No demostrado & Sin registros comparables entre placas completas \\
+-\revsolution{Ruido del instrumento} & \revsolution{No medido} & \revsolution{Caracterización pendiente} \\
++Ruido del instrumento & No medido & Caracterización pendiente \\
+ Extensión hacia capas más profundas y cálculo de $V_{S,30}$ & Trabajo futuro & El perfil actual tiene soporte hasta unos 10--11 m \\
+ \bottomrule
+ \end{tabularx}
+@@ -198,16 +224,16 @@
+ \section{Limitaciones y trabajos futuros}
+ \label{sec:limitaciones}
+ 
+-\revsolution{\textbf{Ruido del instrumento.} Se propone caracterizar el ruido para las configuraciones de ganancia y rango utilizadas.}
+-
+-\revsolution{\textbf{Operación multicanal.} Se completará la revisión de placa y la operación conjunta de varios nodos GEO, verificando la dispersión de ganancia y fase y la sincronización respecto de la tolerancia de unos 670 $\mu$s.}
+-
+-\revsolution{\textbf{Geometría y protocolo.} Se plantea registrar coordenadas y azimut, mantener una referencia de impacto y ensayar una mayor apertura efectiva para extender la caracterización por debajo de los 8 Hz actuales hacia capas más profundas.}
+-
+-\revsolution{\textbf{Fuente y extensión de la banda de excitación.} Se propone ensayar una fuente de impactos periódicos cuyo período pueda variarse. Para un período $T$, la frecuencia fundamental $f_p$ y sus armónicos $f_k$ cumplen
++\textbf{Ruido del instrumento.} Se propone caracterizar el ruido para las configuraciones de ganancia y rango utilizadas.
++
++\textbf{Operación multicanal.} Se completará la revisión de placa y la operación conjunta de varios nodos GEO, verificando la dispersión de ganancia y fase y la sincronización respecto de la tolerancia de unos 670 $\mu$s.
++
++\textbf{Geometría y protocolo.} Se plantea registrar coordenadas y azimut, mantener una referencia de impacto y ensayar una mayor apertura efectiva para extender la caracterización por debajo de los 8 Hz actuales hacia capas más profundas.
++
++\textbf{Fuente y extensión de la banda de excitación.} Se propone ensayar una fuente de impactos periódicos cuyo período pueda variarse. Para un período $T$, la frecuencia fundamental $f_p$ y sus armónicos $f_k$ cumplen
+ \begin{equation}
+ f_p=\frac{1}{T},\qquad f_k=\frac{k}{T},
+ \quad k=1,2,\ldots
+ \label{eq:fuente-periodica}
+ \end{equation}
+-donde $k$ es el orden del armónico. Al variar el período entre ensayos se desplazan la fundamental y sus armónicos. Se evaluará si esta excitación permite obtener registros coherentes a frecuencias menores.}
++donde $k$ es el orden del armónico. Al variar el período entre ensayos se desplazan la fundamental y sus armónicos. Se evaluará si esta excitación permite obtener registros coherentes a frecuencias menores.

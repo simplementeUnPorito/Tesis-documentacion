@@ -21,7 +21,16 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,fit}
 \usepackage[round,authoryear]{natbib}
+\usepackage{xurl} % Permite partir las URL bibliográficas dentro de las columnas.
 \usepackage{hyperref}
+\newcommand{\rev}[1]{{\color{red}#1}}
+% Correcciones aplicadas a los comentarios \rev{}: se muestran en verde.
+% Nota: LaTeX no admite el guion bajo dentro del nombre de un comando, de modo
+% que \rev_solution no es un nombre valido. El equivalente es \revsolution.
+\definecolor{revverde}{RGB}{0,120,45}
+\newcommand{\revsolution}[1]{{\color{revverde}#1}}
+% Las marcas de revisión no deben introducir comandos de color en los marcadores PDF.
+\pdfstringdefDisableCommands{\def\revsolution#1{#1}\def\rev#1{#1}}
 
 \geometry{margin=2.5cm}
 \setlength{\columnsep}{0.7cm}

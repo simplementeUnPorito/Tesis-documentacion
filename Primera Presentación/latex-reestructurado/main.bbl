@@ -1,26 +1,97 @@
 \begin{thebibliography}{}
 
-\bibitem[Barbier et~al., 1976]{Barbier1976}
-Barbier, M.~G., Bondon, P., Mellinger, R., and Viallix, J.~R. (1976).
-\newblock Mini-sosie for land seismology.
-\newblock {\em Geophysical Prospecting}, 24(3):518--527.
+\bibitem[{Analog Devices}, 2026]{AnalogDevicesADXL355}
+{Analog Devices} (2026).
+\newblock {ADXL355}: Low-noise, low-drift, low-power 3-axis {MEMS}
+  accelerometer.
+\newblock \url{https://www.analog.com/en/products/ADXL355.html}.
+\newblock Página de producto y hoja de datos ADXL354/ADXL355. Consulta: 31 de
+  agosto de 2026.
+
+\bibitem[Breslin, 2020]{Breslin2020}
+Breslin, M. (2020).
+\newblock Groundborne noise and vibration: Instrumentation \& data processing.
+\newblock Presentación, Association of Noise Consultants, 10 de noviembre.
+  \url{https://www.association-of-noise-consultants.co.uk/wp-content/uploads/2020/11/Groundborne-Noise-and-Vibration-Instrumentation-Data-Processing-Mike-Breslin.pdf}.
+\newblock Diapositiva 10: ilustración de geófonos acreditada a Deutsches
+  Elektronen-Synchrotron (DESY).
+
+\bibitem[Das~G and Sekar, 2017]{InfineonAN68403}
+Das~G, G. and Sekar, P. (2017).
+\newblock {PSoC 3 and PSoC 5LP} analog signal chain calibration.
+\newblock Technical Report AN68403, documento 001-68403, Rev.~*G, Cypress
+  Semiconductor.
+\newblock 19 de abril de 2017.
+  \url{https://www.infineon.com/assets/row/public/documents/cross-divisions/42/infineon-an68403-psoc-3-and-psoc-5lp-analog-signal-chain-calibration-applicationnotes-en.pdf}.
+
+\bibitem[{DigiKey}, 2026]{DigiKeyADXL355}
+{DigiKey} (2026).
+\newblock {ADXL355BEZ-RL7}: pricing and availability.
+\newblock
+  \url{https://www.digikey.com/en/products/detail/analog-devices-inc/ADXL355BEZ-RL7/7100491}.
+\newblock Precio unitario publicado: USD 70,93. Consulta: 31 de agosto de 2026.
+
+\bibitem[Efron, 1979]{Efron1979}
+Efron, B. (1979).
+\newblock Bootstrap methods: Another look at the jackknife.
+\newblock {\em The Annals of Statistics}, 7(1):1--26.
+\newblock \href{https://doi.org/10.1214/aos/1176344552}{doi:
+  \nolinkurl{10.1214/aos/1176344552}}.
+
+\bibitem[{Espressif Systems}, 2026]{EspressifESPNow}
+{Espressif Systems} (2026).
+\newblock {ESP-NOW}: {ESP-IDF} programming guide, {ESP32}.
+\newblock
+  \url{https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html}.
+\newblock Consulta: 31 de agosto de 2026.
+
+\bibitem[Foti et~al., 2009]{Foti2009}
+Foti, S., Comina, C., Boiero, D., and Socco, L.~V. (2009).
+\newblock Non-uniqueness in surface-wave inversion and consequences on seismic
+  site response analyses.
+\newblock {\em Soil Dynamics and Earthquake Engineering}, 29(6):982--993.
+\newblock \href{https://doi.org/10.1016/j.soildyn.2008.11.004}{doi:
+  \nolinkurl{10.1016/j.soildyn.2008.11.004}}.
 
 \bibitem[Foti et~al., 2018]{Foti2018}
-Foti, S. et~al. (2018).
+Foti, S., Hollender, F., Garofalo, F., Albarello, D., Asten, M., Bard, P.-Y.,
+  Comina, C., Cornou, C., Cox, B., Di~Giulio, G., Forbriger, T., Hayashi, K.,
+  Lunedei, E., Martin, A., Mercerat, D., Ohrnberger, M., Poggi, V., Renalier,
+  F., Sicilia, D., and Socco, V. (2018).
 \newblock Guidelines for the good practice of surface wave analysis: a product
   of the {InterPACIFIC} project.
 \newblock {\em Bulletin of Earthquake Engineering}, 16(6):2367--2420.
+\newblock \href{https://doi.org/10.1007/s10518-017-0206-7}{doi:
+  \nolinkurl{10.1007/s10518-017-0206-7}}.
 
 \bibitem[Foti et~al., 2014]{Foti2014}
 Foti, S., Lai, C.~G., Rix, G.~J., and Strobbia, C. (2014).
 \newblock {\em Surface Wave Methods for Near-Surface Site Characterization}.
 \newblock CRC Press, Boca Raton, FL, USA.
+\newblock \href{https://doi.org/10.1201/b17268}{doi:
+  \nolinkurl{10.1201/b17268}}.
 
-\bibitem[{K. Ma et al.}, 2023]{Ma2023}
-{K. Ma et al.} (2023).
-\newblock An effective method for improving low-frequency response of geophone.
-\newblock {\em Sensors}, 23(6).
-\newblock Art. no. 3082, doi: 10.3390/s23063082.
+\bibitem[{Güralp Systems}, sf]{Guralp3ESPC}
+{Güralp Systems} (s.f.).
+\newblock {3ESPC} portable broadband seismometer.
+\newblock \url{https://www.guralp.com/documents/DAS-C3E-0001.pdf}.
+\newblock Hoja de datos DAS-C3E-0001, Issue P, sin fecha. Sin precio público
+  en la fuente consultada. Consulta: 31 de agosto de 2026.
+
+\bibitem[{Infineon Technologies AG}, 2024]{InfineonPSoC}
+{Infineon Technologies AG} (2024).
+\newblock {PSoC 5LP}: {CY8C58LP} family datasheet.
+\newblock
+  \url{https://www.infineon.com/assets/row/public/documents/30/49/infineon-psoc-5lp-cy8c58lp-datasheet-datasheet-en.pdf}.
+\newblock Documento 001-84932, Rev.~*O, 11 de diciembre de 2024; publicación
+  original de Cypress Semiconductor.
+
+\bibitem[Karki, 2023]{Karki2023}
+Karki, J. (2023).
+\newblock Active low-pass filter design.
+\newblock Technical Report SLOA049D, Texas Instruments.
+\newblock Revisión de febrero de 2023; original de julio de 2000.
+  \url{https://www.ti.com/lit/an/sloa049d/sloa049d.pdf}.
 
 \bibitem[Kramer, 1996]{Kramer1996}
 Kramer, S.~L. (1996).
@@ -32,22 +103,45 @@ Lin, S. and Ashlock, J.~C. (2016).
 \newblock Surface-wave testing of soil sites using multichannel simulation with
   one-receiver.
 \newblock {\em Soil Dynamics and Earthquake Engineering}, 87:82--92.
+\newblock \href{https://doi.org/10.1016/j.soildyn.2016.04.013}{doi:
+  \nolinkurl{10.1016/j.soildyn.2016.04.013}}.
 
-\bibitem[Park et~al., 1996]{Park1996SIST}
-Park, C.~B., Miller, R.~D., Steeples, D.~W., and Black, R.~A. (1996).
-\newblock Swept impact seismic technique ({SIST}).
-\newblock {\em Geophysics}, 61(6):1789--1803.
+\bibitem[Ma et~al., 2023]{Ma2023}
+Ma, K., Wu, J., Ma, Y., Xu, B., Qi, S., and Jiang, X. (2023).
+\newblock An effective method for improving low-frequency response of geophone.
+\newblock {\em Sensors}, 23(6):3082.
+\newblock \href{https://doi.org/10.3390/s23063082}{doi:
+  \nolinkurl{10.3390/s23063082}}.
 
 \bibitem[Park et~al., 1998]{Park1998}
 Park, C.~B., Miller, R.~D., and Xia, J. (1998).
 \newblock Imaging dispersion curves of surface waves on multi-channel record.
 \newblock In {\em SEG Technical Program Expanded Abstracts 1998}, pages
   1377--1380.
+\newblock \href{https://doi.org/10.1190/1.1820161}{doi:
+  \nolinkurl{10.1190/1.1820161}}.
 
 \bibitem[Park et~al., 1999]{Park1999}
 Park, C.~B., Miller, R.~D., and Xia, J. (1999).
 \newblock Multichannel analysis of surface waves.
 \newblock {\em Geophysics}, 64(3):800--808.
+\newblock \href{https://doi.org/10.1190/1.1444590}{doi:
+  \nolinkurl{10.1190/1.1444590}}.
+
+\bibitem[Park et~al., 2007]{Park2007}
+Park, C.~B., Miller, R.~D., Xia, J., and Ivanov, J. (2007).
+\newblock Multichannel analysis of surface waves ({MASW})---active and passive
+  methods.
+\newblock {\em The Leading Edge}, 26(1):60--64.
+\newblock \href{https://doi.org/10.1190/1.2431832}{doi:
+  \nolinkurl{10.1190/1.2431832}}.
+
+\bibitem[Park et~al., 2018]{Park2018Roads}
+Park, C.~B., Richter, J., Rodrigues, R., and Cirone, A. (2018).
+\newblock {MASW} applications for road construction and maintenance.
+\newblock {\em The Leading Edge}, 37(10):724--730.
+\newblock \href{https://doi.org/10.1190/tle37100724.1}{doi:
+  \nolinkurl{10.1190/tle37100724.1}}.
 
 \bibitem[{PCB Piezotronics}, 2025]{PCB086D20}
 {PCB Piezotronics} (2025).
@@ -63,16 +157,62 @@ Park, C.~B., Miller, R.~D., and Xia, J. (1999).
   \url{https://www.pcb.com/resources/technical-information/signal-conditioning-basics}.
 \newblock Consulta: 20 de agosto de 2026.
 
+\bibitem[{R. T. Clark}, 2026]{RTClark45}
+{R. T. Clark} (2026).
+\newblock {RTC 4.5 Hz 375 Ohm Vertical Geophone}.
+\newblock
+  \url{https://rtclark.com/product/rtc-4-5hz-375ohm-vertical-geophone/}.
+\newblock Precio publicado: USD 92--154, según opción. Consulta: 31 de agosto
+  de 2026.
+
+\bibitem[Samtani and Nowatzki, 2006]{FHWA2006}
+Samtani, N.~C. and Nowatzki, E.~A. (2006).
+\newblock Soils and foundations reference manual, volume {I}.
+\newblock Technical Report FHWA-NHI-06-088, Federal Highway Administration,
+  National Highway Institute.
+\newblock \url{https://www.fhwa.dot.gov/engineering/geotech/pubs/nhi06088.pdf}.
+
+\bibitem[Sekar, 2010]{CypressAN60319}
+Sekar, P. (2010).
+\newblock Instrumentation amplifier using {PSoC} 3.
+\newblock Cypress Semiconductor, Application Note AN60319, Document
+  No.~001-60319, Rev.~*A.
+
 \bibitem[{Sensor Nederland B.V.}, 2006]{SM24}
 {Sensor Nederland B.V.} (2006).
 \newblock {SM-24 Geophone Element}.
 \newblock Product brochure:
   \url{https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/SM-24%20Brochure.pdf}.
 
+\bibitem[Smith, 1997]{Smith1997}
+Smith, S.~W. (1997).
+\newblock {\em The Scientist and Engineer's Guide to Digital Signal
+  Processing}.
+\newblock California Technical Publishing.
+\newblock Texto del autor: \url{https://www.dspguide.com/pdfbook.htm}.
+
+\bibitem[{SparkFun Electronics}, 2026]{SparkFunSM24}
+{SparkFun Electronics} (2026).
+\newblock Geophone --- {SM-24}, with insulating disc.
+\newblock
+  \url{https://www.sparkfun.com/geophone-sm-24-with-insulating-disc.html}.
+\newblock Precio publicado: USD 69,95. Consulta: 31 de agosto de 2026.
+
+\bibitem[{Víctor González \& Asoc. S.S.}, 2023]{EstudioHidrogeologico2023}
+{Víctor González \& Asoc. S.S.} (2023).
+\newblock Estudio hidrogeológico: Facultad de ciencias y tecnología,
+  {Universidad Católica Nuestra Señora de la Asunción}, campus asunción --
+  sede santa librada.
+\newblock Technical report, Víctor González \& Asoc. S.S.
+\newblock Informe técnico de consultoría, julio de 2023, 38 páginas. Copia
+  conservada en el archivo del proyecto.
+
 \bibitem[Xia et~al., 1999]{Xia1999}
 Xia, J., Miller, R.~D., and Park, C.~B. (1999).
 \newblock Estimation of near-surface shear-wave velocity by inversion of
   {Rayleigh} waves.
 \newblock {\em Geophysics}, 64(3):691--700.
+\newblock \href{https://doi.org/10.1190/1.1444578}{doi:
+  \nolinkurl{10.1190/1.1444578}}.
 
 \end{thebibliography}

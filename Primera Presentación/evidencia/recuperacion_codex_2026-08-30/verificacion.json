@@ -1,0 +1,14 @@
+{
+  "pages": 28,
+  "equations": 31,
+  "figures": 24,
+  "pending_rev": 0,
+  "green_marks": 31,
+  "original_image_files_unchanged": 52,
+  "source_hashes": {
+    "secciones\\01_contexto.tex": "4c5e0db1914fd8ad4919178d089f3aeebef9799953484b14b3f67f6654ad55ad",
+    "secciones\\02_requerimientos.tex": "eab18032f29a86dd5236ce239cfc214a1f643e563132c1bf22cc7be7fb1427e0",
+    "secciones\\03_diseno.tex": "bf9cfe1d0e1da56baf83a0701569885cce08b70edc4159229ad58fe4a9c4112e",
+    "secciones\\04_validacion.tex": "b5e12393e28fe54880d4e6d92b5d2a477ddd9ad735b0a9ff58d58b0f83df90af"
+  }
+}

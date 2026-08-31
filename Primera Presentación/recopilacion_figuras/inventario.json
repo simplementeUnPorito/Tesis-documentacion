@@ -1,0 +1,497 @@
+[
+  {
+    "id": "D01",
+    "title": "Sistema completo: del impacto al perfil",
+    "sections": [
+      1,
+      4,
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D01.png",
+    "note": "Resumen del sistema diseñado; no implica validación de extremo a extremo.",
+    "status": "Prioritario",
+    "page": 1,
+    "source": null
+  },
+  {
+    "id": "D02",
+    "title": "Flujo operativo UML",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D02.png",
+    "note": "Flujo de uso detallado. Elegir entre este y D01 según el espacio.",
+    "status": "Alternativa",
+    "page": 2,
+    "source": null
+  },
+  {
+    "id": "D03",
+    "title": "Modelo UML de nodos",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D03.png",
+    "note": "Modelo lógico, no diagrama de canales simultáneamente ensayados.",
+    "status": "Apoyo",
+    "page": 3,
+    "source": null
+  },
+  {
+    "id": "D04",
+    "title": "Arquitectura maestro y esclavos",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D04.png",
+    "note": "Distingue GEO, HAMMER, maestro y captura local.",
+    "status": "Prioritario",
+    "page": 4,
+    "source": null
+  },
+  {
+    "id": "D05",
+    "title": "Sincronización y comienzo de captura",
+    "sections": [
+      6,
+      7,
+      8
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D05.png",
+    "note": "Explica ARM, PRESTART y START. No certifica precisión temporal medida.",
+    "status": "Prioritario",
+    "page": 5,
+    "source": null
+  },
+  {
+    "id": "D06",
+    "title": "Almacenamiento local",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D06.png",
+    "note": "Secuencia de almacenamiento en SD o memoria del ESP.",
+    "status": "Apoyo",
+    "page": 6,
+    "source": null
+  },
+  {
+    "id": "D07",
+    "title": "Vaciado ordenado de registros",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D07.png",
+    "note": "Protocolo de recuperación y confirmaciones; útil para preguntas.",
+    "status": "Apoyo",
+    "page": 7,
+    "source": null
+  },
+  {
+    "id": "D08",
+    "title": "Fuente, geófono y frente analógico",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D08.png",
+    "note": "Diagrama funcional. Antes de insertar, revisar la referencia de H_geo a velocidad frente al modelo referido a aceleración.",
+    "status": "Revisar",
+    "page": 8,
+    "source": null
+  },
+  {
+    "id": "D09",
+    "title": "Calibración de offset",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D09.png",
+    "note": "Secuencia de calibración y PI por etapa; comprobar valores si se rotulan parámetros.",
+    "status": "Prioritario",
+    "page": 9,
+    "source": null
+  },
+  {
+    "id": "D10",
+    "title": "FSM de captura superMaquina",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D10.png",
+    "note": "Máquina de estados del control de adquisición.",
+    "status": "Prioritario",
+    "page": 10,
+    "source": null
+  },
+  {
+    "id": "D11",
+    "title": "Control de captura integrado al PSoC",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D11.png",
+    "note": "Arquitectura de control y datos; alternativa a D10 y D13.",
+    "status": "Alternativa",
+    "page": 11,
+    "source": null
+  },
+  {
+    "id": "D12",
+    "title": "Ingesta y procesamiento del servidor",
+    "sections": [
+      4,
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D12.png",
+    "note": "Separa adquisición, transporte y análisis. Sin necesidad de mostrar rutas internas en el manuscrito.",
+    "status": "Alternativa",
+    "page": 12,
+    "source": null
+  },
+  {
+    "id": "D13",
+    "title": "Hardware digital y lógica interna",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D13.png",
+    "note": "Vista técnica detallada; preferible en ancho completo o como apoyo.",
+    "status": "Apoyo",
+    "page": 13,
+    "source": null
+  },
+  {
+    "id": "D14",
+    "title": "FSM detallada de la captura",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\Diagramas_operativos_y_calibracion.drawio",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\D14.png",
+    "note": "Página original Page-14. Elegir D10 o esta; no ambas por defecto.",
+    "status": "Alternativa",
+    "page": 14,
+    "source": null
+  },
+  {
+    "id": "F01",
+    "title": "Amplificación sísmica: caso CentrePort",
+    "sections": [
+      1
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\casos_estudio\\centreport_05_amplificacion_terremotos.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\casos_estudio\\centreport_05_amplificacion_terremotos.png",
+    "note": "Ejemplo bibliográfico de Vantassel et al. (2018), figura 11. No corresponde al predio de la UCA. Requiere cita y revisar derechos de reproducción.",
+    "status": "Bibliografía",
+    "page": null,
+    "source": "https://doi.org/10.1785/0120170287"
+  },
+  {
+    "id": "F02",
+    "title": "Decaimiento con distancia: análisis histórico",
+    "sections": [
+      8,
+      9
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\atenuacion_geometrica.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\atenuacion_geometrica.png",
+    "note": "Contiene ajustes a registros por bandas y curvas teóricas, no sólo una ilustración geométrica. Las pendientes medidas no identifican por sí solas el tipo de onda. Requiere revisar datos y redacción antes de usar.",
+    "status": "Revisar",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F03",
+    "title": "Fundamentos de dispersión",
+    "sections": [
+      3,
+      4
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\fundamentos_dispersion.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\fundamentos_dispersion.png",
+    "note": "Ilustración con datos sintéticos. Ya se había descartado por diseño y tipografía; se conserva como alternativa conceptual, preferible B02 o una adaptación futura.",
+    "status": "Rehacer",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F04",
+    "title": "Comparación de métodos",
+    "sections": [
+      2,
+      5
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\comparacion_metodos.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\comparacion_metodos.png",
+    "note": "Tabla gráfica histórica con categorías cualitativas de resolución y cobertura. No usar tal cual: conservar la comparación actual del manuscrito, sin convertir esas categorías en un ranking absoluto.",
+    "status": "Rehacer",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F05",
+    "title": "Geometría de campañas",
+    "sections": [
+      6,
+      8
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\geometria_campanas.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\geometria_campanas.png",
+    "note": "Figura histórica: comprobar posiciones y distinguir el tendido total de 40 m del subarreglo efectivo de 20 m.",
+    "status": "Revisar",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F06",
+    "title": "Sincronización y error de fase",
+    "sections": [
+      6,
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\sincronizacion_fase.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\sincronizacion_fase.png",
+    "note": "La figura usa un umbral de 5 grados y una observación preliminar menor que 400 microsegundos; no equivale al requisito actual de 5 por ciento y 670 microsegundos. Rehacer antes de insertar; no presentar 400 como resultado validado.",
+    "status": "Rehacer",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F07",
+    "title": "Interior de un geófono de bobina móvil",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\transductores\\sm24_esquema_interno.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\transductores\\sm24_esquema_interno.png",
+    "note": "Ilustración genérica del principio masa-resorte y bobina. La geometría exacta del SM-24 y la procedencia deben confirmarse; no rotular como corte constructivo específico del SM-24 sin respaldo.",
+    "status": "Candidato",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F08",
+    "title": "Fotografía comercial de un geófono cableado",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\transductores\\sm24_fotografia_cableado.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\transductores\\sm24_fotografia_cableado.png",
+    "note": "Fotografía comercial guardada en el proyecto; no es evidencia fotográfica del nodo ensayado. Confirmar modelo y atribución antes de usar.",
+    "status": "Candidato",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F09",
+    "title": "Frente analógico PSoC",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Urucom_2026_compact\\imagenes\\AnalogPathFinal_FLECHAS.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Urucom_2026_compact\\imagenes\\AnalogPathFinal_FLECHAS.png",
+    "note": "Esquemático completo: no recortar. Comprobar revisión de circuito y legibilidad de valores antes de publicar.",
+    "status": "Prioritario",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F10",
+    "title": "Hardware digital PSoC",
+    "sections": [
+      7
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Urucom_2026_compact\\imagenes\\DigitalPathGordito.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Urucom_2026_compact\\imagenes\\DigitalPathGordito.png",
+    "note": "Diagrama completo, sin recorte adicional. Alternativa a D11/D13; revisar correspondencia con la revisión actual.",
+    "status": "Alternativa",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F11",
+    "title": "Señales por etapas durante un ensayo",
+    "sections": [
+      7,
+      8
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Urucom_2026_compact\\imagenes\\autocalibration_stage_outputs_5_to_20s.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Urucom_2026_compact\\imagenes\\autocalibration_stage_outputs_5_to_20s.png",
+    "note": "Las curvas muestran señales y transitorios. Confirmar si son de calibración o adquisición y sus condiciones; no presentarlas automáticamente como convergencia del PI.",
+    "status": "Revisar",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F12",
+    "title": "Medición de la ruta PGA–ADC",
+    "sections": [
+      8,
+      9
+    ],
+    "path": "C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/04_cadena_adc/PGA_a_ADC/cadena_pga_adc.png",
+    "preview": "C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/04_cadena_adc/PGA_a_ADC/cadena_pga_adc.png",
+    "note": "Figura de resultados_tanda_calibrada, fuente de la identificación actual. Distinguir la respuesta medida, la nominal y la envolvente de ajuste; es una prueba eléctrica.",
+    "status": "Prioritario",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F13",
+    "title": "Identificación del compensador",
+    "sections": [
+      8,
+      9
+    ],
+    "path": "C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/03_identificacion_etapas/COMPENSADOR_PGA/compensador_pga.png",
+    "preview": "C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/03_identificacion_etapas/COMPENSADOR_PGA/compensador_pga.png",
+    "note": "Figura de la tanda calibrada. Identifica la ruta medida indicada en el título; no confundir una ruta con etapas incluidas con el compensador aislado.",
+    "status": "Candidato",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F14",
+    "title": "Registros de campo en cascada",
+    "sections": [
+      8
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\waterfall_promedios.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-historial\\figuras\\waterfall_promedios.png",
+    "note": "Arreglo sintetizado desplazando un receptor; no corresponde a 21 receptores simultáneos.",
+    "status": "Prioritario",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F15",
+    "title": "Imágenes de dispersión comparadas",
+    "sections": [
+      9
+    ],
+    "path": "C:\\Github\\Tesis\\src\\calculos_modelados\\python\\masw_bench\\informe\\figuras\\figuras_informe__fig_imagenes.png",
+    "preview": "C:\\Github\\Tesis\\src\\calculos_modelados\\python\\masw_bench\\informe\\figuras\\figuras_informe__fig_imagenes.png",
+    "note": "Normalizadas por frecuencia: los colores no comparan energía entre bandas. El límite de apertura dibujado es el criterio de análisis lambda <= 1,5 L.",
+    "status": "Prioritario",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F16",
+    "title": "Curvas de dispersión y longitud de onda",
+    "sections": [
+      9
+    ],
+    "path": "C:\\Github\\Tesis\\src\\calculos_modelados\\python\\masw_bench\\informe\\figuras\\figuras_informe__fig_curvas.png",
+    "preview": "C:\\Github\\Tesis\\src\\calculos_modelados\\python\\masw_bench\\informe\\figuras\\figuras_informe__fig_curvas.png",
+    "note": "Incluye alternativas y bandas bootstrap. Para el texto actual, identificar la curva Park del subarreglo 22–42 m desde 8 Hz.",
+    "status": "Prioritario",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F17",
+    "title": "Perfiles e incertidumbre de inversión",
+    "sections": [
+      9
+    ],
+    "path": "C:\\Github\\Tesis\\src\\calculos_modelados\\python\\masw_bench\\informe\\figuras\\figuras_informe__fig_vs.png",
+    "preview": "C:\\Github\\Tesis\\src\\calculos_modelados\\python\\masw_bench\\informe\\figuras\\figuras_informe__fig_vs.png",
+    "note": "Los perfiles y configuraciones de esta lámina no coinciden directamente con el único modelo de tres capas del texto. No usarla como perfil adoptado; elegir una figura regenerada del modelo correcto o reservarla para comparación de alternativas.",
+    "status": "No usar tal cual",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F18",
+    "title": "Estado del martillete",
+    "sections": [
+      10
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\excitacion\\estado_actual_martillete.jpg",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\latex-15p-review\\figuras\\excitacion\\estado_actual_martillete.jpg",
+    "note": "Fotografía de la implementación mecánica. Sólo ilustra la idea a ensayar; no demuestra una mejora en bajas frecuencias.",
+    "status": "Candidato",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F19",
+    "title": "Impactos periódicos manuales: señal",
+    "sections": [
+      10
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\evidencia\\ensayo_impactos_periodicos_manual\\01_senal_geo1_60s_impactos_aprox_1Hz.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\evidencia\\ensayo_impactos_periodicos_manual\\01_senal_geo1_60s_impactos_aprox_1Hz.png",
+    "note": "Ensayo exploratorio manual a cadencia aproximada. No demuestra funcionamiento de una fuente automática de período variable.",
+    "status": "Apoyo",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "F20",
+    "title": "Impactos periódicos manuales: espectro",
+    "sections": [
+      10
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\Primera Presentación\\evidencia\\ensayo_impactos_periodicos_manual\\02_espectro_geo1_60s_impactos_aprox_1Hz.png",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\evidencia\\ensayo_impactos_periodicos_manual\\02_espectro_geo1_60s_impactos_aprox_1Hz.png",
+    "note": "Espectro exploratorio. No usar picos como prueba de mayor profundidad ni como resultado del sistema futuro.",
+    "status": "Apoyo",
+    "page": null,
+    "source": null
+  },
+  {
+    "id": "B01",
+    "title": "Ensayos invasivos y ondas superficiales",
+    "sections": [
+      2
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\investigacion\\sources\\Sebastiano Foti Chapter 1.pdf",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\B01.png",
+    "note": "Foti et al. (2014), figura 1.13, página 30 del PDF del capítulo. Ejemplo bibliográfico, no medición propia. Se muestra la página completa para seleccionar; requiere cita.",
+    "status": "Bibliografía",
+    "page": 30,
+    "source": null
+  },
+  {
+    "id": "B02",
+    "title": "Dispersión y profundidad sensible",
+    "sections": [
+      3,
+      4
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\investigacion\\sources\\Sebastiano Foti Chapter 1.pdf",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\B02.png",
+    "note": "Foti et al. (2014), figura 1.2, página 7 del PDF del capítulo. Explica por qué distintas longitudes de onda involucran distintas profundidades. Requiere cita.",
+    "status": "Bibliografía",
+    "page": 7,
+    "source": null
+  },
+  {
+    "id": "B03",
+    "title": "Complemento de fuentes activas y pasivas",
+    "sections": [
+      5
+    ],
+    "path": "C:\\Github\\Tesis\\docs\\investigacion\\sources\\Sebastiano Foti Chapter 1.pdf",
+    "preview": "C:\\Github\\Tesis\\docs\\Primera Presentación\\recopilacion_figuras\\vistas\\B03.png",
+    "note": "Foti et al. (2014), figura 1.5, página 11 del PDF del capítulo. Ilustra la comparación de métodos, no la banda validada del prototipo. Requiere cita.",
+    "status": "Bibliografía",
+    "page": 11,
+    "source": null
+  }
+]

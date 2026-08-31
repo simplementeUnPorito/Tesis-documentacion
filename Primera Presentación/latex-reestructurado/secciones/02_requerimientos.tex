@@ -1,59 +1,50 @@
 \section{Requerimientos del sistema de instrumentación}
+\label{sec:requerimientos}
 
-Esta sección constituye el puente entre la geofísica y el diseño electrónico. Cada requerimiento que sigue se deriva de una necesidad del método expuesta en las secciones 5 a 7 y no de una preferencia de implementación.
+Esta sección constituye el puente entre la geofísica y el diseño electrónico. Cada requerimiento que sigue se deriva de una necesidad del método expuesta en las secciones~\ref{sec:ondas} a~\ref{sec:seleccion} y no de una preferencia de implementación.
 
-\textbf{Banda útil de trabajo.} La profundidad de investigación se fija por la máxima longitud de onda observable a través de $z\approx\lambda/2$, y la longitud de onda se relaciona con la frecuencia mediante $\lambda=c/f$. Combinando ambas expresiones, la frecuencia mínima necesaria para alcanzar una profundidad $z$ resulta
+\textbf{Banda útil de trabajo.} La relación frecuencia--longitud de onda de la ecuación~\eqref{eq:longitud-onda} y la estimación de profundidad de la sección~\ref{sec:ondas} permiten expresar la frecuencia mínima de trabajo $f_{\min}$ para una profundidad de investigación $z$ como
 
 \begin{equation}
 f_{\min}\simeq\frac{c_R}{2z}.
 \end{equation}
 
-Con la velocidad de fase efectivamente observada en el sitio, del orden de 150 m/s, alcanzar 10 m exige contenido coherente en torno a 7,5 Hz, mientras que el objetivo formal de 50 m exigiría alcanzar aproximadamente 1,5 Hz. Esta única relación explica la distancia entre el objetivo de diseño y el alcance demostrado, y anticipa por qué la elección del transductor y la energía de la fuente, y no la velocidad de conversión, constituyen el cuello de botella del sistema.
+Para una velocidad de fase de referencia de 150 m/s, una profundidad de investigación de 10 m requiere contenido coherente en torno a 7,5 Hz. A velocidad constante, duplicar la profundidad exige dividir esa frecuencia por dos. Esta única relación explica por qué el acceso a las capas profundas es, ante todo, un problema de baja frecuencia, y anticipa por qué la elección del transductor y la energía de la fuente, y no la velocidad de conversión, constituyen el cuello de botella del sistema.
 
-% — verificar el criterio exacto contra la fuente antes del .bib
-\textbf{Separación entre canales y apertura del arreglo.} La separación $\Delta x$ define el muestreo espacial del frente de onda y por lo tanto un límite de aliasing, ya que sólo pueden interpretarse sin ambigüedad longitudes de onda que satisfagan $\lambda\gtrsim 2\Delta x$. La apertura total $L$ actúa en el extremo opuesto: no puede estimarse de forma confiable una longitud de onda comparable o mayor que la extensión del tendido. Las recomendaciones de buena práctica expresan ese límite como $L\gtrsim 1{,}5\,\lambda_{\max}$ en una estimación optimista, y con criterios más conservadores exigen $L\gtrsim 2\,\lambda_{\max}$ \citep{Foti2018}. Para la apertura de 40 m efectivamente desplegada, el criterio optimista admite longitudes de onda de hasta unos 27 m, cifra que resulta consistente con el soporte de 20 a 22 m que el procesamiento identificó a posteriori y que se reporta en la sección 11.3. Ambos límites se trasladan al plano $f$–$c$ y deben dibujarse sobre la imagen de dispersión, práctica que se adopta en la sección 11.
+\textbf{Separación entre canales y apertura del arreglo.} Para $N_r$ posiciones equiespaciadas, la apertura $L$ y el límite de muestreo espacial satisfacen
+\begin{equation}
+L=(N_r-1)\Delta x,\qquad
+\lambda_{\min}\gtrsim2\Delta x.
+\label{eq:geometria-arreglo}
+\end{equation}
+La separación $\Delta x$ limita las longitudes de onda cortas; la apertura condiciona la interpretación de las largas. Foti y colaboradores proponen $L\gtrsim\lambda_{\max}$ y un ejemplo conservador con $L\gtrsim1{,}5\lambda_{\max}$ \citep{Foti2018}. Como criterio más estricto de diseño se considera aquí $L\gtrsim2\lambda_{\max}$.
 
-\textbf{Sincronización entre canales.} Un desfase temporal $\Delta t$ entre dos canales introduce un error de fase $2\pi f\,\Delta t$ que el procesamiento interpreta como un tiempo de propagación adicional. En una aproximación de primer orden, el error relativo resultante sobre la velocidad de fase es
+\textbf{Sincronización entre canales.} Para una frecuencia $f$, el error temporal $\Delta t$ introduce un error de fase $\delta\phi_t$:
+\begin{equation}
+\delta\phi_t=2\pi f\,\Delta t.
+\label{eq:error-fase-temporal}
+\end{equation}
+\revsolution{Esta relación se obtiene del desplazamiento temporal de una componente sinusoidal \citep[cap.~10]{Smith1997}.} El procesamiento interpreta este error como una contribución adicional al tiempo de propagación. En una aproximación de primer orden,
 
 \begin{equation}
 \frac{\Delta c}{c}\simeq\frac{c\,\Delta t}{\Delta x},
 \end{equation}
 
-de modo que la tolerancia de sincronización queda determinada por la geometría y por la velocidad esperada, no por una cifra elegida de antemano. Para $c\approx150$ m/s, $\Delta x=2$ m y un error admisible del 1 \% en la velocidad de fase, el desfase entre nodos debe mantenerse por debajo de unos 130 µs. Este número es el que justifica la arquitectura de arranque coordinado descrita en la sección 9 y el que deberá verificarse experimentalmente según se indica en la sección 12.
-
-\textbf{Relación señal a ruido y rango dinámico.} El registro debe conservar simultáneamente el primer arribo cercano a la fuente y la llegada atenuada en el offset más lejano, cuya diferencia de amplitud abarca varios órdenes de magnitud. De allí la necesidad de ganancia programable por canal y de un convertidor con margen suficiente para evitar tanto la saturación como el enterramiento de la señal lejana en el ruido de cuantificación. La contrapartida es que ninguna ganancia recupera información que nunca superó el piso de ruido de la cadena, lo que devuelve la atención a la energía de la fuente.
+de modo que la tolerancia de sincronización queda determinada por la geometría y por la velocidad esperada, no por una cifra elegida de antemano. Para $c\approx150$ m/s, $\Delta x=2$ m y un error admisible del 5 \% en la velocidad de fase, el desfase entre nodos debe mantenerse por debajo de unos 670 µs. Este número es el que justifica la arquitectura de arranque coordinado descrita en la sección~\ref{sec:diseno} y el que deberá verificarse experimentalmente según se indica en la sección~\ref{sec:limitaciones}.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=\textwidth,keepaspectratio]{sincronizacion_fase.png}
-\caption{Traducción del desalineamiento temporal entre canales a error de fase y, a través de la geometría, a error de velocidad de fase. El presupuesto fija el criterio de medición de la sincronización.}
+\includegraphics[width=0.86\textwidth,keepaspectratio]{f_presupuesto_sincronizacion.png}
+\caption{Presupuesto de sincronización. El error relativo sobre la velocidad de fase crece linealmente con el desalineamiento temporal entre nodos y con la velocidad esperada. Para la separación adoptada y la velocidad observada en el sitio, el error admisible del 5 \% se alcanza a unos 670 µs; una velocidad mayor endurece el requisito. \revsolution{Fuente: elaboración propia.}}
+\label{fig:presupuestosinc}
 \end{figure*}
 
-\textbf{Preservación de fase.} Como la magnitud medida es una velocidad de fase, un error sistemático de fase entre canales se traduce directamente en un error de velocidad. El requerimiento no es que la respuesta del acondicionamiento sea plana, sino que sea conocida y, sobre todo, idéntica entre canales, porque una diferencia común a todos los canales se cancela al estimar la pendiente de fase mientras que una dispersión entre unidades no lo hace.
+\textbf{Rango dinámico y control de ganancia.} El registro debe conservar tanto el primer arribo cercano a la fuente como la llegada atenuada en el offset más lejano. Conviene dimensionar esa diferencia en lugar de exagerarla: la amplitud de una onda Rayleigh decae con la distancia de forma aproximadamente proporcional a $r^{-1/2}$, de modo que multiplicar por cinco la distancia sólo la reduce en unos 7 dB, y la atenuación material agrega un término adicional que crece con la frecuencia.
+
+De ahí se sigue la conclusión que interesa al diseño. A esas dos pérdidas, que dependen de la distancia y de la frecuencia, se suma una tercera que depende del sitio: el acoplamiento mecánico entre el sensor y el terreno cambia con el material, con la humedad y con la calidad del hincado, y modifica la fracción del movimiento que efectivamente llega al transductor \revsolution{\citep{Foti2018}}. La combinación de las tres hace que el valor exacto de ganancia conveniente no se conozca antes de estar en campo y que además cambie entre posiciones de un mismo tendido. El requerimiento no es, por lo tanto, un rango dinámico instantáneo elevado, sino una ganancia ajustable por canal y por adquisición, que permita acomodar cada registro a la escala del convertidor sin saturar en el offset cercano ni comprimir la traza lejana contra el ruido de cuantificación.
+
+El ruido propio de la cadena debe ser suficientemente bajo para conservar la señal coherente en la banda y en los offsets definidos. La ganancia ajustable permite utilizar la escala del convertidor, pero no recupera una señal que ya queda por debajo del ruido referido a la entrada.
+
+\textbf{Preservación de fase.} Como la magnitud medida es una velocidad de fase, un error sistemático de fase entre canales se traduce directamente en un error de velocidad. El requerimiento no es que la respuesta del acondicionamiento sea plana, sino que sea conocida y, sobre todo, suficientemente apareada entre canales, porque un desfase común a todos ellos se cancela al estimar la pendiente de fase mientras que una dispersión entre unidades no lo hace.
 
 \textbf{Trazabilidad y operación en campo.} El procesamiento sólo es reproducible si cada registro conserva su geometría, su configuración de ganancia, su referencia temporal y la identificación del hardware que lo produjo. A ello se suma la exigencia operativa de trabajar sin infraestructura, con almacenamiento local y sin depender de conectividad externa durante la adquisición.
-
-La tabla~\ref{tab:puente} resume esa derivación y funciona además como mapa de lectura del resto del documento: la columna de decisiones anticipa lo que la sección 9 desarrolla, y la de evidencia remite a las secciones 10 y 11, donde cada afirmación se sostiene o se declara pendiente.
-
-
-\begin{table*}[!ht]
-\centering
-\footnotesize
-\caption{Puente requerimiento → decisión → evidencia → estado. Es la tabla central del documento y no debe recortarse.}
-\label{tab:puente}
-\begin{tabularx}{0.92\textwidth}{YYYY}
-\toprule
-Necesidad derivada del método & Decisión de diseño adoptada & Evidencia disponible & Estado \\
-\midrule
-Observar longitudes de onda largas ($f\lesssim 8$ Hz para 10 m) & Geófono SM-24 con rama de compensación $1-\mathrm{BP}$ \citep{Ma2023} → §9.3 & Ruta PGA → ADC identificada desde 0,21 Hz → §10.1 & Electrónica verificada en la banda; el geófono entra como modelo \\
-Evitar aliasing espacial y respetar la apertura & Geometría registrada: $\Delta x=2$ m, apertura 40 m, offsets de 10 a 50 m & Metadatos de la campaña & Disponible para la campaña realizada \\
-Estimar $c_R(f)$ sin sesgo instrumental & Respuesta de fase conocida y homogénea entre canales & Caracterización parcial de fase del AFE & Pendiente: falta dispersión entre placas \\
-Sostener el rango dinámico entre offsets & Ganancia programable, control de offset y ADC $\Delta\Sigma$ con rangos seleccionables & Arquitectura implementada y registros de campo utilizables & Pendiente: sin ruido referido a entrada ni ENOB \\
-Sincronizar por debajo de ~130 µs & Arranque coordinado por radio y temporización de ventana en lógica dedicada → §9.4 & Ensayo funcional con tres nodos en laboratorio → §10.2 & Funcionalmente demostrado; sin verificación metrológica \\
-Referenciar temporalmente cada impacto & Nodo HAMMER con martillo instrumentado, adquirido junto al nodo GEO & 598 registros aceptados con referencia de impacto & Operativo en campaña \\
-Adquirir simultáneamente varios receptores & Nodos GEO independientes con buffer local e inicio común → §9.1 & Coordinación probada con tres nodos en laboratorio → §10.2 & No demostrado con varios GEO completos en campo \\
-Evitar pérdida o corrupción de muestras & Fragmentación con numeración de secuencia, reintento, CRC y copia local & Implementación e interfaces existentes & Falta ensayo multinodo bajo interferencia \\
-Conservar trazabilidad del registro & Metadatos de campaña, manifiesto y servidor de ingesta & Conjunto de datos y flujo reproducible & Falta asociar revisión de hardware y firmware a cada registro \\
-\bottomrule
-\end{tabularx}
-\end{table*}

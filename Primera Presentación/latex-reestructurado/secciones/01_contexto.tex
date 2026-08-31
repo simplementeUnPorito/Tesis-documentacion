@@ -1,78 +1,43 @@
 \section{Importancia de la caracterización geotécnica del suelo}
+\label{sec:importancia}
 
-La respuesta de una obra civil frente a cargas estáticas y dinámicas depende de propiedades mecánicas del terreno que varían con la profundidad y, en general, también lateralmente. Reconocer esa variación (espesores, contactos, rellenos y zonas de menor rigidez) es una condición previa al dimensionamiento de fundaciones, a la evaluación de asentamientos y a la estimación de la respuesta sísmica de sitio.
+La respuesta de una obra civil frente a cargas estáticas y dinámicas depende de propiedades mecánicas del terreno que varían con la profundidad y, en general, también lateralmente. Reconocer esa variación (espesores, contactos, rellenos y zonas de menor rigidez) es una condición previa al dimensionamiento de fundaciones, a la evaluación de asentamientos y a la estimación de la respuesta sísmica de sitio \revsolution{\citep{FHWA2006,Kramer1996}}.
 
-Entre las magnitudes que describen ese comportamiento, la velocidad de propagación de las ondas de corte, $V_S$, ocupa un lugar particular porque se vincula de forma directa con la rigidez del medio a pequeñas deformaciones. Para un medio elástico de densidad $\rho$, el módulo de corte a pequeñas deformaciones queda determinado por
+La variación de la rigidez con la profundidad condiciona la respuesta dinámica del sitio. Su relación con la velocidad de corte se desarrolla en la sección~\ref{sec:propagacion} \citep{Kramer1996}.
 
-\begin{equation}
-G_{\max}=\rho\,V_S^{2},
-\end{equation}
+Este proyecto de fin de grado tiene por objetivo el diseño, la implementación y la evaluación experimental de un sistema electrónico multicanal del tipo IoT para la caracterización geotécnica del suelo mediante ondas sísmicas, con el propósito de extender la caracterización hacia capas más profundas que las que alcanza hoy la cadena disponible. Se trata de un trabajo de Ingeniería Electrónica: el objeto de diseño y de validación es el instrumento, mientras que la geofísica aporta el contexto que fija los requerimientos y el criterio con el que se juzga si se cumplen. La contribución de esta primera etapa es de instrumentación, y consiste en la integración y la evaluación con datos reales de la cadena de medida completa, desde la fuente instrumentada y el sensor hasta el acondicionamiento analógico, la conversión, la temporización, el almacenamiento y el procesamiento posterior. El interés de construir esa cadena en lugar de adquirirla no está en suponer que la industria carezca de soluciones, sino en disponer de una plataforma adaptada a las necesidades de nuestro mercado y a un costo acotado.
 
-de manera que medir $V_S$ equivale, conocida la densidad, a medir la rigidez del suelo en el rango de deformaciones en que su comportamiento puede considerarse aproximadamente elástico. Esa equivalencia explica por qué el perfil $V_S(z)$ se ha consolidado como parámetro de entrada en la clasificación sísmica de sitios y en el análisis de respuesta dinámica del terreno \citep{Kramer1996,Foti2014}.
-
-Conviene fijar desde el inicio una precisión que condiciona todo lo que sigue: ninguna técnica de prospección entrega una imagen exacta del subsuelo, sino un modelo compatible con los datos, con la geometría del ensayo y con los supuestos de interpretación. Esa distinción determina qué información debe preservar el instrumento y hasta qué profundidad puede sostenerse una afirmación.
-
-Se tiene como objetivo de este proyecto de fin de grado el diseño, la implementación y la evaluación experimental de un sistema electrónico multicanal del tipo IoT para la caracterización geotécnica del suelo mediante ondas sísmicas, orientado a profundidades de investigación de hasta 50 m. La contribución que se presenta en esta primera etapa es de instrumentación: la integración y la evaluación con datos reales de una cadena de medida completa, desde la fuente instrumentada y el geófono hasta el acondicionamiento analógico, la conversión analógico-digital, la temporización, el almacenamiento y el procesamiento que conduce a un perfil $V_S(z)$ preliminar. El interés de construirla en lugar de adquirirla no está en suponer que la industria carezca de soluciones, sino en disponer de una plataforma auditable en cada etapa, condición que el instrumental comercial cerrado no ofrece a un laboratorio universitario.
-
-Conviene precisar el centro de gravedad del trabajo antes de continuar. Se trata de un proyecto de fin de grado de Ingeniería Electrónica, de modo que el objeto de diseño, implementación, caracterización y validación es el sistema de instrumentación. La caracterización geotécnica y el método MASW constituyen el contexto de aplicación: son los que definen los requerimientos que el instrumento debe satisfacer y el criterio con el que se juzga si los satisface. Las secciones 2 a 7 desarrollan en consecuencia únicamente la física necesaria para derivar esos requerimientos, y la interpretación geológica se mantiene en todo el documento dentro del límite estricto de verificar la plausibilidad de los resultados obtenidos.
-
-Ese objetivo formal debe distinguirse con claridad del alcance efectivamente alcanzado hasta hoy, y el documento mantiene esa separación en todas sus secciones:
-
-\begin{itemize}
-\item \textbf{Objetivo de diseño.} Una plataforma multicanal orientada a investigar hasta 50 m de profundidad.
-\item \textbf{Alcance demostrado con la campaña y la cadena actuales.} Adquisición, procesamiento e inversión con soporte de investigación del orden de 10 a 11 m.
-\item \textbf{Brecha experimental.} Aumentar la energía coherente de baja frecuencia, completar el hardware multinodo y realizar las validaciones metrológicas y geofísicas independientes que todavía faltan.
-\end{itemize}
-
-Las secciones 2 a 7 establecen qué se desea medir y por qué mediante ondas superficiales; la sección 8 traduce esa elección en requerimientos cuantitativos; la sección 9 presenta el diseño electrónico como respuesta a ellos; las secciones 10 y 11 describen la validación y sus resultados, y la 12 delimita lo que aún no puede afirmarse.
+La sección~\ref{sec:tradicionales} presenta los ensayos tradicionales. La sección~\ref{sec:fundamentos} desarrolla los tipos de onda, su propagación y los métodos de medición, en ese orden; las secciones~\ref{sec:uso-superficiales} y~\ref{sec:seleccion} explican el uso de ondas superficiales y la elección del método. La sección~\ref{sec:requerimientos} deriva los requerimientos y la sección~\ref{sec:diseno} presenta el diseño. La validación, los resultados y los trabajos futuros se desarrollan en las secciones~\ref{sec:validacion} a~\ref{sec:limitaciones}.
 
 \section{Métodos tradicionales de caracterización del suelo}
+\label{sec:tradicionales}
 
-El reconocimiento geotécnico convencional se apoya en ensayos que establecen contacto físico con el terreno. El ensayo de penetración estándar (SPT) da una medida indirecta de resistencia y permite recuperar muestras a intervalos discretos, con la ventaja de una práctica extendida y correlaciones documentadas; el ensayo de penetración con cono (CPT y su variante piezométrica CPTu) mejora la continuidad vertical del registro y reduce la dependencia del operador, aunque pierde aplicabilidad en gravas o niveles cementados.
+El reconocimiento geotécnico convencional se apoya en ensayos que establecen contacto físico con el terreno. El ensayo de penetración estándar (SPT) da una medida indirecta de resistencia y permite recuperar muestras a intervalos discretos, con la ventaja de una práctica extendida y correlaciones documentadas; el ensayo de penetración con cono (CPT y su variante piezométrica CPTu) mejora la continuidad vertical del registro y reduce la dependencia del operador, aunque pierde aplicabilidad en gravas o niveles cementados \revsolution{\citep{FHWA2006}}.
 
-Cuando el objetivo es directamente una velocidad sísmica, la referencia son los ensayos en pozo: el downhole registra en profundidad las llegadas generadas en superficie y el crosshole mide el tiempo de tránsito entre perforaciones vecinas, ofreciendo la mejor resolución vertical disponible para $V_S$. Ambos comparten la limitación que motiva este trabajo, ya que exigen perforar, con el costo y el plazo asociados, y describen el suelo sólo en el entorno del pozo.
+\revsolution{Los ensayos de penetración miden resistencias y permiten estimar parámetros de rigidez mediante correlaciones; no miden directamente el módulo de corte a pequeñas deformaciones $G_{\max}$. Este módulo caracteriza la respuesta inicial del suelo, mientras que para estimar asentamientos o respuesta sísmica a deformaciones mayores debe considerarse también su reducción con la deformación \citep{FHWA2006,Kramer1996}.} Sí existe, en cambio, una magnitud cinemática ligada a ella de manera directa: la velocidad con que el suelo transmite una onda de corte, cuya relación con la rigidez se establece en la sección~\ref{sec:propagacion}. De ahí que, cuando el objetivo es la rigidez y no la resistencia, el ensayo se plantee en términos de una velocidad sísmica.
 
-De esa comparación se desprende la motivación de los métodos no invasivos. Una obra necesita reconocer la variación lateral de la rigidez en un volumen extenso, y un conjunto de sondeos puntuales resulta costoso de densificar. Los métodos basados en la propagación de ondas mecánicas desde la superficie permiten cubrir esa extensión sin perforar, a cambio de trabajar con una magnitud que se infiere en lugar de medirse por contacto. A ese argumento se agrega un campo de aplicación que el carácter no invasivo habilita de manera casi exclusiva: el control de calidad y el seguimiento de obras ya construidas. Una traza vial, un terraplén o una plataforma pueden recorrerse de forma repetida y sin daño para verificar la uniformidad de la compactación durante la construcción, y para detectar posteriormente la degradación o la pérdida de rigidez que anticipa la necesidad de mantenimiento. Un ensayo destructivo no admite esa repetición sobre la misma obra.
-
-\section{Métodos basados en ondas mecánicas}
-
-La caracterización sísmica se apoya en que las propiedades mecánicas del medio gobiernan cómo se propaga una perturbación, y en que esa propagación deja magnitudes observables en superficie: tiempos de llegada, amplitudes y relaciones de fase entre puntos separados. Medirlas permite estimar las propiedades sin acceder a la profundidad de interés.
-
-Las familias de métodos se distinguen por qué observable explotan. La refracción sísmica utiliza los tiempos de primera llegada de ondas de cuerpo refractadas críticamente y resulta apropiada cuando la velocidad crece de manera monótona con la profundidad; su punto débil conocido es la incapacidad de detectar capas de baja velocidad ocultas bajo otras más rápidas. La reflexión aprovecha los contrastes de impedancia y alcanza mayor profundidad, pero requiere fuentes de energía considerable y una relación señal a ruido difícil de obtener en el rango somero. Los métodos de ondas superficiales, en cambio, explotan la dependencia de la velocidad de fase con la frecuencia, y esa dependencia es precisamente lo que codifica la variación de rigidez con la profundidad.
-
-Para un ensayo desde superficie orientado a $V_S$ en los primeros metros, la última familia presenta una ventaja física decisiva. Un impacto vertical aplicado en la superficie de un semiespacio destina la mayor parte de la energía elástica radiada a la onda Rayleigh \citep{Foti2014}, cuya amplitud decae con la distancia de forma considerablemente más lenta que la de las ondas de cuerpo. El método aprovecha así la componente más energética del campo de ondas en lugar de combatirla como ruido, lo que resulta determinante cuando la fuente disponible es un impacto manual y no una fuente sísmica de gran porte.
-
-\section{Fundamentos de propagación de ondas en un medio}
-
-En un medio elástico, homogéneo e isótropo, la propagación de perturbaciones infinitesimales queda descrita por dos velocidades independientes, asociadas a los dos modos posibles de deformación. La velocidad de las ondas de compresión y la de las ondas de corte se expresan en función de los parámetros de Lamé $\lambda$ y $\mu$ y de la densidad $\rho$ como
-
+Los ensayos en pozo permiten estimar velocidades a partir del tiempo de propagación. Para un tramo aproximadamente homogéneo de longitud $\Delta\ell$ y un tiempo de tránsito de corte $\Delta t_S$,
 \begin{equation}
-V_P=\sqrt{\frac{\lambda+2\mu}{\rho}},
-\qquad
-V_S=\sqrt{\frac{\mu}{\rho}} .
+V_S\simeq\frac{\Delta\ell}{\Delta t_S}.
+\label{eq:velocidad-transito}
 \end{equation}
+El \emph{downhole} registra a distintas profundidades una excitación superficial y el \emph{crosshole} mide entre perforaciones vecinas. Ambos requieren conocer la trayectoria de propagación y realizar perforaciones, con el costo asociado \revsolution{\citep{FHWA2006,Foti2014}}.
 
-La segunda expresión es la que conecta la medición con el objetivo planteado en la sección 1: como $\mu$ coincide con el módulo de corte a pequeñas deformaciones, obtener $V_S$ equivale a obtener $G_{\max}$ salvo por el factor de densidad. Esa relación resulta especialmente conveniente porque las dos magnitudes involucradas tienen rangos de variación muy dispares. La densidad de los suelos habituales se mantiene aproximadamente entre 1,4 y 2,2 t/m³, es decir dentro de un factor menor que dos, mientras que $V_S$ recorre desde algunas decenas de metros por segundo en suelos blandos hasta varios cientos en materiales densos o cementados. Como $G_{\max}$ depende del cuadrado de la velocidad, su variación queda dominada por $V_S$, y un valor de densidad estimado con precisión moderada resulta suficiente para obtener una rigidez útil \citep{Kramer1996,Foti2014}. Las ondas de compresión, en cambio, resultan poco informativas en el rango somero saturado: por debajo del nivel freático $V_P$ queda gobernada por la compresibilidad del agua intersticial y tiende hacia unos 1500 m/s con independencia del estado del esqueleto sólido, de modo que pierde sensibilidad justamente a la propiedad que interesa medir \citep{Foti2014,Foti2018}.
+De esa comparación se desprende la motivación de los métodos no invasivos. Una obra necesita reconocer la variación lateral de la rigidez en un volumen extenso, y un conjunto de sondeos puntuales resulta costoso de densificar. Los métodos basados en la propagación de ondas mecánicas desde la superficie permiten cubrir esa extensión sin perforar, a cambio de trabajar con una magnitud que se infiere en lugar de medirse por contacto. A ese argumento se agrega un campo de aplicación que el carácter no invasivo habilita de manera casi exclusiva: el control de calidad y el seguimiento de obras ya construidas. Una traza vial, un terraplén o una plataforma pueden recorrerse de forma repetida y sin daño para verificar la uniformidad de la compactación durante la construcción, y para detectar posteriormente la degradación o la pérdida de rigidez que anticipa la necesidad de mantenimiento. Un ensayo destructivo no admite esa repetición sobre la misma obra \revsolution{\citep{Park2018Roads}}.
 
-Ambas velocidades quedan vinculadas por el coeficiente de Poisson,
+\section{Fundamentos de los métodos sísmicos}
+\label{sec:fundamentos}
 
-\begin{equation}
-\nu=\frac{V_P^{2}-2V_S^{2}}{2\left(V_P^{2}-V_S^{2}\right)},
-\end{equation}
+\subsection{Ondas de cuerpo y ondas superficiales}
+\label{sec:ondas}
 
-relación que conviene retener porque $\nu$ no fue medido en este trabajo y debió adoptarse por hipótesis en la inversión, con las consecuencias que se analizan en la sección 11.3.
+En un sólido elástico, las ondas de cuerpo se propagan por el volumen del medio y las superficiales se concentran cerca de la superficie libre. Se distinguen por la dirección del movimiento de las partículas y por la región del terreno que involucran.
 
-Las expresiones anteriores suponen un medio homogéneo y perfectamente elástico, y conviene señalar que ninguna de las dos condiciones se cumple en el terreno real. El suelo es un medio estratificado, y esa estratificación no es una desviación molesta del modelo sino precisamente lo que el ensayo se propone reconstruir. El suelo tampoco es perfectamente elástico: disipa energía a medida que la onda avanza, por lo que la amplitud registrada en un receptor lejano se reduce tanto por divergencia geométrica como por atenuación material, y esta última crece con la frecuencia.
+En la onda de compresión, o P, las partículas se desplazan paralelamente a la dirección de propagación, con compresiones y dilataciones del material. En la onda de corte, o S, el desplazamiento es perpendicular a la propagación y produce una deformación de corte sin cambio de volumen. Sus velocidades se denotan $V_P$ y $V_S$, respectivamente. Se distingue la polarización SV cuando ese desplazamiento está en el plano vertical que contiene la dirección de propagación, y la polarización SH cuando es horizontal y perpendicular a dicho plano.
 
-De ahí se sigue una consecuencia que condiciona el diseño del instrumento. Si la señal útil se debilita al aumentar la distancia y la frecuencia, entonces el margen entre señal y ruido de la cadena de medida deja de ser una cifra de mérito genérica y pasa a ser la variable que determina cuál es la máxima longitud de onda que todavía puede reconocerse y, por lo tanto, hasta qué profundidad puede investigarse.
+En la superficie libre, la condición de tensión nula admite una solución formada por componentes P y SV acopladas, cuya amplitud decae con la profundidad: la onda Rayleigh. Se propaga paralelamente a la superficie y combina desplazamientos verticales y longitudinales, que en un semiespacio homogéneo describen un movimiento elíptico retrógrado en superficie. Su velocidad de fase $c_R$ se sitúa aproximadamente entre el 87 \% y el 96 \% de $V_S$, según el coeficiente de Poisson \revsolution{\citep{Foti2014}}.
 
-\section{Ondas de cuerpo y ondas superficiales}
-
-Las ondas de cuerpo se propagan por el volumen del medio y se distinguen por su polarización: la P desplaza las partículas en la dirección de propagación y la S lo hace transversalmente, razón por la cual es esta última la que involucra al módulo de corte. Dentro de la onda S conviene además distinguir dos polarizaciones, porque de ellas depende qué onda superficial puede formarse: la componente SV oscila en el plano vertical que contiene la dirección de propagación y la SH en el plano horizontal perpendicular a él.
-
-Las ondas superficiales no son un tercer tipo de onda independiente, sino el resultado de la interacción de las anteriores con la superficie libre del terreno. Cuando una onda P y una onda SV inciden sobre esa frontera, la condición de tensión nula obliga a que se conviertan mutuamente al reflejarse, y para ciertas combinaciones de ángulo y frecuencia ambas quedan acopladas en una perturbación que no se propaga hacia el interior sino que viaja paralela a la superficie, con amplitud que decae exponencialmente con la profundidad. Esa perturbación es la onda Rayleigh: combina por construcción una componente vertical y una longitudinal, y describe en el semiespacio homogéneo un movimiento elíptico retrógrado. Su velocidad de fase se sitúa entre el 87 \% y el 96 \% de $V_S$ según el coeficiente de Poisson, lo que la convierte en un buen sustituto observable de la velocidad de corte.
-
-La componente SH no puede acoplarse a la P por razones de polarización, y por eso no participa de la onda Rayleigh. Puede, en cambio, quedar atrapada por reflexiones múltiples dentro de una capa superficial de menor velocidad apoyada sobre un sustrato más rápido, y forma entonces la onda Love. Como su movimiento es horizontal y transversal, no produce señal apreciable en un geófono vertical; por esa razón la onda Love queda fuera del alcance de este trabajo, cuya cadena de medida registra únicamente la componente vertical.
+La componente SH no puede acoplarse a la P por razones de polarización, y por eso no participa de la onda Rayleigh. Puede, en cambio, quedar atrapada por reflexiones múltiples dentro de una capa superficial de menor velocidad apoyada sobre un sustrato más rápido, y forma entonces la onda Love. Su movimiento es horizontal y transversal a la dirección de propagación \revsolution{\citep{Foti2014}}.
 
 La relación entre la Rayleigh y $V_S$ es la que convierte a la primera en un observable útil. Como la velocidad de fase Rayleigh es del orden del 90 \% de la velocidad de corte del material que la onda efectivamente muestrea, una medición de $c_R$ constituye una medición aproximada de $V_S$ una vez resuelto qué volumen del terreno correspondió a cada frecuencia.
 
@@ -80,53 +45,110 @@ Esa correspondencia entre frecuencia y volumen muestreado la fija la longitud de
 
 \begin{equation}
 \lambda_R(f)=\frac{c_R(f)}{f},
+\label{eq:longitud-onda}
 \end{equation}
 
-y el desplazamiento asociado a una onda Rayleigh decae con la profundidad en una escala comparable a $\lambda_R$. Las longitudes de onda cortas quedan por tanto controladas por el material somero, mientras que las largas integran un volumen mayor y alcanzan mayor profundidad. La regla práctica $z\approx\lambda/2$, en la que $z$ es la profundidad de investigación, entendida como la profundidad máxima hasta la cual la medición conserva sensibilidad apreciable, resume esa proporcionalidad y se emplea de forma habitual para estimar la profundidad de investigación de una campaña, pero no asigna una profundidad exacta a cada frecuencia: las funciones de sensibilidad son distribuidas y se superponen entre frecuencias vecinas. De ahí se sigue una advertencia que resulta decisiva al interpretar los registros: observar energía a una frecuencia baja no demuestra que exista allí una onda Rayleigh útil, criterio que la sección 12 desarrolla al discutir la fuente.
+y el desplazamiento asociado decae con la profundidad en una escala comparable a $\lambda_R$. Las longitudes de onda cortas son sensibles al material somero; las largas alcanzan capas más profundas. Se estima la profundidad de investigación $z$ mediante $z\approx\lambda_{R,\max}/2$, donde $\lambda_{R,\max}$ es la mayor longitud de onda identificada de forma confiable. Esta aproximación se basa en la sensibilidad de las ondas Rayleigh a la estructura del terreno; no asigna una profundidad exacta a cada frecuencia, porque las sensibilidades se distribuyen y se superponen entre capas \citep{Foti2018}.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=\textwidth,keepaspectratio]{b_dispersion_profundidad.png}
+\caption{Dispersión geométrica de las ondas Rayleigh: movimiento vertical de partícula con la profundidad para dos frecuencias en un medio estratificado. La onda de alta frecuencia queda confinada a la capa superior, mientras que la de baja frecuencia involucra las tres capas y por eso su velocidad depende de la combinación de todas. Reproducida de \citet{Foti2014}, figura 1.2.}
+\label{fig:dispersion}
+\end{figure*}
+
+\subsection{Fundamentos de propagación de ondas en un medio}
+\label{sec:propagacion}
+
+En un medio elástico, homogéneo e isótropo, las velocidades de las ondas P y S dependen de la densidad $\rho$ y de los parámetros de Lamé $\lambda$ y $\mu$. El parámetro $\mu$ es el módulo de corte y determina la resistencia a la deformación por cizalladura. El parámetro $\lambda$ relaciona la deformación volumétrica con la contribución isotrópica a la tensión; junto con $\mu$ determina el módulo volumétrico $K=\lambda+2\mu/3$, que expresa la resistencia a la compresión uniforme. Las velocidades de compresión $V_P$ y de corte $V_S$ resultan
+
+\begin{equation}
+V_P=\sqrt{\frac{\lambda+2\mu}{\rho}},
+\qquad
+V_S=\sqrt{\frac{\mu}{\rho}} .
+\end{equation}
+
+De las dos, la velocidad de corte es la que interesa a la caracterización geotécnica, porque $\mu$ es el módulo de corte a pequeñas deformaciones. La segunda expresión admite entonces la forma equivalente
+
+\begin{equation}
+G_{\max}=\rho\,V_S^{2},
+\end{equation}
+
+que permite obtener la rigidez del terreno a partir de una magnitud cinemática y de la densidad, y que explica por qué el perfil $V_S(z)$ se ha consolidado como parámetro de entrada en la clasificación sísmica de sitios y en el análisis de respuesta dinámica \citep{Kramer1996,Foti2014}.
+
+Esa formulación resulta particularmente ventajosa porque las dos magnitudes que intervienen tienen rangos de variación muy dispares. La densidad de los suelos habituales se mantiene aproximadamente entre 1,4 y 2,2 t/m³, es decir dentro de un factor menor que dos, mientras que $V_S$ recorre desde algunas decenas de metros por segundo en suelos blandos hasta varios cientos en materiales densos o cementados. Como $G_{\max}$ depende del cuadrado de la velocidad, su variación queda dominada por $V_S$, y un valor de densidad estimado con precisión moderada resulta suficiente para obtener una rigidez útil \citep{Kramer1996,Foti2014}. Las ondas de compresión, en cambio, resultan poco informativas en el rango somero saturado: por debajo del nivel freático $V_P$ queda gobernada por la compresibilidad del agua intersticial y tiende hacia unos 1500 m/s con independencia del estado del esqueleto sólido, de modo que pierde sensibilidad justamente a la propiedad que interesa medir \citep{Foti2014,Foti2018}.
+
+Ambas velocidades quedan vinculadas por el coeficiente de Poisson,
+
+\begin{equation}
+\nu=\frac{V_P^{2}-2V_S^{2}}{2\left(V_P^{2}-V_S^{2}\right)},
+\end{equation}
+
+relación que conviene retener porque $\nu$ no fue medido en este trabajo y debió adoptarse por hipótesis en la inversión, con las consecuencias que se analizan en la sección~\ref{sec:resultado-geofisico} \revsolution{\citep{Kramer1996}}.
+
+Las expresiones anteriores suponen un medio homogéneo y perfectamente elástico, y ninguna de las dos condiciones se cumple en el terreno real. El suelo está estratificado, y esa estratificación es justamente lo que el ensayo se propone reconstruir. El suelo tampoco es perfectamente elástico: disipa energía a medida que la onda avanza, por lo que la amplitud registrada en un receptor lejano se reduce tanto por divergencia geométrica como por atenuación material, y esta última crece con la frecuencia.
+
+Para una fuente puntual y fuera del campo cercano, la amplitud $A(r,f)$ a distancia $r$ puede expresarse, respecto de una distancia de referencia $r_0$, como
+\begin{equation}
+\frac{A(r,f)}{A(r_0,f)}
+=\left(\frac{r_0}{r}\right)^p e^{-\alpha(f)(r-r_0)},
+\label{eq:atenuacion}
+\end{equation}
+donde $p=1$ para ondas de cuerpo y $p=1/2$ para ondas superficiales en el caso ideal. El coeficiente $\alpha(f)$, en m$^{-1}$, representa la atenuación material. La potencia de $r$ describe la divergencia geométrica y el término exponencial la disipación \revsolution{\citep{Foti2014}}.
+
+\subsection{Métodos basados en ondas mecánicas}
+\label{sec:metodos-ondas}
+
+Los métodos sísmicos estiman las propiedades mecánicas del terreno a partir de tiempos de llegada, amplitudes y diferencias de fase. Se distinguen dos familias según la onda utilizada: los métodos de ondas de cuerpo, que registran ondas de compresión (P) o de corte (S) propagadas por el volumen del suelo, y los de ondas superficiales, que registran perturbaciones concentradas cerca de la superficie, como las ondas Rayleigh y Love.
+
+\subsubsection{Métodos basados en ondas de cuerpo}
+
+La refracción sísmica utiliza los tiempos de primera llegada de ondas refractadas críticamente en una interfaz y resulta apropiada cuando la velocidad crece de manera monótona con la profundidad. Su punto débil conocido es la incapacidad de detectar una capa de baja velocidad oculta bajo otra más rápida, porque esa capa no genera una refracción crítica y su presencia no queda registrada en los primeros arribos \revsolution{\citep{FHWA2006,Foti2014}}.
+
+La reflexión sísmica aprovecha los contrastes de impedancia entre capas y alcanza mayor profundidad, pero exige fuentes de energía considerable y una relación señal a ruido difícil de obtener en el rango somero, donde las reflexiones llegan mezcladas con el arribo directo y con las ondas superficiales \revsolution{\citep{Foti2014}}.
+
+\subsubsection{Métodos basados en ondas superficiales}
+
+Los métodos de ondas superficiales explotan un observable distinto: la dependencia de la velocidad de propagación con la frecuencia. Como cada frecuencia involucra una capa de espesor diferente, esa dependencia es precisamente lo que codifica la variación de rigidez con la profundidad, y permite reconstruir un perfil a partir de un registro tomado enteramente en superficie.
+
+Para un ensayo desde superficie orientado a los primeros metros, esta última familia presenta además una ventaja física decisiva. Un impacto vertical aplicado en la superficie de un semiespacio destina la mayor parte de la energía elástica radiada a la onda Rayleigh \citep{Foti2014}, cuya amplitud decae con la distancia de forma considerablemente más lenta que la de las ondas de cuerpo. El método aprovecha así la componente más energética del campo de ondas en lugar de combatirla como ruido, lo que resulta determinante cuando la fuente disponible es un impacto manual y no una fuente sísmica de gran porte.
 
 \section{Utilización de ondas superficiales para la caracterización de suelos}
+\label{sec:uso-superficiales}
 
-En un medio homogéneo la velocidad Rayleigh no depende de la frecuencia. La dispersión aparece cuando el medio está estratificado, porque cada longitud de onda muestrea una combinación distinta de capas y se propaga con la velocidad de fase que resulta de esa combinación. La curva $c_R(f)$ deja entonces de ser una constante del material y pasa a contener, codificada, la variación de rigidez con la profundidad: ese es el fundamento del método.
+En un medio homogéneo la velocidad Rayleigh no depende de la frecuencia. La dispersión aparece cuando el medio está estratificado, porque cada longitud de onda muestrea una combinación distinta de capas y se propaga con la velocidad de fase que resulta de esa combinación. La curva $c_R(f)$ deja entonces de ser una constante del material y pasa a contener, codificada, la variación de rigidez con la profundidad: ese es el fundamento del método \revsolution{\citep{Foti2014}}.
 
-La explotación de esa información sigue la cadena de la figura~\ref{fig:cadena}: se registra la respuesta del terreno en varias posiciones de una línea, se transforma el conjunto de trazas al dominio frecuencia–velocidad de fase, se extrae de esa imagen la curva de dispersión observada $c_R^{\mathrm{obs}}(f)$ y se resuelve el problema inverso buscando el modelo estratificado que la reproduzca \citep{Park1998,Park1999,Xia1999}.
+El procesamiento transforma las trazas registradas al dominio frecuencia--velocidad y extrae una curva de dispersión. En el método de desplazamiento de fase, el indicador normalizado es
+\begin{equation}
+P(f,c)=\frac{1}{N_r}\left|
+\sum_{j=1}^{N_r}\frac{U_j(f)}{|U_j(f)|}
+e^{\,\mathrm{i}2\pi f x_j/c}\right|,
+\label{eq:imagen-dispersion}
+\end{equation}
+donde $N_r$ es el número de posiciones, $x_j$ su distancia a la fuente, $U_j(f)$ el espectro complejo de la traza, $c$ la velocidad de prueba e $\mathrm{i}$ la unidad imaginaria. Se consideran componentes de amplitud no nula. La compensación de fase refuerza los máximos compatibles entre posiciones, a partir de los cuales se extrae $c_R^{\mathrm{obs}}(f)$ \citep{Park1998,Park1999}.
 
-La última etapa impone la cautela principal del método: el problema inverso no tiene solución única, de modo que un ajuste bajo demuestra consistencia entre el dato y el modelo propuesto, no que ese modelo sea el único compatible. La sección 11.3 aplica ese criterio al resultado obtenido.
+La inversión busca parámetros de capas $\boldsymbol{\theta}$ que reproduzcan esa curva. Para $N_f$ frecuencias válidas $f_k$, un desajuste relativo es
+\begin{equation}
+J(\boldsymbol{\theta})=
+\sqrt{\frac{1}{N_f}\sum_{k=1}^{N_f}
+\left[\frac{c_R^{\mathrm{mod}}(f_k;\boldsymbol{\theta})
+-c_R^{\mathrm{obs}}(f_k)}
+{c_R^{\mathrm{obs}}(f_k)}\right]^2}.
+\label{eq:desajuste}
+\end{equation}
+Aquí $c_R^{\mathrm{mod}}$ es la predicción del modelo; $\boldsymbol{\theta}$ incluye espesores y velocidades de corte, con densidad y coeficiente de Poisson adoptados. La expresión corresponde al caso en que el modelo predice todos los puntos solicitados; el procesamiento penaliza las predicciones faltantes.
 
-\begin{figure}[!tb]
-\centering
-\footnotesize
-\begin{tikzpicture}[
-  node distance=3.2mm,
-  caja/.style={draw,rounded corners=1.5pt,align=center,inner sep=3pt,
-               text width=0.80\columnwidth,font=\footnotesize},
-  fl/.style={-{Latex[length=1.6mm]},thick}]
-  \node[caja] (a) {Propiedad mecánica del suelo\\[1pt]\scriptsize $V_S(z)$, la incógnita};
-  \node[caja,below=of a] (b) {Propagación de ondas Rayleigh\\[1pt]\scriptsize cada $\lambda$ muestrea un volumen distinto};
-  \node[caja,below=of b] (c) {Registros multicanal $u(x,t)$\\[1pt]\scriptsize lo que el instrumento debe preservar};
-  \node[caja,below=of c] (d) {Imagen frecuencia--velocidad de fase\\[1pt]\scriptsize los modos aparecen como máximos};
-  \node[caja,below=of d] (e) {Curva de dispersión $c_R^{\mathrm{obs}}(f)$};
-  \node[caja,below=of e] (f) {Inversión\\[1pt]\scriptsize modelo estratificado que reproduce la curva};
-  \node[caja,below=of f] (g) {Perfil $V_S(z)$ con banda de incertidumbre};
-  \draw[fl] (a)--(b); \draw[fl] (b)--(c); \draw[fl] (c)--(d);
-  \draw[fl] (d)--(e); \draw[fl] (e)--(f); \draw[fl] (f)--(g);
-  \node[right=1mm of b.east,font=\scriptsize,anchor=west,xshift=-1mm] {};
-\end{tikzpicture}
-\caption{Cadena de inferencia del método. Las dos relaciones que la gobiernan son
-$\lambda_R=c_R/f$, que liga cada frecuencia con el volumen muestreado, y
-$z\approx\lambda/2$, que traduce esa longitud de onda en profundidad de investigación.
-La flecha descendente es el sentido de la medición; la inversión recorre el camino
-inverso y por eso no tiene solución única.}
-\label{fig:cadena}
-\end{figure}
+Un valor pequeño de $J$ indica compatibilidad entre la curva y el modelo, pero no una solución única: diferentes perfiles pueden reproducir datos similares. La geometría, la banda disponible y los supuestos de inversión delimitan la interpretación presentada en la sección~\ref{sec:resultado-geofisico} \revsolution{\citep{Xia1999,Foti2009}.}
 
 \section{Revisión y selección del método}
+\label{sec:seleccion}
 
 \begin{table*}[!tb]
 \centering
 \footnotesize
 \caption{Comparación de los métodos considerados. La selección de MASW activo se sigue
 de la propiedad buscada y de los recursos disponibles, no de una jerarquía absoluta
-entre técnicas.}
+entre técnicas. \revsolution{Síntesis propia basada en \citet{FHWA2006,Foti2014,Foti2018}.}}
 \begin{tabularx}{0.94\textwidth}{@{}lYYY@{}}
 \toprule
 Método & Propiedad observada & Requisito de campo & Limitación dominante \\
@@ -142,8 +164,20 @@ Pasivos (ReMi, SPAC, ESAC) & Dispersión del ruido ambiental & Registro simultá
 \end{tabularx}
 \end{table*}
 
-Dentro de la familia de ondas superficiales, la alternativa histórica a MASW es el análisis espectral de ondas superficiales (SASW), que estima la velocidad de fase a partir de la diferencia de fase entre dos receptores y repite la medición con distintas separaciones. Su exigencia instrumental es menor, pero la estimación depende del desenvolvimiento de fase y no dispone de un criterio interno para separar el modo fundamental de los modos superiores, lo que obliga a un procesamiento cuidadoso y a la repetición del ensayo. El registro simultáneo de muchos receptores que propone MASW resuelve precisamente esa debilidad: la transformación al dominio $f$–$c$ separa los modos como máximos distintos y proporciona redundancia frente a ruido local y frente a la falla de un canal individual \citep{Park1999}.
+El análisis espectral de ondas superficiales (SASW) estima la velocidad a partir de dos receptores separados una distancia $\Delta x$:
+\begin{equation}
+c_R(f)=\frac{2\pi f\,\Delta x}{|\Delta\phi(f)|},
+\label{eq:sasw-fase}
+\end{equation}
+donde $\Delta\phi(f)$ es la diferencia de fase desenvuelta, en radianes, asociada a la propagación entre receptores. La estimación exige resolver la ambigüedad de fase y separar las contribuciones modales. MASW incorpora múltiples posiciones en la suma de la ecuación~\eqref{eq:imagen-dispersion}, aportando redundancia y permitiendo distinguir máximos asociados a distintos modos \revsolution{\citep{Foti2014,Park1999}.}
 
-Los métodos pasivos, entre ellos ReMi, SPAC y ESAC, presentan una ventaja complementaria de peso, ya que el ruido ambiental contiene energía en frecuencias inferiores a las que alcanza un impacto manual y permite en principio extender el rango hacia mayores profundidades. Su requisito, sin embargo, resulta incompatible con los recursos disponibles: exigen registrar simultáneamente en todas las posiciones del arreglo, porque el campo de ruido no puede reproducirse a voluntad mientras se desplaza un sensor. Con dos geófonos disponibles en la Facultad y un único nodo receptor operativo por registro, estos métodos quedan fuera de alcance por construcción y no por decisión de diseño.
+Los métodos pasivos, entre ellos ReMi, SPAC y ESAC, presentan una ventaja complementaria de peso, ya que el ruido ambiental contiene energía en frecuencias inferiores a las que alcanza un impacto manual y permite en principio extender el rango hacia mayores profundidades. Su requisito, sin embargo, resulta incompatible con los medios disponibles: exigen registrar simultáneamente en todas las posiciones del arreglo, porque el campo de ruido no puede reproducirse a voluntad mientras se desplaza un sensor \revsolution{\citep{Park2007,Foti2018}}. El número de transductores con que se contó no permite cubrir un arreglo completo de forma simultánea, de modo que estos métodos quedan fuera de alcance por una restricción material y no por una decisión de diseño.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.82\textwidth,keepaspectratio]{b_activas_pasivas.png}
+\caption{Complemento entre fuentes activas y pasivas. El ensayo pasivo aporta la porción de baja frecuencia de la curva de dispersión y el activo la de alta; la inversión se resuelve sobre la curva combinada. Este trabajo sólo dispone de la rama activa. Reproducida de \citet{Foti2014}, figura 1.5.}
+\label{fig:activapasiva}
+\end{figure*}
 
 La selección de MASW activo se sigue entonces de los objetivos y de la física expuesta. La fuente controlada permite referenciar temporalmente cada registro y repetir la excitación tantas veces como sea necesario; la geometría conocida convierte la diferencia de fase entre posiciones en una velocidad; y el registro de múltiples offsets ofrece la redundancia que la inversión necesita. Para el propósito de este trabajo hay además una razón instrumental: MASW ejercita simultáneamente todas las funciones que el sistema debe cumplir, esto es, sincronización, preservación de fase entre canales, margen dinámico, almacenamiento sin pérdidas y trazabilidad de la geometría, y por lo tanto sirve como banco de prueba integral de la plataforma.

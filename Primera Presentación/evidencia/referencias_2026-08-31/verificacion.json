@@ -1,0 +1,146 @@
+{
+  "referencias_citadas": [
+    "AnalogDevicesADXL355",
+    "Breslin2020",
+    "CypressAN60319",
+    "DigiKeyADXL355",
+    "Efron1979",
+    "EspressifESPNow",
+    "EstudioHidrogeologico2023",
+    "FHWA2006",
+    "Foti2009",
+    "Foti2014",
+    "Foti2018",
+    "Guralp3ESPC",
+    "InfineonAN68403",
+    "InfineonPSoC",
+    "Karki2023",
+    "Kramer1996",
+    "LinAshlock2016",
+    "Ma2023",
+    "PCB086D20",
+    "PCBSignalConditioning",
+    "Park1998",
+    "Park1999",
+    "Park2007",
+    "Park2018Roads",
+    "RTClark45",
+    "SM24",
+    "Smith1997",
+    "SparkFunSM24",
+    "Xia1999"
+  ],
+  "cantidad": 29,
+  "ecuaciones": 31,
+  "figuras": 24,
+  "creditos": [
+    [
+      "b_activas_pasivas.png",
+      "Foti2014"
+    ],
+    [
+      "b_dispersion_profundidad.png",
+      "Foti2014"
+    ],
+    [
+      "contenido_baja_frecuencia.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "d_almacenamiento_local.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_arquitectura_nodos.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_cadena_fuente_geofono.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_calibracion_offset.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_flujo_operativo.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_fsm_supermaquina.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_servidor_ingesta.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "d_sincronizacion_arranque.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "f_curvas_dispersion.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "f_frente_analogico.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "f_geofono_interior.png",
+      "Ilustración acreditada a DESY, reproducida en \\citet[diap.~10]{Breslin2020}."
+    ],
+    [
+      "f_geometria_campanas.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "f_hardware_digital.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "f_identificacion_comp.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "f_imagenes_dispersion.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "f_presupuesto_sincronizacion.png",
+      "Fuente: elaboración propia."
+    ],
+    [
+      "f_ruta_pga_adc.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "f_senales_por_etapa.png",
+      "Fuente: elaboración propia a partir de los registros del proyecto."
+    ],
+    [
+      "i_revision_dispersion.png",
+      "Fuente: captura propia del software desarrollado."
+    ],
+    [
+      "i_scope_stream_claro.png",
+      "Fuente: captura propia del software desarrollado."
+    ],
+    [
+      "i_web_maestro_claro.png",
+      "Fuente: captura propia del software desarrollado."
+    ]
+  ],
+  "marcas_verdes_nuevas": 85,
+  "paginas_pdf": 29,
+  "referencias_impresas": 29,
+  "sin_referencias_pendientes": true,
+  "sin_overfull": true,
+  "pdf_sha256": "0217c088252db0f1ecbf07b6b3a6296b597bb7baf033def6462b3dba4117296c",
+  "revision_visual": "29 páginas en hojas de contacto; detalle de tabla de sensores, bibliografía y capturas claras",
+  "advertencias_no_bloqueantes": [
+    "Aviso heredado de fixltx2e",
+    "Un underfull de espaciado",
+    "Páginas con sólo figuras (13 y 26)"
+  ]
+}
