@@ -72,7 +72,7 @@ Los marcadores **no** pasan al LaTeX; el conversor los elimina.
 
 **Esto invalida lo que decían el borrador anterior y parte de la base de conocimiento.**
 
-La carpeta correcta es **`resultados_tanda_calibrada`**, no `resultados_verificacion_calibracion_2026-07-21`.
+La carpeta correcta es **`outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada`**, no `outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_verificacion_calibracion_2026-07-21`.
 
 | | corrida parcial (la que se citaba mal) | tanda calibrada (correcta) |
 |---|---:|---:|
@@ -82,7 +82,7 @@ La carpeta correcta es **`resultados_tanda_calibrada`**, no `resultados_verifica
 | Error de fase | 1,88° | **1,16°** |
 | Coherencia | 0,9938 | **0,9946** |
 
-Ruta: `src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/05_tablas_reportes/resumen_identificacion.csv`
+Ruta: `outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/05_tablas_reportes/resumen_identificacion.csv`
 
 La campaña de osciloscopio `data/raw/Osciloscopio_verificacion_calibracion_2026-07-21/` incluye bandas desde **10 mHz**.
 

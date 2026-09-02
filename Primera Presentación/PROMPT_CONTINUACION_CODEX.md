@@ -172,7 +172,7 @@ Todos estos números fueron auditados contra el repositorio. Detalle completo en
 
 | Dato | Valor | Fuente |
 |---|---|---|
-| `f_0` | **10,20 Hz** (exacto 10,2046) | `resultados_tanda_calibrada\05_tablas_reportes\parametros_compensador.csv` |
+| `f_0` | **10,20 Hz** (exacto 10,2046) | `outputs\calculos_modelados\matlab\AnalisisCircuito\resultados_tanda_calibrada\05_tablas_reportes\parametros_compensador.csv` |
 | `zeta_1` | **937** (exacto 937,396) | ídem |
 | `zeta_0` | 0,25 | ídem |
 | Atenuación central | 1/(2·zeta_1) = 5,3e-4, unas **1875 veces** | ídem |
@@ -182,7 +182,7 @@ Todos estos números fueron auditados contra el repositorio. Detalle completo en
 
 ### Identificación del acondicionamiento
 
-Fuente: `...\resultados_tanda_calibrada\05_tablas_reportes\resumen_identificacion.csv`
+Fuente: `outputs\calculos_modelados\matlab\AnalisisCircuito\resultados_tanda_calibrada\05_tablas_reportes\resumen_identificacion.csv`
 
 | Ruta | Puntos | Banda | Coherencia | Dentro de tolerancias | Dentro del recorrido del pot. |
 |---|---:|---|---:|---|---|

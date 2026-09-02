@@ -76,7 +76,7 @@ con una configuración anterior, a 2929 Hz nativos, y que el conjunto procesado 
 ### E3 — f_0 está mal redondeado
 
 **Estado: IMPRECISO.** El documento dice f_0 = 10,21 Hz.
-`resultados_tanda_calibrada/05_tablas_reportes/parametros_compensador.csv` da
+`outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/05_tablas_reportes/parametros_compensador.csv` da
 `f0 = 10,2045976372255 Hz`, cuyo redondeo correcto a dos decimales es **10,20 Hz**.
 El error se hereda de `latex-15p-review`, que ya decía 10.21.
 
@@ -140,12 +140,12 @@ verifican en el dibujo.
 
 **Estado: ERROR de presentación.** `mosaico_normalizados.png` no es una figura sino una
 **hoja de contacto** de cinco figuras MATLAB, cada una con tres subgráficos apilados, y
-tiene rotulada dentro de la imagen la ruta absoluta
-`C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/06_graficos_normalizados`.
+tiene rotulada dentro de la imagen una ruta absoluta de origen; los gráficos se
+reubicaron en `C:/Github/Tesis/outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/06_graficos_normalizados`.
 Eso no puede ir en un documento entregable, y además al 27 % de escala es ilegible.
 
 Reemplazo recomendado: usar el gráfico individual
-`resultados_tanda_calibrada/06_graficos_normalizados/normalizado_cadena_pga_adc.png`,
+`outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/06_graficos_normalizados/normalizado_cadena_pga_adc.png`,
 que es justamente la fila central de la Tabla 2, a ancho de página completa.
 
 ### E10 — La distancia a los sondeos eléctricos está mal acotada
@@ -280,10 +280,10 @@ primaria:
 | «la calibración manual redujo el error de 26,7 dB a 10,7 dB» | `data/raw/Osciloscopio_verificacion_calibracion_2026-07-21/RESULTADO.md` | «Error RMS de magnitud CH3/PGA contra PSoC High: `26.707 dB` → `10.707 dB`» | **OK** |
 | «deja un desajuste remanente en torno a 10 Hz» | mismo archivo, primera línea | «todavía no coincide con el ajuste objetivo alrededor de 10 Hz» | **OK** |
 | BP: dispersión mediana 2,26 dB y p90 21,45 dB | mismo archivo, línea 29 | `2.257 dB` y p90 `21.454 dB` | **OK** |
-| «la fila BP mezcla campañas históricas mutuamente inconsistentes» | `resultados_tanda_calibrada/RESULTADO.md` líneas 6 y 48 | «las campañas no coinciden bien entre sí en ganancia de BP» | **OK** |
+| «la fila BP mezcla campañas históricas mutuamente inconsistentes» | `src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/RESULTADO.md` líneas 6 y 48 | «las campañas no coinciden bien entre sí en ganancia de BP» | **OK** |
 | «el estimador del potenciómetro no resulta confiable» | mismo, sección Potenciómetro | «ninguna posición fija del modelo reproduce toda la forma observada» | **OK** |
 | «bandas superpuestas desde los 10 mHz hasta los 200 kHz» | carpetas `10mHzto50mHz_400s_50s_div` y `20kHzto200kHz_1ms_100us_div` en `data/raw/Osciloscopio_verificacion_calibracion_2026-07-21/` | ambos extremos existen | **OK** |
-| «la dinámica subsónica no resulta observable» | `resultados_tanda_calibrada/RESULTADO.md` | «tfest conserva su límite inferior de 0,2 Hz» | **OK** |
+| «la dinámica subsónica no resulta observable» | `src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/RESULTADO.md` | «tfest conserva su límite inferior de 0,2 Hz» | **OK** |
 | jitter de alineación 1,46 ms | base de conocimiento §466, del benchmark | 1,46 ms | **OK** |
 | coherencia adyacente 0,732 en 10–50 Hz | `latex-historial/secciones/24_banda_util_real.tex` | 0,732 | **OK** |
 | energía bajo 10 Hz «menos del uno por ciento» | misma fuente | 0,74 % | **OK** |

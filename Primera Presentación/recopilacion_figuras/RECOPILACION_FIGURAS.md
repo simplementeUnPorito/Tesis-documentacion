@@ -253,9 +253,9 @@ Contiene ajustes a registros por bandas y curvas teóricas, no sólo una ilustra
 
 Secciones: 8, 9. Estado: Prioritario.
 
-Figura de resultados_tanda_calibrada, fuente de la identificación actual. Distinguir la respuesta medida, la nominal y la envolvente de ajuste; es una prueba eléctrica.
+Figura de `outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada`, fuente de la identificación actual. Distinguir la respuesta medida, la nominal y la envolvente de ajuste; es una prueba eléctrica.
 
-[Abrir fuente](<C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/04_cadena_adc/PGA_a_ADC/cadena_pga_adc.png>)
+[Abrir fuente](<C:/Github/Tesis/outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/04_cadena_adc/PGA_a_ADC/cadena_pga_adc.png>)
 
 ### F13 · Identificación del compensador
 
@@ -263,7 +263,7 @@ Secciones: 8, 9. Estado: Candidato.
 
 Figura de la tanda calibrada. Identifica la ruta medida indicada en el título; no confundir una ruta con etapas incluidas con el compensador aislado.
 
-[Abrir fuente](<C:/Github/Tesis/src/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/03_identificacion_etapas/COMPENSADOR_PGA/compensador_pga.png>)
+[Abrir fuente](<C:/Github/Tesis/outputs/calculos_modelados/matlab/AnalisisCircuito/resultados_tanda_calibrada/03_identificacion_etapas/COMPENSADOR_PGA/compensador_pga.png>)
 
 ### F14 · Registros de campo en cascada
 
