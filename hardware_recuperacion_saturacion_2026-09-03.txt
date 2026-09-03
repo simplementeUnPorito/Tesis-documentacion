@@ -1,0 +1,71 @@
+RECUPERACION DE LA CADENA DESPUES DE SATURAR — tau ~ 31 s
+2026-09-03, ~20:10 local. Firmware de CAMPO. Medido por la ruta de captura.
+
+DE DONDE SALIO LA PREGUNTA
+Barriendo las etapas 0, 1 y 2 con +-240 codigos, la salida se iba siempre a los
+mismos dos valores -58836 y 39102 cuentas- y el codigo 0 NO volvia al mismo
+lugar. En la etapa 1, tres pasadas por el codigo 0 dieron 54998, 58835 y 39098
+cuentas. O la cadena tiene memoria, o el asentamiento no alcanzaba.
+
+EXPERIMENTO
+Etapa 1 (Vref_BP) a -240, que satura, y vuelta a 0 midiendo repetido.
+
+  reposo previo            52505 cuentas = 1001,5 mV
+  saturado en -240         39106 cuentas =  745,9 mV   (riel bajo)
+
+  vuelta a 0:
+     t [s]   cuentas       mV     error vs reposo
+      7,18     57457    1095,9        94,5 mV
+     32,77     54536    1040,2        38,7 mV
+     63,47     53216    1015,0        13,6 mV
+     93,95     52773    1006,6         5,1 mV
+    129,50     52604    1003,3         1,9 mV
+
+DECAIMIENTO EXPONENCIAL LIMPIO, tau ~ 31 s
+Ajustando el logaritmo del error entre t=7,2 s y t=129,5 s: -0,0319 por
+segundo, o sea tau = 31,3 s. Entra en banda de 5 mV recien a los 94 s.
+
+Es coherente con el resto: mover Vref_LP -la ULTIMA etapa- daba curvas limpias
+y repetibles con 0,5 s de espera, porque su referencia entra directo a la
+salida. Mover una etapa de aguas arriba pasa por el acople de alterna del
+pasabanda, y ahi aparece el tau largo. Tambien es del mismo orden que el tau de
+71 s que ya se habia visto en las medidas in-circuit de esta placa.
+
+CONSECUENCIA 1: el error decae HACIA EL REPOSO, no hacia otro valor
+El valor final (1003,3 mV, todavia bajando) tiende al reposo previo
+(1001,5 mV). O sea que en regimen permanente una referencia de aguas arriba NO
+corre la continua de la SALIDA: el acople se la come y solo deja un transitorio
+largo. Por eso medir las etapas 0, 1 y 2 desde la salida no sirve para
+caracterizarlas; hay que medirlas en su propio tap.
+
+CONSECUENCIA 2: los lazos NO estan rotos, pero el orden y la espera importan
+Se verifico en calibration_tables.h que cada etapa calibra contra SU PROPIO
+tap:
+
+    GEO_PGA -> canal 0     GEO_SUM -> canal 2
+    GEO_BP  -> canal 1     GEO_LP  -> canal 3
+
+Asi que el acople de alterna no esta dentro de cada lazo, y la sospecha de que
+los lazos de arriba midieran a traves de el era infundada.
+
+Lo que si queda en pie es el ACOPLAMIENTO ENTRE ETAPAS: al mover una etapa de
+arriba se perturban los taps de abajo con este tau, y la calibracion pasa a la
+etapa siguiente esperando
+
+    CAL_PI_SETTLE_SAMPLES_* = 512 muestras = 0,197 s a 2604 Hz
+
+en las cuatro etapas. Son 0,006 tau. Si el transitorio cruzado en los taps de
+abajo tiene un tau parecido al de la salida, la calibracion de cada etapa
+arranca midiendo un tap que todavia se esta moviendo por culpa de la anterior.
+
+LO QUE ESTO NO PRUEBA, Y HACE FALTA PARA CERRARLO
+El tau de 31 s esta medido EN LA SALIDA (canal 3). No se pudo medir el
+transitorio cruzado en los taps intermedios porque eso necesita el firmware de
+autotest en el PSoC, y el KitProg no esta enumerando. Es la medida que decide si
+hay que subir CAL_PI_SETTLE_SAMPLES_* o no; sin ella, subirlo seria adivinar.
+
+Tambien reabre una lectura vieja: en el HANDOFF quedo anotado que el snapshot
+ADC de campo "mostro +200 en etapa 3 como ~1106 mV y el negativo cayo a 0, y
+despues quedo en 0". Con un transitorio de 31 s y saturacion de por medio, ese
+comportamiento se explica sin que el snapshot este roto. No hay que darlo por
+defectuoso sin repetirlo respetando el tiempo de recuperacion.

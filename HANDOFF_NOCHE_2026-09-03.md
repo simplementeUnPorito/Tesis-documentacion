@@ -167,7 +167,7 @@ se verificaron ACK reales para etapa 3 con `+200`, `-200` y `0`; el último
 comando dejó la referencia restaurada a cero. Transcript:
 `hardware_idac_signed_2026-09-03.txt`.
 
-### B. Pipeline completo — RUTA DE CONFIGURACIÓN 0xAA PROBADA
+### B. Pipeline completo — CONFIGURACIÓN **Y** CAPTURA/INGESTA PROBADAS
 
 Hay un ESP maestro en **COM6** y el esclavo en **COM8**; el PSoC por KitProg en
 COM3.
@@ -186,9 +186,65 @@ Builds posteriores a la integración: master `esp32dev`, slave1/2/3 y
 slave2 COM8; el filesystem LittleFS del master también quedó cargado.
 
 **Los datos que se ingesten van a una carpeta `lab/`** para no mezclarlos con
-los buenos.
+los buenos. Se hace con una sola variable: `TESIS_DATA_ROOT=C:\Github\Tesis\data\lab`
+manda `raw`, `processed` y `server` adentro de `data/lab`. No hizo falta tocar
+código.
+
+#### Ronda de la noche 19:20–20:15 — la ruta de DATOS quedó cerrada
+
+Andaba entera y sin intervención: PSoC → slave2 → ESP-NOW → master → USB →
+ZIP v4 → `/ingest` → catálogo. Evidencia:
+`docs/hardware_pipeline_captura_2026-09-03.txt`.
+
+- 20 lotes dan 600 muestras exactas; 100 lotes dan 3000. Todas del nodo 2, con
+  131 valores distintos de 600, o sea señal y no un valor pegado.
+- Ida y vuelta exacta por el ZIP: media 52467 cuentas capturadas, 52467
+  releídas del `raw_f32le.bin`.
+- El server cataloga la captura: fs 2604, 1,152 s, nodo 2 rol geo,
+  `plottable: true`, `estado: "Sin martillo"` (correcto: hay un solo esclavo).
+- Lo que hace creíble el número: 52467 cuentas son +1000,6 mV, el **mismo**
+  punto de trabajo que venía midiendo el banco por COM8 con el firmware de
+  autotest. Dos caminos independientes coinciden.
+- Detalle que había que acertar: `raw_f32le.bin` guarda **volts**, no cuentas.
+  Verificado contra una captura real de Canchiga antes de escribir nada.
+
+Gate de humo del servidor: **57 de 58**. El único que falla es
+`masw.canchita_compatibilidad`, y no es del pipeline — ver la lista de abajo.
 
 ### C. Cosas abiertas que conviene cerrar
+
+**Nuevo, y es lo mas importante de la noche: la cadena tarda 31 s en
+recuperarse.** Evidencia:
+`docs/hardware_recuperacion_saturacion_2026-09-03.txt`.
+
+Al saturar la salida moviendo una etapa de aguas arriba, vuelve al reposo con
+un decaimiento exponencial limpio de tau ~ 31 s; entra en banda de 5 mV recien a
+los 94 s. La calibracion espera `CAL_PI_SETTLE_SAMPLES_* = 512` muestras =
+**0,197 s** en las cuatro etapas, o sea 0,006 tau.
+
+Dos aclaraciones para no sacar la conclusion equivocada:
+
+- Los lazos **no** estan rotos. Se verifico en `calibration_tables.h` que cada
+  etapa calibra contra su propio tap (0->ch0, 1->ch1, 2->ch2, 3->ch3), asi que
+  el acople de alterna no esta dentro de ningun lazo.
+- Lo que si queda en pie es el **acoplamiento entre etapas**: mover una de
+  arriba perturba los taps de abajo con ese tau, y la calibracion pasa a la
+  siguiente en 0,197 s.
+- Falta la medida que decide si hay que subir el settle: el transitorio cruzado
+  en los taps intermedios. Necesita el firmware de autotest, o sea el KitProg.
+  Sin eso, subir el settle seria adivinar.
+
+**La transferencia de `Vref_LP` no es lineal.** Evidencia:
+`docs/hardware_transferencia_vref_lp_2026-09-03.txt`. La pendiente va de 29
+cuentas por codigo cerca de Vref a 75,6 en -224, creciendo de forma continua, y
+reproduce al repetir bajando y subiendo (histeresis de 0,7 a 1,9 mV). La
+sintonia Kp/Ki del Monte Carlo asume ganancia de etapa fija; medida varia un
+factor 2,6 segun donde trabaje el lazo. El peor caso es arrancar desde el
+extremo negativo.
+
+**Las etapas 0, 1 y 2 no se pueden caracterizar desde la salida.** Su efecto en
+continua se lo come el acople; solo dejan un transitorio largo. Hay que medirlas
+en su propio tap, y eso tambien necesita el autotest.
 
 - **ACK de configuración ADC reprobado el 2026-09-03 a las 16:40 sobre COM8:**
   el enlace estaba arriba (`probe=1`, 10 pings, 0 tramas malas). Los comandos
@@ -228,15 +284,35 @@ Ordenada por lo que desbloquea más.
 1. **No rehacer el port `0xAA`: ya está probado y documentado.** Revisar los
    commits del ESP/Python y las dos evidencias antes de continuar.
 
-2. **Confirmar eléctricamente el sentido del bit de polaridad en campo.** Que
-   el bit en 1 signifique sumidero (referencia por debajo de `Vref`) está
-   *supuesto*, no verificado. Si sale al revés, alcanza con dar vuelta
-   `PSOC_IDAC_POLARITY_NEGATIVE_BIT` en `psoc_hw.h`. Se comprueba con
-   `idac 3 -200` y `idac 3 +200` mirando `LPo`: el negativo tiene que dar MENOS
-   milivoltios.
+2. ~~Confirmar el sentido del bit de polaridad.~~ **RESUELTO en la noche, no
+   hay nada que hacer.** El bit está al derecho: `+240` da 1122,2 mV y `-240`
+   da 745,7 mV, una diferencia de +376,5 mV, medida por la ruta de captura. El
+   control es sólido: el código 0 medido tres veces intercalado entre los
+   extremos dispersa 0,42 mV, o sea 900 veces menos que la señal. **No** hay que
+   dar vuelta `PSOC_IDAC_POLARITY_NEGATIVE_BIT`.
 
-3. **Revisar los Kp/Ki contra la placa real.** Salieron de Monte Carlo con la
-   planta medida, pero nunca corrieron una calibración completa sobre hardware.
+2bis. **Enchufá el KitProg cuando puedas.** Es lo único que bloquea de verdad.
+   Sin él no puedo poner el firmware de autotest en el PSoC, y eso es lo que
+   hace falta para medir los taps intermedios: caracterizar las etapas 0, 1 y 2
+   (que desde la salida no se ven) y medir el transitorio cruzado que decide si
+   hay que subir el tiempo de asentamiento de la calibración.
+
+2ter. **Mirá los picks de Canchita: puede que se hayan perdido.** El gate de
+   humo falla en `masw.canchita_compatibilidad` y al investigarlo aparece esto:
+   `data/processed/Canchita/field_review_masw_state.json` dice 2 picks, 1 grupo
+   y 0 regiones, pero el `.npz` de al lado guarda `inv_freqs`, `inv_c_obs` e
+   `inv_c_t` con **112 puntos** y `wf_group_ids` con **2 grupos**. O sea que el
+   JSON se truncó y el npz conservó la evidencia de lo que había. El archivo es
+   del 2026-08-20, muy anterior a esta sesión, y `data/` no está versionado, así
+   que no hay historial. La curva pickeada se puede reconstruir desde el npz
+   (`inv_freqs` + `inv_c_obs` son exactamente eso). Decidí vos si reconstruirla
+   o si simplemente el chequeo quedó viejo respecto de tu trabajo posterior.
+
+3. **Revisar los Kp/Ki contra la placa real**, ahora con dos motivos nuevos y
+   concretos: la ganancia de etapa varía un factor 2,6 a lo largo del rango
+   (la sintonía la asume fija) y el acoplamiento entre etapas tiene tau ~31 s
+   contra 0,197 s de espera. Nunca corrió una calibración completa sobre
+   hardware.
 
 4. La decisión conservadora ya quedó aplicada: `0xAA` sirve para ensayo manual,
    pero la próxima calibración lo pisa y no se guarda en EEPROM como resultado
@@ -259,5 +335,5 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-03 17:08. Reanudación automática de Claude
-programada desde las 19:22, cada hora hasta las 09:22, sin corridas solapadas.*
+*Última actualización: 2026-09-03 20:20. Ruta de datos cerrada, polaridad
+resuelta, y tres hallazgos nuevos de planta en la sección C.*
