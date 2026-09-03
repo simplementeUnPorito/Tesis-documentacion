@@ -1,0 +1,101 @@
+TRANSFERENCIA Vref_LP -> SALIDA DE LA CADENA, medida por la ruta de captura
+2026-09-03, ~19:40 local. Firmware de CAMPO en PSoC y en slave2.
+
+INSTRUMENTO
+El snapshot ADC de campo no daba comparaciones estables (ver HANDOFF). Se uso en
+cambio la ruta de captura, que quedo probada exacta el mismo dia (ida y vuelta
+52467 -> 52467 cuentas). Por cada codigo: 0xAA dirigido al nodo 2 por el
+maestro, asentamiento de 0,5 s, captura de 8 lotes y promedio de 240 muestras.
+Se mide la SALIDA DE LA CADENA, que es lo que el ADC muestrea de verdad.
+
+--------------------------------------------------------------------------
+1) SENTIDO DE polarity_reg — RESUELTO
+--------------------------------------------------------------------------
+  codigo -240 ->  39096 cuentas =  745,7 mV
+  codigo +240 ->  58836 cuentas = 1122,2 mV
+  diferencia  -> +19740 cuentas = +376,5 mV
+
+  El positivo da MAS: EL BIT DE POLARIDAD ESTA AL DERECHO. No hay que dar
+  vuelta PSOC_IDAC_POLARITY_NEGATIVE_BIT.
+
+  CONTROL: el codigo 0 se midio tres veces intercalado entre los extremos y
+  dio 52510,5 / 52499,2 / 52488,3 cuentas, o sea 0,42 mV de dispersion contra
+  una senal de 376,5 mV. La diferencia es 900 veces la dispersion: no es ruido
+  ni deriva.
+
+--------------------------------------------------------------------------
+2) CURVA COMPLETA -255..+255
+--------------------------------------------------------------------------
+  codigo    cuentas       mV        pendiente local (cuentas/codigo)
+   -255     39102,0     745,8
+   -224     39887,5     760,8      25,3   <- saturado
+   -192     42149,9     803,9      70,7
+   -160     44474,5     848,3      72,6
+   -128     46708,5     890,9      69,8
+    -96     48820,2     931,2      66,0
+    -64     50599,3     965,1      55,6
+      0     52469,1    1000,8      29,2
+    +32     53398,6    1018,5      29,0
+    +64     54282,0    1035,3      27,6
+    +96     55175,4    1052,4      27,9
+   +128     56047,2    1069,0      27,2
+   +160     56892,7    1085,1      26,4
+   +192     57748,3    1101,5      26,7
+   +224     58600,6    1117,7      26,6
+   +255     58836,1    1122,2       7,6   <- saturado
+
+  Monotona en todo el rango. Satura en las dos puntas: los ultimos ~31 codigos
+  de cada lado casi no mueven nada (25,3 y 7,6 contra ~27-70 en el medio).
+
+--------------------------------------------------------------------------
+3) LA PENDIENTE NO ES CONSTANTE, Y REPRODUCE
+--------------------------------------------------------------------------
+Repeticion independiente de la mitad negativa, bajando y volviendo a subir:
+
+  bajando        0 -> 52511,2      subiendo   -128 -> 46747,6
+               -64 -> 50653,4                  -96 -> 48826,8
+               -96 -> 48923,9                  -64 -> 50587,6
+              -128 -> 46803,0                    0 -> 52474,0
+              -160 -> 44571,0
+              -192 -> 42282,2
+              -224 -> 39863,3
+
+  Pendientes bajando: 29,0 / 54,0 / 66,3 / 69,8 / 71,5 / 75,6 cuentas por
+  codigo. Crece de forma CONTINUA al alejarse de Vref hacia abajo; no es un
+  escalon en cero, asi que no se explica por una simple asimetria entre la
+  rama que inyecta y la que absorbe corriente.
+
+  Histeresis entre ida y vuelta: 37 a 97 cuentas, o sea 0,7 a 1,9 mV. Chica
+  frente a los 376 mV de recorrido, pero no nula.
+
+  En mV por codigo en la referencia: 0,55 cerca de cero y 1,44 en -224. El
+  escalon nominal de la referencia es 1,875 mV por codigo, asi que la ganancia
+  de la etapa desde su referencia va de ~0,29 a ~0,77 segun donde este.
+
+--------------------------------------------------------------------------
+4) CONSECUENCIA PARA EL PI  (esto es lo que importa)
+--------------------------------------------------------------------------
+La sintonia Kp/Ki que salio del Monte Carlo asume una GANANCIA DE ETAPA FIJA.
+Medido, la ganancia del lazo para Vref_LP varia por un factor 2,6 segun en que
+parte del rango este trabajando.
+
+Eso no invalida la sintonia, pero si acota su validez: un Kp elegido con la
+ganancia chica queda 2,6 veces mas agresivo cuando el lazo entra en la zona de
+ganancia grande. Conviene, en orden de menos a mas trabajo:
+  a) verificar la estabilidad del PI arrancando desde el extremo negativo,
+     que es la zona de mayor ganancia y por lo tanto la de peor caso;
+  b) o acotar el esfuerzo del PI en esa zona;
+  c) o alimentar cal_pi_stage_gain_x1000() con una ganancia que dependa del
+     codigo actual, no solo de la ganancia del PGA.
+
+Todavia NO se corrio una calibracion completa sobre hardware, asi que esto es
+una prediccion a partir de la planta medida, no una falla observada.
+
+--------------------------------------------------------------------------
+5) FIABILIDAD DEL TRANSPORTE
+--------------------------------------------------------------------------
+En 32 puntos medidos hubo 3 fallos aislados: dos capturas sin datos y un 0xAA
+sin ACK. Se recuperaron solos en el punto siguiente, sin reset ni
+reenumeracion. Es del orden del 10 % de puntos, suficiente para molestar en una
+bateria larga y poco para bloquear nada. No se toco ningun retry: conviene
+medirlo aparte antes de cambiar algo a ciegas.
