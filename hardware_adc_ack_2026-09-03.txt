@@ -1,0 +1,94 @@
+   0.121  --   abierto COM8 @ 115200 (DTR/RTS en False)
+   0.142  RX   0x1 (POWERON_ets Jul 29 2019 12:21:46
+   0.142  RX   
+   0.142  RX   rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+   0.142  RX   configsip: 0, SPIWP:0xee
+   0.142  RX   clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+   0.142  RX   mode:DIO, clock div:2
+   0.162  RX   load:0x3fff0030,len:1184
+   0.162  RX   load:0x40078000,len:13232
+   0.162  RX   load:0x40080400,len:3028
+   0.162  RX   entry 0x400805e4
+   1.007  RX   [521336][S2] [ESPNOW] ready ch=1
+   6.154  RX   [ST] Autotest listo. 'b' y 'c' corren solo digital;
+   6.154  RX   [ST] 'run' ejecuta la corrida completa, incluido analogico.
+  11.425  TX   probe
+  11.446  RX   [ST] probe=1 bOK=0 bBad=0 ping=10 diag=4 ovr=0
+  18.426  TX   adc 1 0
+  19.296  RX   #ADC 1 0 1000690 267 1
+  25.410  TX   adc 2 0
+  30.166  RX   #ADC 2 0 0 0 0
+  34.626  TX   adc 3 0
+  35.479  RX   #ADC 3 0 46781 6187 1
+  45.849  TX   adc 4 0
+  46.703  RX   #ADC 4 0 48236 6580 1
+  56.423  TX   b
+  56.444  RX   [B0] Lineas del bus I2C en reposo ......... PASS  SDA(21) y SCL(22) en alto: los pull-ups estan
+  56.444  RX   [B0c] Pull-ups externos, medidos .......... INFO  SDA flotante 50/50 pu 30/30 pd 30/30 | SCL flotante 50/50 pu 30/30 pd 30/30
+  56.465  RX   [B0d] Pull-up externo de SCL .............. PASS  SCL aguanta el pull-down interno: el pull-up externo llega al pin
+  58.704  RX   [B1] Subida I2C PSoC->ESP (0x42) .......... PASS  8 B/1.5s, 2 pings, 0 diag, overruns=0
+  58.725  RX   [B0b] Reloj del bus (SCL) ................. PASS  32 flancos observados al arranque
+  58.970  RX   [B2a] El ESP transmite por la UART ........ PASS  131 flancos en GPIO26 al mandar 5 comandos
+  58.991  RX   [B2] Bajada UART ESP->PSoC + vuelta por I2  PASS  STATUS respondido en 2 ms
+  59.153  RX   [B3] Linea SYNC GPIO27 -> P0[4] ........... PASS  P0[4] leyo LOW y HIGH correctamente (contador legacy=0)
+  59.153  RX   [B4] Integridad de trama en toda la corrid  PASS  bBad=0 badLen=0 (drop=156 informativo)
+  59.153  RX   
+  59.174  RX   RESUMEN  8 PASS - 0 FAIL - 0 WARN - 0 SKIP - 1 INFO     VEREDICTO: APTO
+  59.174  RX   #JSON {"verdict":"PASS","pass":8,"fail":[],"warn":[],"skip":0,"info":1}
+  59.174  RX   =============================================
+  60.699  TX   d
+  62.860  RX   [D1] Reposo de los taps analogicos ........ PASS  ch0=48mV ch1=52mV ch2=50mV ch3=62mV
+  62.881  RX       D2: barriendo etapa 1 de 4...
+  67.175  RX       D2: barriendo etapa 2 de 4...
+  74.333  RX       D2: barriendo etapa 3 de 4...
+  80.533  RX       D2: barriendo etapa 4 de 4...
+  85.818  RX   [D2] Matriz DC IDAC->etapa ................ FAIL  4/4 barridos, 3 etapa(s) sin respuesta, 0 fuga(s): etapa 1 no mueve su tap (0 uV/cod)
+  85.818  RX   [D2.0]   pendientes uV/codigo ............. INFO  1260.7 -1382.0 26.1 224.7
+  85.819  RX   [D2.1]   pendientes uV/codigo ............. INFO  -10.0 0.0 0.0 0.0
+  85.819  RX   [D2.2]   pendientes uV/codigo ............. INFO  42.3 -124.4 0.0 0.0
+  85.840  RX   [D2.3]   pendientes uV/codigo ............. INFO  4.3 6.3 -0.5 0.0
+  86.412  RX   [D3] Asentamiento del ultimo tap .......... WARN  deriva 5ms->500ms = 124931 uV
+  86.413  RX   [D4] Ganancia PGAout 1x vs 4x ............. SKIP  solo aplica a nodos GEO
+  90.753  RX   [D6.0] Piso de ruido del tap .............. PASS  media 48832 uV, RMS 1492 uV, pp 11348 uV, 50Hz 42 uV
+  95.089  RX   [D6.1] Piso de ruido del tap .............. PASS  media 52037 uV, RMS 2069 uV, pp 14166 uV, 50Hz 33 uV
+  99.375  RX   [D6.2] Piso de ruido del tap .............. PASS  media 53672 uV, RMS 1378 uV, pp 9598 uV, 50Hz 85 uV
+ 103.634  RX   [D6.3] Piso de ruido del tap .............. PASS  media 44469 uV, RMS 4100 uV, pp 24070 uV, 50Hz 128 uV
+ 107.950  RX   [D6b] Carga de la entrada (indicador de ge  INFO  ch0: RMS 2222 uV, 50 Hz 85 uV. Con geofono baja; con la entrada abierta sube. Comparar las dos c
+ 107.971  RX   [D8] Auto-calibracion ..................... SKIP  desactivada: la maquina de calibracion todavia no esta portada de VDAC8 a IDAC8, su veredicto no
+ 112.610  RX   [D5] Coherencia de rangos del ADC ......... SKIP  el tap quedo fuera de +-0.45 V: la config 2 recortaria
+ 112.610  RX   
+ 112.610  RX   RESUMEN  5 PASS - 1 FAIL - 1 WARN - 3 SKIP - 5 INFO     VEREDICTO: NO APTO
+ 112.610  RX   FAIL: D2
+ 112.610  RX   WARN: D3
+ 112.610  RX   #JSON {"verdict":"FAIL","pass":5,"fail":["D2"],"warn":["D3"],"skip":3,"info":5}
+ 112.631  RX   =============================================
+ 147.701  TX   adc 2
+ 148.008  RX   #ADC 2 -1 0 0 1
+ 150.050  TX   adc 3
+ 150.360  RX   #ADC 3 -1 0 0 1
+ 152.411  TX   adc 4
+ 152.720  RX   #ADC 4 -1 0 0 1
+ 154.771  TX   adc 2
+ 155.080  RX   #ADC 2 -1 0 0 1
+ 157.133  TX   adc 3
+ 157.443  RX   #ADC 3 -1 0 0 1
+ 159.495  TX   adc 4
+ 159.803  RX   #ADC 4 -1 0 0 1
+ 161.855  TX   adc 2
+ 162.165  RX   #ADC 2 -1 0 0 1
+ 164.219  TX   adc 3
+ 164.527  RX   #ADC 3 -1 0 0 1
+ 166.578  TX   adc 4
+ 166.888  RX   #ADC 4 -1 0 0 1
+ 168.938  TX   adc 2
+ 169.247  RX   #ADC 2 -1 0 0 1
+ 171.294  TX   adc 3
+ 171.603  RX   #ADC 3 -1 0 0 1
+ 173.644  TX   adc 4
+ 173.954  RX   #ADC 4 -1 0 0 1
+ 176.003  TX   adc 2
+ 176.312  RX   #ADC 2 -1 0 0 1
+ 178.365  TX   adc 3
+ 178.674  RX   #ADC 3 -1 0 0 1
+ 180.720  TX   adc 4
+ 181.045  RX   #ADC 4 -1 0 0 1

@@ -1,0 +1,32 @@
+   0.123  --   abierto COM8 @ 115200 (DTR/RTS en False)
+   0.144  RX   ets Jul 29 2019 12:21:46
+   0.144  RX   
+   0.144  RX   rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+   0.144  RX   configsip: 0, SPIWP:0xee
+   0.144  RX   clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+   0.144  RX   mode:DIO, clock div:2
+   0.165  RX   load:0x3fff0030,len:1184
+   0.165  RX   load:0x40078000,len:13232
+   0.165  RX   load:0x40080400,len:3028
+   0.165  RX   entry 0x400805e4
+   1.028  RX   [522383][S2] [ESPNOW] ready ch=1
+   6.146  RX   [ST] Autotest listo. 'b' y 'c' corren solo digital;
+   6.146  RX   [ST] 'run' ejecuta la corrida completa, incluido analogico.
+  11.084  TX   probe
+  11.105  RX   [ST] probe=1 bOK=0 bBad=0 ping=10 diag=4 ovr=0
+  29.676  TX   idac 3 0
+  31.719  TX   dc 3
+  32.982  RX   #IDAC 3 0 0
+  35.029  TX   idac 3 200
+  37.076  TX   dc 3
+  39.127  TX   idac 3 -200
+  40.386  RX   #DC 3 3 0 0 0
+  42.434  TX   dc 3
+  43.696  RX   #IDAC 3 200 0
+  45.744  TX   idac 3 0
+  47.794  TX   dc 3
+  51.091  RX   #DC 3 3 0 0 0
+  54.393  RX   #IDAC 3 -200 0
+  61.873  RX   #DC 3 3 0 0 0
+  65.100  RX   #IDAC 3 0 0
+  72.494  RX   #DC 3 3 0 0 0

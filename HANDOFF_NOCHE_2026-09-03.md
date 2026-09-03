@@ -140,9 +140,27 @@ actualizar el transporte ESP/maestro o definir explícitamente otra ruta que
 conserve etapa, signo y magnitud. No volver silenciosamente al comando muerto
 de un byte.
 
-**Lo único que no puedo hacer yo**: el TopDesign de campo **no tiene
-`polarity_reg`**. Hasta que ese componente exista ahí, el código compila y corre
-pero los negativos se saturan a magnitud positiva. Está en la lista para vos.
+**Desbloqueado por Elías a las 16:40:** el TopDesign de campo ya tiene
+`polarity_reg`, con sus cuatro salidas conectadas a `ipolarity` en el orden de
+las etapas. Creator generó `polarity_reg.c/.h`, `project.h` lo incluye y el
+rebuild compiló explícitamente `polarity_reg.o`; el `#if
+defined(CY_CONTROL_REG_polarity_reg_H)` de `psoc_hw.c` ya toma la rama real.
+
+El proyecto de campo se programó después por KitProg
+`CMSIS-DAP/246475`, **sin `-AllRows`**: 61.328 bytes, Fs 4x2604 Hz, 248 filas
+ocupadas escritas y verificadas, `ProtectAll`, `VerifyProtect` y
+`DAP_ReleaseChip` en `0 OK`. Log original:
+`%TEMP%\psoc_program_geo_2604_20260903_164236.log`. Al reiniciar el ESP de
+test en COM8, `probe` confirmó `probe=1`, 10 pings, 0 tramas malas y 4 eventos
+de diagnóstico: el firmware de campo arrancó y el enlace volvió arriba.
+
+No usar el comando `idac` del ESP de autotest para validar este firmware de
+campo: ese comando todavía manda el protocolo de test `0xA2` y espera un
+`ST_ID_IDAC`; el campo ahora recibe el contrato manual `0xAA` documentado
+arriba y responde `CFG_ACK`. La prueba hecha así devolvió `#IDAC ... 0` y
+medidas nulas, como corresponde a protocolos incompatibles; **no dice nada del
+sentido eléctrico de la polaridad**. Primero portar `0xAA` al ESP y recién
+entonces comparar +200/0/-200.
 
 ### B. Pipeline completo
 
@@ -164,9 +182,24 @@ los buenos.
 
 ### C. Cosas abiertas que conviene cerrar
 
-- El cambio de configuración del ADC **pierde respuestas**: la mayoría de los
-  pedidos a cfg 2/3/4 no contestan. Afecta a D5, que hace justo esa comparación
-  cuatro veces. Es lo que impidió cerrar la verificación cruzada de escala.
+- **ACK de configuración ADC reprobado el 2026-09-03 a las 16:40 sobre COM8:**
+  el enlace estaba arriba (`probe=1`, 10 pings, 0 tramas malas). Los comandos
+  manuales `adc 1 0` ... `adc 4 0` recibieron ACK para las cuatro configs; luego
+  se hicieron cinco ciclos consecutivos 2 -> 3 -> 4 sin captura y dieron
+  **15/15 ACK correctos** (`#ADC N -1 0 0 1`). Por lo tanto, la pérdida de ACK
+  observada antes no se reproduce en este estado y no conviene tocar el retry
+  a ciegas. Transcript completo:
+  `hardware_adc_ack_2026-09-03.txt`.
+- La captura manual inmediatamente posterior al cambio sí mostró una anomalía
+  distinta: `adc 2 0` devolvió `#ADC 2 0 0 0 0`, mientras configs 1, 3 y 4
+  devolvieron medidas válidas. Al correr el grupo D completo, D5 no llegó a
+  comparar rangos: dio `SKIP` porque el tap estaba fuera de +-0,45 V y la
+  config 2 recortaría. Separar entonces dos problemas: transporte/ACK (hoy
+  15/15) y captura/asentamiento de config 2 (todavía abierta).
+- El hardware tiene cargados el PSoC/ESP de **test anteriores al port**: D8
+  todavía informa que la autocal está desactivada. El port de campo compilado
+  en `b122112` no se flasheó durante esta prueba, para no mezclar la evidencia
+  ni arriesgar el PSoC sin el `polarity_reg` del TopDesign.
 - Los cuatro taps recortan en valores parecidos (~750 y ~1120 mV) cuando la
   cadena está contra un tope. Con el limitador sacado hay que volver a
   caracterizarlo: puede que ya no aparezca.
@@ -177,12 +210,10 @@ los buenos.
 
 Ordenada por lo que desbloquea más.
 
-1. **Agregar `polarity_reg` al TopDesign del proyecto de campo.**
-   `src/firmware/psoc/AcondicionamientoAnalogico.cydsn` no lo tiene; el de test
-   sí. Es un Control Register de 4 bits, un bit al `ipolarity` de cada IDAC8, en
-   el mismo orden que las etapas (`Vref_PGA`, `Vref_BP`, `Vref_ADDER`,
-   `Vref_LP`). Sin eso el firmware de campo no puede poner una referencia por
-   debajo de `Vref`, que es la mitad del punto de todo el trabajo.
+1. **Portar y probar el nuevo `0xAA` de punta a punta.** El TopDesign ya está
+   resuelto y el PSoC de campo está cargado. Falta que ESP esclavo, transporte
+   maestro y web conserven etapa, signo y magnitud; después comparar +200/0/-200
+   sobre una misma etapa y restaurarla.
 
 2. **Confirmar el sentido del bit de polaridad.** Que el bit en 1 signifique
    sumidero (referencia por debajo de `Vref`) está *supuesto*, no verificado. Si
@@ -199,5 +230,5 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-03 16:33. Reanudación automática de Claude
+*Última actualización: 2026-09-03 16:48. Reanudación automática de Claude
 programada desde las 19:22, cada hora hasta las 09:22, sin corridas solapadas.*
