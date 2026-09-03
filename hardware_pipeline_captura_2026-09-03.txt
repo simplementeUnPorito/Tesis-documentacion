@@ -1,0 +1,81 @@
+PIPELINE DE CAPTURA E INGESTA — PSoC -> slave2 -> master -> ZIP -> server
+2026-09-03, ~19:29 local. Sin navegador y sin intervencion humana.
+
+Es la ruta de DATOS, distinta de la ruta de CONFIGURACION (0xAA firmado) que ya
+estaba probada. Se habla el protocolo binario del maestro directamente
+(geophone_scope/protocol), que es el mismo que usa la pagina: si esto anda, un
+problema de la pagina seria de la pagina y no del camino de datos.
+
+HARDWARE
+  COM6  ESP32 maestro          COM8  ESP32 slave2 (firmware de campo)
+  PSoC  firmware GEO de campo con polarity_reg. KitProg ausente, no hizo falta.
+
+--------------------------------------------------------------------------
+1) CAPTURA CORTA DE VERIFICACION  (20 lotes)
+--------------------------------------------------------------------------
+  STATUS       -> 4 HEARTBEAT + 1 READY, node_id vistos [0, 255]
+  SET_RECLEN 20-> 2 ACK + 7 STATUS
+  ARM 1        -> 1 ACK, 2 READY, 14 STATUS
+  START N=20   -> 600 DATA + 10 HEARTBEAT + 2 ACK + 2 READY
+
+  600 muestras = 20 lotes x 30, exacto. Todas de node_id 2.
+  min 52251  max 52539  pp 288 cuentas  media 52467
+  131 valores distintos de 600: es senal, no un valor pegado.
+
+--------------------------------------------------------------------------
+2) CAPTURA LARGA E INGESTA  (100 lotes)
+--------------------------------------------------------------------------
+  3000 muestras del nodo 2, exacto (100 x 30).
+  cuentas: min 52220  max 52563  media 52467
+  volts:   min 0,996017  max 1,002560  media 1,000735   pp 6,542 mV
+
+  ZIP con contrato geophone_scope_web_zip_v4, 5534 B, etiqueta
+  lab_20260903_192903.
+
+  POST http://127.0.0.1:8011/ingest -> HTTP 200
+       "OK 20260903_192903_4eb46f565849 encolado (5534 B)"
+
+  Quedo en disco:
+    data/lab/raw/20260903_192903_4eb46f565849/metadata.json
+    data/lab/raw/.../maestro/metadata.json
+    data/lab/raw/.../captures/001_lab_20260903_192903/metadata.json
+    data/lab/raw/.../captures/001_lab_20260903_192903/geo1_s2/raw_f32le.bin
+    data/lab/server/zips/20260903_192903_4eb46f565849.zip
+
+  /api/dataset lo cataloga:
+    fs 2604,0   3000 muestras   1,152074 s   nodo 2 rol geo
+    has_geo true, has_hammer false, plottable true, estado "Sin martillo"
+
+  Ida y vuelta exacta: se releyo raw_f32le.bin y da media 1,000735 V, que
+  vuelta a cuentas es 52467, identico a lo capturado. No hay perdida ni
+  reescalado en el camino.
+
+--------------------------------------------------------------------------
+POR QUE LOS VALORES SON CREIBLES
+--------------------------------------------------------------------------
+La media de 52467 cuentas equivale a +1000,6 mV con el fondo de escala de la
+configuracion 1 del ADC (2,5 V sobre 131072 cuentas). Es el MISMO valor que
+venian dando los taps medidos por el banco a traves de COM8 y del autotest, que
+es un camino completamente distinto: otro firmware del ESP, otro transporte y
+otro codigo de PC. Dos vias independientes coinciden en el punto de trabajo de
+la placa.
+
+UNIDADES: raw_f32le.bin guarda VOLTS float32 little-endian, no cuentas. Se
+verifico contra una captura real del repo (Canchiga/001_actual/geo1_s2), cuyos
+valores son del orden de -0,058 V.
+
+AISLAMIENTO: el server corre con TESIS_DATA_ROOT=C:\Github\Tesis\data\lab, asi
+que raw, processed y server quedan dentro de data/lab y no se mezclan con los
+29 GB de data/raw reales.
+
+--------------------------------------------------------------------------
+LO QUE ESTO NO PRUEBA
+--------------------------------------------------------------------------
+- No hay martillo: solo hay un esclavo conectado, asi que la captura queda
+  "Sin martillo" y no habilita picking ni MASW. Es una limitacion del banco,
+  no del pipeline.
+- No se probo la exportacion desde la pagina real del master; se armo el ZIP
+  con el mismo contrato desde Python. La pagina ya se habia probado para la
+  ruta de configuracion.
+- La captura es de reposo: el geofono no fue golpeado. Los 6,5 mV pico a pico
+  son ruido y microvibracion ambiente, no un evento.
