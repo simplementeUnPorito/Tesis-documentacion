@@ -1,0 +1,46 @@
+   0.123  --   abierto COM8 @ 115200 (DTR/RTS en False)
+   0.144  RX   ets Jul 29 2019 12:21:46
+   0.144  RX
+   0.144  RX   rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+   0.144  RX   configsip: 0, SPIWP:0xee
+   0.144  RX   clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+   0.144  RX   mode:DIO, clock div:2
+   0.164  RX   load:0x3fff0030,len:1184
+   0.164  RX   load:0x40078000,len:13232
+   0.164  RX   load:0x40080400,len:3028
+   0.164  RX   entry 0x400805e4
+   0.510  RX   [23193][S2] [SLAVE 2] boot
+   0.531  RX   [23826][S2] [SLAVE 2] heap free=301868 maxAlloc=110580 (~363 lotes contiguos antiguos)
+   0.531  RX   [40369][S2] [SCOPE] sample pulse pin=-1 idle=0 us=20
+   0.551  RX   [40621][S2] [SCOPE] debugHardware=0 start pin=15 idle=0 us=500
+   3.136  --   no se vio el banner de arranque; el ESP puede estar corriendo otro firmware o ya venia arrancado
+   3.794  RX   [3219404][S2] [SLAVE] AP 'GeoNetwork' en canal 1 (-52 dBm)
+   3.795  RX   [3220342][S2] [SLAVE] MAC: C8:2E:18:67:68:6C  ch=1 (maestro)
+   3.795  RX   [3220749][S2] [SLAVE] WiFi ps=off tx=78 qdBm
+   3.795  RX   [3231731][S2] [ESPNOW] ready ch=1
+   3.795  RX   [3235279][S2] [SLAVE 2] Buscando PSoC...
+   3.795  PSoC [3262081][S2] [PSoC] boot hw=0/GEO pstate=0/IDLE
+   3.795  RX   [3262360][S2] [SLAVE 2] PSoC: DETECTADO
+   3.795  RX   [3262497][S2] [SLAVE 2] listo, esperando ARM
+   5.540  PSoC [5000785][S2] [PSoC] SD status=0x77 present=1 type=3 selftest=0
+   5.540  RX   [5001305][S2] [SLAVE] PSoC cfg ack unsolicited sub=0xBC val=119
+  16.571  TX   probe
+  16.592  PSoC [16090139][S2] [PSoC] boot hw=0/GEO pstate=0/IDLE
+  16.592  RX   [16090583][S2] [USB] probe psoc=1
+  16.613  RX   [16090705][S2] [SLAVE 2] USB_PROBE bOK=0 bBad=0 uartBytes=135 mark=29 drop=36 badLen=0 ping=18 diag=8 rx=1 edge=0/1 last=0xE5 age=0 txOK=0 txFail=0 state=0 fill=0/0 fs=2604
+  22.913  TX   idac 3 200
+  22.934  RX   [22431787][S2] [USB] idac stage=3 code=200 -> PSoC 0xAA p1=3 p2=200
+  22.934  RX   [22432926][S2] [SLAVE] PSoC cfg ack sub=0xAA val=3 expected=3 ok=1
+  24.981  TX   idac 3 -200
+  25.002  RX   [24499208][S2] [USB] idac stage=3 code=-200 -> PSoC 0xAA p1=131 p2=200
+  25.002  RX   [24500324][S2] [SLAVE] PSoC cfg ack sub=0xAA val=131 expected=131 ok=1
+  27.052  TX   idac 3 0
+  27.073  RX   [26570106][S2] [USB] idac stage=3 code=0 -> PSoC 0xAA p1=3 p2=0
+  27.826  RX   [27320117][S2] [SLAVE] PSoC cfg ack timeout sub=0xAA expected=3 elapsed=750/750
+  32.055  TX   probe
+  32.076  PSoC [31574185][S2] [PSoC] boot hw=0/GEO pstate=0/IDLE
+  32.076  RX   [31574598][S2] [USB] probe psoc=1
+  32.097  RX   [31574708][S2] [SLAVE 2] USB_PROBE bOK=0 bBad=0 uartBytes=264 mark=58 drop=78 badLen=0 ping=39 diag=13 rx=1 edge=0/1 last=0xE5 age=0 txOK=0 txFail=0 state=0 fill=0/0 fs=2604
+  38.396  TX   idac 3 0
+  38.417  RX   [37913712][S2] [USB] idac stage=3 code=0 -> PSoC 0xAA p1=3 p2=0
+  38.417  RX   [37914840][S2] [SLAVE] PSoC cfg ack sub=0xAA val=3 expected=3 ok=1

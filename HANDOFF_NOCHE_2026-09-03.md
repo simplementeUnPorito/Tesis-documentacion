@@ -71,7 +71,7 @@ negativos son alcanzables (se midió −1 158 mV en un tap).
 
 Orden deliberado: primero lo que deja el repo consistente, después el pipeline.
 
-### A. Port al proyecto de campo — PSoC COMPILA, INTEGRACIÓN PENDIENTE
+### A. Port al proyecto de campo — PSoC Y TRANSPORTE COMPLETADOS
 
 `src/firmware/psoc/AcondicionamientoAnalogico.cydsn`
 
@@ -131,14 +131,21 @@ no existe. El ajuste actualiza `g_psoc_cal_results[stage].final_dac`, limpia su
 `ok` y pone `g_last_calibration_ok=0`, de modo que `SAVE_EEPROM` no pueda
 presentar el ajuste manual como calibración verificada.
 
-**Pendiente inmediato para Claude:** este contrato todavía no está portado de
-punta a punta. El ESP de campo conserva `PsocUART::setVdac(uint8_t)` y manda la
-trama vieja de un parámetro; la web/maestro también representa `0xAA` con un
-solo `param`. Si se usa hoy desde ese camino, el PSoC espera el segundo byte y
-el pedido termina por watchdog/timeout. Antes de probar el pipeline hay que
-actualizar el transporte ESP/maestro o definir explícitamente otra ruta que
-conserve etapa, signo y magnitud. No volver silenciosamente al comando muerto
-de un byte.
+**Cerrado por Codex a las 17:06:** el contrato quedó portado de punta a punta.
+El frame USB dirigido usa 7 bytes solamente para `0xAA`; los demás comandos
+dirigidos conservan sus 6 bytes. `MsgSetConfig` entre maestro y esclavo lleva
+`param2`, el esclavo manda la trama PSoC de dos parámetros, y la web expone una
+fila IDAC manual en los paneles GEO. El helper Python es
+`encode_manual_idac(node_id, stage, code)`.
+
+Commits de implementación: ESP32 `f748bdb` (`Portar el IDAC firmado de punta a
+punta`) y Python `7e66739` (`Agregar encoder del IDAC manual firmado`). Los
+commits PSoC previos son `b122112` (port) y `b801b72` (TopDesign de campo).
+
+Compatibilidad deliberada: un cliente viejo que mande `0xAA` en el formato
+dirigido de 6 bytes ya no es válido. Los demás comandos dirigidos siguen
+idénticos. No volver al `setVdac(uint8_t)` muerto: fue reemplazado por
+`setStageDac(signo_etapa, magnitud)`.
 
 **Desbloqueado por Elías a las 16:40:** el TopDesign de campo ya tiene
 `polarity_reg`, con sus cuatro salidas conectadas a `ipolarity` en el orden de
@@ -154,28 +161,29 @@ ocupadas escritas y verificadas, `ProtectAll`, `VerifyProtect` y
 test en COM8, `probe` confirmó `probe=1`, 10 pings, 0 tramas malas y 4 eventos
 de diagnóstico: el firmware de campo arrancó y el enlace volvió arriba.
 
-No usar el comando `idac` del ESP de autotest para validar este firmware de
-campo: ese comando todavía manda el protocolo de test `0xA2` y espera un
-`ST_ID_IDAC`; el campo ahora recibe el contrato manual `0xAA` documentado
-arriba y responde `CFG_ACK`. La prueba hecha así devolvió `#IDAC ... 0` y
-medidas nulas, como corresponde a protocolos incompatibles; **no dice nada del
-sentido eléctrico de la polaridad**. Primero portar `0xAA` al ESP y recién
-entonces comparar +200/0/-200.
+El firmware de campo del ESP ahora agrega `idac <etapa> <codigo>` para probar
+el `0xAA` correcto sin usar el comando homónimo del autotest (`0xA2`). En COM8
+se verificaron ACK reales para etapa 3 con `+200`, `-200` y `0`; el último
+comando dejó la referencia restaurada a cero. Transcript:
+`hardware_idac_signed_2026-09-03.txt`.
 
-### B. Pipeline completo
+### B. Pipeline completo — RUTA DE CONFIGURACIÓN 0xAA PROBADA
 
 Hay un ESP maestro en **COM6** y el esclavo en **COM8**; el PSoC por KitProg en
 COM3.
 
-1. PSoC → ESP esclavo: ya probado esta tarde (autotest, taps, barridos).
-2. Esclavo → maestro por ESP-NOW, con la página web.
-3. Esclavo → inyección con el server de Python
-   (`src/interfaces/python/server`).
+1. PSoC → ESP esclavo: probado con firmware de campo y ACK de `0xAA` firmado.
+2. USB binario → maestro → ESP-NOW → esclavo → PSoC: `+200/-200/0`, 3/3 ACK.
+3. Página real del master → WebSocket → misma ruta: `+200/-200/0`, 3/3 ACK.
+4. LittleFS: `app.js`, `protocol.js` y `slave_panel.js` servidos desde
+   `http://192.168.4.1` contienen la UI nueva cargada al master.
+5. Helper Python: trama exacta validada para `encode_manual_idac(2,3,-200)`.
 
-Gate previo: cerrar la integración end-to-end de `0xAA` descrita arriba y
-compilar los entornos ESP afectados. El resto de los comandos de captura no
-depende de `0xAA`, pero la interfaz no debe confirmar como aplicado un formato
-que el PSoC ya no acepta.
+Evidencia compacta: `hardware_idac_end_to_end_2026-09-03.txt`.
+
+Builds posteriores a la integración: master `esp32dev`, slave1/2/3 y
+`slaveTest`, todos `SUCCESS`. Los firmwares físicos cargados son master COM6 y
+slave2 COM8; el filesystem LittleFS del master también quedó cargado.
 
 **Los datos que se ingesten van a una carpeta `lab/`** para no mezclarlos con
 los buenos.
@@ -196,10 +204,17 @@ los buenos.
   comparar rangos: dio `SKIP` porque el tap estaba fuera de +-0,45 V y la
   config 2 recortaría. Separar entonces dos problemas: transporte/ACK (hoy
   15/15) y captura/asentamiento de config 2 (todavía abierta).
-- El hardware tiene cargados el PSoC/ESP de **test anteriores al port**: D8
-  todavía informa que la autocal está desactivada. El port de campo compilado
-  en `b122112` no se flasheó durante esta prueba, para no mezclar la evidencia
-  ni arriesgar el PSoC sin el `polarity_reg` del TopDesign.
+- El hardware ahora tiene cargados el PSoC de **campo** con `polarity_reg`, el
+  ESP slave2 de campo y el ESP master nuevos. No interpretar los resultados D8
+  antiguos como estado del firmware que está actualmente en la placa.
+- Hubo un timeout aislado de ACK al mandar tres cambios directos muy seguidos
+  por COM8; `probe` mostró el enlace vivo y el reintento respondió. Las dos
+  rondas de punta a punta (USB master y WebSocket) dieron 3/3 cada una.
+- El snapshot ADC de campo mostró una vez +200 en etapa 3 como ~1106 mV y el
+  negativo cayó a 0, pero después las lecturas quedaron en 0 incluso al volver
+  a positivo. No usar esa secuencia como prueba concluyente del sentido físico:
+  repetir con DMM/osciloscopio en LPo o depurar el snapshot antes de afirmar
+  polaridad en campo.
 - Los cuatro taps recortan en valores parecidos (~750 y ~1120 mV) cuando la
   cadena está contra un tope. Con el limitador sacado hay que volver a
   caracterizarlo: puede que ya no aparezca.
@@ -210,16 +225,15 @@ los buenos.
 
 Ordenada por lo que desbloquea más.
 
-1. **Portar y probar el nuevo `0xAA` de punta a punta.** El TopDesign ya está
-   resuelto y el PSoC de campo está cargado. Falta que ESP esclavo, transporte
-   maestro y web conserven etapa, signo y magnitud; después comparar +200/0/-200
-   sobre una misma etapa y restaurarla.
+1. **No rehacer el port `0xAA`: ya está probado y documentado.** Revisar los
+   commits del ESP/Python y las dos evidencias antes de continuar.
 
-2. **Confirmar el sentido del bit de polaridad.** Que el bit en 1 signifique
-   sumidero (referencia por debajo de `Vref`) está *supuesto*, no verificado. Si
-   sale al revés, alcanza con dar vuelta `PSOC_IDAC_POLARITY_NEGATIVE_BIT` en
-   `psoc_hw.h`. Se comprueba con `idac 3 -200` y `idac 3 +200` mirando `LPo`:
-   el negativo tiene que dar MENOS milivoltios.
+2. **Confirmar eléctricamente el sentido del bit de polaridad en campo.** Que
+   el bit en 1 signifique sumidero (referencia por debajo de `Vref`) está
+   *supuesto*, no verificado. Si sale al revés, alcanza con dar vuelta
+   `PSOC_IDAC_POLARITY_NEGATIVE_BIT` en `psoc_hw.h`. Se comprueba con
+   `idac 3 -200` y `idac 3 +200` mirando `LPo`: el negativo tiene que dar MENOS
+   milivoltios.
 
 3. **Revisar los Kp/Ki contra la placa real.** Salieron de Monte Carlo con la
    planta medida, pero nunca corrieron una calibración completa sobre hardware.
@@ -230,5 +244,18 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-03 16:48. Reanudación automática de Claude
+### D. Reanudación nocturna
+
+- Tarea de Windows `ClaudeReanudarTesis`: `Ready`, próxima corrida 19:22,
+  repetición horaria hasta 09:22, política `IgnoreNew`.
+- Script: `src/firmware/psoc/reanudar_sesion.ps1`.
+- Sesión exacta: `claude --resume 17391455-01f5-43a8-8b39-2717439e180c`.
+- Log: `%LOCALAPPDATA%\claude_reanudar`.
+- La última corrida manual terminó limpiamente al encontrar la cuota de Claude;
+  el scheduler volverá a intentar. Ethernet mantiene salida a Internet aunque
+  WiFi quede conectado al AP `GeoNetwork` para el banco.
+
+---
+
+*Última actualización: 2026-09-03 17:08. Reanudación automática de Claude
 programada desde las 19:22, cada hora hasta las 09:22, sin corridas solapadas.*

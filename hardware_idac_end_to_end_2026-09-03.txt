@@ -1,0 +1,58 @@
+Prueba de hardware: IDAC manual firmado 0xAA de punta a punta
+Fecha: 2026-09-03 17:03-17:06 -03:00
+
+Hardware / firmware cargado
+- Master ESP32: COM6, 921600 baud, firmware esp32dev nuevo.
+- Esclavo GEO nodo 2: COM8, firmware slave2 nuevo.
+- PSoC GEO de campo: build con polarity_reg, previamente programado y verificado.
+
+Ruta binaria PC -> master USB -> ESP-NOW -> slave2 -> UART -> PSoC -> ACK
+
+OPEN COM6 921600; waiting master/slave discovery
+HELLO node2: 56 02 fd 01 01 1a
+IDAC code=+200 tx=ab bd 02 aa 03 c8 63 ack=56 02 07 aa 01 00 ok=True
+IDAC code=-200 tx=ab bd 02 aa 83 c8 e3 ack=56 02 07 aa 01 00 ok=True
+IDAC code=+0   tx=ab bd 02 aa 03 00 ab ack=56 02 07 aa 01 00 ok=True
+RESULT PASS
+
+Ruta web real -> WebSocket del master -> ESP-NOW -> slave2 -> UART -> PSoC -> ACK
+
+La PC se conecto al AP GeoNetwork y se verifico que http://192.168.4.1
+sirviera los tres assets nuevos (app.js, protocol.js y slave_panel.js) desde
+la imagen LittleFS que se habia cargado al master.
+
+OPEN ws://192.168.4.1/ws
+WEB {"cmd":"BD","node":2,"sub":"AA","param":3,"param2":200}
+ACK 56 02 07 aa 01 00 OK True
+WEB {"cmd":"BD","node":2,"sub":"AA","param":131,"param2":200}
+ACK 56 02 07 aa 01 00 OK True
+WEB {"cmd":"BD","node":2,"sub":"AA","param":3,"param2":0}
+ACK 56 02 07 aa 01 00 OK True
+RESULT PASS
+
+La ultima orden de ambas rondas fue codigo 0 en etapa 3. Por lo tanto la
+referencia quedo restaurada al centro/Vref. El ACK de PC es el MsgCfgAck que
+solo emite el esclavo despues de recibir CFG_ACK(0xAA,p1) correcto del PSoC.
+
+Compilaciones y chequeos posteriores
+- pio run (slave1, slave2, slave3): 3/3 SUCCESS.
+- pio run -e slaveTest: SUCCESS.
+- pio run -e esp32dev: SUCCESS.
+- node --check app.js/protocol.js/slave_panel.js: PASS.
+- ack_contract_test.py: PASS.
+- compileall geophone_scope + asserts de trama 0xAA: PASS.
+
+Observacion de robustez
+- En una ronda directa COM8 hubo un timeout aislado al restaurar 0 despues de
+  dos cambios inmediatos. Un probe confirmo el enlace y el reintento dio ACK.
+  La ronda completa por master y la ronda completa por WebSocket dieron 3/3
+  sin timeout. El transcript directo completo esta en
+  hardware_idac_signed_2026-09-03.txt.
+
+Limite de esta evidencia
+- Demuestra transporte, interpretacion de signo/etapa/magnitud y ACK real del
+  PSoC. El diagnostico ADC de campo no dio una comparacion electrica estable
+  tras conmutar el signo, por lo que no se usa para afirmar el sentido fisico.
+  Ese sentido ya habia mostrado recorrido firmado en el proyecto de autotest,
+  pero conviene repetirlo con DMM/osciloscopio sobre LPo antes de cerrar la
+  caracterizacion analogica de campo.
