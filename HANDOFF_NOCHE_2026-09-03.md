@@ -249,6 +249,8 @@ Ordenada por lo que desbloquea más.
 - Tarea de Windows `ClaudeReanudarTesis`: `Ready`, próxima corrida 19:22,
   repetición horaria hasta 09:22, política `IgnoreNew`.
 - Script: `src/firmware/psoc/reanudar_sesion.ps1`.
+- Commit del script actualizado: `00241cc`; ya identifica COM8 como firmware
+  de campo y ordena continuar captura/ingesta sin repetir el port `0xAA`.
 - Sesión exacta: `claude --resume 17391455-01f5-43a8-8b39-2717439e180c`.
 - Log: `%LOCALAPPDATA%\claude_reanudar`.
 - La última corrida manual terminó limpiamente al encontrar la cuota de Claude;
