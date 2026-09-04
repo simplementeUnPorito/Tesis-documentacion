@@ -15,7 +15,7 @@ esclavo en **COM7**, PGA 1× y PGAout 1× salvo donde se aclare.
 |---|---|
 | «C1 se come la continua, el acople entre etapas es sólo transitorio» | **Falso.** El acople es de continua y **permanente**. C1 sólo lo demora. |
 | «los abortos son de sintonía / watchdog» | **Son de autoridad.** El ADDER corre la salida del LP 4× más que el propio LP. |
-| «`CAL_PI_GAIN_GEO_BP_X1000` = 101» | **Mal por 2×.** Medido 90,1 y 96,5 µV/cód por dos caminos → debería ser ~48. |
+| «`CAL_PI_GAIN_GEO_BP_X1000` = 101 está mal» | **No.** Era un error mío: comparé contra la ganancia de régimen y el firmware usa la **instantánea**, que es la correcta. Ver §4. |
 | «la ganancia del LP es 651» | **Es 295.** Medido 524,7 µV/cód; 295 predice 553, 651 predice 1220. |
 | «hay que subir `CAL_PI_SETTLE_SAMPLES`» | Ese número **siempre estuvo bien** (vacía el FIR). Faltaba otro concepto: la espera de planta. |
 | «se cayeron los pull-ups del bus I2C» | **Falsa alarma mía.** Estaba midiendo el ESP maestro. Ver §7. |

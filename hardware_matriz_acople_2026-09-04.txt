@@ -82,8 +82,41 @@ El problema no es el orden sino la MAGNITUD de lo que cada etapa le deja a las
 de abajo.
 
 
-HALLAZGO 4 — LA GANANCIA DEL BP QUE USA EL FIRMWARE ESTA MAL, POR 2X
-=====================================================================
+HALLAZGO 4 — CORREGIDO: LA GANANCIA DEL BP NO ESTA MAL
+=======================================================
+!! Lo que sigue en esta seccion fue una CONCLUSION MIA EQUIVOCADA. Se conserva
+!! porque el error es instructivo, pero NO hay que aplicar el cambio que propone.
+!!
+!! Compare la ganancia del firmware contra la de REGIMEN PERMANENTE (G_DC) y
+!! concluí que la del BP estaba al doble. Es la comparacion equivocada. Las
+!! cuatro constantes del firmware coinciden con la respuesta INSTANTANEA, que es
+!! G_DC + G_TRANS, y esa es la que corresponde a un lazo que reacciona en 49 ms:
+!!
+!!       etapa      G_DC    G_TRANS   inmediata   firmware    error
+!!         PGA    61,2 uV    0,0 uV     61,2 uV    58,1 uV    +5,3 %
+!!          BP    90,1 uV   98,0 uV    188,1 uV   189,4 uV    -0,7 %
+!!       ADDER   740,9 uV   21,4 uV    762,3 uV   770,6 uV    -1,1 %
+!!          LP   524,7 uV    0,0 uV    524,7 uV   553,1 uV    -5,1 %
+!!
+!! El BP es la UNICA etapa donde el transitorio es comparable a la continua, por
+!! eso parecia mal solo esa. Las cuatro estan bien.
+!!
+!! Y aplicar el "arreglo" ROMPE el lazo: con la ganancia de regimen (48) el
+!! deadbeat sobrecorrige por 2 en la escala de tiempo en que trabaja, y el DAC
+!! oscila con amplitud CRECIENTE hasta el riel. Trayectoria simulada del DAC del
+!! BP: 0, -17, 2, -19, 4, -21, 6, -23, 9, -28, 14, -33, 20, -40. Exito 0 %.
+!! Con Kp=1/2 se estabiliza, pero no hace falta: la constante ya era correcta.
+!!
+!! LO QUE SI QUEDA EN PIE de aca abajo: que la ganancia del LP es 295 y no 651.
+!! Esa comparacion no cambia, porque el LP tiene G_TRANS = 0.
+!!
+!! Y la consecuencia REAL del asunto: usando la ganancia instantanea el lazo es
+!! estable, pero el valor FINAL del BP queda en G_DC/G_inst = 0,48 de lo que
+!! hacia falta. O sea que converge y despues se va, que es exactamente el
+!! sintoma "no se sostiene". El arreglo no es tocar la ganancia sino ESPERAR a
+!! la planta, para que la medida sea la asentada.
+
+TEXTO ORIGINAL, ERRONEO:
       etapa       medida     firmware      error
         PGA      61,2 uV      58,1 uV      +5,3 %
          BP      90,1 uV     189,4 uV     -52,4 %     <-- MAL
