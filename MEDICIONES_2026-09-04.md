@@ -78,6 +78,19 @@ nada. **Ése es el mecanismo de aborto por riel, ahora medido.**
 `Vref_LP` es cero salvo su diagonal, la columna de ch0 también. Eso **valida el
 orden de calibración actual (0,1,2,3)** y descarta invertirlo.
 
+**c-bis) Control de calidad: ida contra vuelta.** Cada etapa se midió yendo a
++120 y volviendo a 0. Las dos ramas dan la misma ganancia dentro del **1–1,5 %**:
+
+| par | ida | vuelta | acuerdo |
+|---|---:|---:|---:|
+| PGA→ch0 | 61,2 | 62,0 | 1,3 % |
+| PGA→ch2 | −240,3 | −236,7 | 1,5 % |
+| PGA→ch3 | 1026,0 | 1013,6 | 1,2 % |
+| BP→ch1 | 90,1 | 91,4 | 1,4 % |
+| BP→ch2 | −388,3 | −390,1 | 0,5 % |
+
+Valida la matriz entera y **descarta histéresis** en el rango medido.
+
 **d) Hay dos caminos, uno rápido y uno lento.** El ajuste separa `G_DC` de la
 amplitud transitoria `A`. Según el par eso es un sobrepico (`BP→ADDER`: salta a
 −150 mV y sube a −46,6) o una subida lenta desde casi cero (`PGA→LP`: arranca en
