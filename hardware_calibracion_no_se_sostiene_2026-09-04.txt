@@ -82,3 +82,54 @@ No se probo subir el asentamiento, porque sin KitProg no se puede reprogramar el
 PSoC. Es lo primero que hay que hacer cuando vuelva, y ahora se sabe exactamente
 que medir para saber si funciono: calibrar, esperar diez minutos, y pedir un
 snapshot. Si LP sigue a 51 mV, no alcanzo.
+
+
+==========================================================================
+LA CURVA: cuanto tarda en irse, medido
+==========================================================================
+Se calibro y se pidio un snapshot cada 45 s. Error de cada etapa, en mV:
+
+  t desde cal     PGA      BP    ADDER       LP
+        10 s     0,04    0,48    -0,92     1,83
+        55 s     0,04   -0,48     2,38   -13,96
+       100 s     0,10   -0,65     2,94   -17,17
+       145 s     0,13   -0,51     3,13   -18,04
+       190 s     0,10   -0,67     3,03   -17,89
+       235 s     0,06   -0,71     3,30   -18,10
+       280 s     0,06   -0,63     3,13   -18,41
+       325 s     0,02   -0,86     2,98   -17,80
+       370 s     0,00   -0,65     3,11   -18,33
+
+TRES COSAS, Y LAS TRES CIERRAN EL CASO:
+
+1. A los 10 s la calibracion se ve BIEN: LP en 1,83 mV. Es el numero que informa
+   y es cierto en ese instante.
+
+2. A los 145 s ya se asento en -18 mV Y SE QUEDA AHI. No sigue derivando: las
+   cinco medidas siguientes dan -17,9 / -18,1 / -18,4 / -17,8 / -18,3. O sea que
+   no es deriva termica ni ruido, es el TRANSITORIO de la propia calibracion
+   terminando de asentarse.
+
+   Llegar al valor final en ~145 s son unos 4,7 tau con el tau = 31 s medido
+   aparte esa noche. Las dos medidas son independientes y coinciden.
+
+3. EL ERROR CRECE MONOTONAMENTE AGUAS ABAJO:
+
+     PGA    0,00 mV     no lo perturba nadie: es la primera
+     BP    -0,65 mV
+     ADDER  3,11 mV
+     LP   -18,33 mV     acumula el transitorio de las tres de arriba
+
+   Ese orden es la firma del acoplamiento entre etapas. Si fuera deriva del
+   sensor o ruido de medida, no tendria por que ordenarse asi.
+
+CUANTO HABRIA QUE ESPERAR
+El valor final se alcanza a los ~145 s. El lazo hoy espera 0,197 s. Como cota
+inferior razonable, el asentamiento de cada etapa deberia estar en el orden de
+las decenas de segundos, no de las decimas. En muestras a 2604 Hz, hablar de
+50000 a 100000 en vez de 512.
+
+Eso hace que una calibracion completa pase de ~40 s a varios minutos. Es un
+costo real y hay que decidirlo a sabiendas, pero hoy los ~40 s producen un
+resultado que se va a 18 mV, asi que la comparacion no es entre rapido y lento
+sino entre rapido y correcto.
