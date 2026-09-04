@@ -49,3 +49,29 @@ PISTAS PARA QUIEN LO SIGA
 QUE NO SE TOCO
 Nada. Cambiar escalas o tiempos de asentamiento sin entender el factor 24-25
 seria tapar el sintoma. La configuracion quedo restaurada en 1 al terminar.
+
+--------------------------------------------------------------------------
+REPRODUCCION (dos corridas independientes mas, misma noche)
+--------------------------------------------------------------------------
+  cfg   corrida A     corrida B     corrida original
+   1     1000,0 mV     1000,0 mV       999,6 mV
+   1'     999,9 mV     1000,0 mV      1000,0 mV   (repetida al final)
+   3       41,6 mV       39,5 mV        39,2 mV
+   4       26,2 mV       42,6 mV        42,4 mV
+   2    sin datos      -440,6 mV      -440,6 mV
+
+Config 1 repite al 0,1 mV: es la unica estable. Config 3 ronda los 40 mV.
+Config 4 varia (26,2 contra 42,6) y no es repetible.
+
+DATO NUEVO Y FUERTE: config 2 devolvio -112796,0 cuentas en DOS corridas
+separadas, identico hasta el ultimo digito. Un promedio de 240 muestras de una
+senal con ruido no puede repetir exactamente; eso no es una medida, es un valor
+fijo. Encaja con el defecto de coherencia DMA que el propio firmware documenta
+para esa configuracion -si el DMA mezcla bytes de una entrada estable, el
+resultado erroneo es deterministico- y NO con un error de escala, que daria
+valores distintos con el mismo factor.
+
+O sea que hay al menos dos problemas distintos, no uno:
+  * config 2: dato corrupto, deterministico, probablemente el camino DMA.
+  * config 3 y 4: valores del orden de 40 mV en vez de 1000, con config 4
+    ademas no repetible. Eso no lo explica la coherencia.
