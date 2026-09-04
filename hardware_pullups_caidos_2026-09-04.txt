@@ -1,0 +1,91 @@
+PULL-UPS DE 3V3 CAIDOS — regresion electrica medida, 2026-09-04
+================================================================
+
+QUE PASA
+El enlace PSoC->ESP esta muerto: probe=0, cero tramas buenas Y cero tramas
+malas, cero pings. No llega basura: no llega nada.
+
+LA MEDIDA QUE LO DECIDE
+El item B0c del autotest mide las lineas del bus I2C en tres condiciones: pin
+del ESP flotante, con pull-up interno y con pull-down interno. El pull-up/down
+interno del ESP32 es de ~45 kOhm.
+
+  fecha              SDA flotante  pu     pd     | SCL flotante  pu     pd
+  2026-09-02 00:51      50/50    30/30  30/30   |    50/50     30/30  30/30
+  2026-09-02 01:03      50/50    30/30  30/30   |    50/50     30/30  30/30
+  2026-09-03 01:33      50/50    30/30  30/30   |    50/50     30/30  30/30
+  ---------------------------------------------------------------------------
+  2026-09-04 12:0x       0/50    30/30   0/30   |     0/50     30/30   0/30
+  2026-09-04 12:1x       0/50    30/30   0/30   |     0/50     30/30   0/30
+  2026-09-04 12:2x       0/50    30/30   0/30   |     0/50     30/30   0/30
+
+Leer la columna "pd" es lo importante y no admite interpretacion:
+
+  ANTES: con el pull-down interno de 45 kOhm ACTIVO, la linea seguia en ALTO
+         30 de 30 veces. Solo un pull-up externo fuerte (orden de 4k7) gana esa
+         pelea. LOS PULL-UPS EXTERNOS ESTABAN.
+
+  HOY:   con el mismo pull-down interno, la linea cae 0 de 30. Y flotante cae
+         0 de 50, cuando antes se quedaba arriba 50 de 50. La linea ahora sigue
+         EXACTAMENTE al pull-up/pull-down interno del ESP y a nada mas.
+         LOS PULL-UPS EXTERNOS NO ESTAN.
+
+NO ES UN CASO AISLADO: SON DOS REDES DISTINTAS
+El item A3 mide los pull-ups de los cuatro pulsadores, que son otra red:
+
+  2026-09-01/02/03   A3 PASS   "4/4 en alto estable"
+  2026-09-04         A3 WARN   "UP(34),DOWN(35),OK(36),BACK(39) en bajo ->
+                                falta R 10k a 3V3"
+
+Dos redes de pull-up independientes se caen a la vez. La causa comun es el
+riel de 3V3 que las alimenta a las dos.
+
+POR QUE ESTO EXPLICA TODOS LOS SINTOMAS CON UNA SOLA CAUSA
+El I2C es de drenador abierto: los dispositivos solo tiran a masa, y el nivel
+alto lo pone el pull-up. Sin pull-up las dos lineas quedan bajas. Un maestro
+I2C, ANTES de emitir un START, exige ver SDA y SCL en alto; si las ve bajas
+interpreta que el bus esta ocupado y NO arranca nunca.
+
+Eso es exactamente lo que reporta B0b: "sin flancos al arranque ni trafico
+actual". Cero flancos. El PSoC no es que transmita mal, es que nunca empieza.
+Y por eso no hay tramas malas: no hay tramas.
+
+LO QUE ESTO DESCARTA, YA VERIFICADO
+- No es el firmware del PSoC. Se grabaron y verificaron los dos por KitProg:
+  campo (62.104 B, 251 filas) y autotest (67.448 B, 272 filas). Identico
+  comportamiento con los dos.
+- No esta condicionado por software: psoc_link_start() se llama sin guarda en
+  main.c:3238.
+- No es el perfil de hardware en NVS: forzado a psoc=1 (presente), sin cambio.
+- No es el ESP: A1 PASS (heap 204 KB, flash 4 MB) y A4 PASS (ESP-NOW init,
+  peer y TX, esp_now_send=0). Responde consola, perfil y todos los tests que no
+  dependen del PSoC.
+- No es intermitente: tres corridas del grupo B mas una corrida completa, las
+  cuatro identicas.
+
+CONTEXTO QUE PUEDE IMPORTAR
+Lo unico que cambio en el equipo entre la ultima corrida buena y hoy es que el
+KitProg volvio a enumerar (anoche no aparecia; hoy si, "KitProg
+(CMSIS-DAP/246475)" confirmado con ppcli GetPorts). El netlist marca los pines
+I2C del PSoC como NO conectados en el PCB:
+
+  unconnected-(A1-P12.0_/_I2C_SCL-PadJ1.16)
+  unconnected-(A1-P12.1_/_I2C_SDA-PadJ1.15)
+
+o sea que la subida I2C no va por pista. En el CY8CKIT-059 P12[0] y P12[1] son
+justamente las lineas que usa el puente I2C del KitProg. No esta probado que
+haya relacion, pero es la unica variable que se movio y conviene descartarla
+desanchufando el USB del KitProg y repitiendo el grupo B.
+
+QUE HAY QUE MEDIR CON TESTER (no lo puedo hacer por software)
+1. 3V3 en el pin 3V3 del ESP32 y en el extremo de los pull-ups del I2C.
+2. Continuidad de los dos cables volantes P12[0]=SCL y P12[1]=SDA (pads J1.15
+   y J1.16) hasta GPIO22 y GPIO21.
+3. Masa comun entre las dos placas.
+4. De donde sale ese 3V3 y si algo lo dejo de alimentar.
+
+COMO SE REPITE LA MEDIDA
+  cd C:\Github\Tesis\src\interfaces\python
+  <python3.14> -m testbench run --port COM8 --group b
+Son 3,4 s. B0c es la linea que hay que mirar: si "pd" vuelve a 30/30, los
+pull-ups volvieron.
