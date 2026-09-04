@@ -64,7 +64,7 @@ QUE HACER, EN ORDEN DE MENOS A MAS TRABAJO
 --------------------------------------------------------------------------
 1. Subir CAL_PI_SETTLE_SAMPLES en las etapas que estan aguas abajo de otra, para
    que el lazo no mida sobre un transitorio ajeno. Un tau son ~81000 muestras;
-   no hace falta tanto, pero 512 es tres ordenes de magnitud menos.
+   no hace falta tanto, pero 512 muestras son 158 veces menos que un tau.
 2. Esperar entre etapa y etapa, no solo dentro de cada una: el problema es el
    transitorio que deja la etapa ANTERIOR.
 3. Recien despues tocar deadband o lock. Hoy el deadband de la etapa 2 es 26

@@ -18,7 +18,7 @@ real. Desde un offset grande se aborta, y el mecanismo está identificado.
 | recuperación tras saturar | **τ ≈ 31 s**, contra 0,197 s que espera el lazo |
 | capturas vacías (~4 %) | es el ACK del **SETN** sin reintento |
 | configs 2/3/4 del ADC | **no sirven hoy**; sólo la 1 está validada |
-| el modelo del lazo | se queda corto por **tres órdenes de magnitud** |
+| el modelo del lazo | predice **500 veces más rápido** de lo que es |
 
 **Encontré y arreglé dos bugs**, compilados y sin grabar (necesitan el KitProg):
 el reintento del SETN y el centrado de `cmp`/`err`, sin el cual una calibración
@@ -78,7 +78,7 @@ se mostraba como `err_mV=-1000`. `psocCalCompareCounts()` del ESP y
 la del PSoC restaba `CAL_TARGET_1V_COUNTS` (52429). Hasta que se pueda grabar,
 **los logs de calibración hay que leerlos restando 52429 a mano**.
 
-### El modelo del lazo y la placa difieren en TRES ÓRDENES DE MAGNITUD
+### El modelo del lazo predice 500 veces más rápido de lo que la placa es
 
 Vale la pena tenerlo presente al mirar cualquier resultado de simulación.
 `calculos_modelados/python/calibracion_pi/modelo_exacto_firmware.py` es un
