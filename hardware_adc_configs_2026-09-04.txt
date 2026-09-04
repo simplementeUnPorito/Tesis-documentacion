@@ -75,3 +75,45 @@ O sea que hay al menos dos problemas distintos, no uno:
   * config 2: dato corrupto, deterministico, probablemente el camino DMA.
   * config 3 y 4: valores del orden de 40 mV en vez de 1000, con config 4
     ademas no repetible. Eso no lo explica la coherencia.
+
+--------------------------------------------------------------------------
+DESCARTADO: no es la alineacion. HIPOTESIS NUEVA: la correccion GCOR
+--------------------------------------------------------------------------
+Primera sospecha, razonable: las configuraciones difieren en alineacion del dato
+crudo y el camino DMA podria estar aplicando la de una a las otras. En main.c,
+dma_buf_to_adc_counts() decide con
+
+    #if (ADC_CF_0V512_ALIGNMENT == 0u)
+        if (ADC_Config != ADC_CF_2V5) -> sign_extend a ADC_CF_0V512_RESOLUTION
+
+o sea que usa las constantes de la CONFIG 2 para decidir por las tres no-default.
+Eso es fragil, pero da la respuesta correcta: verificado en la cabecera generada,
+
+    CF_2V5   ALIGNMENT 1     (left)
+    CF_0V512 ALIGNMENT 0     (right)
+    CF_1V024 ALIGNMENT 0     (right)
+    CF_0V625 ALIGNMENT 0     (right)
+
+y las cuatro son de 18 bits. Las tres no-default comparten alineacion y
+resolucion, asi que decidir por ellas con las constantes de una sola no las
+rompe. LA ALINEACION NO ES LA CAUSA.
+
+Queda una hipotesis mejor, que explica el factor comun ~25 de las configs 3 y 4:
+LA CORRECCION DE GANANCIA (GCOR).
+
+psoc_adc.c dice que ADC_SelectConfiguration "hace ADC_Stop + InitConfig y
+compensacion GCOR". Esa compensacion la aplica la API del componente al
+LEER (ADC_GetResult32), pero la captura NO usa esa API: los DMA leen
+ADC_DEC_SAMP_PTR, o sea el registro crudo del decimador, y se saltean cualquier
+correccion por software. Si el GCOR de la configuracion 1 es ~1 -es la que se usa
+siempre y contra la que estan calibrados los targets- config 1 saldria bien y las
+otras salen escaladas por su propio GCOR, que es justo lo que se ve.
+
+COMO COMPROBARLO, en cinco minutos y sin tocar nada:
+leer el MISMO nodo en la misma configuracion por los dos caminos, ADC_GetResult32()
+y el valor que arma el DMA, y comparar. Si difieren por el factor que falta, es
+GCOR. Si coinciden, la causa esta antes y hay que mirar el decimador.
+
+Esto NO explica lo de la config 2, que devuelve un valor bit a bit identico entre
+corridas: eso sigue apuntando al defecto de coherencia DMA ya documentado. Son
+dos problemas distintos, como ya estaba anotado.
