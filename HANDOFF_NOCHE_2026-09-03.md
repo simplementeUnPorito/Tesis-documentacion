@@ -48,6 +48,13 @@ buena se lee como un error de −1000 mV.
 Está detallado en la sección 3. Y mirá el punto 4: puede que se hayan perdido
 picks de Canchita, y no es de esta sesión.
 
+**En qué estado te dejo el banco** (07:50): PSoC y ESP con el firmware de campo,
+enlace arriba. La última acción fue medir la curva de decaimiento, así que
+**quedó recién calibrado y ya decaído**: `GEO_LP` a −18 mV y las otras tres por
+debajo de 3 mV. No lo volví a calibrar a propósito, porque volvería a decaer
+igual y así ves el estado real. El servidor de laboratorio sigue corriendo en
+`:8011` con las raíces en `data/lab`.
+
 ---
 
 Este archivo tiene tres partes: **lo que hay que saber antes de tocar nada**, **el
