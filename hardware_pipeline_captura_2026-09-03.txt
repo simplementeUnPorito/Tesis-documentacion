@@ -79,3 +79,22 @@ LO QUE ESTO NO PRUEBA
   ruta de configuracion.
 - La captura es de reposo: el geofono no fue golpeado. Los 6,5 mV pico a pico
   son ruido y microvibracion ambiente, no un evento.
+
+--------------------------------------------------------------------------
+ANEXO: el server no solo cataloga, LEE las muestras (2026-09-04 ~03:10)
+--------------------------------------------------------------------------
+Catalogar podria hacerse solo con los metadatos. Se comprobo que ademas lee el
+raw_f32le.bin y calcula sobre el:
+
+  /api/captures/p2p  ->  0,006542 V  y  0,006523 V (x2)
+
+Son exactamente los pico a pico que se midieron al capturar (6,542 mV y
+6,523 mV). Si el server estuviera leyendo mal el archivo, o leyendo otro, esos
+numeros no coincidirian.
+
+  /api/signal  ->  3000 muestras, 1,15207 s, fs 2604, canal geo S2,
+                   apuntando al archivo correcto
+
+O sea que la ruta de ANALISIS tambien funciona sobre lo ingerido, no solo la de
+escritura. Con eso el pipeline queda cerrado de punta a punta: PSoC -> esclavo
+-> maestro -> USB -> ZIP -> /ingest -> catalogo -> lectura de la senal.
