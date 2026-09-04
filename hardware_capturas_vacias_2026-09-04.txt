@@ -1,0 +1,50 @@
+CAPTURAS VACIAS ESPORADICAS — lo medido y una hipotesis DESCARTADA
+2026-09-04, ~00:30 local. Firmware de campo, maestro COM6, slave2 COM8.
+
+EL SINTOMA
+Cada tanto un START devuelve cero muestras. El comando se acepta, no hay error
+en ningun lado, y la captura siguiente anda. Se vio en tres tandas distintas.
+
+CUANTO
+  bateria de fiabilidad (codigos chicos)   1 vacia en 60   (1,7 %)
+  ingesta de campana                       1 vacia en  3
+  prueba de esperas                        1 vacia en 12
+  ------------------------------------------------------------
+  total                                    3 vacias en 75  (4 %)
+
+HIPOTESIS DESCARTADA: "falla la PRIMERA captura despues de abrir el puerto"
+Era razonable: abrir COM6 resetea el maestro, y el esclavo tiene que volver a
+registrarse por ESP-NOW; 2,5 s de espera podian no alcanzar. Ademas las dos
+primeras veces que se vio, la vacia fue la primera de la tanda.
+
+Se probo abriendo y cerrando el puerto cuatro veces, esperando 2,5 / 5 / 8 / 12
+segundos antes de la primera captura, con tres capturas por tanda:
+
+   espera   capturas (muestras de cada una)
+    2,5 s   [150, 150, 150]
+    5,0 s   [150, 150, 150]
+    8,0 s   [150, 150, 150]
+   12,0 s   [150,   0, 150]
+
+NINGUNA primera fallo, ni siquiera con la espera mas corta. La unica vacia fue
+una SEGUNDA, y encima con la espera mas larga. La hipotesis no se sostiene: los
+fallos no estan atados a abrir el puerto ni a la posicion en la secuencia.
+
+Queda entonces: fallos esporadicos del orden del 4 %, sin patron identificado.
+
+LO QUE FALTA PARA PINCHARLO
+Hace falta ver el lado del ESCLAVO durante una captura fallada, porque desde el
+maestro no se distingue "el esclavo nunca recibio el START" de "lo recibio y no
+mando nada". El esclavo tiene su consola USB libre en COM8, asi que se puede
+escuchar mientras se dispara desde COM6 hasta que caiga una vacia.
+
+Precaucion antes de hacerlo: abrir COM8 resetea el ESP esclavo, y eso puede
+desincronizar la UART de bajada del PSoC (ver las trampas del HANDOFF). Hay que
+abrirlo UNA vez y despues disparar muchas capturas, no abrir y cerrar seguido.
+
+POR QUE NO SE TOCO NINGUN RETRY
+Con 4 % y sin causa identificada, agregar un reintento taparia el sintoma y
+haria mas dificil encontrarlo despues. Ademas el transporte de CONFIGURACION no
+falla: 0 de 60 fallos de 0xAA, 0 de SET_RECLEN y 0 de ARM en la misma bateria,
+consistente con el 15/15 que ya estaba documentado. El problema esta en el
+camino de DATOS, no en el de comandos.
