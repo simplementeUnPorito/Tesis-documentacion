@@ -1,3 +1,61 @@
+FALSA ALARMA — NO HUBO NINGUNA FALLA DE HARDWARE
+=================================================
+CORRECCION del 2026-09-04, 14:35. Todo lo que sigue debajo de la linea de
+guiones es un ERROR DE DIAGNOSTICO MIO. Se deja escrito entero porque el error
+es mas util que la conclusion.
+
+QUE PASO DE VERDAD
+Estuve toda la tarde midiendo el bus I2C del ESP MAESTRO, que naturalmente no
+tiene ningun PSoC conectado. El esclavo real estaba en COM7, no en COM8.
+Corriendo el MISMO grupo B contra COM7:
+
+  [B0c] SDA flotante 50/50  pu 30/30  pd 30/30   <- identico a los dias buenos
+  [B0d] SCL aguanta el pull-down externo ......... PASS
+  [B1]  Subida I2C PSoC->ESP: 8 B/1.5s, 2 pings .. PASS
+  [B0b] 33 flancos observados al arranque ........ PASS
+  [B2]  Bajada UART + vuelta por I2C: 2 ms ....... PASS
+  7 PASS, 1 FAIL (B3, la linea SYNC, que es otro tema)
+
+Los pull-ups siempre estuvieron. La placa nunca se toco, como decia Elias.
+
+POR QUE ME EQUIVOQUE — esto es lo que no hay que repetir
+1. Me confie del HANDOFF que decia "el esclavo en COM8" y NUNCA LO VERIFIQUE.
+   Los COM de Windows se reasignan al reenumerar; a media sesion vi
+   "ESP=['COM8','COM7']" y no me detuve a preguntar cual era cual.
+2. platformio.ini tiene upload_port = COM8 fijo en el entorno slaveTest, asi que
+   grabe slaveTest AL MAESTRO, pisandole su firmware. Eso reforzo el engano: el
+   ESP contestaba consola y perfil perfectamente porque era un ESP sano; lo
+   unico que no tenia era un PSoC del otro lado.
+3. Las mediciones eran CORRECTAS y REPRODUCIBLES -tres corridas identicas- y la
+   conclusion era falsa igual. Reproducibilidad no es validez: repetir una medida
+   sobre el objeto equivocado la confirma igual de bien.
+
+LA SENAL QUE DEBI ESCUCHAR
+Elias insistio dos veces en que la placa no se habia tocado. Trate ese dato como
+un obstaculo a explicar en vez de como evidencia contra mi hipotesis. Cuando el
+usuario afirma un hecho fisico que contradice la conclusion, lo primero que hay
+que revisar es la conclusion.
+
+Tambien hubo una anomalia que no supe leer: P2[1] daba 2,7 V y GPIO21 daba
+3,3 V. La interprete como "junta de alta resistencia entre los dos". La lectura
+correcta era mas simple: NO ERAN EL MISMO NODO, porque ese GPIO21 pertenecia a
+otra placa.
+
+DATO UTIL QUE SI QUEDA
+Los pines I2C reales, del .cydwr, porque el netlist usa los nombres del simbolo
+del kit (P12.0/P12.1) y esos NO son los que usa el firmware:
+  I2Cp[0] SDA = P2[1], pin 63       I2Cp[1] SCL = P2[3], pin 65
+
+REGLA PARA LA PROXIMA
+Antes de diagnosticar el enlace, identificar la placa con
+`-m testbench probe --port COMn`. Si contesta banner y perfil pero da probe=0
+con CERO tramas malas, sospechar primero que es el ESP equivocado: un bus roto
+de verdad suele dar tramas malas, un ESP sin PSoC da silencio perfecto.
+
+--------------------------------------------------------------------------
+LO QUE SIGUE ES EL ANALISIS ERRONEO, CONSERVADO A PROPOSITO
+--------------------------------------------------------------------------
+
 PULL-UPS DE 3V3 CAIDOS — regresion electrica medida, 2026-09-04
 ================================================================
 
