@@ -114,3 +114,16 @@ No necesita el I2C. El costo es que el lazo de depuracion queda ciego: cada
 iteracion es compilar, grabar y leer memoria. Solo vale la pena si el arreglo
 fisico se demora mucho. Antes hay que hacer andar Acquire, que hoy falla con la
 secuencia de arriba aunque program_psoc.ps1 si logra grabar.
+
+HIPOTESIS DESCARTADA: EL ORDEN DE ARRANQUE
+Se penso que el PSoC podia estar quedando trabado en "bus ocupado" por bootear
+con las lineas bajas: un maestro I2C exige ver SDA y SCL altas antes del START,
+y el ESP levanta sus pull-ups internos (~45 kOhm) recien cuando arranca Wire,
+que en slaveTest ocurre DESPUES de la medicion B0.
+
+Se probo la secuencia correcta, que hasta entonces no se habia probado: correr
+el grupo B para dejar Wire arriba y recien despues resetear el PSoC. Ocho
+sondeos en 40 s: up=False, 0 tramas, 0 pings, siempre.
+
+El orden no es la causa. Sumado a lo anterior, quedan descartados el firmware
+del PSoC (los dos), el perfil de NVS, el KitProg y la secuencia de arranque.
