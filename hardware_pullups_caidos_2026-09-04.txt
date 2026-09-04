@@ -127,3 +127,22 @@ sondeos en 40 s: up=False, 0 tramas, 0 pings, siempre.
 
 El orden no es la causa. Sumado a lo anterior, quedan descartados el firmware
 del PSoC (los dos), el perfil de NVS, el KitProg y la secuencia de arranque.
+
+ULTIMO CAMINO PROBADO: MEDIR CON EL ADC DEL ESP. TAMBIEN CERRADO.
+La bajada UART ESP->PSoC es un cable DISTINTO del I2C, y su test B2 dio SKIP
+("no se puede confirmar la ida"), no FAIL. O sea que escribir IDACs podria
+seguir funcionando. Si ademas el ESP pudiera LEER la salida de la cadena con su
+propio ADC, habria un lazo de medicion completo sin tocar el I2C.
+
+No lo hay. En el netlist, la red /LP_OUT tiene exactamente tres nodos:
+
+  A1 pin J2.10  (P0.1 del PSoC)
+  C5 pin 1      (capacitor de realimentacion del pasabajos)
+  R10 pin 1     (resistencia de realimentacion del pasabajos)
+
+No llega a ningun pin del ESP. El GPIO32 que aparece cerca en el netlist es la
+entrada de sincronismo externa (J3 SYNC_EXT), no la cadena.
+
+CONCLUSION: la salida de la cadena analogica solo la puede leer el ADC del PSoC,
+y el PSoC solo puede reportar por el I2C. No existe camino alternativo. Las
+mediciones de la cadena quedan bloqueadas hasta que el bus vuelva.
