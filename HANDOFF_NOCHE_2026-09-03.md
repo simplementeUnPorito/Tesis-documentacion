@@ -342,63 +342,84 @@ NO grabado.**
 
 ## 3. Lista para vos (mañana)
 
-Ordenada por lo que desbloquea más.
+Cinco cosas, en orden. Las tres primeras son de manos y destraban todo lo demás.
 
-1. **No rehacer el port `0xAA`: ya está probado y documentado.** Revisar los
-   commits del ESP/Python y las dos evidencias antes de continuar.
+### 1. Enchufá el KitProg  ·  *destraba tres pendientes de una vez*
 
-2. ~~Confirmar el sentido del bit de polaridad.~~ **RESUELTO en la noche, no
-   hay nada que hacer.** El bit está al derecho: `+240` da 1122,2 mV y `-240`
-   da 745,7 mV, una diferencia de +376,5 mV, medida por la ruta de captura. El
-   control es sólido: el código 0 medido tres veces intercalado entre los
-   extremos dispersa 0,42 mV, o sea 900 veces menos que la señal. **No** hay que
-   dar vuelta `PSOC_IDAC_POLARITY_NEGATIVE_BIT`.
+Es lo único que bloquea de verdad. Sin él no puedo poner el firmware de autotest
+en el PSoC, y eso es lo que hace falta para:
 
-2ante. **Mirá si la tapa cerrada apaga dispositivos.** Hay un patrón: el
-   KitProg no enumera *y* el adaptador WiFi, estando habilitado
-   (`AdminStatus: Up`), devuelve **cero** redes en un scan, lo cual es
-   imposible en un entorno normal. Las dos cosas empezaron después de cerrar la
-   tapa. Si abrirla los recupera, se destraban de una vez dos pendientes: la
-   medición por tap (necesita el KitProg) y la prueba de la página web (necesita
-   asociarse al AP `GeoNetwork`, cuyo perfil está guardado). No toqué la radio:
-   deshabilitar y rehabilitar el adaptador de madrugada, sin nadie mirando,
-   podía dejarte sin WiFi a las 8.
+- caracterizar las etapas 0, 1 y 2, que **desde la salida no se ven** (su efecto
+  en continua se lo come el acople de alterna);
+- medir el transitorio cruzado entre etapas, que es el número que decide si hay
+  que subir `CAL_PI_SETTLE_SAMPLES`;
+- probar cualquier cambio en las constantes de control.
 
-1bis. **Grabá el ESP esclavo: hay dos arreglos esperando.** Los dos están
-   commiteados y compilan, pero no se pudieron grabar porque reflashear el ESP
-   cuelga al PSoC y la recuperación necesita el KitProg. Son:
-   (a) el reintento del SETN, que elimina el ~4 % de capturas vacías;
-   (b) el centrado de `cmp`/`err` en el log de calibración, sin el cual una
-   calibración buena se lee como un error de −1000 mV.
+**Antes de comprar nada:** puede ser la tapa. El KitProg no enumera *y* el
+adaptador WiFi, estando habilitado (`AdminStatus: Up`), devuelve **cero** redes
+en un scan, cosa imposible en un entorno normal. Las dos cosas empezaron después
+de cerrar la tapa. Probá abriéndola. No toqué la radio a propósito:
+deshabilitarla de madrugada sin nadie mirando podía dejarte sin WiFi a las 8.
 
-2bis. **Enchufá el KitProg cuando puedas.** Es lo único que bloquea de verdad.
-   Sin él no puedo poner el firmware de autotest en el PSoC, y eso es lo que
-   hace falta para medir los taps intermedios: caracterizar las etapas 0, 1 y 2
-   (que desde la salida no se ven) y medir el transitorio cruzado que decide si
-   hay que subir el tiempo de asentamiento de la calibración.
+### 2. Grabá el ESP esclavo  ·  *hay dos arreglos esperando*
 
-2ter. **Mirá los picks de Canchita: puede que se hayan perdido.** El gate de
-   humo falla en `masw.canchita_compatibilidad` y al investigarlo aparece esto:
-   `data/processed/Canchita/field_review_masw_state.json` dice 2 picks, 1 grupo
-   y 0 regiones, pero el `.npz` de al lado guarda `inv_freqs`, `inv_c_obs` e
-   `inv_c_t` con **112 puntos** y `wf_group_ids` con **2 grupos**. O sea que el
-   JSON se truncó y el npz conservó la evidencia de lo que había. El archivo es
-   del 2026-08-20, muy anterior a esta sesión, y `data/` no está versionado, así
-   que no hay historial. La curva pickeada se puede reconstruir desde el npz
-   (`inv_freqs` + `inv_c_obs` son exactamente eso). Decidí vos si reconstruirla
-   o si simplemente el chequeo quedó viejo respecto de tu trabajo posterior.
+Commiteados y compilando, sin grabar porque reflashear el ESP cuelga al PSoC y
+la recuperación necesita el KitProg (por eso va después del punto 1).
 
-3. ~~Revisar los Kp/Ki contra la placa real.~~ **Ya corrió y converge** (ver
-   arriba). Lo que queda es más fino, con dos motivos concretos: la ganancia de etapa varía un factor 2,6 a lo largo del rango
-   (la sintonía la asume fija) y el acoplamiento entre etapas tiene tau ~31 s
-   contra 0,197 s de espera. Nunca corrió una calibración completa sobre
-   hardware.
+- **(a) Reintento del SETN.** Elimina el ~4 % de capturas vacías. La causa está
+  cazada con las dos puntas abiertas: el ACK del PSoC al SETN no llega en 500 ms
+  y el esclavo aborta el armado.
+- **(b) Centrado de `cmp`/`err`.** Sin esto, una calibración buena se lee como un
+  error de −1000 mV. **Hasta que grabes, los logs de calibración hay que leerlos
+  restando 52429 a mano.**
 
-4. La decisión conservadora ya quedó aplicada: `0xAA` sirve para ensayo manual,
-   pero la próxima calibración lo pisa y no se guarda en EEPROM como resultado
-   bueno sin volver a verificar la cadena.
+### 3. Conectate al AP `GeoNetwork` y probá la página  ·  *lo único del pipeline sin probar*
+
+El perfil está guardado. Todo lo demás del pipeline quedó probado sin navegador:
+PSoC → esclavo → maestro → USB → ZIP → `/ingest` → catálogo. Falta confirmar que
+la página del maestro exporte el ZIP igual que lo armé yo desde Python.
+
+### 4. Mirá los picks de Canchita  ·  *puede que se hayan perdido datos tuyos*
+
+No es de esta sesión y no lo toqué. El gate de humo falla en
+`masw.canchita_compatibilidad`, y al investigarlo:
+`data/processed/Canchita/field_review_masw_state.json` dice **2 picks, 1 grupo,
+0 regiones**, pero el `.npz` de al lado guarda `inv_freqs`, `inv_c_obs` e
+`inv_c_t` con **112 puntos** y `wf_group_ids` con **2 grupos**. El JSON se truncó
+y el npz conservó la evidencia. Es del 2026-08-20 y `data/` no está versionado,
+así que no hay historial.
+
+La curva pickeada **se puede reconstruir** desde el npz: `inv_freqs` +
+`inv_c_obs` son exactamente eso. Decidí vos si reconstruirla o si simplemente el
+chequeo quedó viejo respecto de tu trabajo posterior.
+
+### 5. Decisiones que te tocan a vos, no urgentes
+
+- **Recuperación desde offset grande.** La calibración converge de cerca pero se
+  aborta desde lejos, y el mecanismo está identificado (mide sobre el transitorio
+  que dejó la etapa anterior). El arreglo natural es esperar entre etapas, pero
+  no lo toqué porque sin KitProg no se puede probar, y cambiar constantes de
+  control a ciegas es justo lo que no hay que hacer. Ojo con la salida tentadora:
+  agrandar el deadband lo haría "pasar" dejando una calibración peor.
+- **Las tres configuraciones no-1 del ADC no sirven hoy.** Son dos problemas
+  distintos, no uno; están separados en la evidencia. Decidir si se arreglan o si
+  se documenta que sólo se usa la 1.
+- **Tres de las cuatro etapas quedan con el DAC cerca del tope** (una justo en
+  255). Convergen, pero sin margen para corregir hacia arriba si cambia
+  temperatura o ganancia.
 
 ---
+
+### Lo que ya está resuelto y NO hay que rehacer
+
+- El port `0xAA` de punta a punta. Probado y documentado.
+- El sentido del bit de polaridad: **está al derecho**, medido con un control
+  900 veces menor que la señal. No hay que dar vuelta
+  `PSOC_IDAC_POLARITY_NEGATIVE_BIT`.
+- Los Kp/Ki del Monte Carlo: **funcionan sobre la placa real**, mejor de medio
+  milivoltio en las cuatro etapas.
+- La ruta de datos y la ingesta, con los datos aislados en `data/lab/`.
+- La causa de las capturas vacías.
 
 ### D. Reanudación nocturna
 
