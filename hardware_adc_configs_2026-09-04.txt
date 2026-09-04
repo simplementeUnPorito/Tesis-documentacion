@@ -1,0 +1,51 @@
+LAS CUATRO CONFIGURACIONES DEL ADC NO COINCIDEN ENTRE SI
+2026-09-04, ~00:45 local. Firmware de campo. Medido por la ruta de captura.
+
+QUE SE MIDIO
+Con la cadena quieta y la MISMA entrada fisica, se puso cada configuracion del
+ADC por el comando dirigido del maestro (0xBA) y se capturo de verdad en cada
+una, esperando 1 s despues de cambiar:
+
+  cfg   fondo      media cuentas    mV en ESA escala   estado
+   1   +-2500 mV        52409,6            999,6       dentro de rango
+   3   +-1024 mV         5013,3             39,2       dentro de rango
+   4   +- 625 mV         8901,2             42,4       dentro de rango
+   2   +- 512 mV      -112796,0           -440,6       al 86 % del fondo
+   1   +-2500 mV        52431,2           1000,0       dentro de rango
+
+Config 1 repite (999,6 y 1000,0 mV) y coincide con lo que da el banco por el
+otro camino (COM8 + autotest, ~1000 mV). Las otras tres NO son reconciliables:
+si midieran el mismo nodo con su escala correcta, todas tendrian que dar ~1000
+mV, y config 3 deberia estar casi saturada (999,6/1024 del fondo = 127950 de
+131072 cuentas). Da 5013.
+
+LO QUE ESTO SI PERMITE AFIRMAR
+Solo la configuracion 1 esta validada para medidas absolutas. Cualquier uso de
+2, 3 o 4 para leer tensiones hoy no tiene respaldo.
+
+Y explica de otra manera la anomalia que el HANDOFF tenia abierta: no es que
+config 2 "falle a veces", es que ninguna de las tres alternativas esta dando lo
+mismo que config 1. D5 compara un nodo entre configuraciones, asi que su premisa
+no se puede cumplir hasta entender esto; su SKIP no era un falso negativo.
+
+PISTAS PARA QUIEN LO SIGA
+1. La discrepancia de config 3 y 4 es de un factor parecido: 999,6/39,2 = 25,5 y
+   999,6/42,4 = 23,6. Un factor comun sugiere escala o formato del dato, no
+   ruido ni asentamiento.
+2. El firmware YA documenta un defecto de la config 2: en psoc_adc.c dice que
+   "la config 2 generada usa coherencia LOW, que libera el registro en el primer
+   byte y puede mezclar muestras", y por eso fuerza ADC_SetCoherency(HIGH). O
+   sea que las configuraciones no-default ya habian dado problemas de
+   integracion con el DMA.
+3. Las cuatro difieren tambien en la FUENTE de referencia, no solo en el rango:
+   cfg1 y cfg4 usan ADC_INT_REF_VDDA_4 (Vdda/4) y cfg2 y cfg3 usan
+   ADC_INT_REF_NOT_BYPASSED (bandgap sin capacitor de bypass externo). Vale la
+   pena descartar que la referencia sin bypass necesite un tiempo de
+   estabilizacion que hoy nadie espera.
+4. Se verifico que la captura NO fuerza la configuracion: psoc_adc_select_capture_config()
+   respeta g_psoc_adc_config salvo durante el override de calibracion, que fuerza
+   ADC_CF_2V5 a proposito. Asi que lo medido son las configuraciones reales.
+
+QUE NO SE TOCO
+Nada. Cambiar escalas o tiempos de asentamiento sin entender el factor 24-25
+seria tapar el sintoma. La configuracion quedo restaurada en 1 al terminar.
