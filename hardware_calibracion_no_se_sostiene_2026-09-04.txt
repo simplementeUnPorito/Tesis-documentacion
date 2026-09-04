@@ -1,0 +1,84 @@
+LA CALIBRACION CONVERGE PERO NO SE SOSTIENE
+2026-09-04, ~07:00 local. Firmware de CAMPO, por COM8.
+
+Es el hallazgo mas importante de la noche y reencuadra todos los anteriores.
+
+--------------------------------------------------------------------------
+QUE SE MIDIO
+--------------------------------------------------------------------------
+Una calibracion termino informando 4/4 etapas ok con 0,27 mV de peor error.
+Diez minutos despues, sin tocar nada, se le pidio al PSoC un snapshot por etapa
+-el MISMO camino de medida que usa la calibracion, su ADC sobre el canal de cada
+etapa- y dio esto:
+
+  etapa        dac    raw     centrado    error
+  GEO_PGA      251   52435          6     +0,11 mV
+  GEO_BP       232   52337        -92     -1,66 mV
+  GEO_ADDER    252   52800        371     +7,08 mV
+  GEO_LP       236   49763      -2666    -50,85 mV
+
+Repetido tres veces seguidas: 0,11 / -1,66 / +7,08 / -50,85 mV, despues
+0,11 / -1,66 / +7,15 / -51,44, despues 0,15 / -1,58 / +6,90 / -50,91.
+
+ESTABLE. No esta derivando en el momento de medir: se quedo ahi.
+
+--------------------------------------------------------------------------
+LO QUE SIGNIFICA
+--------------------------------------------------------------------------
+La calibracion no mintio sobre lo que midio: cuando termino, el tap estaba donde
+dijo. Lo que pasa es que MIDIO DEMASIADO PRONTO. El valor que leyo todavia se
+estaba moviendo, y el punto final al que la cadena se asento esta a 51 mV del
+que la calibracion creyo haber conseguido.
+
+Y la progresion no deja lugar a dudas sobre el mecanismo:
+
+  PGA      +0,11 mV     la primera etapa aguanta
+  BP       -1,66 mV
+  ADDER    +7,08 mV
+  LP      -50,85 mV     la ultima acumula todo
+
+Cuanto mas aguas abajo, peor. Es exactamente lo que predice el acoplamiento
+entre etapas con tau ~31 s: cada etapa hereda el transitorio de las de arriba, y
+el lazo espera CAL_PI_SETTLE_SAMPLES = 512 muestras = 0,197 s antes de dar por
+buena su medida. Son 0,006 tau.
+
+--------------------------------------------------------------------------
+POR QUE ESTO REENCUADRA TODO LO DEMAS
+--------------------------------------------------------------------------
+Esta noche se anotaron, en este orden:
+
+  1. tau ~31 s de acoplamiento, contra 0,197 s de espera   -> RIESGO
+  2. el lazo oscila y a veces lo aborta un watchdog        -> OBSERVADO
+  3. el resultado no depende del punto de partida          -> OBSERVADO
+  4. la calibracion converge a 0,04-0,51 mV                -> OBSERVADO
+
+El punto 4 hay que leerlo con esto al lado: converge a ese error MEDIDO EN EL
+MOMENTO, y ese numero no sobrevive diez minutos. Los puntos 2 y 3 tambien salen
+de aca: si la medida se toma sobre un transitorio, el error salta entre
+iteraciones, y que junte o no la racha estable antes del watchdog pasa a ser
+cuestion de suerte. Una sola causa explica los tres.
+
+--------------------------------------------------------------------------
+QUE HACER
+--------------------------------------------------------------------------
+La palanca es una sola y ya estaba identificada, pero ahora esta claro que no es
+opcional ni un detalle de tiempos:
+
+  SUBIR EL ASENTAMIENTO. Hoy el lazo espera 0,197 s donde la planta tarda
+  ~31 s. Aunque no haga falta esperar un tau entero, 512 muestras estan tres
+  ordenes de magnitud abajo de lo razonable.
+
+Y hay una consecuencia inmediata que NO necesita tocar firmware: no alcanza con
+mirar si la calibracion informo 4/4. Hay que VOLVER A MEDIR unos minutos despues
+y verificar que el error se sostenga. Hoy no se sostiene.
+
+Cuidado con la salida tentadora: agrandar el deadband haria que mas corridas
+informen 4/4 y empeoraria el resultado real.
+
+--------------------------------------------------------------------------
+LO QUE NO SE PROBO
+--------------------------------------------------------------------------
+No se probo subir el asentamiento, porque sin KitProg no se puede reprogramar el
+PSoC. Es lo primero que hay que hacer cuando vuelva, y ahora se sabe exactamente
+que medir para saber si funciono: calibrar, esperar diez minutos, y pedir un
+snapshot. Si LP sigue a 51 mV, no alcanzo.
