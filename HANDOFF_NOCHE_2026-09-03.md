@@ -6,11 +6,15 @@
 `/ingest` → catálogo → lectura de la señal, sin intervención y sin navegador.
 Los datos de banco quedaron aislados en `data/lab/`.
 
-**La autocalibración corrió por primera vez sobre hardware.** Converge a mejor
-de medio milivoltio en las cuatro etapas cuando arranca cerca, que es el caso
-real. Desde un offset grande se aborta, y el mecanismo está identificado.
+**La autocalibración corrió por primera vez sobre hardware**, doce veces.
+Cuando termina converge a **0,04–0,51 mV** en las cuatro etapas: los Kp/Ki del
+Monte Carlo funcionan. Pero **cuatro de cada diez corridas se abortan** por
+watchdog, y no se puede anticipar cuál: el mismo punto de partida da resultados
+distintos. El mecanismo está identificado y el problema **no es de alcance sino
+del criterio de terminación**. Mientras tanto alcanza con verificar el resultado
+y reintentar si quedó en 2/4, que el firmware ya informa por etapa.
 
-**Cinco cosas que no sabíamos y ahora sí**, todas medidas:
+**Seis cosas que no sabíamos y ahora sí**, todas medidas:
 
 | | |
 |---|---|
@@ -19,6 +23,7 @@ real. Desde un offset grande se aborta, y el mecanismo está identificado.
 | capturas vacías (~4 %) | es el ACK del **SETN** sin reintento |
 | configs 2/3/4 del ADC | **no sirven hoy**; sólo la 1 está validada |
 | el modelo del lazo | predice **500 veces más rápido** de lo que es |
+| la calibración | falla **~40 % de las veces**, y al azar |
 
 **Encontré y arreglé dos bugs**, compilados y sin grabar (necesitan el KitProg):
 el reintento del SETN y el centrado de `cmp`/`err`, sin el cual una calibración
