@@ -48,6 +48,27 @@ se mostraba como `err_mV=-1000`. `psocCalCompareCounts()` del ESP y
 la del PSoC restaba `CAL_TARGET_1V_COUNTS` (52429). Hasta que se pueda grabar,
 **los logs de calibración hay que leerlos restando 52429 a mano**.
 
+### El modelo del lazo y la placa difieren en TRES ÓRDENES DE MAGNITUD
+
+Vale la pena tenerlo presente al mirar cualquier resultado de simulación.
+`calculos_modelados/python/calibracion_pi/modelo_exacto_firmware.py` es un
+modelo bastante serio —usa los 128 coeficientes Q1.23 del FIR reales, la
+aritmética entera del firmware y la transferencia medida de `Vref_LP`— y predice:
+
+| | modelo | placa |
+|---|---:|---:|
+| convergencia | 99,2–100 % | converge de cerca, **aborta de lejos** |
+| tiempo | 209–602 **ms** | 40–318 **s** |
+
+Lo que le falta está identificado y medido: **el acoplamiento entre etapas, con
+τ ≈ 31 s**. El modelo trata cada etapa aislada con el retardo del FIR como única
+dinámica; en la placa lo que domina es que al calibrar una etapa las de abajo
+quedan moviéndose durante medio minuto. Por eso la sintonía se veía cómoda en
+Monte Carlo y en la placa el lazo oscila.
+
+No hay que descartar el modelo: sirve para lo que sí cubre (saturación, sesgo
+final, dependencia del signo). Pero **no** para estimar tiempos ni convergencia.
+
 ### Hallazgos que corrigen cosas dichas antes
 
 Tres conclusiones anteriores eran **falsas** y ya están corregidas. Las dejo
