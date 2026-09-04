@@ -127,6 +127,33 @@ vuelta). Crudos: `curva_e*_pga0_out0_*.json`.
 incluye las zonas recortada y no lineal. Para la ganancia del lazo valen las del
 escalón, §2.)*
 
+### Rango útil de cada IDAC — y el ADDER pierde el 40 %
+
+La curva en S es **real**. En el handoff de anoche quedó escrito que «la curva en
+S del barrido es recorte de la etapa — NO, era un limitador propio del firmware».
+Eran **dos efectos distintos**: el limitador existía y se sacó, y debajo estaba
+la saturación de verdad, que el limitador tapaba.
+
+Midiendo dónde la pendiente local cae por debajo del 30 % de su mediana:
+
+| etapa | rango útil | recorrido útil | pendiente mediana | rango perdido |
+|---|---|---:|---:|---:|
+| PGA | −230 … +230 | 25,3 mV | 62,1 µV/cód | 10 % |
+| BP | −230 … +230 | 38,0 mV | 93,5 µV/cód | 10 % |
+| **ADDER** | **−178 … +128** | 307,3 mV | 739,0 µV/cód | **40 %** |
+| LP | −248 … +218 | 357,4 mV | 535,3 µV/cód | 9 % |
+
+Tres etapas pierden apenas los extremos (~10 %, que es el redondeo del criterio).
+**El ADDER pierde el 40 % y encima asimétrico**: su pendiente local va de
+1963 µV/cód en el centro a **0,4 µV/cód** en los extremos, un factor 5000. Ahí el
+lazo empuja sin efecto y termina contra el riel.
+
+**Acción concreta:** acotar el IDAC del ADDER a **−178 … +128**. Fuera de eso no
+hay autoridad, sólo hay riel.
+
+Las pendientes medianas confirman por **cuarta vía** las ganancias del escalón:
+62,1/61,2 · 93,5/90,1 · 739,0/740,9 · 535,3/524,7.
+
 ### ¿Cuánto sesga medir sobre transitorios?
 
 La primera tanda de curvas se tomó con 500 ms por punto, o sea sobre
@@ -258,7 +285,8 @@ modelo no captura, no porque la simulación lo pida.
    medido: **10 (=1τ) da 2,09 mV en 119 s**, 20 (=2τ) da 0,47 mV en 237 s. Como
    la recalibración es por umbral y no en cada arranque, 2τ es asequible.
    Para campo, τ de peor caso con 5–45 °C es **~40 s**, no 29,5.
-4. **Acotar el rango útil del IDAC del ADDER**, que recorta.
+4. **Acotar el IDAC del ADDER a −178 … +128.** Medido: fuera de ahí su pendiente
+   cae a 0,4 µV/cód (factor 5000 contra el centro) y el lazo sólo puede railar.
 5. **Ki en 1/32.**
 6. **Decidir qué hacer con el acople ADDER→LP (4,04×).** Es el problema de fondo
    y no se arregla con sintonía. Opciones: precompensar por firmware, o subir la
