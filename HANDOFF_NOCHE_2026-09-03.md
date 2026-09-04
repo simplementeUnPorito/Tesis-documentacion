@@ -8,6 +8,39 @@ Se actualiza a medida que avanza la noche; mirá la fecha de cada sección.
 
 ## 1. Lo que hay que saber antes de tocar nada
 
+### LA AUTOCALIBRACIÓN CORRIÓ SOBRE HARDWARE Y CONVERGE
+
+Es lo más importante de la noche. Nunca había corrido. Evidencia:
+`docs/hardware_calibracion_primera_corrida_2026-09-04.txt`.
+
+| etapa | medido | centrado | error |
+|---|---:|---:|---:|
+| `GEO_PGA` | 52427 | −2 | 0,04 mV |
+| `GEO_BP` | 52437 | +8 | 0,15 mV |
+| `GEO_ADDER` | 52445 | +16 | 0,31 mV |
+| `GEO_LP` | 52405 | −24 | 0,46 mV |
+
+**Las cuatro etapas dentro de medio milivoltio.** Los Kp/Ki del Monte Carlo
+funcionan sobre la placa real.
+
+Pero su propio log la mostraba como un fracaso total (`err_mV=-1000` en las
+cuatro, con `ok=1`), y eso me hizo perder un rato buscando un bug inexistente.
+La causa: `psocCalCompareCounts()` del ESP y `cal_pi_compare_counts()` del PSoC
+son **la misma función escrita dos veces**, y sólo la del PSoC restaba
+`CAL_TARGET_1V_COUNTS` (52429). Los taps GEO descansan sobre `Vref ≈ 1 V` y el
+ADC entrega el nivel absoluto, así que sin centrar el log resta el objetivo al
+nivel absoluto en vez de a la desviación.
+
+**Arreglado y compilado, pero NO grabado**: reflashear el ESP cuelga al PSoC y la
+recuperación necesita el KitProg. Hasta entonces, los logs de calibración hay que
+leerlos **restando 52429 a mano**.
+
+Lo demás que se aprendió del lazo: las etapas 0, 1 y 3 convergen en menos de un
+segundo y la 2 tarda 39 s con iteraciones cada ~8 s, del orden del τ ≈ 31 s de
+acoplamiento. Los deadbands son holgados (hasta 39 códigos ≈ 20 mV) y tres de
+las cuatro etapas quedaron con el DAC cerca del tope, una justo en 255:
+convergió, pero sin margen para corregir hacia arriba.
+
 ### Hallazgos que corrigen cosas dichas antes
 
 Tres conclusiones anteriores eran **falsas** y ya están corregidas. Las dejo
@@ -334,8 +367,8 @@ Ordenada por lo que desbloquea más.
    (`inv_freqs` + `inv_c_obs` son exactamente eso). Decidí vos si reconstruirla
    o si simplemente el chequeo quedó viejo respecto de tu trabajo posterior.
 
-3. **Revisar los Kp/Ki contra la placa real**, ahora con dos motivos nuevos y
-   concretos: la ganancia de etapa varía un factor 2,6 a lo largo del rango
+3. ~~Revisar los Kp/Ki contra la placa real.~~ **Ya corrió y converge** (ver
+   arriba). Lo que queda es más fino, con dos motivos concretos: la ganancia de etapa varía un factor 2,6 a lo largo del rango
    (la sintonía la asume fija) y el acoplamiento entre etapas tiene tau ~31 s
    contra 0,197 s de espera. Nunca corrió una calibración completa sobre
    hardware.
@@ -361,6 +394,5 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-04 00:50. Ruta de datos e ingesta cerradas,
-polaridad resuelta, y cinco hallazgos de planta/instrumentación en la
-sección C.*
+*Última actualización: 2026-09-04 01:20. La autocalibración corrió sobre
+hardware y converge; la ruta de datos y la ingesta están cerradas.*
