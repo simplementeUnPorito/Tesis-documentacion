@@ -1,5 +1,35 @@
 # Noche del 2026-09-03 — estado, plan y lo que tenés que hacer vos
 
+## Resumen en 30 segundos
+
+**El pipeline entero funciona.** PSoC → esclavo → maestro → USB → ZIP →
+`/ingest` → catálogo → lectura de la señal, sin intervención y sin navegador.
+Los datos de banco quedaron aislados en `data/lab/`.
+
+**La autocalibración corrió por primera vez sobre hardware.** Converge a mejor
+de medio milivoltio en las cuatro etapas cuando arranca cerca, que es el caso
+real. Desde un offset grande se aborta, y el mecanismo está identificado.
+
+**Cinco cosas que no sabíamos y ahora sí**, todas medidas:
+
+| | |
+|---|---|
+| el bit de polaridad | **está al derecho**, no hay que tocarlo |
+| recuperación tras saturar | **τ ≈ 31 s**, contra 0,197 s que espera el lazo |
+| capturas vacías (~4 %) | es el ACK del **SETN** sin reintento |
+| configs 2/3/4 del ADC | **no sirven hoy**; sólo la 1 está validada |
+| el modelo del lazo | se queda corto por **tres órdenes de magnitud** |
+
+**Encontré y arreglé dos bugs**, compilados y sin grabar (necesitan el KitProg):
+el reintento del SETN y el centrado de `cmp`/`err`, sin el cual una calibración
+buena se lee como un error de −1000 mV.
+
+**Lo que te toca**: enchufar el KitProg, grabar el ESP, y probar la página.
+Está detallado en la sección 3. Y mirá el punto 4: puede que se hayan perdido
+picks de Canchita, y no es de esta sesión.
+
+---
+
 Este archivo tiene tres partes: **lo que hay que saber antes de tocar nada**, **el
 plan de la noche** (lo que va haciendo la sesión sola) y **la lista para vos**.
 Se actualiza a medida que avanza la noche; mirá la fecha de cada sección.
