@@ -1,102 +1,134 @@
-MATRIZ DE ACOPLE ENTRE ETAPAS — medida por primera vez, 2026-09-04
-====================================================================
+MATRIZ DE ACOPLE ENTRE ETAPAS — MEDIDA, 2026-09-04
+====================================================
+Primera medicion de los dieciseis pares (etapa, tap). Hasta hoy el tau de 31 s
+estaba medido SOLO en la salida y las ganancias cruzadas no existian.
+
+Metodo: escalon de +120 codigos en el IDAC de cada etapa, leyendo los CUATRO
+taps en ronda durante 150 s, ~500 puntos por ensayo. A cada serie se le ajusta
+y(t) = y_inf + A*exp(-t/tau). El regimen permanente sale de y_inf, no del ultimo
+punto. PGA 1x, PGAout 1x, firmware de autotest, esclavo en COM7.
 Crudo: lab/planta/escalon_pga0_out0_20260904_143457.json
-Condiciones: PGA 1x, PGAout 1x, escalon de +120 codigos por etapa, 150 s por
-tramo, ida y vuelta, ~500 puntos por tramo. Firmware de autotest en el PSoC,
-slaveTest en el esclavo por COM7.
 
-Es la medida que el HANDOFF del 03-09 dejaba anotada como pendiente y que
-decidia si habia que subir el asentamiento del lazo de calibracion. Nunca se
-habia podido hacer: el tau de 31 s estaba medido SOLO en la salida.
+GANANCIA EN REGIMEN PERMANENTE — uV en el tap por codigo de IDAC
+-----------------------------------------------------------------
+                 ch0 PGA      ch1 BP    ch2 ADDER     ch3 LP
+  Vref_PGA          61.2        -0.4       -240.3     1026.0
+  Vref_BP           -0.3        90.1       -388.3     1002.3
+  Vref_ADDER         2.0         0.5        740.9    -2120.9
+  Vref_LP           -1.8         0.1          0.5      524.7
 
-1. EL TAU, CONFIRMADO Y EN TODOS LOS TAPS
------------------------------------------
-Trece ajustes con relacion amplitud/ruido >= 20:
+CONSTANTES DE TIEMPO — s, solo donde la amplitud supera 10x el ruido
+                 tau ch0     tau ch1    tau ch2     tau ch3
+  Vref_PGA             -      29.2       30.2        22.3
+  Vref_BP              -      29.1       26.4           -
+  Vref_ADDER           -      28.2       33.4           -
+  Vref_LP              -         -          -           -
 
-  rango 22,3 .. 32,2 s        MEDIANA 29,1 s
 
-Contra la prediccion del esquematico R4*C1 = 43k x 680 uF = 29,24 s, la
-mediana medida da 29,1 s: **0,5 % de diferencia**. El polo es ese y no hay otro.
+HALLAZGO 1 — EL ACOPLE ES DE CONTINUA, NO UN TRANSITORIO
+=========================================================
+Esto CONTRADICE la conclusion central de HANDOFF_NOCHE_2026-09-03.md, que decia:
 
-Y lo que importaba: el tau de los taps INTERMEDIOS (ch1 y ch2) es el mismo que
-el de la salida, ~29 s. No hay que tratar cada etapa con una constante distinta;
-un solo polo domina toda la cadena.
+  "en regimen permanente una referencia de aguas arriba NO corre la continua de
+   la SALIDA: el acople se la come y solo deja un transitorio largo"
 
-2. LA MATRIZ, EN CONTINUA [uV por codigo de IDAC]
--------------------------------------------------
-         ch0        ch1        ch2        ch3
-  et 0   61,2       -0,4     -240,3     1026,0
-  et 1   -0,3       90,1     -388,3     1002,3
-  et 2    2,0        0,5      740,9    -2120,9
-  et 3   -1,8        0,1        0,5      524,7
+Es falso, y la medicion es directa: los y_inf de las etapas de abajo quedan
+CORRIDOS de forma permanente. Mover Vref_BP +120 codigos deja ch2 en 954,2 mV
+-venia de 1000,8- y ch3 en 1122,4 -venia de 1002,1-. No vuelven.
 
-Es TRIANGULAR INFERIOR: ninguna etapa mueve un tap de aguas arriba. Eso no se
-impuso, salio de la medicion, y es la mejor prueba de que el experimento esta
-bien hecho.
+Por que se creyo lo contrario: aquella medida se hizo SATURANDO la cadena y
+mirando solo ch3. Con la salida contra el riel, lo que se ve volver al reposo es
+la recuperacion de la saturacion, no la ausencia de acople en continua.
 
-3. ESTO ROMPE UN SUPUESTO DEL MODELO. LA CADENA NO ES UNA CASCADA.
-------------------------------------------------------------------
-El modelo suponia que C1 bloquea la continua, asi que el acople entre etapas
-seria puramente TRANSITORIO. La medicion dice que si y que no:
+Consecuencia: no alcanza con esperar. Esperar arregla que la MEDIDA sea buena,
+pero el corrimiento de continua que una etapa le mete a las de abajo queda ahi
+para siempre y hay que corregirlo.
 
-- et 0 -> ch1 en continua es -0,4 uV/codigo, o sea CERO, pero tiene un
-  transitorio de 7,7 mV con tau 29 s. Ahi C1 bloquea, como se esperaba.
-- et 0 -> ch2 y ch3 en continua son -240 y +1026 uV/codigo. Enormes, y
-  PERMANENTES.
 
-Un mismo escalon no llega en continua al pasabanda pero si llega al sumador.
-Solo se explica si hay DOS caminos en paralelo hacia el sumador, y el BOM lo
-confirma:
+HALLAZGO 2 — EL ACOPLE ES MAS GRANDE QUE LA AUTORIDAD PROPIA DE LA ETAPA
+=========================================================================
+Comparando cada acople cruzado contra la ganancia propia del tap afectado:
 
-  R5, R7 = 47k   "BP_OUT contribution before gain trim"     <- via el pasabanda
-  R6     = 6,8k  "SE_OUT contribution to the analog summing node"  <- DIRECTO
+  Vref_PGA   sobre ch2 ADDER :  -240,3 uV/cod =  0,32 x la propia
+  Vref_BP    sobre ch2 ADDER :  -388,3 uV/cod =  0,52 x la propia
+  Vref_PGA   sobre ch3 LP    :  1026,0 uV/cod =  1,96 x la propia
+  Vref_BP    sobre ch3 LP    :  1002,3 uV/cod =  1,91 x la propia
+  Vref_ADDER sobre ch3 LP    : -2120,9 uV/cod =  4,04 x la propia
 
-           PGA --+-- C1/R4 -- BP --(R5,R7 47k)--+
-                 |                              +-- ADDER -- LP
-                 +------- SE_OUT --(R6 6,8k)----+
+Leerlo asi: **mover la referencia del ADDER corre la salida del LP CUATRO VECES
+MAS de lo que la corre la referencia del propio LP.**
 
-O sea: un camino acoplado en alterna y otro acoplado en continua, sumados. La
-cadena no es una cascada y por eso la calibracion por etapas independientes
-nunca iba a cerrar bien.
+Y de ahi sale, con numeros, el mecanismo de aborto por riel:
 
-4. LA CONSECUENCIA DURA: CUANTA AUTORIDAD CUESTA CADA CORRECCION
-----------------------------------------------------------------
-La etapa 3 tiene 524,7 uV/codigo sobre su propio tap. Cuanto tiene que moverse
-para compensar lo que hace cada etapa de arriba:
+  autoridad total del LP = 524,7 uV/cod x 255 cod = 133,8 mV
+  corrimiento que le mete el ADDER moviendo 120 cod = 254,5 mV
 
-  etapa 0: corre ch3 en 1026,0 uV/codigo  ->  1,96 codigos de la 3 por cada uno
-  etapa 1: corre ch3 en 1002,3 uV/codigo  ->  1,91 codigos de la 3 por cada uno
-  etapa 2: corre ch3 en -2120,9 uV/codigo ->  4,04 codigos de la 3 por cada uno
+O sea que una correccion moderada del ADDER puede sacar al LP fuera de su rango
+corregible por un factor de casi 2. El LP no puede volver, pega contra el riel y
+la etapa aborta. Eso explica los abortos observados sin necesidad de invocar el
+watchdog, y coincide con lo que predijo el modelo: los abortos son por RIEL, no
+por timeout.
 
-Con el dominio del IDAC en +-255, eso pone un techo DURO:
 
-  la etapa 2 no puede moverse mas de 255/4,04 = 63 CODIGOS
-  sin dejar a la etapa 3 sin autoridad para compensarla.
+HALLAZGO 3 — LA CADENA ES TRIANGULAR, ASI QUE EL ORDEN ACTUAL ES CORRECTO
+==========================================================================
+La matriz es casi triangular inferior: aguas arriba afecta aguas abajo, y aguas
+abajo NO afecta aguas arriba. La fila de Vref_LP es practicamente cero salvo su
+propia diagonal, y la columna de ch0 es cero salvo su propia diagonal.
 
-Eso confirma con dato medido la sospecha que el modelo habia levantado -que los
-abortos son por RIEL del DAC y no por watchdog- y ademas la cuantifica. No es un
-problema de sintonia y no se arregla con firmware: es el rango de las
-referencias.
+Eso valida el orden de calibracion del firmware -0, 1, 2, 3- y descarta que
+haya que invertirlo: una vez fijada la etapa k, las anteriores ya no se mueven.
+El problema no es el orden sino la MAGNITUD de lo que cada etapa le deja a las
+de abajo.
 
-5. LO QUE ESTO PROPONE COMO ARQUITECTURA
------------------------------------------
-La matriz es triangular inferior y AHORA SE CONOCE. Entonces no hace falta
-iterar etapa por etapa peleando contra el acople: se resuelve el sistema por
-sustitucion hacia adelante, que para una triangular es EXACTO y de un solo paso.
 
-  1. medir los cuatro taps una vez, asentados
-  2. resolver el sistema 4x4 -> los cuatro codigos de DAC de una
-  3. aplicar los cuatro JUNTOS
-  4. esperar UN asentamiento (~3 tau = 87 s) y verificar
+HALLAZGO 4 — LA GANANCIA DEL BP QUE USA EL FIRMWARE ESTA MAL, POR 2X
+=====================================================================
+      etapa       medida     firmware      error
+        PGA      61,2 uV      58,1 uV      +5,3 %
+         BP      90,1 uV     189,4 uV     -52,4 %     <-- MAL
+      ADDER     740,9 uV     770,6 uV      -3,9 %
+         LP     524,7 uV     553,1 uV      -5,1 %
 
-Ventajas sobre lo que hay hoy: una sola espera en vez de cuatro, y sobre todo
-usa la MINIMA autoridad posible, porque tiene en cuenta el acople en vez de
-descubrirlo a los golpes. Hoy cada codigo gastado aguas arriba cuesta 2 a 4
-codigos aguas abajo, y el lazo no lo sabe.
+Tres de las cuatro caen dentro del 5 %, que es muy bueno. La del BP esta a un
+factor 2: `CAL_PI_GAIN_GEO_BP_X1000` vale 101 y deberia valer ~48.
 
-6. LO QUE FALTA MEDIR
----------------------
-- La matriz esta medida SOLO con PGA 1x y PGAout 1x. Falta ver como escala.
-- Las curvas de cada etapa sin suponer linealidad (en curso).
-- Repetir con el buffer del ADC ya activado: estas medidas se tomaron con el
-  DelSig en Bypass Buffer, y Elias lo paso a Rail-to-Rail despues.
+Efecto sobre el lazo: con Kp=1 deadbeat la correccion es error/ganancia_supuesta.
+Si la supuesta es el doble de la real, cada iteracion aplica la MITAD de lo que
+hace falta. No diverge -converge geometricamente a razon 0,5- pero tarda el
+doble de iteraciones, y con el watchdog contando eso es margen que se regala.
+
+LA GANANCIA DEL LP ES 295, NO 651. Medido 524,7 uV/cod contra 553 que predice
+295 (-5 %). Con 651 predeciria 1220 uV/cod, mas del doble de lo medido. En la
+sesion de hoy quedo dicho "usar 651"; la medicion dice lo contrario y, por la
+regla de que lo medido manda, hay que dejar 295. El 651 del proyecto de test es
+el que esta mal.
+
+
+HALLAZGO 5 — EL TAU SE CONFIRMA, Y ES UNO SOLO PARA TODA LA CADENA
+===================================================================
+Los seis pares con senal real dan tau entre 26,4 y 33,4 s, con media ~29,5 s.
+Coincide con R4*C1 = 43k x 680 uF = 29,2 s del esquematico y con los 31,3 s
+medidos por el otro camino el 2026-09-03. Tres medidas independientes.
+
+No hay un tau por etapa: es el mismo polo, el de C1, visto desde distintos
+lugares. Eso simplifica el firmware: alcanza UNA constante de espera, no cuatro.
+
+Los tau de 1542 s que aparecen en la tabla cruda son ajustes sobre ruido
+-amplitudes de 0,1 mV contra rms de 20-30 uV- y estan filtrados de la tabla de
+arriba por el criterio de amplitud > 10x rms. No significan nada.
+
+
+QUE HACER CON ESTO
+===================
+1. Corregir CAL_PI_GAIN_GEO_BP_X1000 de 101 a ~48. Es un cambio de una linea
+   con efecto directo en la velocidad de convergencia del BP.
+2. Dejar la del LP en 295 y corregir el 651 del proyecto de test.
+3. La espera de planta (CAL_PI_PLANT_SETTLE_TAU_X10) ya se puede fijar con dato:
+   tau = 29,5 s medido, y una sola constante alcanza para las cuatro etapas.
+4. LO MAS IMPORTANTE, y es una idea nueva que habilita esta matriz:
+   PRE-COMPENSAR. Como el acople esta medido y es lineal y deterministico,
+   cuando la etapa k se mueve delta codigos se puede corregir de una las etapas
+   j>k por G[k][j]*delta/G[j][j] codigos, ANTES de medirlas. Eso deja los taps
+   de abajo cerca de su objetivo en vez de patearlos fuera de rango, y ataca la
+   causa real de los abortos por riel, que ni esperar ni sintonizar arreglan.
