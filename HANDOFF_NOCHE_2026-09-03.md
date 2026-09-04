@@ -8,38 +8,45 @@ Se actualiza a medida que avanza la noche; mirá la fecha de cada sección.
 
 ## 1. Lo que hay que saber antes de tocar nada
 
-### LA AUTOCALIBRACIÓN CORRIÓ SOBRE HARDWARE Y CONVERGE
+### LA AUTOCALIBRACIÓN CORRIÓ SOBRE HARDWARE: converge de cerca, no de lejos
 
-Es lo más importante de la noche. Nunca había corrido. Evidencia:
-`docs/hardware_calibracion_primera_corrida_2026-09-04.txt`.
+Es lo más importante de la noche. Nunca había corrido. Cuatro corridas.
+Evidencia: `docs/hardware_calibracion_limite_2026-09-04.txt` (el primero,
+`..._primera_corrida_...`, quedó demasiado optimista por tener una sola muestra).
 
-| etapa | medido | centrado | error |
-|---|---:|---:|---:|
-| `GEO_PGA` | 52427 | −2 | 0,04 mV |
-| `GEO_BP` | 52437 | +8 | 0,15 mV |
-| `GEO_ADDER` | 52445 | +16 | 0,31 mV |
-| `GEO_LP` | 52405 | −24 | 0,46 mV |
+| punto de partida | duración | resultado |
+|---|---:|---|
+| el que ya tenía (calibrado) | 40 s | 4/4 ok, peor error **0,46 mV** |
+| perturbado a −120 en las cuatro | 178 s | 4/4 ok, peor error **0,32 mV** |
+| perturbado a +150 en las cuatro | 318 s | **2/4**; ADDER y LP abortadas |
+| lo mismo, repetido | 317 s | **2/4**, idéntico |
 
-**Las cuatro etapas dentro de medio milivoltio.** Los Kp/Ki del Monte Carlo
-funcionan sobre la placa real.
+Desde un punto razonable —que es el caso real, porque arranca de lo guardado en
+EEPROM— **los Kp/Ki del Monte Carlo funcionan sobre la placa**: mejor de medio
+milivoltio en las cuatro etapas. Lo que no tiene es capacidad de **recuperarse
+desde un offset grande**, que es justo la situación de una placa nueva.
 
-Pero su propio log la mostraba como un fracaso total (`err_mV=-1000` en las
-cuatro, con `ok=1`), y eso me hizo perder un rato buscando un bug inexistente.
-La causa: `psocCalCompareCounts()` del ESP y `cal_pi_compare_counts()` del PSoC
-son **la misma función escrita dos veces**, y sólo la del PSoC restaba
-`CAL_TARGET_1V_COUNTS` (52429). Los taps GEO descansan sobre `Vref ≈ 1 V` y el
-ADC entrega el nivel absoluto, así que sin centrar el log resta el objetivo al
-nivel absoluto en vez de a la desviación.
+El mecanismo está identificado. La traza por iteración de la etapa 2 muestra el
+error oscilando (−2, −20, +5, −12, +8, 0, −23, +2, +7, −11, +3) sin quedarse
+quieto; nunca junta la racha estable que pide el lock y un watchdog la aborta. Y
+**cuando la etapa 2 aborta, la 3 no se calibra nunca**.
 
-**Arreglado y compilado, pero NO grabado**: reflashear el ESP cuelga al PSoC y la
-recuperación necesita el KitProg. Hasta entonces, los logs de calibración hay que
-leerlos **restando 52429 a mano**.
+Por qué oscila: las iteraciones llegan cada ~8 s, el acoplamiento entre etapas
+tiene τ ≈ 31 s, y el lazo espera `CAL_PI_SETTLE_SAMPLES = 512` muestras
+(**0,197 s**) en las cuatro. Son 0,006 τ. Cuando le toca a la etapa 2, sus taps
+siguen moviéndose por lo que acaban de hacer las etapas 0 y 1: mide sobre un
+transitorio ajeno. Estaba anotado como riesgo cuando medí el τ; ahora está
+observado.
 
-Lo demás que se aprendió del lazo: las etapas 0, 1 y 3 convergen en menos de un
-segundo y la 2 tarda 39 s con iteraciones cada ~8 s, del orden del τ ≈ 31 s de
-acoplamiento. Los deadbands son holgados (hasta 39 códigos ≈ 20 mV) y tres de
-las cuatro etapas quedaron con el DAC cerca del tope, una justo en 255:
-convergió, pero sin margen para corregir hacia arriba.
+**No toqué ninguna constante de control**: sin KitProg no puedo reprogramar el
+PSoC, así que un cambio quedaría sin probar.
+
+**Y un defecto aparte, ya arreglado y compilado pero NO grabado:** el log del ESP
+informaba `cmp` y `err` sin centrar, así que una calibración convergida a 0,3 mV
+se mostraba como `err_mV=-1000`. `psocCalCompareCounts()` del ESP y
+`cal_pi_compare_counts()` del PSoC son la misma función escrita dos veces y sólo
+la del PSoC restaba `CAL_TARGET_1V_COUNTS` (52429). Hasta que se pueda grabar,
+**los logs de calibración hay que leerlos restando 52429 a mano**.
 
 ### Hallazgos que corrigen cosas dichas antes
 
@@ -394,5 +401,6 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-04 01:20. La autocalibración corrió sobre
-hardware y converge; la ruta de datos y la ingesta están cerradas.*
+*Última actualización: 2026-09-04 02:05. La autocalibración corrió cuatro
+veces sobre hardware: converge de cerca y se aborta desde lejos, con el
+mecanismo identificado.*
