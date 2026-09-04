@@ -500,7 +500,22 @@ La curva pickeada **se puede reconstruir** desde el npz: `inv_freqs` +
 `inv_c_obs` son exactamente eso. Decidí vos si reconstruirla o si simplemente el
 chequeo quedó viejo respecto de tu trabajo posterior.
 
-### 5. Decisiones que te tocan a vos, no urgentes
+### 5. El cambio de firmware que más importa  ·  *subir el asentamiento*
+
+Es la conclusión técnica de la noche y no es un ajuste fino: el lazo espera
+`CAL_PI_SETTLE_SAMPLES = 512` muestras (**0,197 s**) donde la planta tarda
+**τ ≈ 31 s**. Por eso mide sobre un transitorio, por eso oscila, por eso el
+watchdog aborta cuatro de cada diez corridas, y por eso **lo que consigue no se
+sostiene**. Una sola causa para los tres síntomas.
+
+Necesita el KitProg (punto 1). Cuando lo tengas, la prueba de si funcionó ya
+está definida: calibrar, esperar diez minutos, pedir un `snapshot`. Si `GEO_LP`
+sigue a ~50 mV, no alcanzó.
+
+Cuidado con la salida tentadora: **agrandar el deadband** haría que más corridas
+informen 4/4 y empeoraría el resultado real.
+
+### 6. Decisiones que te tocan a vos, no urgentes
 
 - **Recuperación desde offset grande.** La calibración converge de cerca pero se
   aborta desde lejos, y el mecanismo está identificado (mide sobre el transitorio
