@@ -6,13 +6,28 @@
 `/ingest` → catálogo → lectura de la señal, sin intervención y sin navegador.
 Los datos de banco quedaron aislados en `data/lab/`.
 
-**La autocalibración corrió por primera vez sobre hardware**, doce veces.
-Cuando termina converge a **0,04–0,51 mV** en las cuatro etapas: los Kp/Ki del
-Monte Carlo funcionan. Pero **cuatro de cada diez corridas se abortan** por
-watchdog, y no se puede anticipar cuál: el mismo punto de partida da resultados
-distintos. El mecanismo está identificado y el problema **no es de alcance sino
-del criterio de terminación**. Mientras tanto alcanza con verificar el resultado
-y reintentar si quedó en 2/4, que el firmware ya informa por etapa.
+**La autocalibración corrió por primera vez sobre hardware**, doce veces, y el
+hallazgo más importante de la noche es que **converge pero el resultado no se
+sostiene.** Una corrida informó 4/4 con 0,27 mV; diez minutos después, sin tocar
+nada, el propio snapshot del PSoC da:
+
+| GEO_PGA | GEO_BP | GEO_ADDER | GEO_LP |
+|---:|---:|---:|---:|
+| +0,11 mV | −1,66 mV | +7,08 mV | **−50,85 mV** |
+
+Estable en tres medidas seguidas, así que no está derivando: se quedó ahí. La
+calibración no mintió sobre lo que midió, **midió demasiado pronto**, sobre un
+valor que todavía se movía. Y la progresión —cuanto más aguas abajo, peor— es
+exactamente lo que predice el acoplamiento con **τ ≈ 31 s** contra los **0,197 s**
+que espera el lazo.
+
+Eso explica de una sola causa los otros dos síntomas: que el error oscile entre
+iteraciones y que cuatro de cada diez corridas las aborte el watchdog (sin
+depender del punto de partida: el mismo punto da resultados distintos).
+
+**La palanca es una sola: subir el asentamiento.** No se pudo probar porque
+necesita reprogramar el PSoC. Mientras tanto, **no alcanza con ver si informó
+4/4**: hay que volver a medir unos minutos después.
 
 **Seis cosas que no sabíamos y ahora sí**, todas medidas:
 
@@ -23,7 +38,7 @@ y reintentar si quedó en 2/4, que el firmware ya informa por etapa.
 | capturas vacías (~4 %) | es el ACK del **SETN** sin reintento |
 | configs 2/3/4 del ADC | **no sirven hoy**; sólo la 1 está validada |
 | el modelo del lazo | predice **500 veces más rápido** de lo que es |
-| la calibración | falla **~40 % de las veces**, y al azar |
+| la calibración | falla ~40 % al azar, **y lo que logra no se sostiene** |
 
 **Encontré y arreglé dos bugs**, compilados y sin grabar (necesitan el KitProg):
 el reintento del SETN y el centrado de `cmp`/`err`, sin el cual una calibración
