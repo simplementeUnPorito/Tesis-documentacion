@@ -106,12 +106,23 @@ propio tap. Se calcula la pendiente **local** entre puntos consecutivos, que es
 lo que delata la no linealidad, y se separa del **recorte** (pendiente que se da
 vuelta). Crudos: `curva_e*_pga0_out0_*.json`.
 
-| etapa | pendiente global | razón p90/p10 | residuo vs recta | veredicto |
-|---|---:|---:|---:|---|
-| **PGA** | 61,57 µV/cód | 1,06 | 0,034 mV | **lineal** — la constante alcanza |
-| **BP** | 96,54 µV/cód | 1,13 | 1,14 mV | **lineal** |
-| **ADDER** | 916,5 µV/cód | ∞ | 35,2 mV | **RECORTA** — pendientes locales negativas |
-| **LP** | 733,0 µV/cód | 2,63 | 25,6 mV | **NO lineal** |
+Se midieron **dos tandas**: una rápida (500 ms por punto, sobre transitorios) y
+otra con **60 s de espera de planta** por punto. Las dos:
+
+| etapa | espera | pts | pendiente | razón p90/p10 | recorrido | veredicto |
+|---|---:|---:|---:|---:|---:|---|
+| **PGA** | 500 ms | 35 | 61,6 µV/cód | 1,06 | 31,3 mV | **lineal** |
+| **PGA** | 60 s | 11 | 61,9 | 1,04 | 31,6 mV | **lineal** |
+| **BP** | 60 s | 11 | 96,5 | 1,13 | 51,4 mV | **lineal** |
+| **ADDER** | 500 ms | 31 | 916,5 | ∞ | 372,1 mV | **satura fuerte** |
+| **ADDER** | 60 s | 10 | 882,8 | **4638** | 372,0 mV | **satura fuerte** |
+| **LP** | 500 ms | 33 | 732,9 | 2,63 | 377,1 mV | **NO lineal** |
+| **LP** | 60 s | 11 | 738,9 | **4,14** | 377,1 mV | **NO lineal** |
+
+**Dato que conviene mirar:** con la espera correcta la no linealidad sale **más
+pronunciada**, no menos — el LP pasa de 2,63 a 4,14 y el ADDER a 4638. Medir
+sobre transitorios la estaba **subestimando**, porque el transitorio promedia
+tramos de pendiente distinta.
 
 - **PGA y BP son lineales.** Una constante de ganancia es correcta para las dos.
   No hace falta curva a trozos.
@@ -322,7 +333,52 @@ nombres del símbolo del kit (P12.0/P12.1) y **no** son los del firmware:
 
 ---
 
-## 8. Lo que falta medir
+## 8-bis. Estado del banco al cerrar
+
+- **PSoC:** firmware de **autotest** (67.448 B, 272 filas). Para volver a campo:
+  `.\program_psoc.ps1` sin `-SelfTest`.
+- **ESP en COM7** (el esclavo real, con el PSoC): firmware **slaveTest**. Hay que
+  devolverle `slave2` cuando se termine de medir.
+- **ESP en COM8** (el maestro): le grabé `slaveTest` por error. **Hay que
+  devolverle el firmware de master.**
+- `platformio.ini` tiene `upload_port = COM8` fijo en el entorno `slaveTest`; por
+  eso pasó. Conviene sacarlo o cambiarlo.
+
+### Cambios de firmware compilados pero NO grabados
+
+| commit | qué |
+|---|---|
+| `c62186b` | `uint16`→`uint32` en esperas y contadores; concepto `plant_settle` |
+| `4a46c49` | `CAL_PI_TAU_SAMPLES` = 76818 (29,5 s medidos) y multiplicador en **1τ** |
+| `9af676d` | IDAC del ADDER acotado a ±128 |
+
+Los tres compilan limpio (62.104 B, sin warnings). **Ninguno está en la placa.**
+
+---
+
+## 9-bis. El experimento que cierra todo, y que quedó sin hacer
+
+**¿Subir la espera hace que la calibración se sostenga?** Es la pregunta que
+originó todo el trabajo y la única que falta contestar. El procedimiento ya está
+definido y el firmware ya está compilado:
+
+1. Grabar el firmware de campo (`program_psoc.ps1`, sin `-SelfTest`) — ya tiene
+   la espera en 1τ.
+2. Devolverle `slave2` al ESP de COM7.
+3. Correr una calibración.
+4. **Esperar diez minutos.**
+5. Pedir `snapshot` y mirar `GEO_LP`.
+
+**Criterio:** si `GEO_LP` queda por debajo de ~2 mV, el arreglo funcionó. Si
+sigue cerca de −18 mV, no alcanzó y hay que ir a 2τ. La predicción del modelo,
+ya calibrado contra la placa, es **2,09 mV**.
+
+Se puede grabar la traza con `registrar_calibracion.py --port COM7`, que captura
+la evolución temporal y no sólo el veredicto.
+
+---
+
+## 10. Lo que falta medir
 
 - **Las 81 combinaciones PGA × PGAout.** Es lo que decide tu requisito de que
   calibre con cualquier ganancia. El programa (`medir_planta.py campana`) recorre
