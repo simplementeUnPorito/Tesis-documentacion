@@ -89,3 +89,28 @@ COMO SE REPITE LA MEDIDA
   <python3.14> -m testbench run --port COM8 --group b
 Son 3,4 s. B0c es la linea que hay que mirar: si "pd" vuelve a 30/30, los
 pull-ups volvieron.
+
+CAMINOS ALTERNATIVOS AL I2C, TODOS EXPLORADOS Y CERRADOS
+Antes de dar el bloqueo por bueno se busco medir sin pasar por el bus caido:
+
+  pyocd / openocd            NO instalados.
+  ppcli ReadRAM              "command not found": esta en la guia (pag. 70) pero
+                             no lo implementa esta version del Programmer.
+  ppcli ReadIO               existe pero devuelve 80030003 sin Acquire, y
+                             Acquire devuelve 80004005 en esta secuencia.
+  ppcli PSoC3_ReadRow        devuelve ceros y "Failed to send packet (batch) in
+                             SWD mode"; arrayID 64 (EEPROM) fuera de rango.
+  Puente I2C del KitProg     "I2C_PerformTransaction() is not implemented by
+                             this Programmer". El KitProg en modo CMSIS-DAP no
+                             hace de maestro I2C.
+
+Ese ultimo resultado tiene valor propio: DESCARTA que el KitProg este
+interfiriendo con P12[0]/P12[1]. No los maneja.
+
+QUEDA UNA OPCION, NO INTENTADA, PARA SI EL ARREGLO FISICO SE DEMORA
+Grabar un firmware que corra la campana de medicion SOLO al arrancar y deje los
+resultados en EEPROM o en filas de flash reservadas, y leerlos despues por SWD.
+No necesita el I2C. El costo es que el lazo de depuracion queda ciego: cada
+iteracion es compilar, grabar y leer memoria. Solo vale la pena si el arreglo
+fisico se demora mucho. Antes hay que hacer andar Acquire, que hoy falla con la
+secuencia de arriba aunque program_psoc.ps1 si logra grabar.
