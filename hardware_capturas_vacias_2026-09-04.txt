@@ -48,3 +48,44 @@ haria mas dificil encontrarlo despues. Ademas el transporte de CONFIGURACION no
 falla: 0 de 60 fallos de 0xAA, 0 de SET_RECLEN y 0 de ARM en la misma bateria,
 consistente con el 15/15 que ya estaba documentado. El problema esta en el
 camino de DATOS, no en el de comandos.
+
+==========================================================================
+RESUELTO: es el ACK del SETN, y faltaba el reintento
+==========================================================================
+Se cazo abriendo LAS DOS PUNTAS a la vez: la consola del esclavo en COM8
+mientras el maestro disparaba desde COM6. Cayo en el intento 8 de 40.
+
+La diferencia entre la vuelta buena y la vacia es una sola linea:
+
+  ANDA
+    [SLAVE] store PSoC-SD n=5
+    [PSoC]  SETN ack val=5 pstate=0/IDLE
+    [SLAVE] HOT_WAIT n=5 ready=0
+    [PSoC]  ARMED val=5 pstate=1/ARMED
+    [SLAVE] START_OK ...
+    [PSoC]  CAPTURE_DONE val=5
+
+  FALLA
+    [SLAVE] store PSoC-SD n=5
+    [SLAVE] PSoC SETN ack timeout n=5 expected=5 last=5 age=7183
+    [SLAVE] volviendo a WAIT_ARM
+    [SLAVE] HOT_WAIT aborted n=5: PSoC SETN no confirmado
+    [SLAVE] HOTWAIT_ACK ok=0 state=0 n=0   (x12)
+    [SLAVE] START ignored state=0 ready=1
+
+El ACK del PSoC al comando SETN no llega dentro de los 500 ms
+(PSOC_SETN_ACK_TIMEOUT_MS; se ve en las marcas de tiempo: 64772561 -> 65272944).
+El esclavo aborta el armado, que esta bien -mejor eso que capturar basura- y el
+START siguiente cae sobre un estado que ya no espera nada.
+
+Queda descartado que sea ESP-NOW o el maestro: el esclavo recibio todo, el que
+no contesto fue el PSoC.
+
+LA CAUSA DE FONDO: sendAndConfirmPsocSetN() mandaba el comando UNA sola vez y
+esperaba. Era la excepcion en este firmware; todos los demas caminos de comando
+al PSoC ya usan un reintento acotado de dos intentos, con un comentario que
+explica por que: hay una clase de transitorio que se traga el primer comando en
+silencio.
+
+ARREGLADO con ese mismo reintento. Compila (slave2 SUCCESS). NO SE GRABO:
+reflashear el ESP cuelga al PSoC y la recuperacion necesita el KitProg.
