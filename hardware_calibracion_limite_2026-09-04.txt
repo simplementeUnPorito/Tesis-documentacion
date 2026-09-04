@@ -1,0 +1,86 @@
+HASTA DONDE LLEGA LA AUTOCALIBRACION, Y DONDE SE ROMPE
+2026-09-04, ~02:00 local. Firmware de CAMPO, por COM8. Cuatro corridas.
+
+Corrige y completa `hardware_calibracion_primera_corrida_2026-09-04.txt`, que
+estaba basado en UNA sola corrida y salio demasiado optimista.
+
+--------------------------------------------------------------------------
+RESUMEN
+--------------------------------------------------------------------------
+La calibracion converge muy bien CUANDO ARRANCA CERCA. No converge cuando
+arranca lejos, y ahi la aborta un watchdog dejando etapas sin calibrar. No
+miente: informa ok=0 en las que no pudo.
+
+  punto de partida            duracion   resultado
+  el que ya tenia (calibrado)     40 s   4/4 ok, peor error 0,46 mV
+  perturbado a -120 en las 4     178 s   4/4 ok, peor error 0,32 mV
+  perturbado a +150 en las 4     318 s   2/4 ok; ADDER y LP abortadas
+  perturbado a +150 (repeticion) 317 s   2/4 ok; identico
+
+Las dos corridas desde +150 fallan igual, asi que es reproducible y no un
+accidente.
+
+--------------------------------------------------------------------------
+EL MECANISMO
+--------------------------------------------------------------------------
+Traza de la etapa 2 (GEO_ADDER) en la corrida que falla, una linea por
+iteracion:
+
+  error_dac =  -2  -20   +5  -12   +8    0  -23   +2   +7  -11   +3
+  stable    =   1    1    1    1    1    1    1    1    1    1    1
+  [CAL] WATCHDOG timeout stage=2/GEO_ADDER -> aborted
+  [CAL] done ok=0
+
+El error OSCILA alrededor de cero y nunca se queda quieto. Marca stable=1 en
+cada muestra, pero el lazo pide una cantidad de muestras estables SEGUIDAS
+(CAL_PI_LOCK_SAMPLES_*), y cada vez que el error se sale del deadband el contador
+se reinicia. Nunca junta la racha, y el watchdog corta.
+
+Consecuencia en cadena: cuando la etapa 2 se aborta, LA ETAPA 3 NO SE CALIBRA
+NUNCA. Su DAC queda exactamente en el valor con el que se la perturbo (150) y su
+error termina en -131 mV, que es simplemente la cadena sin calibrar derivando.
+
+--------------------------------------------------------------------------
+POR QUE OSCILA: encaja con el tau medido esta misma noche
+--------------------------------------------------------------------------
+Las iteraciones de la etapa 2 llegan cada ~8 s. La cadena tiene un tau de ~31 s
+de acoplamiento entre etapas (ver `hardware_recuperacion_saturacion_2026-09-04`,
+medido con un decaimiento exponencial limpio). Y el lazo espera
+
+    CAL_PI_SETTLE_SAMPLES_* = 512 muestras = 0,197 s a 2604 Hz
+
+en las CUATRO etapas, o sea 0,006 tau.
+
+Cuando le toca a la etapa 2, los taps de abajo todavia se estan moviendo por lo
+que acaban de hacer las etapas 0 y 1. El lazo mide un valor que sigue
+evolucionando, corrige sobre el, y en la iteracion siguiente el valor cambio
+solo. Eso es exactamente una oscilacion alrededor del objetivo, y es lo que se
+ve.
+
+Esto ya estaba anotado como RIESGO cuando se midio el tau. Ahora esta OBSERVADO.
+
+--------------------------------------------------------------------------
+QUE HACER, EN ORDEN DE MENOS A MAS TRABAJO
+--------------------------------------------------------------------------
+1. Subir CAL_PI_SETTLE_SAMPLES en las etapas que estan aguas abajo de otra, para
+   que el lazo no mida sobre un transitorio ajeno. Un tau son ~81000 muestras;
+   no hace falta tanto, pero 512 es tres ordenes de magnitud menos.
+2. Esperar entre etapa y etapa, no solo dentro de cada una: el problema es el
+   transitorio que deja la etapa ANTERIOR.
+3. Recien despues tocar deadband o lock. Hoy el deadband de la etapa 2 es 26
+   codigos y el error oscila entre -23 y +8, o sea que casi entra: es tentador
+   agrandarlo y "arreglarlo", pero eso taparia el sintoma y dejaria una
+   calibracion peor.
+
+NO SE TOCO NADA. Sin el KitProg no se puede reprogramar el PSoC, asi que
+cualquier cambio no se podria probar esta noche; cambiar constantes de control a
+ciegas es justo lo que no hay que hacer.
+
+--------------------------------------------------------------------------
+LO QUE ESTO NO DICE
+--------------------------------------------------------------------------
+No dice que la calibracion este rota. Desde un punto de partida razonable -que
+es el caso real, porque arranca de lo guardado en EEPROM- converge a mejor de
+0,5 mV en las cuatro etapas. Lo que no tiene hoy es capacidad de RECUPERARSE
+desde un offset grande, y esa es justamente la situacion de una placa nueva o de
+una que derivo.
