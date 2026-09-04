@@ -1,0 +1,85 @@
+PRIMERA CORRIDA DE LA AUTOCALIBRACION SOBRE HARDWARE
+2026-09-04, ~01:10 local. Firmware de CAMPO en PSoC y en slave2, por COM8.
+
+Nunca habia corrido. Los Kp/Ki salian de un Monte Carlo con la planta medida.
+
+RESULTADO CORTO: LA CALIBRACION CONVERGE, Y BIEN.
+Pero su telemetria dice lo contrario, y ese es un defecto aparte que si hay que
+arreglar.
+
+--------------------------------------------------------------------------
+1) LO QUE INFORMA EL LOG (y por que asusta)
+--------------------------------------------------------------------------
+  [CAL] result stage=0/GEO_PGA   ok=1 dac=251 raw=52427 cmp=52427 target=0 err=-52427 err_mV=-1000
+  [CAL] result stage=1/GEO_BP    ok=1 dac=252 raw=52437 cmp=52437 target=0 err=-52437 err_mV=-1000
+  [CAL] result stage=2/GEO_ADDER ok=1 dac=255 raw=52445 cmp=52445 target=0 err=-52445 err_mV=-1000
+  [CAL] result stage=3/GEO_LP    ok=1 dac=  8 raw=52405 cmp=52405 target=0 err=-52405 err_mV=-1000
+  [CAL] done ok=1
+
+Leido asi, parece que declara exito con un error de un volt en las cuatro
+etapas. Eso fue lo primero que se penso, y es falso.
+
+--------------------------------------------------------------------------
+2) LO QUE REALMENTE PASO
+--------------------------------------------------------------------------
+Los taps GEO descansan fisicamente sobre Vref ~= 1 V y el ADC entrega el nivel
+ABSOLUTO (52429 cuentas por volt en CF_2V5). El cero que se calibra es la
+desviacion alrededor de ese modo comun, no el cero del ADC. El PSoC lo hace bien:
+
+    calibration.c: cal_pi_compare_counts(m) -> m - CAL_TARGET_1V_COUNTS  (52429)
+
+Centrando, la calibracion quedo asi:
+
+  etapa        medido   centrado   error
+  GEO_PGA       52427      -2      0,04 mV
+  GEO_BP        52437      +8      0,15 mV
+  GEO_ADDER     52445     +16      0,31 mV
+  GEO_LP        52405     -24      0,46 mV
+
+Las cuatro etapas dentro de MEDIO MILIVOLTIO. Y encaja con la traza del lazo,
+que informaba error_dac de 0 a 12 contra deadbands de 9 a 39: valores de un lazo
+convergido, no de uno ciego.
+
+Comprobacion aritmetica: error_dac = error_counts / 98,3. Si el error real
+fuera de -52437 cuentas, error_dac seria -533 y el lazo habria seguido
+empujando hasta el riel. Informaba 0. O sea que el control estaba viendo el
+error centrado, que es el correcto.
+
+--------------------------------------------------------------------------
+3) EL DEFECTO: DOS COPIAS DE LA MISMA FUNCION QUE NO COINCIDEN
+--------------------------------------------------------------------------
+El PSoC manda por telemetria solamente `final_measured` en crudo; el `cmp` y el
+`err` los calcula el ESP. Y su copia estaba sin centrar:
+
+  PSoC  calibration.c   cal_pi_compare_counts(m) -> m - 52429      (GEO)
+  ESP   main.cpp        psocCalCompareCounts(raw) -> raw            (GEO)
+
+Son la misma funcion escrita dos veces, y solo una restaba. No es cosmetico:
+estos son los unicos numeros por los que se puede ver que hizo la calibracion, y
+decian exactamente lo contrario de lo que paso. Cualquiera que mire ese log
+concluye que la calibracion no funciona y sale a buscar un bug que no existe;
+paso esta misma noche.
+
+ARREGLADO en el ESP, con la constante y el porque escritos al lado para que no
+se vuelvan a separar. Compila: slave2 SUCCESS, RAM 15,0 %, Flash 63,1 %.
+
+NO SE GRABO. Reflashear el ESP cuelga al PSoC y la recuperacion es un ToggleReset
+por KitProg, que hoy no enumera. Queda para cuando el KitProg vuelva; hasta
+entonces hay que leer los logs de calibracion restando 52429 a mano.
+
+--------------------------------------------------------------------------
+4) LO QUE ADEMAS SE APRENDIO DEL LAZO
+--------------------------------------------------------------------------
+* Tiempos: etapas 0, 1 y 3 convergen en menos de un segundo. La etapa 2
+  (GEO_ADDER) tardo 39 s y su error_dac fue oscilando 4 -> 2 -> 0 -> 2 -> 2 con
+  unos 8 s entre iteraciones. Es la unica que se toma tiempo, y ese ritmo es del
+  orden del tau ~31 s de acoplamiento entre etapas medido antes esta noche.
+* Deadbands grandes: 9 / 26 / 39 codigos de DAC en las etapas 1, 2 y 3. Con el
+  paso de la etapa 3 medido (~0,5 mV por codigo cerca de Vref), 39 codigos son
+  ~20 mV de tolerancia. Convergio muy por dentro de eso, asi que hoy no molesta,
+  pero es holgado.
+* Tres de las cuatro etapas quedaron con el DAC cerca del tope superior (251,
+  252, 255). La etapa 2 EN el tope, 255. Convergio igual, pero sin margen para
+  corregir hacia arriba; conviene mirarlo cuando cambien temperatura o ganancia.
+* El enlace quedo ARRIBA al terminar y el snapshot posterior confirma los mismos
+  valores por etapa, o sea que la corrida no dejo nada colgado.
