@@ -55,28 +55,38 @@ Desde un punto razonable —que es el caso real, porque arranca de lo guardado e
 EEPROM— **los Kp/Ki del Monte Carlo funcionan sobre la placa**: mejor de medio
 milivoltio en las cuatro etapas.
 
-**Pero no es cuestión de cuán lejos arranca, sino de qué LADO.** Barriendo la
-perturbación apareció algo más nítido que una frontera:
+**Pero busqué la frontera y NO HAY UMBRAL DE MAGNITUD.** Ocho puntos de
+perturbación (las cuatro referencias al mismo código antes de calibrar):
 
-| perturbación | resultado |
-|---:|---|
-| **+60** | 0/4 — ni una etapa llegó a informar |
-| +90 / +120 / +150 | 2/4, peor error ~15 mV |
-| **−120** | **4/4**, peor error 0,32 mV |
-| sembrado cerca (240,20,250,8) | **4/4**, peor error 0,50 mV |
+| perturbación | ok | peor error |
+|---:|:-:|---:|
+| **+60** | **0/4** | — ni una etapa informó |
+| +90 / +120 / +150 | 2/4 | ~15 mV |
+| −60 | **4/4** | 0,04 mV |
+| −120 | **4/4** | 0,32 mV |
+| **−150** | **2/4** | 188 mV |
+| −240 | **4/4** | 0,23 mV |
+| sembrado cerca | **4/4** | 0,08 mV |
 
-Todo el lado positivo falla, **incluso +60**, y el negativo converge. Encaja con
-la transferencia medida, que es asimétrica: la pendiente es ~2,6 veces mayor del
-lado negativo. Del positivo, con ganancia chica, el lazo corrige de a poco y no
-le alcanza el watchdog.
+`−120` converge, `−150` falla y `−240` vuelve a converger: si fuera una frontera
+de distancia, `−240` tendría que fallar más que `−150`. Lo que sí se ve:
 
-Que el caso más suave (+60) sea el peor sugiere que además hay algo dependiente
-del estado, no sólo de la magnitud. Con tres puntos no alcanza para decir qué.
+1. **El signo pesa muchísimo.** El lado negativo recuperó en 3 de 4 puntos; el
+   positivo en **0 de 4**, incluido el más suave. Ocho puntos son pocos, pero
+   0/4 contra 3/4 no se explica por azar cómodo.
+2. **Hay variabilidad entre corridas.** Que `−150` falle entre dos vecinos que
+   convergen dice que el resultado no está determinado sólo por el punto de
+   partida. Encaja con el mecanismo: la corrida termina bien o mal según si junta
+   una racha estable **antes** de que la corte el watchdog. Tiene componente de
+   suerte.
+3. **Cuando converge, converge muy bien** (0,04–0,32 mV). Nunca queda a mitad de
+   camino: es todo o nada.
 
-**Consecuencia práctica:** una placa nueva, o una que derive hacia el positivo,
-**no se recupera sola**. Hay que sembrarla cerca a mano con `0xAA` y recién
-después calibrar. Eso hoy no está automatizado ni escrito en ningún
-procedimiento.
+**Consecuencia práctica:** una placa que arranca de EEPROM se calibra sin
+problema, y ése es el caso de campo. Una placa **nueva**, o una que derive hacia
+el positivo, **no se recupera sola**: hay que sembrarla cerca a mano con `0xAA` y
+recién después calibrar. Eso hoy no está automatizado ni escrito en ningún
+procedimiento, y es lo que habría que agregar antes de armar placas nuevas.
 
 El mecanismo está identificado. La traza por iteración de la etapa 2 muestra el
 error oscilando (−2, −20, +5, −12, +8, 0, −23, +2, +7, −11, +3) sin quedarse

@@ -86,43 +86,60 @@ desde un offset grande, y esa es justamente la situacion de una placa nueva o de
 una que derivo.
 
 ==========================================================================
-LA FRONTERA: incluso +60 falla. La asimetria es fuerte
+NO HAY FRONTERA: no es un umbral de magnitud, es el SIGNO (y suerte)
 ==========================================================================
-Se barrio la perturbacion buscando desde donde puede recuperarse. Perturbar
-significa poner LAS CUATRO referencias en el mismo codigo antes de calibrar.
+Se barrio la perturbacion buscando desde que offset la calibracion deja de
+recuperarse. Perturbar significa poner LAS CUATRO referencias en el mismo codigo
+antes de calibrar. Ocho puntos:
 
-  perturbacion   duracion   resultado
-        +60        164 s    0/4  watchdog aborto; ninguna etapa informo
-        +90        319 s    2/4  peor error 14,99 mV
-       +120        318 s    2/4  peor error 15,85 mV
-       +150        318 s    2/4  (medido antes, reproducido dos veces)
-       -120        178 s    4/4  peor error 0,32 mV
-  (240,20,250,8)   154 s    4/4  peor error 0,50 mV
+  perturbacion   duracion   ok     peor error   nota
+       +60         164 s   0/4          -       ni una etapa informo
+       +90         319 s   2/4     14,99 mV     watchdog
+      +120         318 s   2/4     15,85 mV     watchdog
+      +150         318 s   2/4          -       watchdog (repetido 2 veces)
+       -60         131 s   4/4      0,04 mV
+      -120         178 s   4/4      0,32 mV
+      -150         336 s   2/4    188,64 mV     watchdog
+      -240         191 s   4/4      0,23 mV
+  (240,20,250,8)   154 s   4/4      0,08 mV     sembrado cerca
 
-Lo que se esperaba era una frontera: converge hasta cierto offset y despues no.
-Lo que hay es otra cosa, y mas util de saber:
+LO QUE SE BUSCABA ERA UN UMBRAL, Y NO HAY.
+El resultado no es monotono con la magnitud: -120 converge, -150 falla, y -240
+vuelve a converger. Si hubiera una frontera de distancia, -240 tendria que
+fallar mas que -150.
 
-1. TODO el lado positivo falla, incluso +60. No hay un umbral de magnitud que
-   respetar del lado positivo: falla desde cerca.
-2. El lado negativo converge, y bien (0,32 mV desde -120).
-3. Sembrar cerca de la solucion converge siempre (0,50 mV).
+LO QUE SI SE VE, Y ES ROBUSTO:
 
-O sea que lo que decide no es CUAN LEJOS esta el punto de partida, sino de que
-LADO. Eso encaja con la transferencia medida, que es asimetrica: la pendiente es
-~2,6 veces mayor del lado negativo que del positivo (ver
-hardware_transferencia_vref_lp_2026-09-03.txt). Del lado positivo, donde la
-ganancia es chica, el lazo corrige de a poco, tarda mas por iteracion de lo que
-le permite el watchdog, y ademas mide sobre el transitorio que dejo la etapa
-anterior.
+1. EL SIGNO PESA MUCHISIMO. El lado negativo recupero en 3 de 4 puntos; el
+   positivo en 0 de 4, incluido el mas suave. Ocho puntos son pocos, pero
+   0 de 4 contra 3 de 4 no se explica por azar comodo.
 
-El caso +60 merece una nota aparte: NINGUNA etapa llego a informar resultado, o
-sea que se aborto en la primera. Con +90 y +120 al menos dos etapas terminan.
-Que el caso mas suave sea el que peor sale sugiere que ademas hay algo dependiente
-del estado, no solo de la magnitud; con tres puntos no alcanza para decir que.
+2. HAY VARIABILIDAD ENTRE CORRIDAS. Que -150 falle entre dos vecinos que
+   convergen dice que el resultado no esta determinado solo por el punto de
+   partida. Encaja con el mecanismo: el error oscila alrededor del objetivo y
+   la corrida termina bien o mal segun si junta una racha estable ANTES de que
+   la corte el watchdog. Eso tiene componente de suerte.
+
+3. CUANDO CONVERGE, CONVERGE MUY BIEN: 0,04 a 0,32 mV. Nunca queda a mitad de
+   camino. Es todo o nada.
+
+POR QUE EL SIGNO
+Encaja con la transferencia medida, que es asimetrica: la pendiente es ~2,6
+veces mayor del lado negativo que del positivo (ver
+hardware_transferencia_vref_lp_2026-09-03.txt). Del lado positivo, con la
+ganancia chica, cada iteracion corrige menos, hacen falta mas, y cada una cuesta
+~8 s porque ademas mide sobre el transitorio que dejo la etapa anterior. El
+watchdog llega antes.
 
 QUE SIGNIFICA EN LA PRACTICA
-Una placa que arranque de EEPROM con valores razonables se calibra sin
-problema, y ese es el caso de campo. Pero una placa NUEVA, o una que haya
-derivado hacia el lado positivo, no se recupera sola: hay que sembrarla cerca a
-mano (0xAA) y recien despues calibrar. Eso hoy no esta automatizado ni
-documentado en ningun procedimiento.
+Una placa que arranca de EEPROM con valores razonables se calibra sin problema,
+y ese es el caso de campo: sembrando cerca dio 4/4 con 0,08 mV. Pero una placa
+NUEVA, o una que haya derivado hacia el positivo, NO se recupera sola. Hay que
+sembrarla cerca a mano con 0xAA y recien despues calibrar. Eso hoy no esta
+automatizado ni escrito en ningun procedimiento, y es lo que habria que agregar
+antes de armar placas nuevas.
+
+Una salida natural, para cuando se pueda probar: que la calibracion haga un
+barrido grueso de cada etapa antes de soltar el PI, y arranque el PI desde el
+mejor punto de ese barrido. Con eso el PI siempre empezaria cerca, que es el
+unico caso en el que hoy anda bien.
