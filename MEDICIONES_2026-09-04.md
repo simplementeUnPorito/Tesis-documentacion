@@ -114,6 +114,25 @@ vuelta). Crudos: `curva_e*_pga0_out0_*.json`.
 incluye las zonas recortada y no lineal. Para la ganancia del lazo valen las del
 escalón, §2.)*
 
+### ¿Cuánto sesga medir sobre transitorios?
+
+La primera tanda de curvas se tomó con 500 ms por punto, o sea sobre
+transitorios. Se repitió con **60 s de espera de planta** por punto para
+cuantificar el sesgo. En la etapa 0:
+
+| | pendiente | razón | residuo |
+|---|---:|---:|---:|
+| sin espera (500 ms) | 61,57 µV/cód | 1,06 | 0,034 mV |
+| con 60 s | 61,90 µV/cód | 1,04 | 0,043 mV |
+| escalón (régimen, ajuste exponencial) | 61,2 µV/cód | — | — |
+
+**Coinciden al 1 %**, y es lo que hay que esperar: el PGA tiene `G_TRANS = 0`, o
+sea que **su propio tap no tiene transitorio**, así que esperar no cambia nada.
+Tres medidas independientes del mismo número por tres caminos distintos.
+
+Donde la espera sí importa es en las etapas con transitorio propio —el BP, que
+tiene `G_TRANS = 98` contra `G_DC = 90`— y sobre todo en los **taps ajenos**.
+
 ---
 
 ## 4. Ganancias y autoridad: medido contra lo que usa el firmware
