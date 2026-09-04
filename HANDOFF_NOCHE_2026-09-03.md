@@ -246,6 +246,22 @@ extremo negativo.
 continua se lo come el acople; solo dejan un transitorio largo. Hay que medirlas
 en su propio tap, y eso tambien necesita el autotest.
 
+**Las cuatro configuraciones del ADC no coinciden entre sí.** Evidencia:
+`docs/hardware_adc_configs_2026-09-04.txt`. Con la misma entrada física, config 1
+da 999,6 mV (repite, y coincide con el banco por COM8), config 3 da 39,2 mV,
+config 4 da 42,4 mV y config 2 da −440,6 mV. Si midieran lo mismo con su escala
+correcta, todas darían ~1000 mV. **Sólo la configuración 1 está validada**, y eso
+reencuadra la anomalía que estaba anotada como "config 2 falla a veces": la
+premisa de D5 —comparar un nodo entre configuraciones— no se puede cumplir
+todavía, y su SKIP no era un falso negativo.
+
+**Capturas vacías esporádicas, ~4 %.** Evidencia:
+`docs/hardware_capturas_vacias_2026-09-04.txt`. Se descartó la explicación
+razonable (que fallara la primera captura tras abrir el puerto): con esperas de
+2,5 / 5 / 8 / 12 s ninguna primera falló, y la única vacía fue una segunda. No se
+agregó ningún reintento: taparía el síntoma. El camino de COMANDOS no falla
+(0 de 60 en 0xAA, SET_RECLEN y ARM).
+
 - **ACK de configuración ADC reprobado el 2026-09-03 a las 16:40 sobre COM8:**
   el enlace estaba arriba (`probe=1`, 10 pings, 0 tramas malas). Los comandos
   manuales `adc 1 0` ... `adc 4 0` recibieron ACK para las cuatro configs; luego
@@ -345,5 +361,6 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-03 20:20. Ruta de datos cerrada, polaridad
-resuelta, y tres hallazgos nuevos de planta en la sección C.*
+*Última actualización: 2026-09-04 00:50. Ruta de datos e ingesta cerradas,
+polaridad resuelta, y cinco hallazgos de planta/instrumentación en la
+sección C.*
