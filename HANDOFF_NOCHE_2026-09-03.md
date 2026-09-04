@@ -295,12 +295,19 @@ reencuadra la anomalía que estaba anotada como "config 2 falla a veces": la
 premisa de D5 —comparar un nodo entre configuraciones— no se puede cumplir
 todavía, y su SKIP no era un falso negativo.
 
-**Capturas vacías esporádicas, ~4 %.** Evidencia:
-`docs/hardware_capturas_vacias_2026-09-04.txt`. Se descartó la explicación
-razonable (que fallara la primera captura tras abrir el puerto): con esperas de
-2,5 / 5 / 8 / 12 s ninguna primera falló, y la única vacía fue una segunda. No se
-agregó ningún reintento: taparía el síntoma. El camino de COMANDOS no falla
-(0 de 60 en 0xAA, SET_RECLEN y ARM).
+**Capturas vacías esporádicas (~4 %): RESUELTO.** Evidencia:
+`docs/hardware_capturas_vacias_2026-09-04.txt`. Se cazó abriendo **las dos
+puntas a la vez** —la consola del esclavo mientras el maestro disparaba— y cayó
+en el intento 8 de 40. La diferencia con una vuelta buena es una sola línea: el
+ACK del PSoC al comando **SETN** no llega dentro de los 500 ms, el esclavo aborta
+el armado (bien: mejor eso que capturar basura) y el START siguiente se ignora.
+No es ESP-NOW ni el maestro.
+
+La causa de fondo: `sendAndConfirmPsocSetN()` mandaba el comando **una sola vez**.
+Era la excepción — todos los demás caminos de comando al PSoC ya usan un
+reintento acotado de dos intentos, con un comentario que explica que hay un
+transitorio que se traga el primer comando en silencio. **Arreglado y compilado,
+NO grabado.**
 
 - **ACK de configuración ADC reprobado el 2026-09-03 a las 16:40 sobre COM8:**
   el enlace estaba arriba (`probe=1`, 10 pings, 0 tramas malas). Los comandos
@@ -357,6 +364,13 @@ Ordenada por lo que desbloquea más.
    deshabilitar y rehabilitar el adaptador de madrugada, sin nadie mirando,
    podía dejarte sin WiFi a las 8.
 
+1bis. **Grabá el ESP esclavo: hay dos arreglos esperando.** Los dos están
+   commiteados y compilan, pero no se pudieron grabar porque reflashear el ESP
+   cuelga al PSoC y la recuperación necesita el KitProg. Son:
+   (a) el reintento del SETN, que elimina el ~4 % de capturas vacías;
+   (b) el centrado de `cmp`/`err` en el log de calibración, sin el cual una
+   calibración buena se lee como un error de −1000 mV.
+
 2bis. **Enchufá el KitProg cuando puedas.** Es lo único que bloquea de verdad.
    Sin él no puedo poner el firmware de autotest en el PSoC, y eso es lo que
    hace falta para medir los taps intermedios: caracterizar las etapas 0, 1 y 2
@@ -401,6 +415,6 @@ Ordenada por lo que desbloquea más.
 
 ---
 
-*Última actualización: 2026-09-04 02:05. La autocalibración corrió cuatro
-veces sobre hardware: converge de cerca y se aborta desde lejos, con el
-mecanismo identificado.*
+*Última actualización: 2026-09-04 02:35. Capturas vacías resueltas (ACK del
+SETN sin reintento); dos arreglos compilados esperando que se pueda grabar
+el ESP.*
