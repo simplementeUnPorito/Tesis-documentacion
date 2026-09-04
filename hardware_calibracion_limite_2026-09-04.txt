@@ -84,3 +84,45 @@ es el caso real, porque arranca de lo guardado en EEPROM- converge a mejor de
 0,5 mV en las cuatro etapas. Lo que no tiene hoy es capacidad de RECUPERARSE
 desde un offset grande, y esa es justamente la situacion de una placa nueva o de
 una que derivo.
+
+==========================================================================
+LA FRONTERA: incluso +60 falla. La asimetria es fuerte
+==========================================================================
+Se barrio la perturbacion buscando desde donde puede recuperarse. Perturbar
+significa poner LAS CUATRO referencias en el mismo codigo antes de calibrar.
+
+  perturbacion   duracion   resultado
+        +60        164 s    0/4  watchdog aborto; ninguna etapa informo
+        +90        319 s    2/4  peor error 14,99 mV
+       +120        318 s    2/4  peor error 15,85 mV
+       +150        318 s    2/4  (medido antes, reproducido dos veces)
+       -120        178 s    4/4  peor error 0,32 mV
+  (240,20,250,8)   154 s    4/4  peor error 0,50 mV
+
+Lo que se esperaba era una frontera: converge hasta cierto offset y despues no.
+Lo que hay es otra cosa, y mas util de saber:
+
+1. TODO el lado positivo falla, incluso +60. No hay un umbral de magnitud que
+   respetar del lado positivo: falla desde cerca.
+2. El lado negativo converge, y bien (0,32 mV desde -120).
+3. Sembrar cerca de la solucion converge siempre (0,50 mV).
+
+O sea que lo que decide no es CUAN LEJOS esta el punto de partida, sino de que
+LADO. Eso encaja con la transferencia medida, que es asimetrica: la pendiente es
+~2,6 veces mayor del lado negativo que del positivo (ver
+hardware_transferencia_vref_lp_2026-09-03.txt). Del lado positivo, donde la
+ganancia es chica, el lazo corrige de a poco, tarda mas por iteracion de lo que
+le permite el watchdog, y ademas mide sobre el transitorio que dejo la etapa
+anterior.
+
+El caso +60 merece una nota aparte: NINGUNA etapa llego a informar resultado, o
+sea que se aborto en la primera. Con +90 y +120 al menos dos etapas terminan.
+Que el caso mas suave sea el que peor sale sugiere que ademas hay algo dependiente
+del estado, no solo de la magnitud; con tres puntos no alcanza para decir que.
+
+QUE SIGNIFICA EN LA PRACTICA
+Una placa que arranque de EEPROM con valores razonables se calibra sin
+problema, y ese es el caso de campo. Pero una placa NUEVA, o una que haya
+derivado hacia el lado positivo, no se recupera sola: hay que sembrarla cerca a
+mano (0xAA) y recien despues calibrar. Eso hoy no esta automatizado ni
+documentado en ningun procedimiento.
