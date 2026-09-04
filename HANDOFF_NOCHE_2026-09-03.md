@@ -55,38 +55,42 @@ Desde un punto razonable —que es el caso real, porque arranca de lo guardado e
 EEPROM— **los Kp/Ki del Monte Carlo funcionan sobre la placa**: mejor de medio
 milivoltio en las cuatro etapas.
 
-**Pero busqué la frontera y NO HAY UMBRAL DE MAGNITUD.** Ocho puntos de
-perturbación (las cuatro referencias al mismo código antes de calibrar):
+**Pero cuatro de cada diez corridas se abortan, y no se puede anticipar cuál.**
+Doce corridas perturbando las cuatro referencias antes de calibrar:
 
-| perturbación | ok | peor error |
-|---:|:-:|---:|
-| **+60** | **0/4** | — ni una etapa informó |
-| +90 / +120 / +150 | 2/4 | ~15 mV |
-| −60 | **4/4** | 0,04 mV |
-| −120 | **4/4** | 0,32 mV |
-| **−150** | **2/4** | 188 mV |
-| −240 | **4/4** | 0,23 mV |
-| sembrado cerca | **4/4** | 0,08 mV |
+| perturbación | resultados |
+|---:|---|
+| +60 | **0/4**, luego **4/4**, luego **4/4** |
+| +90 / +120 / +150 | 2/4 |
+| −60 / −120 / −240 | 4/4 (0,04 / 0,32 / 0,23 mV) |
+| −150 | **2/4**, luego **4/4**, luego **2/4** |
+| sembrado cerca | 4/4 ×3 |
 
-`−120` converge, `−150` falla y `−240` vuelve a converger: si fuera una frontera
-de distancia, `−240` tendría que fallar más que `−150`. Lo que sí se ve:
+**El mismo punto de partida da resultados distintos**, así que el punto de
+partida no es lo que decide. Busqué primero un umbral de magnitud y después una
+dependencia del signo: **las dos eran patrones en el ruido, y las escribí antes
+de repetir.** Quedan corregidas en la evidencia.
 
-1. **El signo pesa muchísimo.** El lado negativo recuperó en 3 de 4 puntos; el
-   positivo en **0 de 4**, incluido el más suave. Ocho puntos son pocos, pero
-   0/4 contra 3/4 no se explica por azar cómodo.
-2. **Hay variabilidad entre corridas.** Que `−150` falle entre dos vecinos que
-   convergen dice que el resultado no está determinado sólo por el punto de
-   partida. Encaja con el mecanismo: la corrida termina bien o mal según si junta
-   una racha estable **antes** de que la corte el watchdog. Tiene componente de
-   suerte.
-3. **Cuando converge, converge muy bien** (0,04–0,32 mV). Nunca queda a mitad de
-   camino: es todo o nada.
+Lo que sí sostienen los datos:
 
-**Consecuencia práctica:** una placa que arranca de EEPROM se calibra sin
-problema, y ése es el caso de campo. Una placa **nueva**, o una que derive hacia
-el positivo, **no se recupera sola**: hay que sembrarla cerca a mano con `0xAA` y
-recién después calibrar. Eso hoy no está automatizado ni escrito en ningún
-procedimiento, y es lo que habría que agregar antes de armar placas nuevas.
+1. **Cuando termina, termina muy bien**: 0,04–0,51 mV. Nunca a mitad de camino.
+2. **Cinco de doce corridas se abortaron** por watchdog (2/4 o 0/4). ~40 %.
+3. **El tiempo varía de 13 s a 336 s** para perturbaciones parecidas.
+
+Es coherente con el mecanismo observado en la traza: el error oscila y la corrida
+sale bien o mal según si junta una racha estable antes de que la corte el
+watchdog. Eso tiene azar. **El problema no es de alcance —el lazo llega— sino del
+criterio de terminación.**
+
+**En la práctica, hoy:** la calibración de campo arranca de EEPROM y ahí anda
+bien, pero conviene **verificar el resultado y reintentar si quedó en 2/4**. El
+firmware lo informa correctamente con `ok=0` por etapa, así que es fácil, y
+reintentar alcanza mientras no se arregle el criterio.
+
+*(Una limitación del experimento, para no sobrevenderlo: el paso de perturbación
+no verifica que los cuatro `idac` se hayan aplicado, así que la tabla no sirve
+para hablar de magnitudes. No cambia la conclusión, porque `+60` dio 0/4 y 4/4
+con el mismo procedimiento.)*
 
 El mecanismo está identificado. La traza por iteración de la etapa 2 muestra el
 error oscilando (−2, −20, +5, −12, +8, 0, −23, +2, +7, −11, +3) sin quedarse

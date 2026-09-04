@@ -86,60 +86,76 @@ desde un offset grande, y esa es justamente la situacion de una placa nueva o de
 una que derivo.
 
 ==========================================================================
-NO HAY FRONTERA: no es un umbral de magnitud, es el SIGNO (y suerte)
+NI FRONTERA NI SIGNO: el resultado NO depende del punto de partida
 ==========================================================================
-Se barrio la perturbacion buscando desde que offset la calibracion deja de
-recuperarse. Perturbar significa poner LAS CUATRO referencias en el mismo codigo
-antes de calibrar. Ocho puntos:
+ESTA SECCION CORRIGE DOS CONCLUSIONES ANTERIORES DE ESTA MISMA NOCHE. Primero se
+creyo que habia un umbral de magnitud; despues, viendo mas puntos, que decidia el
+SIGNO de la perturbacion. Repitiendo los puntos, las dos son falsas.
 
-  perturbacion   duracion   ok     peor error   nota
-       +60         164 s   0/4          -       ni una etapa informo
-       +90         319 s   2/4     14,99 mV     watchdog
-      +120         318 s   2/4     15,85 mV     watchdog
-      +150         318 s   2/4          -       watchdog (repetido 2 veces)
-       -60         131 s   4/4      0,04 mV
-      -120         178 s   4/4      0,32 mV
-      -150         336 s   2/4    188,64 mV     watchdog
-      -240         191 s   4/4      0,23 mV
-  (240,20,250,8)   154 s   4/4      0,08 mV     sembrado cerca
+Doce corridas, perturbando las cuatro referencias al mismo codigo antes de
+calibrar:
 
-LO QUE SE BUSCABA ERA UN UMBRAL, Y NO HAY.
-El resultado no es monotono con la magnitud: -120 converge, -150 falla, y -240
-vuelve a converger. Si hubiera una frontera de distancia, -240 tendria que
-fallar mas que -150.
+  perturbacion          resultado                    duracion
+       +60      0/4  /  4/4 (0,31 mV)  /  4/4 (0,46 mV)    164 / 315 / 42 s
+       +90      2/4                                        319 s
+      +120      2/4                                        318 s
+      +150      2/4  /  2/4  (repetido, identico)          318 / 317 s
+       -60      4/4 (0,04 mV)                              131 s
+      -120      4/4 (0,32 mV)                              178 s
+      -150      2/4  /  4/4 (0,51 mV)  /  2/4              336 / 13 / 320 s
+      -240      4/4 (0,23 mV)                              191 s
+  sembrado cerca  4/4 x3 (0,08 / 0,27 / 0,50 mV)           154 s
 
-LO QUE SI SE VE, Y ES ROBUSTO:
++60 dio 0/4 una vez y 4/4 dos veces. -150 dio 2/4 dos veces y 4/4 una. EL MISMO
+PUNTO DE PARTIDA DA RESULTADOS DISTINTOS, asi que el punto de partida no es lo
+que decide.
 
-1. EL SIGNO PESA MUCHISIMO. El lado negativo recupero en 3 de 4 puntos; el
-   positivo en 0 de 4, incluido el mas suave. Ocho puntos son pocos, pero
-   0 de 4 contra 3 de 4 no se explica por azar comodo.
+LO QUE SI SOSTIENEN LOS DATOS
 
-2. HAY VARIABILIDAD ENTRE CORRIDAS. Que -150 falle entre dos vecinos que
-   convergen dice que el resultado no esta determinado solo por el punto de
-   partida. Encaja con el mecanismo: el error oscila alrededor del objetivo y
-   la corrida termina bien o mal segun si junta una racha estable ANTES de que
-   la corte el watchdog. Eso tiene componente de suerte.
+1. CUANDO TERMINA, TERMINA MUY BIEN: 0,04 a 0,51 mV en las cuatro etapas. Nunca
+   queda a mitad de camino. Es todo o nada.
 
-3. CUANDO CONVERGE, CONVERGE MUY BIEN: 0,04 a 0,32 mV. Nunca queda a mitad de
-   camino. Es todo o nada.
+2. UNA FRACCION IMPORTANTE DE LAS CORRIDAS SE ABORTA. De doce, cinco quedaron en
+   2/4 o 0/4 por watchdog. Es del orden del 40 %, y no se puede anticipar cual.
 
-POR QUE EL SIGNO
-Encaja con la transferencia medida, que es asimetrica: la pendiente es ~2,6
-veces mayor del lado negativo que del positivo (ver
-hardware_transferencia_vref_lp_2026-09-03.txt). Del lado positivo, con la
-ganancia chica, cada iteracion corrige menos, hacen falta mas, y cada una cuesta
-~8 s porque ademas mide sobre el transitorio que dejo la etapa anterior. El
-watchdog llega antes.
+3. EL TIEMPO VARIA MUCHISIMO, de 13 s a 336 s, para perturbaciones parecidas.
 
-QUE SIGNIFICA EN LA PRACTICA
-Una placa que arranca de EEPROM con valores razonables se calibra sin problema,
-y ese es el caso de campo: sembrando cerca dio 4/4 con 0,08 mV. Pero una placa
-NUEVA, o una que haya derivado hacia el positivo, NO se recupera sola. Hay que
-sembrarla cerca a mano con 0xAA y recien despues calibrar. Eso hoy no esta
-automatizado ni escrito en ningun procedimiento, y es lo que habria que agregar
-antes de armar placas nuevas.
+Todo esto es coherente con el mecanismo que SI esta observado directamente en la
+traza: el error oscila alrededor del objetivo y la corrida termina bien o mal
+segun si junta una racha estable antes de que la corte el watchdog. Eso es un
+proceso con azar, no una funcion del punto de partida.
 
-Una salida natural, para cuando se pueda probar: que la calibracion haga un
-barrido grueso de cada etapa antes de soltar el PI, y arranque el PI desde el
-mejor punto de ese barrido. Con eso el PI siempre empezaria cerca, que es el
-unico caso en el que hoy anda bien.
+O sea que el problema NO es de alcance -el lazo llega- sino del CRITERIO DE
+TERMINACION: pide una racha que la oscilacion le impide juntar de forma
+confiable.
+
+UNA LIMITACION DEL EXPERIMENTO, PARA NO SOBREVENDERLO
+El paso de perturbacion manda cuatro comandos `idac` y NO verifica que se hayan
+aplicado. Con la perdida de comandos medida esa noche (~4 % en el camino de
+datos), alguna corrida pudo arrancar de un punto distinto del nominal. La corrida
+de -150 que convergio en 13 s es sospechosa justamente por eso: 13 s es
+demasiado poco comparado con los 336 s de la otra.
+
+Eso NO cambia la conclusion principal, porque +60 dio 0/4 y 4/4 con el mismo
+procedimiento, pero si significa que la tabla de arriba no sirve para hablar de
+magnitudes. Para eso habria que releer cada IDAC despues de perturbarlo.
+
+QUE HACER
+La palanca no es el punto de partida sino el criterio de terminacion y el
+asentamiento:
+
+1. Subir CAL_PI_SETTLE_SAMPLES en las etapas que estan aguas abajo de otra, para
+   que el lazo no mida sobre el transitorio que dejo la anterior. Un tau son
+   ~81000 muestras; hoy espera 512.
+2. Esperar entre etapa y etapa, no solo dentro de cada una.
+3. Recien despues mirar deadband y lock. Agrandar el deadband haria "pasar" mas
+   corridas dejando una calibracion peor: es la salida tentadora y equivocada.
+
+NO SE TOCO NADA. Sin KitProg no se puede reprogramar el PSoC y cualquier cambio
+quedaria sin probar.
+
+EN LA PRACTICA, HOY
+La calibracion de campo arranca de EEPROM y ahi anda bien. Pero conviene
+VERIFICAR el resultado y reintentar si quedo en 2/4, porque hoy eso pasa en cuatro
+de cada diez corridas y el firmware lo informa correctamente con ok=0 por etapa.
+Reintentar es barato y suficiente mientras no se arregle el criterio.
