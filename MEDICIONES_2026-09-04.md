@@ -118,26 +118,41 @@ escalón, §2.)*
 
 ## 4. Ganancias y autoridad: medido contra lo que usa el firmware
 
-| etapa | medido (escalón) | medido (curva) | firmware | error |
-|---|---:|---:|---:|---:|
-| PGA | 61,2 µV/cód | 61,57 | 58,1 | **+5,3 %** |
-| **BP** | **90,1** | **96,54** | **189,4** | **−52,4 %** |
-| ADDER | 740,9 | — | 770,6 | −3,9 % |
-| LP | 524,7 | — | 553,1 | −5,1 % |
+**Primero me equivoqué acá, y la corrección es la parte interesante.** Comparé
+las constantes del firmware contra la ganancia de **régimen permanente** y
+concluí que la del BP estaba al doble. Es la comparación equivocada: el lazo
+reacciona en 49 ms, muchísimo antes de τ, así que la que corresponde es la
+**instantánea**, `G_DC + G_TRANS`. Con ésa, las cuatro coinciden:
 
-Tres de cuatro caen dentro del 5 %, que es muy bueno. **La del BP está a un
-factor 2, confirmado por dos métodos independientes.**
+| etapa | G_DC | G_TRANS | **instantánea** | firmware | error |
+|---|---:|---:|---:|---:|---:|
+| PGA | 61,2 | 0,0 | 61,2 | 58,1 | +5,3 % |
+| **BP** | 90,1 | **98,0** | **188,1** | **189,4** | **−0,7 %** |
+| ADDER | 740,9 | 21,4 | 762,3 | 770,6 | −1,1 % |
+| LP | 524,7 | 0,0 | 524,7 | 553,1 | −5,1 % |
 
-**Efecto en el lazo.** Con `Kp=1` deadbeat la corrección es `error/ganancia_supuesta`.
-Si la supuesta es el doble de la real, cada iteración aplica **la mitad** de lo
-que hace falta. No diverge —converge geométricamente a razón 0,5— pero tarda el
-doble de iteraciones, y con el watchdog contando eso es margen regalado.
+El BP es la **única** etapa donde el transitorio es comparable a la continua, por
+eso parecía mal sólo ésa. **Las cuatro constantes están bien y no hay que
+tocarlas.**
 
-**Detalle contraintuitivo que apareció al simular:** ese error de ganancia
-**amortigua** el lazo sin querer. Al probar con la ganancia exacta (deadbeat
-real) sobre una señal que todavía deriva, el lazo oscila y el integrador se
-enrolla hasta el riel. **Al corregir la ganancia del BP hay que verificar que no
-aparezca oscilación**, porque se pierde ese amortiguamiento accidental.
+Lo detecté porque el "arreglo" **rompe el lazo**. Con la ganancia de régimen (48)
+el deadbeat sobrecorrige por 2 en la escala de tiempo en la que trabaja, y el DAC
+oscila con amplitud **creciente** hasta el riel:
+
+```
+trayectoria del DAC del BP:  0, -17, 2, -19, 4, -21, 6, -23, 9, -28, 14, -33, 20, -40
+éxito: 0 %
+```
+
+`Kp = 1/2` lo estabiliza (1,586 mV en 1τ, 100 %), pero no hace falta: la
+constante ya era la correcta.
+
+**La consecuencia real, que sí importa.** Usando la ganancia instantánea el lazo
+es estable, pero el valor **final** del BP queda en `G_DC/G_inst = 0,48` de lo que
+hacía falta. O sea: **converge y después se va.** Ése es exactamente el síntoma
+«no se sostiene» que se venía observando, y ahora tiene explicación cuantitativa.
+El arreglo no es tocar ganancias sino **esperar a la planta**, para que la medida
+sobre la que corrige sea la asentada.
 
 ### Autoridad de cada etapa sobre su propio tap (ganancia × 255 códigos)
 
@@ -203,8 +218,8 @@ modelo no captura, no porque la simulación lo pida.
 
 ## 6. Lo que hay que decidir
 
-1. **Corregir `CAL_PI_GAIN_GEO_BP_X1000` de 101 a ~48.** Medido dos veces. Ojo
-   con el amortiguamiento accidental que se pierde (§4).
+1. **NO tocar `CAL_PI_GAIN_GEO_BP_X1000`.** Verificado: el 101 es correcto,
+   corresponde a la ganancia instantánea. Cambiarlo rompe el lazo (§4).
 2. **Dejar la ganancia del LP en 295** y corregir el 651 del proyecto de test.
    Vos dijiste 651; la medición dice 295 y por tu regla manda lo medido.
 3. **Fijar `CAL_PI_PLANT_SETTLE_TAU_X10`.** Hoy vale 0 a propósito. Con τ=29,5 s
