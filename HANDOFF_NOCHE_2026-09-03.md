@@ -291,6 +291,16 @@ Ordenada por lo que desbloquea más.
    extremos dispersa 0,42 mV, o sea 900 veces menos que la señal. **No** hay que
    dar vuelta `PSOC_IDAC_POLARITY_NEGATIVE_BIT`.
 
+2ante. **Mirá si la tapa cerrada apaga dispositivos.** Hay un patrón: el
+   KitProg no enumera *y* el adaptador WiFi, estando habilitado
+   (`AdminStatus: Up`), devuelve **cero** redes en un scan, lo cual es
+   imposible en un entorno normal. Las dos cosas empezaron después de cerrar la
+   tapa. Si abrirla los recupera, se destraban de una vez dos pendientes: la
+   medición por tap (necesita el KitProg) y la prueba de la página web (necesita
+   asociarse al AP `GeoNetwork`, cuyo perfil está guardado). No toqué la radio:
+   deshabilitar y rehabilitar el adaptador de madrugada, sin nadie mirando,
+   podía dejarte sin WiFi a las 8.
+
 2bis. **Enchufá el KitProg cuando puedas.** Es lo único que bloquea de verdad.
    Sin él no puedo poner el firmware de autotest en el PSoC, y eso es lo que
    hace falta para medir los taps intermedios: caracterizar las etapas 0, 1 y 2
