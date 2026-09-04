@@ -69,3 +69,26 @@ ADC de campo "mostro +200 en etapa 3 como ~1106 mV y el negativo cayo a 0, y
 despues quedo en 0". Con un transitorio de 31 s y saturacion de por medio, ese
 comportamiento se explica sin que el snapshot este roto. No hay que darlo por
 defectuoso sin repetirlo respetando el tiempo de recuperacion.
+
+--------------------------------------------------------------------------
+ANEXO: los "fallos de transporte" eran, en buena parte, este transitorio
+--------------------------------------------------------------------------
+Bateria de 60 vueltas con codigos CHICOS (+-20, que no saturan), midiendo cada
+paso del protocolo por separado:
+
+  vueltas limpias           59 de 60   (98,3 %)
+  4_captura_vacia            1         (1,7 %)
+  0xAA sin ACK               0
+  SET_RECLEN sin ACK         0
+  ARM sin READY              0
+  muestras por captura buena  min 150  max 150  (pedidas 150)
+
+Contrasta con el ~10 % de puntos fallados que se habia visto en los barridos
+de +-240, que SI saturan. La diferencia entre las dos tandas no es el
+transporte: es si la cadena habia sido llevada contra un riel.
+
+Conclusion practica: antes de tocar ningun retry, respetar el tiempo de
+recuperacion. Con la cadena en su zona lineal el transporte da 98,3 % de
+vueltas limpias y ningun fallo de configuracion, que es consistente con el
+15/15 de ACK que ya estaba documentado. La captura vacia suelta que queda es
+otra cosa y hace falta mas muestra para decir si es sistematica.
