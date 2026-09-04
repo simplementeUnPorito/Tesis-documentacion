@@ -53,8 +53,30 @@ Evidencia: `docs/hardware_calibracion_limite_2026-09-04.txt` (el primero,
 
 Desde un punto razonable —que es el caso real, porque arranca de lo guardado en
 EEPROM— **los Kp/Ki del Monte Carlo funcionan sobre la placa**: mejor de medio
-milivoltio en las cuatro etapas. Lo que no tiene es capacidad de **recuperarse
-desde un offset grande**, que es justo la situación de una placa nueva.
+milivoltio en las cuatro etapas.
+
+**Pero no es cuestión de cuán lejos arranca, sino de qué LADO.** Barriendo la
+perturbación apareció algo más nítido que una frontera:
+
+| perturbación | resultado |
+|---:|---|
+| **+60** | 0/4 — ni una etapa llegó a informar |
+| +90 / +120 / +150 | 2/4, peor error ~15 mV |
+| **−120** | **4/4**, peor error 0,32 mV |
+| sembrado cerca (240,20,250,8) | **4/4**, peor error 0,50 mV |
+
+Todo el lado positivo falla, **incluso +60**, y el negativo converge. Encaja con
+la transferencia medida, que es asimétrica: la pendiente es ~2,6 veces mayor del
+lado negativo. Del positivo, con ganancia chica, el lazo corrige de a poco y no
+le alcanza el watchdog.
+
+Que el caso más suave (+60) sea el peor sugiere que además hay algo dependiente
+del estado, no sólo de la magnitud. Con tres puntos no alcanza para decir qué.
+
+**Consecuencia práctica:** una placa nueva, o una que derive hacia el positivo,
+**no se recupera sola**. Hay que sembrarla cerca a mano con `0xAA` y recién
+después calibrar. Eso hoy no está automatizado ni escrito en ningún
+procedimiento.
 
 El mecanismo está identificado. La traza por iteración de la etapa 2 muestra el
 error oscilando (−2, −20, +5, −12, +8, 0, −23, +2, +7, −11, +3) sin quedarse
