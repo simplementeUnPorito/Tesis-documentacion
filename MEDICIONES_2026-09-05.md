@@ -1,0 +1,582 @@
+# Registro del 2026-09-05
+
+Continuación de `MEDICIONES_2026-09-04.md`. Banco: **ESP esclavo en COM8**
+(cambió de COM7; sólo hay un ESP conectado, el maestro está desenchufado por
+pedido de Elías), PSoC con firmware de autotest, **geófono conectado a la
+entrada** desde el mediodía.
+
+---
+
+## 1. El grabado del PSoC por PPCLI funciona — queda cerrado
+
+Estaba mal diagnosticado desde el 2026-09-02. `program_psoc.ps1` **graba y el
+chip arranca**.
+
+**Cómo se comprobó.** Se grabó el mismo HEX que ya estaba en el chip (proyecto
+de autotest, `-SkipBuild`), o sea sin cambio funcional, para que el experimento
+midiera sólo el camino de grabado:
+
+| paso | resultado |
+|---|---|
+| `PSoC3_EraseAll` | `0 OK` |
+| 272 filas `ProgramRowFromHex`/`VerifyRowFromHex` con ECC (`0x01`) | todas `0 OK`, `verResult = 1` |
+| `ProtectAll`, `VerifyProtect`, `DAP_ReleaseChip`, `ClosePort` | `0 OK` |
+| **después**: `taps` por I2C | 1001,3 / 1001,5 / 1001,5 / 1000,8 mV |
+| **después**: autotest completo | 22 PASS, 3 FAIL conocidos, 1 WARN, 83,9 s — idéntico a antes |
+
+**Qué era en realidad.** Lo que dejaba el chip muerto era grabar las **1024
+filas** (`-AllRows`), no la ausencia de PSoC Creator. El culpable era grabar de
+más, no de menos.
+
+**Por qué alcanza con las filas ocupadas.** El `.cydwr` tiene
+`CYDEV_CONFIGURATION_ECC=True` con `CYDEV_ECC_ENABLE=False`: la configuración
+del fabric va al espacio ECC. Parseando el HEX, esa configuración es no nula
+**sólo en las filas 0..150** (región `0x80000000`, 32 B por fila). El código
+ocupa 264 filas y el script graba 272: cubre las dos cosas con margen.
+
+**Hipótesis descartada.** Se sospechaba que faltaba escribir las NV latches.
+No es eso: `EraseAll` no las borra, `PSoC3_GetEccStatus` sobre el chip da `0`,
+coherente con el HEX (`nvlUserSize=4`, user `00 00 40 05`) y con
+`CYDEV_ECC_ENABLE=False`. `PSoC3_ReadNvlArray` falla con `0x80004005` y por eso
+no se pueden comparar de frente, pero `PSoC3_WriteNvlArray` existe si alguna vez
+hiciera falta.
+
+**Control adicional:** `DAP_Acquire` + `DAP_ReleaseChip` **sin** grabar no
+perturba al PSoC — sigue contestando. O sea que el problema nunca estuvo en
+adquirir el chip.
+
+**Consecuencia:** se puede iterar firmware sin intervención de Elías.
+
+**Trampa:** el nombre del KitProg cambia entre sesiones (`CMSIS-DAP/236111` el
+2026-07, `CMSIS-DAP/246475` hoy). El script lo autodetecta.
+
+---
+
+## 2. Temperatura por ubicación: sirve, y el rango es peor de lo supuesto
+
+Open-Meteo con las coordenadas del nodo (25°20'19,4"S 57°36'57,8"W), sin API key
+ni credenciales. Al mediodía del 2026-09-05: **19,0 °C**, 58 % HR.
+
+| día | mín | máx |
+|---|---:|---:|
+| 2026-09-05 | 16,2 | 19,0 |
+| 2026-09-06 | 11,5 | 17,6 |
+| **2026-09-07** | **8,1** | 19,3 |
+| 2026-09-08 | 10,9 | 24,8 |
+| 2026-09-09 | 16,5 | 25,1 |
+| 2026-09-10 | 18,6 | 25,1 |
+| **2026-09-11** | 17,1 | **31,6** |
+
+**De 8,1 a 31,6 °C en la misma semana**, sobre un electrolítico de 680 µF. Una
+espera de planta fija dimensionada con el τ de banco (29,5 s a ~19 °C) no cubre
+eso. Decisión de Elías, y es la correcta: **no corregir por temperatura**, sino
+**medir τ en el propio nodo** y dimensionar la espera con lo medido. La
+temperatura queda como explicación del fenómeno, no como entrada del algoritmo.
+
+---
+
+## 3. El geófono está conectado, y a ×1 eso es indetectable
+
+El indicador D6b del autotest (RMS de ch0 a ganancia ×1) **no sirve** para
+decidir si hay geófono: con la entrada abierta daba RMS 19 µV / pp 228 µV, y con
+el geófono puesto da RMS 19 µV / pp 171 µV. Es el piso del ADC en los dos casos.
+
+Subiendo la ganancia del PGA de entrada aparece la diferencia (n_sel=3):
+
+| código | ganancia | media ch0 | RMS | pp |
+|---:|---|---:|---:|---:|
+| 0 | ×1 | 1000,69 mV | 19 µV | 171 µV |
+| 3 | ×8 | 994,63 mV | 114 µV | 801 µV |
+| 6 | ×32 | 973,24 mV | 1163 µV | 5607 µV |
+| 8 | ×50 | 951,16 mV | 4024 µV | 18539 µV |
+
+El RMS crece **más rápido que la ganancia** (de ×8 a ×32 la ganancia sube 4× y
+el RMS sube 10,2×), o sea que a partir de ×8 deja de mandar el piso del ADC y
+empieza a mandar el ruido de la entrada. Referido a la entrada, a ×50 son 80 µV
+RMS: eso es varios órdenes por encima del ruido térmico de una bobina de 375 Ω,
+así que **es movimiento del terreno real**, no ruido eléctrico. El geófono
+está y está midiendo.
+
+**Corolario para el autotest:** D6b hay que medirlo a ganancia alta, no a ×1.
+Como está hoy da lo mismo con y sin geófono y da una falsa sensación de control.
+
+---
+
+## 4. PRIMER RESULTADO DURO: el PGA de entrada no se puede autocorregir por encima de ~×16
+
+La media de ch0 baja monótonamente con la ganancia. Referida a la entrada, es
+una sola constante:
+
+| ganancia | corrimiento de ch0 | referido a la entrada |
+|---|---:|---:|
+| ×8 | −6,06 mV | 0,76 mV |
+| ×32 | −27,45 mV | 0,86 mV |
+| ×50 | −49,53 mV | 0,99 mV |
+
+O sea un **offset referido a la entrada de ~0,9 mV**, que es del PGA (con el
+geófono la entrada es un corto en continua). Ese offset se multiplica por la
+ganancia antes de que ninguna etapa pueda tocarlo.
+
+### CUIDADO: la conclusión de esta sección depende de un dato que todavía no está medido
+
+Escribí primero que esto probaba que el PGA no se puede autocorregir arriba de
+×16, razonando contra los **±15,6 mV** de autoridad medidos el 2026-09-04
+(61,2 µV/código × 255). **Ese razonamiento puede ser falso**, y la falla es mía:
+la matriz del 2026-09-04 se tomó **entera a PGA ×1**, así que no puede distinguir
+dónde inyecta el IDAC de la etapa 0.
+
+Hay dos posibilidades y dan conclusiones **opuestas**:
+
+| dónde inyecta el IDAC del PGA | pendiente esperada en ch0 | autoridad a ×50 | ¿se autocorrige? |
+|---|---|---:|---|
+| **después** de la amplificación | 61,2 µV/cód, constante | ±15,6 mV | **no**, por 3,2× |
+| **antes** (o sea en la entrada) | 61,2·g µV/cód | ±780 mV | **sí**, con 17× de margen |
+
+Y hay un indicio fuerte a favor de la segunda: `cal_pi_stage_gain_x1000()` del
+firmware **multiplica** la ganancia de la etapa 0 por la del PGA, o sea que
+quien escribió el lazo asumió que la autoridad escala. Si eso está bien, el
+offset y la autoridad crecen juntos y su razón es **constante**, así que ×50 no
+tiene ningún problema de autoridad.
+
+**Lo decide una sola medición**, que ya está encolada (EXP1): barrer el IDAC de
+la etapa 0 a varias ganancias del PGA y mirar la pendiente de ch0. `ch0` está
+antes de C1 y su propio tap no tiene transitorio (`G_TRANS[0][0] = 0` medido),
+así que sale rápido.
+
+**Lo que sí queda establecido sin depender de eso**, porque es medición directa:
+el PGA tiene ~1,0 mV de offset referido a la entrada, y a ×50 eso son 49,5 mV de
+corrimiento en su tap. Si ese corrimiento se puede anular o no es lo que decide
+EXP1.
+
+### EXP1: medido, y la respuesta es la segunda — mi conclusión era falsa
+
+**Método.** Barrido del IDAC de la etapa 0 en todo su rango, midiendo ch0, a
+cinco ganancias del PGA. Once puntos por ganancia. `ch0` está antes de C1 y su
+propio tap no tiene transitorio (`G_TRANS[0][0] = 0`), así que no necesita
+espera de planta. Crudos: `lab/planta/curva_e0_pga*_out0_2026090514*.json`
+
+Pendiente en la zona lineal:
+
+| ganancia del PGA | µV por código | razón contra ×1 |
+|---|---:|---:|
+| ×1 | 61,97 | 1,0 |
+| ×8 | 460,5 | 7,4 |
+| ×16 | 927,5 | 15,0 |
+| ×32 | 1774 | 28,6 |
+| ×50 | 2688 | 43,4 |
+
+**La autoridad escala con la ganancia.** El IDAC de la etapa 0 inyecta **antes**
+de la amplificación, y por lo tanto el offset de entrada y la autoridad para
+corregirlo crecen **juntos**: su razón es constante.
+
+**Consecuencias:**
+
+1. **Mi conclusión anterior era falsa** y la retiro. El PGA se puede
+   autocorregir a cualquier ganancia. En números: a ×50 el offset a anular son
+   49,5 mV, que a 2688 µV/código son **16 códigos**. Y de hecho se ve directo en
+   el dato: a ×50 el código 0 deja ch0 en 957,6 mV, y hacen falta ~16 códigos
+   para llevarlo a 1000.
+2. **El firmware tenía razón.** `cal_pi_stage_gain_x1000()` multiplica la
+   ganancia de la etapa 0 por la del PGA, y eso es correcto. No hay que tocarlo.
+3. **El plan de Elías de fijar la entrada en ×50 es viable** desde el punto de
+   vista de la autoridad de calibración.
+
+### Pero aparece el límite verdadero: el riel, no la autoridad
+
+Los mismos barridos muestran dónde se termina el rango útil, y no es donde se
+acaban los códigos:
+
+| ganancia | riel bajo | riel alto | códigos útiles (de ±255) |
+|---|---:|---:|---:|
+| ×1 | no llega | no llega | **los 510** |
+| ×8 | ~−230 | no llega | ~480 |
+| ×16 | −153 | +204 | ~355 |
+| ×32 | −51 | +102 | ~150 |
+| ×50 | −51 | +102 | **~140** |
+
+A ×50 el tap se pega en **759,4 mV** por abajo y **1114,4 mV** por arriba, y
+entre esos dos rieles hay 355 mV, o sea unos 132 códigos a 2688 µV cada uno. Las
+otras dos terceras partes del rango del IDAC **no existen**: son riel.
+
+Como el offset a corregir son 16 códigos y hay ~66 de cada lado, **alcanza con
+holgura**. Pero el lazo tiene que saber que no puede pasar de ahí: contra el
+riel la pendiente es cero, el control empuja sin efecto y la integral se enrolla
+hasta el extremo. **El clamp del IDAC de la etapa 0 tiene que escalar con
+1/ganancia**, y hoy es fijo en ±255.
+
+### Un dato de hardware que sale de acá y sirve para todo lo demás
+
+Los tres taps medidos coinciden: la excursión útil es de **371 a 376 mV**,
+centrada en **~935 mV y no en los 1000 mV del objetivo**.
+
+| tap | riel bajo | riel alto | excursión |
+|---|---:|---:|---:|
+| ch0 PGA | 759,4 | 1114,4 | 355,0 mV |
+| ch2 ADDER | 750,8 | 1121,6 | 370,8 mV |
+| ch3 LP | 746,4 | 1122,3 | 375,9 mV |
+
+O sea que la cadena tiene **250 mV de margen para abajo y sólo 122 mV para
+arriba**. Es **asimétrica**, y eso importa: un offset positivo choca contra el
+riel al doble de velocidad que uno negativo. El objetivo de 1000 mV está mal
+centrado respecto de la excursión real; centrarlo en ~935 mV daría **±186 mV
+simétricos en vez de +122/−250**, o sea 52 % más de margen del lado que hoy es
+crítico. Es un cambio de una constante y hay que evaluarlo.
+
+**Ojo, esto NO significa que ×50 sea inviable.** El requisito real es que la
+cadena no sature y que LPo quede chico, no que todos los taps estén en cero: con
+±2,5 V de excursión, 49,5 mV de corrimiento en el PGA no satura nada. Lo que
+significa es que **la corrección hay que delegarla aguas abajo**, que es
+justamente lo que habilita la matriz de acople (PGA→LP son 1026 µV/código, o
+sea que el LP tiene autoridad de sobra sobre el desvío que dejó el PGA). Es
+exactamente la optimización conjunta ponderada que pidió Elías: no minimizar
+cada etapa por separado, sino el conjunto.
+
+**Falta medir:** si a ×50 el PGA de entrada, más el PGAout, dejan el ADDER o el
+LP fuera de su rango útil. Ése es el límite que decide la configuración de campo.
+
+---
+
+## 5. Estrategias de calibración comparadas en el modelo
+
+**Advertencia de alcance.** Esto es **simulación**, no medición. El modelo está
+calibrado contra la placa (matriz de acople del 2026-09-04, ruido de 1,5
+cuentas, offsets medidos), pero sus predicciones **a ganancia alta dependen de
+un dato que todavía no está medido** — dónde inyecta el IDAC del PGA, ver el
+recuadro de §4. Las conclusiones de ganancia baja y media sí son de fiar; las de
+ganancia alta hay que releerlas cuando esté EXP1.
+
+### El problema del lazo actual
+
+El lazo secuencial cierra una etapa por vez, en orden, llevando cada tap a cero.
+Eso sería óptimo si las etapas fueran independientes, y **no lo son**: mover el
+ADDER corre la salida del LP 4,04 veces más que la referencia del propio LP.
+Llevar el ADDER exactamente a cero puede ser la peor decisión posible para el
+LP, que es el tap que se captura. Aceptar unos milivoltios en el ADDER para que
+al LP le sobre autoridad es un intercambio que el lazo secuencial **no puede
+hacer**, porque cuando cierra el ADDER todavía no sabe qué le va a pasar al LP.
+
+Y encima paga **una espera de planta por etapa**: con 2 τ son cuatro esperas,
+236 s sólo de espera.
+
+### La idea de Elías, formalizada
+
+Su pedido fue: minimizar todas las etapas a la vez, "dando más peso a las que
+tengan más ganancia acumulada porque son las que más probablemente saturen".
+Eso es exactamente un problema de mínimos cuadrados ponderado con cajón:
+
+> minimizar `J(d) = Σ_j w_j · ( off_j + Σ_k G[k][j]·d_k )²` con `|d_k| ≤ límite_k`
+
+donde `G` es la matriz de acople **medida** y `w_j` el cuadrado de la ganancia
+acumulada hasta el tap `j`. El peso al cuadrado no es arbitrario: lo que decide
+si un tap satura es `offset + excursión de señal` contra el riel, y la excursión
+en el tap `j` es proporcional a su ganancia acumulada, así que el presupuesto de
+offset tiene que ser inversamente proporcional a ella. Penalizar con el cuadrado
+es exactamente eso en mínimos cuadrados.
+
+Son cuatro variables enteras y una forma cuadrática convexa: se resuelve con
+descenso por coordenadas en unas pocas pasadas, con enteros de 64 bits, sin
+matrices ni divisiones raras. Entra en el PSoC sin drama.
+
+### Resultado, promediando 12 semillas por celda
+
+Espera de planta 2 τ, Ki = 1/16. `LP` es el error asentado del tap que se
+captura; `peor` es el peor de los cuatro taps; `t` el tiempo total.
+
+| PGA × out | secuencial (hoy) | conjunta 1 iter | conjunta 3 iter, esperas cortas |
+|---|---|---|---|
+| | LP / peor / t | LP / peor / t | LP / peor / t |
+| 1×1 | 0,21 / 0,6 / **237 s** | 0,47 / 1,2 / 118 s | **0,10 / 1,2 / 104 s** |
+| 8×8 | **20,66** / 20,7 / 257 s | 6,08 / 15,4 / 118 s | **9,65 / 14,0 / 104 s** |
+| 50×1 | 214,1 / 214,1 / 76 s | 4,01 / 51,7 / 118 s | 16,63 / 52,2 / 104 s |
+| 1×50 | 91,3 / 91,3 / 256 s | 7,75 / 26,7 / 118 s | 10,68 / 28,8 / 104 s |
+
+**Dos cosas que importan:**
+
+1. **El lazo de hoy no cumple el criterio en 8×8**: da 20,66 mV contra el techo
+   de 20 mV que fijó Elías, y tarda 257 s en no cumplirlo. La conjunta da
+   9,65 mV en 104 s. **Menos de la mitad del tiempo y menos de la mitad del
+   error.**
+2. **El tiempo sale de hacer menos esperas de planta, no de esperar menos.** El
+   secuencial paga cuatro esperas porque cada etapa perturba a la siguiente. La
+   conjunta mueve las cuatro juntas y paga una por iteración; y como a partir de
+   la segunda las correcciones son chicas —y la amplitud del transitorio es
+   proporcional al salto del DAC— esas iteraciones se pueden pagar con 0,5 τ en
+   vez de 2 τ. De ahí salen los 104 s.
+
+### Resultado NEGATIVO, que también hay que registrar
+
+Probé la variante más conservadora, que es la que más se parecía al pedido de
+Elías de "preprocesar un valor y después hacer correcciones pequeñas": aplicar
+el óptimo conjunto como **feed-forward** y después dejar correr el lazo
+secuencial de siempre para refinar. **No funciona.** En 50×1 da 241 mV, contra
+los 4,01 mV de la conjunta sola, o sea que queda **peor que no hacer nada**.
+
+La razón es clara y conviene tenerla escrita: **el lazo deshace la
+optimización**. Su objetivo es llevar cada tap a cero de a uno, y eso contradice
+punto por punto el compromiso ponderado que acababa de calcularse. No se puede
+anteponer el optimizador al lazo existente: hay que **cambiarle el objetivo al
+lazo**, de "cada tap a cero" a "cada tap a su valor del óptimo conjunto".
+
+Es un buen ejemplo de por qué convenía simularlo antes de escribirlo en C: la
+versión intuitivamente más segura era la peor de las tres.
+
+---
+
+## 6. EL ADDER: contestado, y de paso una corrección a la matriz del 2026-09-04
+
+**Método.** Barrido del IDAC del ADDER en todo su rango (−255…+255, paso 24)
+midiendo **los cuatro taps** con **60 s de espera de planta por punto**. Ésa es
+la diferencia con la medición del 04, que miraba sólo el tap propio: para saber
+si la zona plana es recorte del tap o muerte del camino de señal hay que mirar
+**aguas abajo**. Crudo: `lab/planta/curva_e2_pga0_out0_20260905_133508.json`
+
+### 6.1 La respuesta: es saturación real, y la tabla no sirve
+
+| código ADDER | ch2 (tap propio) | ch3 (LP) |
+|---:|---:|---:|
+| −255 … −183 | **750,8 mV, fijo** | **1122,3 mV, fijo** |
+| −159 | 757,5 | 1122,4 |
+| −135 | 805,8 | 1122,4 |
+| −87 | 898,4 | 1122,4 |
+| −39 | 971,4 | 1122,4 |
+| −15 | 989,8 | 1054,6 |
+| +9 | 1007,9 | 962,8 |
+| +33 | 1026,0 | **746,4** |
+| +57 | 1043,9 | 746,3 |
+| +153 | 1115,2 | 746,4 |
+| +177 … +249 | **1121,6, fijo** | 746,4 |
+
+**En los extremos las DOS etapas están contra el riel al mismo tiempo.** Con el
+IDAC en −255, ch2 está pegado en 750,8 mV y ch3 en 1122,3 mV, y ninguno de los
+dos se mueve al cambiar el código. Eso no es una no linealidad —una pendiente
+que varía pero no se anula, como la del LP— sino **saturación**: el camino de
+señal está muerto ahí.
+
+**Conclusión, y contesta la pregunta 3 de Elías:** la propuesta de modelar el
+ADDER con tablas para usar el rango completo **hay que descartarla**. Una tabla
+puede invertir una función monótona de pendiente variable; no puede devolver
+autoridad donde la pendiente es cero. Y peor: al invertir una zona plana, la
+ganancia estimada del lazo se va a infinito, o sea que la tabla no sólo no
+ayudaría sino que **rompería** el control.
+
+Excursión medida de cada tap, que es el dato de hardware que hay detrás:
+**ch2 = 370,8 mV** (750,8 a 1121,6) y **ch3 = 375,9 mV** (746,4 a 1122,3).
+
+### 6.2 Lo que sí importa, y es mucho peor de lo que creíamos
+
+Mirando **ch3** en vez de ch2 aparece el problema real:
+
+> **Para códigos del ADDER de −255 a −15, la salida del LP está pegada al
+> riel.** El LP sólo está dentro de rango en una ventana de unos **48 códigos**,
+> aproximadamente −15 … +33.
+
+O sea que el rango útil del IDAC del ADDER **no es ±178 ni ±128: es ±25 códigos
+alrededor del punto donde el LP queda centrado**. Todo lo demás es riel del LP,
+aunque el propio ADDER siga respondiendo perfectamente en su tap.
+
+El IDAC del LP puede correr esa ventana, pero poco: su autoridad es
+525 µV/cód × 255 = ±134 mV, y el ADDER le mete 3825 µV/cód. O sea que el LP
+compensa **±35 códigos de ADDER**, y la ventana útil total queda en unos
+**−50 … +68**.
+
+### 6.3 La corrección: el acople ADDER→LP estaba subestimado por 1,8×
+
+En la zona donde el LP **no** está saturado hay dos puntos limpios:
+
+| código | ch3 |
+|---:|---:|
+| −15 | 1054,611 mV |
+| +9 | 962,848 mV |
+
+Pendiente: **3823 µV/código**. La matriz del 2026-09-04 dice **2120,9**.
+
+**Por qué el número viejo estaba mal, y es un error instructivo.** Aquella
+medición usó un escalón de **+120 códigos** desde 0. Con la pendiente real,
+120 códigos son 459 mV, y el LP sólo tiene 376 mV de excursión: **el escalón
+metió al LP contra el riel**. La exponencial se ajustó entonces sobre una
+respuesta recortada, y el `y_inf` que salió es el riel, no el régimen. De ahí
+sale un 2121 que es un promedio entre la parte lineal y la parte muerta.
+
+Es el mismo error que se cometió el 2026-09-03 midiendo con la cadena saturada,
+y vuelve a aparecer por la misma causa: **el escalón de prueba era más grande
+que el rango lineal de la etapa afectada.**
+
+**Consecuencia sobre la conclusión de fondo:** el acople ADDER→LP no es 4,04
+veces la autoridad propia del LP, es **7,3 veces** (3823/525). El problema que
+Elías identificó como "la decisión de fondo" es todavía más severo de lo que
+decía el documento del 04.
+
+**Pendiente:** volver a medir la fila del ADDER con un escalón **chico** (±10
+códigos), que es el único que se queda dentro del rango lineal del LP. Lo mismo
+vale para revisar si otras filas de la matriz están contaminadas por el mismo
+efecto.
+
+### 6.4 Dos fallas de instrumentación que hay que arreglar
+
+- **`FALLO set_idac` en los códigos −111 y +105**, o sea 2 de 22 puntos
+  perdidos. No es aleatorio en el valor: hay que ver si es un plazo corto en el
+  enlace o un caso de borde del comando.
+- **En el código +81, ch3 informó `0,000 mV`**, que es físicamente imposible con
+  el resto de la curva pegada al riel. Es una medida fallida que se guardó como
+  si fuera válida. Un cero silencioso es la peor forma de fallar, porque un
+  ajuste posterior lo toma como dato bueno. Hay que hacer que se descarte.
+
+---
+
+## 7. Automedición de τ: el estimador barato sirve, pero sólo en un par bien elegido
+
+**Por qué hace falta.** Elías decidió que el nodo no corrija por temperatura sino
+que **mida su propio τ** y dimensione la espera con eso. Ese estimador tiene que
+correr en el PSoC, en enteros, sin guardar cientos de muestras.
+
+**El estimador.** Con `y(t) = y_inf + A·e^(−t/τ)`, tres muestras alcanzan:
+
+```
+r = ( y(2t₁) − y(0) ) / ( y(t₁) − y(0) )  =  1 + e^(−t₁/τ)
+τ = t₁ / ( −ln(r − 1) )
+```
+
+Lo valioso es que **`y_inf` se cancela**: no hay que esperar a que la planta se
+asiente para estimar cuánto tarda en asentarse. En el PSoC el logaritmo sale de
+una tabla de 16 entradas.
+
+**Validación.** Se aplicó a las series del escalón del 2026-09-04, que tienen
+~500 puntos y un ajuste exponencial completo por mínimos cuadrados como
+referencia. Programa: `src/interfaces/python/validar_estimador_tau.py`
+
+Error relativo contra el ajuste completo, sobre **todos** los pares:
+
+| t₁ | n | error medio | peor |
+|---:|---:|---:|---:|
+| 7,5 s | 11 | 90,0 % | 275 % |
+| 15 s | 16 | 68,2 % | 303 % |
+| 20 s | 15 | 34,8 % | 94 % |
+| 30 s | 16 | 45,8 % | 247 % |
+| 45 s | 16 | 22,5 % | 283 % |
+
+**Visto así, el estimador parece inservible. No lo es: lo que pasa es que el
+promedio mezcla pares con señal fuerte y pares con señal despreciable.**
+
+Separando, con t₁ = 45 s:
+
+| par (etapa → tap) | τ del ajuste | τ del estimador | error |
+|---|---:|---:|---:|
+| **1 → ch2** (ida) | 26,4 s | 27,1 s | **2,7 %** |
+| **1 → ch2** (vuelta) | 29,1 s | 29,3 s | **0,7 %** |
+| 2 → ch1 | 28,2 s | 28,1 s | 0,4 % |
+| 1 → ch1 | 29,1 s | 33,1 s | 14 % |
+| 2 → ch3 | 32,2 s | 35,6 s | 11 % |
+
+**Decisión: medir τ con el par etapa 1 (Vref_BP) → ch2 (tap del ADDER) y
+t₁ = 45 s.** Es el par con mayor relación señal-ruido de la matriz —su respuesta
+tiene `G_TRANS = −861` contra `G_DC = −388`, o sea que el transitorio es más
+grande que el régimen— y da 0,7 % y 2,7 % en dos ensayos independientes. La
+medición completa tarda 90 s y se hace una vez por sesión, no en cada
+calibración.
+
+**Lo que NO hay que hacer:** promediar el estimador sobre varios pares. Los pares
+de señal débil no aportan información y ensucian el resultado; el promedio de las
+tablas de arriba es la prueba.
+
+**Pendiente:** verificar el estimador contra una medición hecha hoy, a la
+temperatura de hoy, y no sólo contra los datos del 04.
+
+---
+
+## 8. La calibración conjunta contra la placa real: falla, y por una razón concreta
+
+**Método.** `src/interfaces/python/calibrar_pc.py` corre el algoritmo completo
+desde la PC contra la placa: mide los cuatro taps, resuelve el óptimo ponderado,
+aplica los cuatro IDAC, espera y repite. Es exactamente lo que haría el firmware,
+pero observable paso a paso y sin regrabar nada.
+
+**Primera corrida, PGA ×8 y PGAout ×8** (`* ` marca tap contra el riel):
+
+| iteración | ch0 | ch1 | ch2 | ch3 | DAC aplicado |
+|---|---:|---:|---:|---:|---|
+| 0 (reposo) | 994,8 | 1001,3 | **1121,5\*** | **746,4\*** | [0, 0, 0, 0] |
+| 1 | 1011,1 | 995,8 | **1121,2\*** | **746,0\*** | [35, 32, 11, −20] |
+| 2 | 1024,1 | 991,8 | **750,0\*** | **1121,7\*** | [64, 40, 7, −22] |
+| final | — | — | — | — | LP +122,1 mV, **NO CUMPLE** |
+
+**El algoritmo saltó de un riel al otro.** Entre la iteración 1 y la 2, ch2 pasó
+de 1121 a 750, o sea **371 mV**, cuando la matriz predecía **59 mV** para ese
+cambio de códigos. Un factor de **6,3×**.
+
+### La causa: la matriz está mal escalada, y el error es mío
+
+La matriz de acople se midió el 2026-09-04 **entera con PGA ×1 y PGAout ×1**. Al
+corregirla con EXP1 escalé la fila 0 por la ganancia del PGA, que es lo que EXP1
+demostró. Pero **no escalé nada por PGAout**, y la placa dice que hay que
+hacerlo: los IDAC de las etapas de aguas arriba inyectan **antes** de PGAout, así
+que su efecto sobre ch2 y ch3 se amplifica también por esa ganancia.
+
+Con PGAout ×8 el factor que falta es del orden de 8, y el observado es 6,3. Es
+consistente.
+
+### Y hay un hecho más duro todavía
+
+**Con PGAout en ×2 o más, la cadena arranca contra el riel con los IDAC en cero.**
+Esto sí está medido con espera de planta correcta (60 s), en la campaña:
+
+| PGA | PGAout | ch0 | ch1 | ch2 | ch3 |
+|---|---|---:|---:|---:|---:|
+| ×1 | ×1 | 1000,7 | 999,9 | 1004,1 | 984,6 |
+| ×1 | **×2** | 1001,1 | 996,4 | **1121,5 riel** | **746,4 riel** |
+| ×2 | ×1 | 999,7 | 1000,8 | 1003,7 | 985,7 |
+| ×50 | ×1 | 958,4 | 1010,1 | **1121,8 riel** | **746,6 riel** |
+
+O sea que **PGAout ×2 rieliza y PGA ×2 no**. De las 12 combinaciones de la
+campaña, 10 arrancan en riel.
+
+### AVISO: las mediciones rápidas que siguieron a esto NO son válidas
+
+Después de lo anterior corrí varios barridos con 2,5–3 s de espera por punto para
+ir rápido, y **hay que descartarlos**. La prueba es directa: en el mismo código
+del IDAC del ADDER (130) y la misma ganancia (PGAout ×2), un barrido que venía
+desde −255 daba ch2 = 750 mV (riel bajo) y otro que arrancaba desde 0 daba
+ch2 = 1121 mV (riel alto). **El mismo código, dos estados opuestos, según de
+dónde se viniera.**
+
+No es histéresis del circuito: es que con τ ≈ 30 s una espera de 3 s son 0,1 τ, o
+sea que cada lectura es un transitorio y el resultado depende del camino. La
+etapa 2 tiene τ = 33,4 s medido sobre su propio tap, así que era previsible.
+
+**Es la tercera vez que el mismo error de método arruina una medición** —el
+2026-09-03 midiendo con la cadena saturada, el 2026-09-04 con un escalón que
+saturaba el LP, y ahora con espera insuficiente—. Queda como regla: **ninguna
+medida de continua de esta cadena vale con menos de 1 τ de espera**, y para
+pendientes hacen falta 2 τ.
+
+Lo que sí queda en pie de esta tanda, porque se midió con 60 s: el reposo de la
+tabla de arriba. Lo que NO queda establecido: si existe algún código del IDAC del
+ADDER que devuelva la cadena al rango con PGAout ≥ ×2. Eso lo está midiendo
+`medir_matriz_vs_ganancia.py`, que espera 1 τ en la búsqueda y 2 τ en cada
+pendiente.
+
+Esto **no significa** todavía que PGAout > ×1 sea inusable: la corrida de (8,8)
+demostró que los IDAC **sí** pueden mover ch2 de un riel al otro, así que la
+autoridad para recuperarlo existe. Lo que significa es que **la calibración no
+puede arrancar de códigos cero** en esas combinaciones, y que el optimizador
+necesita la matriz bien escalada para no pasarse de largo.
+
+### Lo que se está midiendo ahora para cerrarlo
+
+Barrido del IDAC del ADDER en todo su rango, con PGAout en ×1, ×2 y ×8, mirando
+ch2 y ch3. Da tres cosas de una:
+
+1. **cómo escala el acople con PGAout**, que es lo que le falta a la matriz;
+2. **dónde está la ventana útil** en cada ganancia, que es de dónde tiene que
+   arrancar la calibración en vez de arrancar de cero;
+3. si la ventana existe en todas las ganancias, o si a partir de cierto PGAout
+   **no hay ningún código que devuelva la cadena al rango** — que sería el
+   límite de hardware definitivo para las combinaciones altas.
+
+### La lección de método, que vale más que el número
+
+La matriz se midió a **una sola combinación de ganancias** y después se usó para
+razonar sobre **las 81**. Eso es exactamente el mismo error que ya cometimos dos
+veces: el 2026-09-03 midiendo con la cadena saturada, y el 2026-09-04 con un
+escalón de +120 códigos que metía al LP contra el riel. **Una matriz medida en un
+punto de operación no vale en otro punto de operación**, y hay que medir la
+dependencia en vez de suponer que no existe.
