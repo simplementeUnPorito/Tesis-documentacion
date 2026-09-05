@@ -580,3 +580,79 @@ veces: el 2026-09-03 midiendo con la cadena saturada, y el 2026-09-04 con un
 escalón de +120 códigos que metía al LP contra el riel. **Una matriz medida en un
 punto de operación no vale en otro punto de operación**, y hay que medir la
 dependencia en vez de suponer que no existe.
+
+---
+
+## 9. Cómo hay que centrar la cadena, y dos errores de procedimiento propios
+
+### 9.1 El emparejamiento etapa↔tap no es la diagonal
+
+Con el PGA de entrada en ×50, el tap del LP queda contra el riel y **ni −255 ni
++255 de su propio IDAC lo sacan de ahí**. Los números lo explican solos:
+
+| quién mueve ch3 | µV por código | autoridad total |
+|---|---:|---:|
+| el propio LP | 525 | ±134 mV |
+| **el ADDER** | **3823** | **±975 mV** |
+
+El ADDER tiene **7,3 veces** más autoridad sobre la salida del LP que el propio
+LP. Entonces el tap del LP **hay que centrarlo desde el ADDER**, y dejarle a su
+propio IDAC el ajuste fino, que es donde su resolución sirve y la del ADDER —con
+un escalón de 3,8 mV— no alcanzaría.
+
+El ADDER paga quedando descentrado, y puede pagarlo: su tap **no es el que se
+captura**, así que alcanza con que no llegue al riel.
+
+Esto probablemente explique buena parte del historial de calibraciones que "no
+se sostenían": el lazo estaba usando el actuador equivocado para el tap que
+importa.
+
+### 9.2 Error propio: centrar aguas arriba puede ser lo que rompe aguas abajo
+
+La primera versión de la búsqueda centraba las etapas 0 y 1 siempre que
+estuvieran a más de 60 mV del centro de su excursión. Con PGA ×50 eso llevó la
+etapa 1 al código **−252**, y como esa etapa mueve el tap del LP unos
+1002 µV/código, esos 252 códigos le metieron al LP **~252 mV**.
+
+**O sea que la propia corrección metió al LP contra el riel**, y el programa
+concluyó "no hay punto válido" cuando el que lo había arruinado era él. El tap 1
+estaba en 1016,5 mV, a 106 mV de su riel: perfectamente sano, no había nada que
+corregir.
+
+**Regla que queda**, y sale de la estructura triangular de la cadena: *aguas
+arriba sólo se toca lo que está por saturar, y sólo lo justo para alejarlo.* Todo
+el margen que sobre se reserva para el LP, que es el tap que se captura y el
+único que entra en el criterio de aceptación.
+
+### 9.3 Extrapolar el valor asentado en vez de esperarlo
+
+Cada medida de continua cuesta una espera de planta, y ése es el cuello de
+botella de todo el trabajo. Con tres muestras igualmente espaciadas de una
+exponencial se puede saltear la espera:
+
+```
+y_inf = ( y0·y2 − y1² ) / ( y0 + y2 − 2·y1 )
+```
+
+Validado contra las series del escalón del 04, que tienen ~500 puntos y ajuste
+completo como referencia (`src/interfaces/python/validar_extrapolacion.py`):
+
+| t | n | error medio | peor |
+|---:|---:|---:|---:|
+| 7,5 s | 11 | 4703 µV | 12276 µV |
+| 15 s | 11 | 3212 µV | 14186 µV |
+| 20 s | 12 | 1136 µV | 3341 µV |
+| **30 s** | 12 | **488 µV** | **2718 µV** |
+
+Con t = 30 s —o sea 60 s de espera total, lo mismo que cuesta 2 τ— el error es de
+**medio milivoltio**, contra el ~13,5 % de la amplitud del transitorio que queda
+como residuo al esperar 2 τ sin extrapolar. **No ahorra tiempo: compra
+precisión.**
+
+**Pero hay que filtrar, y esto es lo importante.** Sin filtro el error medio sale
+de 20 a 33 mV y el peor caso llega a **300 mV**. Mirando fila por fila, los
+fallos son todos series **que terminan cerca del riel**: ahí la respuesta no es
+una exponencial sino una exponencial **recortada**, y se le está pidiendo al
+estimador que ajuste algo que no es lo que supone. El filtro —descartar cuando el
+valor cae cerca del riel— es **observable en el momento de medir** y no depende
+del resultado, así que se puede aplicar sin hacer trampa.
