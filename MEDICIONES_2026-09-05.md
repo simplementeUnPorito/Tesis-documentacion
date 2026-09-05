@@ -656,3 +656,63 @@ una exponencial sino una exponencial **recortada**, y se le está pidiendo al
 estimador que ajuste algo que no es lo que supone. El filtro —descartar cuando el
 valor cae cerca del riel— es **observable en el momento de medir** y no depende
 del resultado, así que se puede aplicar sin hacer trampa.
+
+---
+
+## 10. La conclusión de diseño: la calibración necesita DOS actuadores, no cuatro
+
+Después de romperlo tres veces y arreglarlo, el procedimiento que queda es mucho
+más simple que el que había, y no por elegancia: cada simplificación salió de un
+fracaso concreto.
+
+### El procedimiento
+
+1. **Los cuatro IDAC en cero, esperar, leer.**
+2. **Aguas arriba, no tocar nada** salvo que un tap esté a menos de 60 mV de su
+   riel, y en ese caso sólo alejarlo.
+3. **Bisección del IDAC del ADDER** hasta que el tap del LP dé el objetivo. Sin
+   usar la matriz: la bisección sólo necesita saber que los dos extremos caen a
+   lados opuestos, y eso se comprueba probándolos.
+4. **Newton sobre el IDAC del LP**, con la pendiente medida en el punto, para
+   recortar los últimos milivoltios.
+5. **Verificar** después de esperar.
+
+### Por qué sólo dos actuadores
+
+| actuador | µV/código sobre ch3 | para qué sirve |
+|---|---:|---|
+| IDAC del ADDER | 3823 | **grueso**: recorre los 376 mV de excursión en 98 códigos |
+| IDAC del LP | 525 | **fino**: 0,525 mV de escalón, para los últimos milivoltios |
+| IDAC del PGA | 1026 × ganancia | **inutilizable**: a ×50 son 51 mV *por código* |
+| IDAC del BP | 1002 | inutilizable por la misma razón |
+
+Los de aguas arriba no son actuadores del LP: son **perturbaciones**. A ×50, un
+solo código del IDAC del PGA corre la salida del LP **51 mV**, o sea dos veces y
+media el criterio de aceptación entero. No hay forma de usar eso para ajustar
+nada; lo único sensato es no moverlo.
+
+### Los tres fracasos que llevaron acá, porque el patrón vale más que los casos
+
+Los tres tienen la misma forma: **una conclusión negativa que salía de mi
+procedimiento y no del circuito.**
+
+1. **"El LP no se puede recuperar."** Mi búsqueda "centraba" la etapa 1, la
+   llevó al código −252, y con ~1002 µV/código sobre ch3 eso le metió al LP
+   252 mV. *Mi corrección* fue la que lo mandó al riel.
+2. **"El ADDER no saca al LP del riel."** Los dos extremos del ADDER dejaban al
+   LP en rieles **opuestos** —1122,5 mV con −255 y 746,4 mV con +255—, que es
+   exactamente la señal de que **sí** hay autoridad y el punto útil está en el
+   medio. Mi test rechazaba por ver "riel" en los dos sin mirar en cuál.
+3. **"×50 no cumple."** El refinamiento persiguió el objetivo nominal en ch0,
+   movió la etapa 0 catorce códigos, y esos catorce códigos le metieron al LP
+   **718 mV**. Destruyó lo que la búsqueda había logrado, para corregir un tap
+   que estaba a 155 mV de su riel y no molestaba a nadie.
+
+En los tres casos la conclusión contradecía un dato de campo de Elías —que ×50
+funciona— y en los tres el que estaba mal era yo.
+
+**Regla que queda escrita:** cuando la medición dice "no se puede", sospechar del
+procedimiento antes que del hardware, **sobre todo si contradice algo que ya se
+observó funcionando**. Y en una cadena con acoples de este tamaño, cualquier
+corrección aguas arriba hay que evaluarla por lo que le hace al tap de abajo,
+nunca por lo que le hace al suyo.
