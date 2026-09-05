@@ -771,3 +771,103 @@ PGAout** es el problema, y hay dos caminos:
 
 Falta el dato que decide cuál: si el offset entra antes o después del primer PGA.
 Lo separa la tanda de reparto de ganancia (§12), que está corriendo.
+
+---
+
+## 12. El origen de coordenadas: qué se descartó y qué quedó
+
+Elías marcó a la tarde que el criterio con el que se venía midiendo todo el día
+estaba mal planteado, y tenía razón. Lo que sigue es el rastro completo, porque
+hubo **dos hipótesis mías refutadas** y la forma en que cayeron es lo útil.
+
+### 12.1 El error de partida
+
+Todo el día se informó el error del LP como desvío respecto de **1000 mV**. Ese
+número **no era un objetivo elegido**: era lo que el banco lee en reposo, y se
+tomó por objetivo sin verificarlo. El objetivo real de GEO es **0**:
+
+    CAL_TARGET_GEO_PGA_MV = ... = CAL_TARGET_GEO_LP_MV = 0
+
+Los 1000/1024/3500 mV son de **HAMMER**, que es single-ended porque el martillo
+no tiene lado positivo y negativo. GEO es diferencial y se compara **contra
+Vref**, así que un tap balanceado tiene que leer cero.
+
+### 12.2 Primera hipótesis mía, refutada: "hay un volt de desbalance"
+
+Si el objetivo es 0 y el banco lee ~1000, parecía que la cadena estaba a un volt
+de Vref. Elías señaló que eso ni siquiera era imposible: con `polarity_reg` el
+recorrido del IDAC es ±255 × 1875 µV = **±478 mV en la referencia**, y por la
+ganancia referencia→tap del ADDER (3823/1875 = 2,04) eso da **±975 mV en ch3**.
+Había autoridad para casi un volt.
+
+**Refutada por medición directa:** con el banco marcando 1000,32 mV, el tester
+mide **LPo = 2,388 V** contra un Vref de **2,415 V**. El LP está a **27 mV** de
+Vref, no a un volt. La cadena está sana.
+
+### 12.3 Segunda hipótesis mía, también refutada: "las etapas saturan contra la alimentación"
+
+Idea de Elías para fijar la escala sin osciloscopio, que es un método correcto:
+*"si satura hacia arriba sabés que es 5 V y si satura hacia abajo es 0"*. Los
+rieles de alimentación son los dos únicos puntos conocidos del sistema, y
+saturar contra ellos los vuelve observables desde adentro.
+
+Se midió, llevando cada etapa a ±255 con 2 τ de espera por punto:
+
+| tap | mínimo | máximo | span |
+|---|---:|---:|---:|
+| ch0 PGA | 756,49 | 1116,10 | 359,6 |
+| ch1 BP | 960,65 | 1016,85 | **56,2** |
+| ch2 ADDER | 749,21 | 1123,24 | 374,0 |
+| ch3 LP | 746,40 | 1123,01 | 376,6 |
+
+Tres de los cuatro taps se detienen en el **mismo par de valores** —dispersión de
+10 mV abajo y 7 mV arriba— con punto medio en **935,7 mV**, que coincidía con el
+centro obtenido por otro camino y otro día. Con Vdda = 4,826 V y Vref = 2,415 V
+medidos con el tester, la escala salía 13,04 mV reales por mV de banco y Vref
+caía en 935,9 — **a 0,2 mV del centro medido**. Parecía cerrado.
+
+**Refutada también por el tester.** Esa escala predice que con el banco en
+1000,32 el LP tiene que estar en **3,255 V**. Mide **2,388 V**.
+
+**Conclusión: las etapas NO saturan contra la alimentación.** Se detienen en
+~750 y ~1122 de banco por otro motivo —la etapa siguiente, el buffer del AMux, o
+el rango de entrada del ADC— y eso queda como pregunta abierta.
+
+### 12.4 Lo que sí quedó, y es un hallazgo aparte
+
+**ch1 no se puede saturar con ningún actuador**: su recorrido total es de 56 mV.
+El IDAC del BP mueve su propio tap sólo 90 µV/código —23 mV en todo el rango—
+pero mueve **ch3 unos 1002 µV/código**. Es una relación de **11 a 1 a favor** de
+usarlo como actuador de aguas abajo.
+
+Eso refuerza mucho la idea de Elías de descentrar el BP para habilitar más
+ganancia en PGAout: **es el actuador más barato de la cadena**, porque casi no
+desordena su propio tap y además ch1 no puede saturar ni queriendo.
+
+### 12.5 Por qué el problema es del IDAC y no del ADC
+
+Pregunta de Elías: *"no entiendo bien por qué me decís que tienen menor
+resolución, el ADC en teoría tiene 18 bits en 5 V de rango"*.
+
+El ADC nunca fue el problema. Con 18 bits sobre ±2,5 V el LSB es **19,1 µV**. El
+límite es el **IDAC, que tiene 8 bits**, y lo que importa es cuánto vale un paso
+suyo **en el tap**:
+
+| actuador | paso sobre ch3 | veces el LSB del ADC |
+|---|---:|---:|
+| LSB del ADC | 19,1 µV | 1 |
+| IDAC del LP | 525 µV | 27× |
+| IDAC del BP | 1002 µV | 52× |
+| IDAC del ADDER | 3823 µV | **200×** |
+
+**El ADC ve 200 veces más fino de lo que el ADDER puede corregir.** El cuello de
+botella es el actuador, no el sensor. Por eso mejorar el ADC no compra nada, y
+por eso la resistencia tampoco resuelve: fija la **escala** del paso, no la
+**cantidad** de pasos, que siguen siendo 255. Al subir PGAout hace falta más
+autoridad *y a la vez* más finura —rango dinámico ∝ Go²— y eso sólo lo da
+encadenar dos etapas, una gruesa y una fina.
+
+### 12.6 Puntos de prueba en la placa
+
+Aportados por Elías: **LPo = P0[1]**, **PGAgain = P2[7]**.
+Alimentación medida: **Vdda = 4,823–4,830 V**, **Vref = 2,415 V** (≈ Vdda/2 ✓).
