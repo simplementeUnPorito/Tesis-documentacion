@@ -716,3 +716,58 @@ procedimiento antes que del hardware, **sobre todo si contradice algo que ya se
 observó funcionando**. Y en una cadena con acoples de este tamaño, cualquier
 corrección aguas arriba hay que evaluarla por lo que le hace al tap de abajo,
 nunca por lo que le hace al suyo.
+
+---
+
+## 11. RESULTADO PRINCIPAL: con PGA ×50, el PGAout máximo estable es ×1
+
+Es la pregunta que Elías planteó como objetivo de campo. Medido con
+`buscar_max_pgaout.py`, procedimiento de dos actuadores (§10), espera de
+búsqueda 1 τ y de medición 2 τ.
+
+| PGA | PGAout | ganancia total | error del LP | peor tap | tiempo | veredicto |
+|---|---|---|---:|---:|---:|---|
+| ×50 | **×1** | ×50 | **−0,21 mV** | 42,4 mV | 484 s | **CUMPLE** |
+| ×50 | ×2 | ×100 | — | — | 92 s | sin punto válido |
+| ×50 | ×4 | ×200 | — | — | 92 s | sin punto válido |
+| ×50 | ×8 | ×400 | — | — | 304 s | sin punto válido |
+| ×50 | ×16 | ×800 | — | — | 305 s | sin punto válido |
+| ×50 | ×24 | ×1200 | — | — | 92 s | sin punto válido |
+| ×50 | ×32 | ×1600 | — | — | 304 s | sin punto válido |
+| ×50 | ×48 | ×2400 | — | — | 307 s | sin punto válido |
+| ×50 | ×50 | ×2500 | — | — | 94 s | sin punto válido |
+
+**Los −0,21 mV son el número que importa:** el criterio de Elías es 20 mV y esto
+queda **cien veces por debajo**, en 484 s, dentro del techo de 2 τ que él fijó.
+La configuración que ya validó en campo no sólo funciona: calibra con un margen
+enorme.
+
+### El diagnóstico del fallo es limpio, y esta vez no es un error de método
+
+Para PGAout ≥ ×2 el mensaje es *"los dos extremos del ADDER dejan al LP en el
+riel bajo"*. Eso es cualitativamente distinto del caso de ×1, donde los extremos
+caían en rieles **opuestos** —1122,5 y 746,4 mV— y por eso existía un punto en el
+medio. Cuando los dos extremos caen del **mismo** lado, no hay ningún código que
+cruce: la autoridad del ADDER, con todo su recorrido, no alcanza para compensar
+lo que PGAout amplifica.
+
+### Qué significa para el nodo
+
+**La red de seguridad se cumple.** El peor resultado posible de esta búsqueda era
+PGAout ×1, y ×1 reproduce exactamente la placa que Elías ya validó en campo. No
+hay riesgo de quedarse sin configuración usable.
+
+**Y hay una recomendación de hardware que sale sola.** El límite no es de
+resolución ni de sintonía: es que **la autoridad del ADDER no alcanza**. Con
+3823 µV/código sobre el LP y 255 códigos, su recorrido es de ±975 mV, y aún así
+no compensa lo que PGAout ×2 le mete. O sea que el offset que entra **antes de
+PGAout** es el problema, y hay dos caminos:
+
+1. **Anularlo donde entra**, con un ajuste propio antes de PGAout. Es lo correcto:
+   corrige la causa en vez de pelearla amplificada.
+2. **Más autoridad en el ADDER**, subiendo su resistencia. Pero eso empeora la
+   resolución justo donde ya es gruesa (su escalón sobre el LP es de 3,8 mV), así
+   que es el peor de los dos.
+
+Falta el dato que decide cuál: si el offset entra antes o después del primer PGA.
+Lo separa la tanda de reparto de ganancia (§12), que está corriendo.
