@@ -1068,3 +1068,73 @@ Es la otra mitad del argumento, y todavía falta medirla:
 - **EXP4c — deriva del punto calibrado.** El que justifica lo *automático*.
 - **EXP4d — que la calibración no empeora el ruido.** Barato, y cierra la
   objeción obvia.
+
+
+---
+
+## 16. CORRECCIÓN a §14: la resistencia se dimensiona por lo que hay que compensar, no por llenar el rango
+
+Elías, después de leer §14: *"la resistencia no debería elegirse tanto por
+llenar el rango sino por cuánto hace falta compensar de normal, ¿no creés?"*.
+
+**Tiene razón, y §14 estaba mal.** La recomendación de ahí habría inutilizado la
+única configuración que funciona.
+
+### Lo que faltaba medir: cuánto se inyecta de verdad
+
+Sale de los códigos que la calibración efectivamente aplicó en las corridas que
+cerraron, multiplicados por el paso real de cada etapa:
+
+| etapa | **máximo inyectado** | autoridad actual | margen |
+|---|---:|---:|---:|
+| **ADDER** | **−14,62 V** | ±19,42 V | 33 % |
+| **PGA (a ×50)** | **+14,30 V** | ±15,54 V | **9 %** |
+| LP | 0,29 V | ±2,67 V | 9× |
+| BP | 0,00 V | ±5,09 V | sin usar |
+
+§14 proponía bajar el ADDER de 15 kΩ a 2,0 kΩ, dejándolo con **±2,59 V para un
+trabajo que exige 14,6 V**. Y bajar el PGA a 2,2 kΩ, cuando el PGA es **el más
+ajustado de los cuatro**: usa el 91 % de su autoridad.
+
+### El error de razonamiento, que conviene tener escrito
+
+§14 decía que el ADDER usa "63 de 510 códigos útiles" y que los otros 447 "no
+existen". **Es falso.** Esos 447 códigos no están desperdiciados: **son los que
+recorren el offset**. Producen una salida recortada mientras se los atraviesa,
+pero son exactamente los que traen la cadena de vuelta desde el recorte.
+
+Se confundió *"el tap está fuera de rango mientras paso por ahí"* con *"ese
+código no sirve"*. Son cosas distintas: de un actuador no importa que todos sus
+puntos sean estados operativos válidos, sino que **alcance** el punto que hay
+que alcanzar.
+
+### La recomendación correcta
+
+| etapa | necesita / tiene | **qué hacer** | por qué |
+|---|---|---|---|
+| **PGA** | 14,3 / 15,5 V | **no tocar, o subir** | 9 % de margen: el más ajustado |
+| **ADDER** | 14,6 / 19,4 V | **no tocar** | es el actuador grueso; necesita el alcance |
+| **LP** | 0,29 / 2,67 V | **bajar a ~1,8 kΩ** | es el fino: le sobra 9× de rango y le falta resolución |
+| BP | 0 / 5,09 V | dejar | no se usó en ninguna calibración que cerró |
+
+Bajando **sólo el LP** a 1,8 kΩ:
+
+| | hoy | con 1,8 kΩ |
+|---|---:|---:|
+| paso del LP sobre ch3 | 10,5 mV | **1,18 mV** |
+| recorrido del LP | ±2,67 V | ±300 mV |
+| escalones del ADDER que cubre | 35 | **4** |
+
+Sigue cubriendo más de un escalón del ADDER, así que el par grueso+fino
+encadena sin huecos, y la **precisión final mejora 9×** sin perder alcance.
+
+Y no contradice el criterio de Elías de *"si perdemos rango en LP perdemos
+resolución"*: eso era sobre el rango de **señal** en LPo, que no cambia. Acá se
+achica el rango del **IDAC de corrección**, que está 9 veces sobredimensionado.
+
+### La lección de método
+
+Dimensionar un actuador por "que su recorrido coincida con el riel" suena
+razonable y es **el criterio equivocado**. El correcto es *cuánto hay que
+corregir*, y eso hay que **medirlo**, no deducirlo del circuito. En este caso
+los dos criterios daban recomendaciones **opuestas** para la misma etapa.
