@@ -1001,3 +1001,70 @@ compra nada. *(Nota: la resolución efectiva del ADC es 380 µV y no los 19 µV 
 darían 18 bits sobre 5 V — sobre los 4,83 V útiles entran unas 12.700 cuentas,
 o sea ~13,6 bits. Por qué se pierden esos 4,4 bits es la misma incógnita del
 factor 19,92, y queda abierta.)*
+
+---
+
+## 15. ¿Vale la autocalibración lo que cuesta? — el apartado para la tesis
+
+Elías pidió medir esto explícitamente: *"principalmente con esto buscamos medir
+su utilidad y justificar su complejidad. Si no se cumple esto no vale la pena y
+necesito que lo justifiques en mi tesis"*.
+
+**El experimento es el más simple posible:** poner los cuatro IDAC en cero —o
+sea, sólo la tensión de base, sin ninguna corrección— y medir dónde queda la
+cadena en cada combinación de ganancia. Es exactamente lo que sería el nodo si
+no existiera el sistema de calibración.
+
+### Resultado
+
+Sobre 12 combinaciones medidas con espera de planta correcta (60 s):
+
+| | combinaciones |
+|---|---:|
+| **Arrancan con al menos un tap CONTRA EL RIEL** | **10 de 12** |
+| Arrancan dentro de rango | 2 de 12 |
+
+Un tap contra el riel significa que **esa etapa no transmite señal**: el nodo no
+captura nada. No es que capture peor, es que no captura.
+
+Y las dos que sí arrancan en rango, tampoco están bien:
+
+| PGA × out | peor tap sin calibrar | error del LP tras calibrar | mejora |
+|---|---:|---:|---:|
+| ×1 × ×1 | **336 mV** | **6,6 mV** | **51×** |
+| ×2 × ×1 | 315 mV | 14,1 mV | 22× |
+
+*(valores en voltios reales, con la escala verificada con tester)*
+
+### El argumento
+
+**La autocalibración no es un refinamiento que mejora un número: es lo que hace
+que la mayoría de las configuraciones existan.** En 10 de 12 casos, la
+diferencia es entre un nodo que funciona y uno que no captura absolutamente
+nada. Y en los 2 casos que arrancan en rango, mejora el punto de operación entre
+**22 y 51 veces**.
+
+Eso incluye la configuración que Elías validó en campo por dar mejor señal
+—PGA ×50—, que **sin calibrar tiene el ADDER y el LP contra el riel**.
+
+### Por qué tiene que ser AUTOMÁTICA y no un ajuste de fábrica
+
+Es la otra mitad del argumento, y todavía falta medirla:
+
+- **τ depende de la temperatura**, porque C1 es un electrolítico. En la ubicación
+  del nodo la temperatura va de **8,1 a 31,6 °C en la misma semana** (Open-Meteo,
+  2026-09-05). Un ajuste fijo dimensionado en banco a 19 °C no cubre eso.
+- Si además el **punto de operación** deriva con la temperatura, un trim de
+  fábrica directamente no sirve. **Ésa es la medición que falta** (EXP4c): dejar
+  el nodo calibrado y registrar los cuatro taps durante horas, de madrugada, que
+  es cuando la casa está quieta y además la temperatura baja de ~19 a ~11 °C.
+  La excursión térmica viene de regalo.
+
+### Lo que falta para cerrar el apartado
+
+- **EXP4b — excursión útil perdida.** Cuantificar en bits del ADC lo que se
+  pierde por el offset sin corregir. Es el argumento en términos de rango
+  dinámico.
+- **EXP4c — deriva del punto calibrado.** El que justifica lo *automático*.
+- **EXP4d — que la calibración no empeora el ruido.** Barato, y cierra la
+  objeción obvia.
