@@ -871,3 +871,133 @@ encadenar dos etapas, una gruesa y una fina.
 
 Aportados por Elías: **LPo = P0[1]**, **PGAgain = P2[7]**.
 Alimentación medida: **Vdda = 4,823–4,830 V**, **Vref = 2,415 V** (≈ Vdda/2 ✓).
+
+---
+
+## 13. La escala, medida con tester — y lo que corrige
+
+Elías midió con tester (no hay osciloscopio) dos puntos del mismo tap, separados
+a propósito, más las referencias:
+
+| qué | valor |
+|---|---|
+| LPo (P0[1]) con el banco en 1000,32 | **2,388 V** |
+| LPo con el banco en 1099,94 | **4,372 V** |
+| PGAgain (P2[7]) con el banco en 1000,90 | 2,419 V |
+| Vdda | 4,823–4,830 V |
+| Vref | 2,415 V |
+
+De los dos puntos de LPo sale la recta:
+
+```
+LPo[mV] = 19,9157 × banco[mV] − 17533,5
+```
+
+**Un milivoltio del banco son 19,92 mV reales.**
+
+| punto | banco | real |
+|---|---:|---:|
+| 0 V (masa) | **880,4** | 0 |
+| **Vref, que es el objetivo** | **1001,5** | 2,412 V |
+| Vdda | **1122,7** | 4,826 V |
+
+### Tres verificaciones independientes
+
+1. La recta predice Vdda en banco **1122,7**. La saturación alta medida por
+   barrido —otro experimento, otro día, sin conocer esta recta— dio **1123,01**
+   en ch3 y **1123,24** en ch2.
+2. El punto medio entre 0 V y Vdda cae en banco **1001,55**, que es exactamente
+   donde se sienta la cadena en reposo con los cuatro IDAC en cero. **La cadena
+   está centrada en Vref**, como Elías sostenía.
+3. Para ch0 en banco 1000,90 la recta predice 2,400 V y el tester dio 2,419:
+   difieren 19 mV, o sea **1 mV de banco**.
+
+### Lo que esto DERRIBA
+
+- **El "riel bajo" de 746.** Equivale a **−2,6 V**, imposible. Por debajo de
+  banco 880,4 el ADC está fuera de rango y devuelve basura. La conclusión "está
+  saturado abajo" era correcta; el número no.
+- **El "centro" en 936 mV** y todo lo derivado: la supuesta excursión de 372 mV,
+  la asimetría del objetivo, y el argumento de que centrar daba 52 % más margen.
+  Salían de promediar ese valor inválido.
+- **El criterio de riel usado todo el día.** Un tap leyendo 900 se daba por
+  "sano, a 154 mV del riel" cuando está en **0,39 V**, casi contra masa. Varias
+  combinaciones se declararon válidas estando railadas.
+
+### Lo que CONFIRMA
+
+- El criterio original de "error contra 1000 mV", que se venía usando sin
+  justificar, **estaba bien por casualidad**: banco 1000 es Vref con 1,5 mV de
+  error, o sea 30 mV reales.
+- Todas las **relaciones entre etapas** (pendientes relativas, el factor 7,3
+  entre ADDER y LP, el 11 a 1 del BP) son cocientes y no cambian.
+- La excursión útil de cada etapa son **los 4,83 V completos**, no 372 mV.
+
+---
+
+## 14. RESPUESTA A LA PREGUNTA DE LAS RESISTENCIAS
+
+Elías: *"si finetuneamos los valores de resistencia para cada etapa, ¿sería
+posible controlar mejor los desbalances y así permitirnos mayores ganancias?"*
+
+**Sí, y es el cuello de botella principal.** Con la escala real:
+
+| actuador | paso real | recorrido (±255) |
+|---|---:|---:|
+| **ADDER → ch3** | **76,1 mV/cód** | **±19,4 V** |
+| BP → ch3 | 20,0 mV/cód | ±5,09 V |
+| LP → ch3 | 10,5 mV/cód | ±2,67 V |
+| PGA → ch0 (×1) | 1,22 mV/cód | ±0,31 V |
+| PGA → ch0 (×50) | 61,0 mV/cód | ±15,5 V |
+
+La alimentación son **4,83 V**. El ADDER tiene **cuatro veces más recorrido que
+toda la alimentación**: de sus 510 códigos, sólo **63 caben** antes de que el
+tap toque el riel. Los otros 447 no existen.
+
+### La recomendación
+
+| etapa | R hoy | paso hoy | útiles | **R sugerida** | paso nuevo | **útiles** |
+|---|---:|---:|---:|---:|---:|---:|
+| **ADDER** | 15 k | 76,1 mV | **63** | **2,0 k** | 10,2 mV | **475** |
+| **PGA** | 15 k | 61,0 mV (×50) | **79** | **2,2 k** | 8,9 mV | **510** |
+| **BP** | 15 k | 20,0 mV | 242 | **6,8 k** | 9,1 mV | **510** |
+| **LP** | 15 k | 10,5 mV | 462 | **dejar en 15 k** | — | 462 |
+
+Criterio: que ±255 códigos cubran ~±2,5 V, o sea media alimentación a cada lado.
+Más que eso es rango que el riel no deja usar. Los valores son comerciales de
+la serie E24.
+
+**El LP no hay que tocarlo**: ya está bien dimensionado, y es el único donde el
+rango es resolución de señal y no sólo margen de continua.
+
+### Una corrección a lo que dije antes
+
+Primero afirmé que la resistencia *no* ayudaba, con el argumento de que "fija la
+escala, no la cantidad de pasos: siguen siendo 255". La frase es cierta y la
+conclusión estaba mal. **Los pasos utilizables hoy no son 255, son 63**,
+justamente porque la escala está mal elegida. Bajar la resistencia cambia rango
+sobrante por resolución faltante, uno a uno, y hay rango de sobra para vender.
+
+### Por qué esto debería destrabar PGAout
+
+El modo de fallo dominante medido fue *"la ventana útil es más angosta que un
+código"*. Con el ADDER 7,5 veces más fino, esa ventana pasa a tener 7,5 códigos
+donde tenía uno. **Es exactamente el cuello de botella**, y se destraba con dos
+resistencias.
+
+No está demostrado —hay que cambiarlas y medir— pero la cadena causal está
+completa y cada eslabón está medido.
+
+### Y el ADC no es el problema
+
+| | resolución |
+|---|---:|
+| LSB del ADC | **380 µV reales** |
+| paso del IDAC del LP | 10,5 mV (**27×** el LSB) |
+| paso del IDAC del ADDER | 76,1 mV (**200×** el LSB) |
+
+El ADC ve 200 veces más fino de lo que el ADDER puede corregir. Mejorarlo no
+compra nada. *(Nota: la resolución efectiva del ADC es 380 µV y no los 19 µV que
+darían 18 bits sobre 5 V — sobre los 4,83 V útiles entran unas 12.700 cuentas,
+o sea ~13,6 bits. Por qué se pierden esos 4,4 bits es la misma incógnita del
+factor 19,92, y queda abierta.)*
