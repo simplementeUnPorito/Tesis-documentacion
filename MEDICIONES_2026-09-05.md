@@ -1138,3 +1138,101 @@ Dimensionar un actuador por "que su recorrido coincida con el riel" suena
 razonable y es **el criterio equivocado**. El correcto es *cuánto hay que
 corregir*, y eso hay que **medirlo**, no deducirlo del circuito. En este caso
 los dos criterios daban recomendaciones **opuestas** para la misma etapa.
+
+---
+
+## 17. La duplicación de firmware, y los dos defectos que estaba tapando
+
+Hasta esta noche había **dos proyectos de PSoC**: el de campo
+(`AcondicionamientoAnalogico.cydsn`) y el de autotest
+(`AcondicionamientoAnalogicoTest/…`), y el segundo era una **copia entera** del
+primero. De las 28 fuentes compartidas, 21 seguían byte a byte iguales —las
+mantenía iguales a mano— y 7 habían divergido.
+
+Elías: *"meté todo lo desarrollado y descubierto en test en el oficial y ya fue,
+dejemos de probar de un lado a otro […] que autotest tenga un include, me parece
+mejor […] hacé algo para que no pase más el problema"*.
+
+### 17.1 Qué costó la duplicación
+
+Cuatro fallas en un solo día, **todas silenciosas**: ninguna daba error, todas
+devolvían números de aspecto normal.
+
+| # | Divergencia | Consecuencia medida |
+|---|---|---|
+| 1 | Contadores de espera en `uint16` | 153.620 muestras daban la vuelta a 22.548: esperaba 8,7 s en vez de 59 |
+| 2 | Faltaba la espera de planta entera | `cal` contestaba `ok=0` a los 59,7 s = exactamente lo que suman los cuatro timeouts |
+| 3 | `cal_pi_compare_counts` devolvía la cuenta cruda | el cero que perseguía el lazo no era Vref |
+| 4 | Lector de ADC por polling, el helper viejo | puede devolver **un cero inventado** si la ISR le come el flag; y no espera a que el decimador del ΔΣ se asiente al cambiar de AMux — el error es peor justo al pasar de SUM a LP, que son los dos taps que más medí |
+
+El punto 4 obliga a poner una advertencia sobre las mediciones del día: se
+tomaron con el instrumento que tenía ese defecto. No las invalida —las series
+del autotest se toman con el ADC libre corriendo, que es el uso donde el polling
+es correcto— pero sí explica por qué algunas lecturas de un solo punto sobre
+ch3 parecían inconsistentes con su vecina.
+
+### 17.2 Qué se hizo
+
+Cada fuente compartida del test pasó a ser **una línea**: un `#include` de la
+del proyecto de campo. Ya no queda ninguna copia que pueda divergir. El único
+archivo con dos versiones es `main.c`, que es legítimamente distinto porque
+lleva el secuenciador de autotest; las primitivas de laboratorio salieron a
+`psoc_selftest_primitivas.inc`.
+
+No se tocó ningún `.cyprj`: siguen listando los mismos nombres de archivo, lo
+que cambió es el contenido. Un `#include ""` se resuelve relativo al archivo que
+incluye, así que el proyecto de campo encuentra sus propias tablas sin tocar
+rutas de búsqueda. Hay un centinela que convierte una ruta relativa mal puesta
+—que daría recursión infinita— en un mensaje que se entiende.
+
+**La garantía es estructural, no de disciplina**: `program_psoc.ps1` verifica la
+sincronía antes de grabar y **se niega a programar** si alguna fuente volvió a
+tener copia propia. El momento de verificar es justo antes de escribir el chip.
+
+### 17.3 EL DEFECTO DE FONDO, que estaba en el firmware DE CAMPO
+
+Al unificar apareció lo que la duplicación tapaba. En `cal_pi_stage_begin`:
+
+```c
+#if CAL_PI_USE_DIRECT_ADC
+    g_cal_pi.settle_remaining = 1u;                 /* ← la rama que compila */
+#else
+    g_cal_pi.settle_remaining = cfg->settle_samples + psoc_cal_plant_settle_samples();
+#endif
+```
+
+`CAL_PI_USE_DIRECT_ADC` vale 1 por defecto. O sea que **la espera de planta
+estaba en la rama que no compila**: `psoc_cal_plant_settle_samples()`, el
+parámetro τ ajustable en caliente, el comando `calparam`, la automedición de τ —
+todo el trabajo del 2026-09-04— era **código muerto**. El nodo que va al campo
+nunca esperaba a que la cadena se asentara.
+
+El razonamiento que justificaba el `1` está escrito ahí mismo y es correcto en
+sus términos: cada lectura directa ya espera `CAL_ADC_DIRECT_CONVERSION_MS`.
+Pero eso son 30 ms y alcanzan para que se asiente **el decimador del ADC**. Lo
+que hay que esperar es otra cosa, cuatro órdenes de magnitud más lenta: el polo
+de C1 contra R4, τ ≈ 29,5 s. **Dos transitorios distintos confundidos en la
+misma constante.**
+
+### 17.4 Y una unidad que dejó de ser cierta
+
+Arreglar lo anterior destapó lo siguiente. Todas las esperas de las tablas están
+en *muestras del ADC a velocidad nativa* —2604 Hz—, que es la forma en que este
+firmware expresa el tiempo. Pero los contadores se decrementan **por iteración
+del lazo**, y con el lector directo una iteración no es una muestra: para el
+ADC, lo arranca y espera 30 ms. Son **78 muestras nativas por iteración**.
+
+Contar iteraciones como si fueran muestras erra por ese factor, y en las dos
+direcciones:
+
+| Espera | Intención | Lo que habría dado |
+|---|---|---|
+| Planta, 2 τ | 153.620 muestras = **59 s** | 77 minutos |
+| Techo del lazo | 30.000 muestras = **11,5 s** | 15 minutos (el watchdog dejaba de proteger) |
+
+Se agregó una conversión única, `cal_pi_samples_to_iters()`, aplicada en los
+cuatro puntos de uso. Toda espera se sigue declarando en muestras —porque es
+tiempo— y se convierte a iteraciones donde se usa.
+
+**Ninguno de estos dos defectos es del proyecto de autotest: los dos estaban en
+el firmware que va al campo, y los dos se encontraron por dejar de duplicar.**
