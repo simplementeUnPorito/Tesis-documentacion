@@ -1654,3 +1654,79 @@ gastar el timeout empujando.
 El chequeo que existía, `cal_pi_measurement_valid()`, sólo preguntaba si el
 número entraba en el rango del ADC — y por eso nunca decía que no: 39.190 de
 131.072 entran cómodas.
+
+
+---
+
+## 25. §21 Y §24 ESTABAN MAL: el ADDER sí puede, y el que no lo dejaba era el firmware
+
+Este apartado corrige dos secciones anteriores escritas por mí, y el error vale
+más que el resultado porque es de método.
+
+### La cadena de razonamiento, y dónde se rompe
+
+1. **§21.** La trayectoria del lazo mostró 42 pasos del ADDER sin que el tap del
+   LP se moviera. Concluí: *la saturación del LP corta el camino*.
+2. **§22.1.** Yo mismo marqué esa conclusión como dudosa: la lectura estaba en
+   la zona ciega, así que podía no moverse **aunque el tap sí se moviera**.
+3. **§24.** El ensayo en lazo abierto pareció confirmar §21: barriendo el ADDER
+   **hasta −128** su propio tap recorrió 1,73 V y el del LP no se movió nada. Y
+   el LP a rango completo, +255, tampoco se sacaba a sí mismo.
+4. **Acá se rompe.** −128 no es un límite físico. Es
+   `CAL_DAC_MAX_CHANGE_GEO_SUM`, el tope que el propio firmware le pone al ADDER.
+   Barrí hasta ahí porque ése era el número que tenía a mano.
+
+### Lo que pasa cuando se sigue barriendo
+
+PGA ×50, PGAout ×1, el resto de los IDAC en cero:
+
+| IDAC del ADDER | ch3, tap del LP | |
+|---:|---:|---|
+| 0 … **−128** | **748,0** | plano, zona ciega — *acá cortaba el firmware* |
+| −144 | **765,6** | primer movimiento |
+| −160 | **874,1** | |
+| −176 | **948,3** | ya observable: 1,353 V |
+| −191 | ~1003 | el código que usa la PC, y centra la cadena |
+
+*(mV de banco)*
+
+**El LP está saturado y no responde nada hasta que la contribución del ADDER
+cruza un umbral cerca de −135 códigos. De ahí en adelante responde, y rápido.**
+El firmware se quedaba **en el último punto plano, un paso antes del acantilado**.
+
+### El error de método
+
+Barrí hasta el límite que el firmware imponía y leí el resultado como una
+propiedad del circuito. **Un límite del instrumento leído como un límite del
+mundo** — el mismo error que ya había señalado dos veces esta semana a propósito
+de la matriz de acople, cometido dos veces seguidas por mí en la misma pregunta.
+
+Lo que lo destapó no fue una idea sino un dato viejo: `max_pgaout_pga8_*.json`
+guardaba que el procedimiento desde la PC, el que **sí** centra la cadena a ×50,
+usaba `dac = {2: −191, 3: +28}`. Un código imposible para el firmware.
+
+### El arreglo
+
+El clamp deja de ser simétrico: `PsocCalStage` lleva ahora `dac_max_change` y
+`dac_max_change_neg`. Esto ya estaba anotado como pendiente en la propia tabla:
+
+> *"Se usa 128 y no 178 porque el clamp de calibration.c es SIMÉTRICO respecto de
+> dac_center […] Se pierde el tramo −178..−128, que sí es útil. Soportar límites
+> asimétricos sería mejor y es un cambio chico, pero toca la estructura […]
+> queda anotado como mejora, no se hace a las apuradas."*
+
+Ese tramo perdido era exactamente el que hacía falta. Al ADDER se le abre todo
+el recorrido negativo —255 y no sólo hasta −178, porque la PC usa −191 y ahí la
+etapa todavía sirve aunque su pendiente sea chica.
+
+Y se revierte lo que había hecho sobre el diagnóstico equivocado: la tabla vuelve
+al orden **ADDER, LP** y GEO a **una sola pasada**.
+
+### Lo que sí sobrevive de §21 y §24
+
+- El **rescate en lazo abierto** (§24) es correcto y necesario, y por su propia
+  razón: no se puede realimentar sobre una lectura que no mide nada. Sin él, el
+  PI trataba "no estoy viendo" como "estoy lejos".
+- La **ventana observable** y el hecho de que el ADC no avise cuando la abandona.
+- Que **el LP no puede rescatarse solo**: a +255 no mueve su propio tap ni un
+  milivoltio. Eso sí quedó medido y no depende del clamp.
