@@ -1420,3 +1420,56 @@ que alcanza para que 5 V entren en ±2,5 V— la adquisición ganaría **3,3 bit
 sin tocar el ADC ni el algoritmo. Es la mejora de rango dinámico más barata que
 apareció en todo el fin de semana, y va a la lista del lunes junto con las
 resistencias.
+
+---
+
+## 21. EL ADDER NO PUEDE RESCATAR UN LP SATURADO — corrección a §10
+
+Con las cinco correcciones anteriores el lazo ya empuja para el lado correcto,
+pero seguía sin llegar. Reconstruí la **trayectoria** paso a paso desde el canal
+de diagnóstico, y lo que muestra no es un problema de sintonía sino de orden.
+
+Arrancando con la cadena contra el riel de abajo (ch3 = 747,5 de banco):
+
+| etapa | pasos | qué midió el lazo |
+|---|---:|---|
+| **ADDER** | **42** | 39.182 … 39.199 cuentas — **ruido, nada más** |
+| LP, paso 1 | | 39.183 cuentas |
+| LP, paso 2 | | **47.230** cuentas ← salto de +153 mV de banco |
+
+Mientras tanto el tap propio del ADDER (ch2) **sí** se movió: de 1117,9 a 1042,7
+de banco, o sea **1,5 V reales**. El ADDER estaba trabajando y su salida
+respondía. Lo que no respondía era la salida del LP.
+
+### Qué significa
+
+**Cuando el LP está saturado, su propia saturación corta el camino.** El ADDER
+puede mover todo lo que quiera aguas arriba: la etapa siguiente está pegada
+contra su límite y no transmite. Lo único que lo saca es su **propia
+referencia**, porque actúa dentro de la etapa, del lado correcto del bloqueo. Y
+recién con el LP fuera de saturación el ADDER recupera la autoridad que la
+matriz de acople le midió.
+
+**Esto corrige la conclusión de §10** —*"el LP no se centra con su propio IDAC
+sino desde el ADDER, que tiene 7,3× más autoridad"*—, que salió de medir en un
+punto donde el LP **no** estaba saturado. Ahí sigue siendo cierta. No lo es
+cuando hay que rescatarlo, que es justamente el caso que la calibración tiene
+que resolver en campo.
+
+Es el mismo error de método que ya apareció con la matriz de acople: **una
+relación medida en un punto, aplicada donde no vale.**
+
+### La secuencia correcta
+
+| | actuador | para qué | por qué ése |
+|---|---|---|---|
+| 1 | **LP** | rescate | es el único que saca al LP de saturación |
+| 2 | **ADDER** | grueso | 3823 µV/código sobre ch3: recorre la excursión |
+| 3 | **LP** | fino | 525 µV/código; el ADDER no puede afinar tanto |
+| 4 | ADDER | ajuste | lo que sobre |
+
+Se implementa sin agregar etapas: la tabla queda en orden **LP, ADDER** y GEO
+pasa a **dos pasadas**. La espera de entrada completa (2 τ) se paga sólo en la
+primera; en la segunda la cadena ya viene cerca y alcanza 1 τ.
+
+Costo: ~950 s. El watchdog del PSoC y el plazo del ESP pasan a 1500 s.
