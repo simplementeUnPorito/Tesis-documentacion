@@ -1686,9 +1686,17 @@ PGA ×50, PGAout ×1, el resto de los IDAC en cero:
 | −144 | **765,6** | primer movimiento |
 | −160 | **874,1** | |
 | −176 | **948,3** | ya observable: 1,353 V |
-| −191 | ~1003 | el código que usa la PC, y centra la cadena |
+| **−191** | **1001,8** | **2,419 V = Vref**, con 4 mV de error |
 
 *(mV de banco)*
+
+En ese último punto la cadena entera queda centrada —ch1 = 1001,9, ch2 = 1001,1,
+ch3 = 1001,8— **moviendo un solo actuador y con los otros tres IDAC en cero**.
+El único que queda afuera es ch0, el tap del PGA, a 958,9: son los ~865 mV de
+offset de entrada amplificados ×50 que ya se habían aceptado explícitamente.
+
+Es el hecho operativo más útil de todo el fin de semana, y el firmware no podía
+alcanzarlo por 63 códigos.
 
 **El LP está saturado y no responde nada hasta que la contribución del ADDER
 cruza un umbral cerca de −135 códigos. De ahí en adelante responde, y rápido.**
