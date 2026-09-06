@@ -103,6 +103,7 @@ Como está hoy da lo mismo con y sin geófono y da una falsa sensación de contr
 ---
 
 ## 4. PRIMER RESULTADO DURO: el PGA de entrada no se puede autocorregir por encima de ~×16
+> **Corregida por [§4, EXP1](#exp1-medido-y-la-respuesta-es-la-segunda--mi-conclusión-era-falsa)**: La conclusión sobre el límite de autocorrección quedó sin efecto.
 
 La media de ch0 baja monótonamente con la ganancia. Referida a la entrada, es
 una sola constante:
@@ -182,6 +183,7 @@ corregirlo crecen **juntos**: su razón es constante.
    vista de la autoridad de calibración.
 
 ### Pero aparece el límite verdadero: el riel, no la autoridad
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige)**: Los límites de riel y códigos útiles quedaron sin efecto.
 
 Los mismos barridos muestran dónde se termina el rango útil, y no es donde se
 acaban los códigos:
@@ -205,6 +207,7 @@ hasta el extremo. **El clamp del IDAC de la etapa 0 tiene que escalar con
 1/ganancia**, y hoy es fijo en ±255.
 
 ### Un dato de hardware que sale de acá y sirve para todo lo demás
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige)**: La excursión, el centro y los márgenes informados quedaron sin efecto.
 
 Los tres taps medidos coinciden: la excursión útil es de **371 a 376 mV**,
 centrada en **~935 mV y no en los 1000 mV del objetivo**.
@@ -246,6 +249,7 @@ recuadro de §4. Las conclusiones de ganancia baja y media sí son de fiar; las 
 ganancia alta hay que releerlas cuando esté EXP1.
 
 ### El problema del lazo actual
+> **Corregida por [§6.3](#63-la-corrección-el-acople-adderlp-estaba-subestimado-por-18)**: El acople de 4,04 veces quedó sin efecto.
 
 El lazo secuencial cierra una etapa por vez, en orden, llevando cada tap a cero.
 Eso sería óptimo si las etapas fueran independientes, y **no lo son**: mover el
@@ -331,6 +335,7 @@ si la zona plana es recorte del tap o muerte del camino de señal hay que mirar
 **aguas abajo**. Crudo: `lab/planta/curva_e2_pga0_out0_20260905_133508.json`
 
 ### 6.1 La respuesta: es saturación real, y la tabla no sirve
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige)**: Las excursiones físicas informadas quedaron sin efecto.
 
 | código ADDER | ch2 (tap propio) | ch3 (LP) |
 |---:|---:|---:|
@@ -484,6 +489,7 @@ temperatura de hoy, y no sólo contra los datos del 04.
 ---
 
 ## 8. La calibración conjunta contra la placa real: falla, y por una razón concreta
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige)**: La identificación del riel bajo quedó sin efecto.
 
 **Método.** `src/interfaces/python/calibrar_pc.py` corre el algoritmo completo
 desde la PC contra la placa: mide los cuatro taps, resuelve el óptimo ponderado,
@@ -515,6 +521,7 @@ Con PGAout ×8 el factor que falta es del orden de 8, y el observado es 6,3. Es
 consistente.
 
 ### Y hay un hecho más duro todavía
+> **Corregida por [§23](#23-15-rehecha--el-argumento-de-la-tesis-ahora-sobre-una-medida-reproducible)**: La espera y el conteo de combinaciones quedaron sin efecto.
 
 **Con PGAout en ×2 o más, la cadena arranca contra el riel con los IDAC en cero.**
 Esto sí está medido con espera de planta correcta (60 s), en la campaña:
@@ -530,6 +537,7 @@ O sea que **PGAout ×2 rieliza y PGA ×2 no**. De las 12 combinaciones de la
 campaña, 10 arrancan en riel.
 
 ### AVISO: las mediciones rápidas que siguieron a esto NO son válidas
+> **Corregida por [§23](#23-15-rehecha--el-argumento-de-la-tesis-ahora-sobre-una-medida-reproducible)**: La vigencia atribuida a la tabla de reposo quedó sin efecto.
 
 Después de lo anterior corrí varios barridos con 2,5–3 s de espera por punto para
 ir rápido, y **hay que descartarlos**. La prueba es directa: en el mismo código
@@ -586,6 +594,7 @@ dependencia en vez de suponer que no existe.
 ## 9. Cómo hay que centrar la cadena, y dos errores de procedimiento propios
 
 ### 9.1 El emparejamiento etapa↔tap no es la diagonal
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige) y [§14](#14-respuesta-a-la-pregunta-de-las-resistencias)**: Las magnitudes físicas y autoridades informadas quedaron sin efecto.
 
 Con el PGA de entrada en ×50, el tap del LP queda contra el riel y **ni −255 ni
 +255 de su propio IDAC lo sacan de ahí**. Los números lo explican solos:
@@ -678,6 +687,7 @@ fracaso concreto.
 5. **Verificar** después de esperar.
 
 ### Por qué sólo dos actuadores
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige) y [§14](#14-respuesta-a-la-pregunta-de-las-resistencias)**: Las autoridades empleadas quedaron sin efecto.
 
 | actuador | µV/código sobre ch3 | para qué sirve |
 |---|---:|---|
@@ -720,6 +730,7 @@ nunca por lo que le hace al suyo.
 ---
 
 ## 11. RESULTADO PRINCIPAL: con PGA ×50, el PGAout máximo estable es ×1
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige)**: El error físico y su comparación con el criterio quedaron sin efecto.
 
 Es la pregunta que Elías planteó como objetivo de campo. Medido con
 `buscar_max_pgaout.py`, procedimiento de dos actuadores (§10), espera de
@@ -752,6 +763,7 @@ cruce: la autoridad del ADDER, con todo su recorrido, no alcanza para compensar
 lo que PGAout amplifica.
 
 ### Qué significa para el nodo
+> **Corregida por [§13](#13-la-escala-medida-con-tester--y-lo-que-corrige) y [§14](#14-respuesta-a-la-pregunta-de-las-resistencias)**: La autoridad total informada del ADDER quedó sin efecto.
 
 **La red de seguridad se cumple.** El peor resultado posible de esta búsqueda era
 PGAout ×1, y ×1 reproduce exactamente la placa que Elías ya validó en campo. No
@@ -845,6 +857,7 @@ ganancia en PGAout: **es el actuador más barato de la cadena**, porque casi no
 desordena su propio tap y además ch1 no puede saturar ni queriendo.
 
 ### 12.5 Por qué el problema es del IDAC y no del ADC
+> **Corregida por [§16](#16-corrección-a-14-la-resistencia-se-dimensiona-por-lo-que-hay-que-compensar-no-por-llenar-el-rango)**: La conclusión sobre el cambio de resistencia quedó sin efecto.
 
 Pregunta de Elías: *"no entiendo bien por qué me decís que tienen menor
 resolución, el ADC en teoría tiene 18 bits en 5 V de rango"*.
@@ -898,7 +911,13 @@ LPo[mV] = 19,9157 × banco[mV] − 17533,5
 | punto | banco | real |
 |---|---:|---:|
 | 0 V (masa) | **880,4** | 0 |
-| **Vref, que es el objetivo** | **1001,5** | 2,412 V |
+| **Vref, que es el objetivo** | **1001,5** | 2,412 V † |
+
+† La recta *predice* 2,412 V y el tester *midió* 2,415. Los 3 mV son el
+residuo del ajuste, no un error de nadie: la recta se ajustó con dos puntos y
+reproduce Vref con un milivoltio de banco de desvío. Cuando haga falta un
+número de Vref para comparar contra una medida, el que vale es el del tester;
+cuando haga falta convertir una lectura del banco, vale la recta.
 | Vdda | **1122,7** | 4,826 V |
 
 ### Tres verificaciones independientes
@@ -936,6 +955,7 @@ LPo[mV] = 19,9157 × banco[mV] − 17533,5
 ---
 
 ## 14. RESPUESTA A LA PREGUNTA DE LAS RESISTENCIAS
+> **Corregida por [§16](#16-corrección-a-14-la-resistencia-se-dimensiona-por-lo-que-hay-que-compensar-no-por-llenar-el-rango)**: El cálculo de códigos disponibles quedó sin efecto.
 
 Elías: *"si finetuneamos los valores de resistencia para cada etapa, ¿sería
 posible controlar mejor los desbalances y así permitirnos mayores ganancias?"*
@@ -955,6 +975,7 @@ toda la alimentación**: de sus 510 códigos, sólo **63 caben** antes de que el
 tap toque el riel. Los otros 447 no existen.
 
 ### La recomendación
+> **Corregida por [§16](#16-corrección-a-14-la-resistencia-se-dimensiona-por-lo-que-hay-que-compensar-no-por-llenar-el-rango)**: Los valores recomendados y la decisión sobre el LP quedaron sin efecto.
 
 | etapa | R hoy | paso hoy | útiles | **R sugerida** | paso nuevo | **útiles** |
 |---|---:|---:|---:|---:|---:|---:|
@@ -979,6 +1000,7 @@ justamente porque la escala está mal elegida. Bajar la resistencia cambia rango
 sobrante por resolución faltante, uno a uno, y hay rango de sobra para vender.
 
 ### Por qué esto debería destrabar PGAout
+> **Corregida por [§16](#16-corrección-a-14-la-resistencia-se-dimensiona-por-lo-que-hay-que-compensar-no-por-llenar-el-rango)**: El diagnóstico y la solución propuestos quedaron sin efecto.
 
 El modo de fallo dominante medido fue *"la ventana útil es más angosta que un
 código"*. Con el ADDER 7,5 veces más fino, esa ventana pasa a tener 7,5 códigos
@@ -1016,6 +1038,7 @@ cadena en cada combinación de ganancia. Es exactamente lo que sería el nodo si
 no existiera el sistema de calibración.
 
 ### Resultado
+> **Corregida por [§23](#23-15-rehecha--el-argumento-de-la-tesis-ahora-sobre-una-medida-reproducible)**: El método, el conteo y los errores informados quedaron sin efecto.
 
 Sobre 12 combinaciones medidas con espera de planta correcta (60 s):
 
@@ -1037,6 +1060,7 @@ Y las dos que sí arrancan en rango, tampoco están bien:
 *(valores en voltios reales, con la escala verificada con tester)*
 
 ### El argumento
+> **Corregida por [§23](#23-15-rehecha--el-argumento-de-la-tesis-ahora-sobre-una-medida-reproducible)**: El conteo y las mejoras usados como fundamento quedaron sin efecto.
 
 **La autocalibración no es un refinamiento que mejora un número: es lo que hace
 que la mayoría de las configuraciones existan.** En 10 de 12 casos, la
@@ -1779,3 +1803,69 @@ ADDER está mal centrada respecto de lo que la cadena necesita**, y corregirlo e
 justamente cambiar su resistencia. Va derecho a la sesión del lunes, y ahora con
 el número: hace falta correr el punto de reposo unos **191 códigos × 1875 µV =
 358 mV** en la referencia.
+
+
+---
+
+## 27. EL NODO SE CALIBRA SOLO — objetivo del fin de semana, conseguido
+
+Medido el **2026-09-06 a las 09:52**, PGA ×50 / PGAout ×1, arrancando con los
+cuatro IDAC en cero, o sea el estado en que quedaría un nodo recién encendido en
+el campo. Sin PC: el comando `cal` y nada más.
+
+| tap | antes | después |
+|---|---:|---:|
+| ch0 PGA | −814 mV | −844 mV |
+| ch1 BP | +111 mV | **−42 mV** |
+| ch2 ADDER | **+2372 mV — contra el riel** | **−16 mV** |
+| ch3 LP | **−5044 mV — zona ciega** | **−34 mV** |
+
+*(mV reales respecto de Vref)*
+
+**El tap que se captura pasó de no ser observable a quedar a 34 mV de Vref**, y
+la cadena entera quedó centrada. ch0 se queda donde estaba porque es el offset
+de entrada amplificado ×50, que ya se había aceptado explícitamente y que no
+corrige ninguna etapa: no es riel, le sobra 1,5 V hasta masa.
+
+Tardó **579 s**. Es lo que pide la física: con τ = 29,5 s no hay forma de
+calibrar esta cadena en menos de varios minutos, y es un costo que se paga una
+vez al desplegar.
+
+### La trayectoria, que muestra las dos fases
+
+| etapa | medida del lazo | |
+|---|---:|---|
+| ADDER, entrada | 748,5 | zona ciega: el lazo no puede realimentar |
+| ADDER, salida | **1003,4** | el rescate en lazo abierto lo trajo a Vref +35 mV |
+| LP, paso 1 | 1002,2 | +11 mV |
+| LP, paso 2 | 999,9 | **−35 mV** |
+
+Se ve el diseño funcionando: el ADDER cruza a ciegas los ~190 códigos que
+separan el reposo del punto útil —donde ninguna medida significa nada— y recién
+cuando el tap entra en la ventana observable el PI toma el control y el LP hace
+el ajuste fino.
+
+### Lo que hizo falta para llegar acá
+
+Siete correcciones, y ninguna era de sintonía:
+
+| | qué estaba mal |
+|---|---|
+| 1 | la espera de planta vivía en una rama de preprocesador que no compila (§17.3) |
+| 2 | las esperas se contaban en iteraciones del lazo pero se declaran en muestras del ADC, 78× más cortas (§17.4) |
+| 3 | el lazo no esperaba nada después de mover, así que medía el pasado (§19) |
+| 4 | la curva no lineal del LP se le aplicaba también al ADDER, invirtiéndole el signo (§18) |
+| 5 | recortar la tabla de etapas dejó al instrumento sin poder escribir dos IDAC, en silencio |
+| 6 | el clamp simétrico frenaba al ADDER 63 códigos antes de que la cadena respondiera (§25) |
+| 7 | el rescate en lazo abierto quedó antes del chequeo de espera y se disparaba cada 30 ms |
+
+Las siete eran silenciosas: ninguna daba error, todas devolvían números de
+aspecto normal.
+
+### Lo que queda, y es chico
+
+El firmware informa `ok=0` pese a dejar el LP a 34 mV. El lazo llegó; lo que no
+alcanzó fue el presupuesto de pasos del LP para acumular las tres muestras
+consecutivas dentro de la banda muerta que su criterio de cierre exige. Es un
+número de tabla, no un problema de fondo, y conviene ajustarlo para que el nodo
+informe éxito cuando efectivamente lo tuvo.
