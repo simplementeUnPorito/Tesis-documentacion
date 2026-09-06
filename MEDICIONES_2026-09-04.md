@@ -25,6 +25,8 @@ esclavo en **COM7**, PGA 1× y PGAout 1× salvo donde se aclare.
 ---
 
 ## 2. Matriz de acople entre etapas — primera medición
+> **Corregida en `MEDICIONES_2026-09-05.md` §6.3 y §24**: el acople ADDER→LP estaba subestimado, y además la matriz sólo vale donde el LP no está saturado.
+
 
 **Método.** Escalón de +120 códigos en el IDAC de cada etapa, leyendo los cuatro
 taps en ronda durante 150 s (~500 puntos por ensayo). A cada serie se le ajusta
@@ -54,6 +56,8 @@ punto. Crudo: `escalon_pga0_out0_20260904_143457.json`.
 práctica: al firmware le alcanza **una** constante de espera, no cuatro.
 
 ### Lo que sale de leer la matriz
+> **Corregida en `MEDICIONES_2026-09-05.md` §24 y §25**: con el LP saturado el camino ADDER→LP está cortado, y ninguna relación de esta tabla se aplica ahí.
+
 
 **a) El acople es permanente, no transitorio.** Mover `Vref_BP` +120 códigos deja
 ch2 en 954,2 mV (venía de 1000,8) y ch3 en 1122,4 (venía de 1002,1). No vuelven.
@@ -139,6 +143,8 @@ incluye las zonas recortada y no lineal. Para la ganancia del lazo valen las del
 escalón, §2.)*
 
 ### Rango útil de cada IDAC — y el ADDER pierde el 40 %
+> **Corregida en `MEDICIONES_2026-09-05.md` §25 y §26**: el criterio del 30 % de la mediana era conservador; el ADDER sirve hasta −191, que es donde centra la cadena.
+
 
 La curva en S es **real**. En el handoff de anoche quedó escrito que «la curva en
 S del barrido es recorte de la etapa — NO, era un limitador propio del firmware».
@@ -225,6 +231,8 @@ El arreglo no es tocar ganancias sino **esperar a la planta**, para que la medid
 sobre la que corrige sea la asentada.
 
 ### Autoridad de cada etapa sobre su propio tap (ganancia × 255 códigos)
+> **Corregida en `MEDICIONES_2026-09-05.md` §13**: estas autoridades están en unidades del banco, sin el factor 19,9157 que las lleva a volts reales.
+
 
 | etapa | autoridad |
 |---|---:|
@@ -238,6 +246,8 @@ de que la cadena calibre con cualquier par de ganancias: si a ganancia alta el
 offset amplificado supera esto, no hay firmware que lo arregle.
 
 ### Offsets naturales, con los cuatro IDAC en código 0
+> **Corregida en `MEDICIONES_2026-09-05.md` §13 y §23**: la escala usada acá era la equivocada, y el reposo se remidió con detección de asentamiento.
+
 
 Taps en **1001,0 / 1001,1 / 1001,1 / 1001,5 mV** contra un objetivo de 1000 mV.
 O sea que en 1×/1× **la cadena está naturalmente centrada a ~1 mV** y la
@@ -247,6 +257,8 @@ eso es lo que falta medir (§8).
 ---
 
 ## 5. Simulación — ahora sí calibrada contra la placa
+> **Corregida en `MEDICIONES_2026-09-05.md` §6.3 y §8**: la simulación heredó el acople subestimado, así que no está calibrada contra la placa como dice el título.
+
 
 `calculos_modelados/python/calibracion_pi/modelo_cadena.py`. **Todos los
 parámetros inventados fueron reemplazados por los medidos.** Lo que se corrigió:
@@ -287,6 +299,8 @@ modelo no captura, no porque la simulación lo pida.
 ---
 
 ## 6. Lo que hay que decidir
+> **Corregida en `MEDICIONES_2026-09-05.md` §25**: la decisión de acotar el ADDER a −178…+128 era justo la que impedía que la calibración funcionara.
+
 
 1. **NO tocar `CAL_PI_GAIN_GEO_BP_X1000`.** Verificado: el 101 es correcto,
    corresponde a la ganancia instantánea. Cambiarlo rompe el lazo (§4).
@@ -345,6 +359,8 @@ nombres del símbolo del kit (P12.0/P12.1) y **no** son los del firmware:
   eso pasó. Conviene sacarlo o cambiarlo.
 
 ### Cambios de firmware compilados pero NO grabados
+> **Corregida en `MEDICIONES_2026-09-05.md` §25**: el clamp simétrico de ±128 que figura acá como solución resultó ser el problema; hoy el límite es asimétrico.
+
 
 | commit | qué |
 |---|---|
