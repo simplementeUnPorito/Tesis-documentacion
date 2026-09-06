@@ -78,11 +78,17 @@ preguntas que lo sostienen tienen ahora respuesta medida.
 \textbf{pregunta} & & \textbf{evidencia} \\
 \midrule
 ¿Sin calibrar el nodo funciona? & \no &
-  12 de 14 combinaciones de ganancia arrancan con una etapa que no transmite \\[1mm]
+  12 de 14 combinaciones de ganancia arrancan con una etapa que no transmite 
+
+
 ¿Alcanza con calibrar una vez en fábrica? & \no &
-  el punto vagabundea en una banda \derivaVeces{} veces más ancha que la corrección \\[1mm]
+  el punto recorre \derivaVeces{} veces la corrección y no tiene un valor al que apuntar 
+
+
 ¿El nodo puede calibrarse solo? & \si &
-  de fuera de rango a 34 mV de $V_{ref}$, en 579 s, sin PC \\[1mm]
+  de fuera de rango a 34 mV de $V_{ref}$, en 579 s, sin PC 
+
+
 ¿Calibrar empeora el ruido? & \no &
   el RMS no crece a lo largo de \derivaHoras{} h \\
 \bottomrule
@@ -280,49 +286,37 @@ Sobre \derivaHoras{} h y \derivaMuestras{} muestras, el tap del filtro pasabajos
 recorrió una banda de \textbf{\derivaBanda{} mV}, que son
 \textbf{\derivaVeces{} veces} los 34 mV que la calibración consigue.
 
-\paragraph{Qué clase de movimiento es, y qué no se puede afirmar todavía.}
-Vale la pena contar cómo se llegó acá, porque escribí la conclusión de dos
-maneras incompatibles antes de esta.
-
-La tasa medida iba bajando ---257, 41, 28 mV/h--- y eso admite lecturas
-opuestas: puede ser la cola del transitorio de la propia calibración decayendo,
-o deriva real con la cola encima. Ajustar una recta y compararla con su residuo
-\emph{no} los separa, porque a un movimiento acotado también se le puede ajustar
-una recta y le da pendiente distinta de cero.
-
-Lo que sí es un dato es cómo crece la banda:
+\paragraph{Y no se va: vagabundea.}
+Con \derivaHoras{} h el recorrido habla solo:
 
 \begin{quote}
-\textbf{Banda recorrida hasta cada momento:} \derivaBandas
+arrancó en \derivaArranco{} mV \quad$\rightarrow$\quad bajó hasta
+\textbf{\derivaExtremo{} mV} a las \derivaExtremoH{} h \quad$\rightarrow$\quad
+y volvió a \derivaAhora{} mV.\[1mm]
+\textbf{Desplazamiento neto en \derivaHoras{} h: \derivaNeto{} mV. Excursión
+recorrida: \derivaBanda{} mV.}
 \end{quote}
 
-\textbf{La banda dejó de crecer}: el último 40\,\% del registro le agregó
-\derivaCrecio{} mV sobre \derivaBanda{}. Y la pendiente ajustada se viene
-achicando sola ---$-17{,}8$, $-30{,}5$, $-24{,}6$, $-20{,}6$, $-14{,}6$ mV/h---,
-que es lo que le pasa a una recta ajustada a algo que deja de irse.
+\textbf{Volvió.} Eso descarta las dos explicaciones que competían: un
+asentamiento lento hacia una asíntota no regresa, y una rampa sostenida tampoco.
+Lo que hay es un movimiento \emph{acotado}, que va y viene.
 
-Eso descarta la rampa sostenida, y \textbf{llamarlo ``deriva de \derivaTasa{}
-mV/h'' sería afirmar algo que no está pasando}. Pero deja dos explicaciones
-todavía en pie, y con \derivaHoras{} h no se pueden separar:
+Vale la pena decir cómo se llegó acá, porque escribí la conclusión de tres
+maneras incompatibles antes de esta. La tasa medida iba bajando ---257, 41,
+28 mV/h--- y a las 3,2 h ajustar una recta daba $-24$ mV/h, que parecía una
+deriva clara. No lo era: a un movimiento acotado también se le ajusta una recta y
+le da pendiente distinta de cero, y esa pendiente se achica sola a medida que
+entran muestras. Ninguna estadística de ajuste lo dice mejor que los tres números
+de arriba.
 
-\begin{itemize}
-  \item \textbf{vagabundeo acotado}, con el punto yendo y viniendo dentro de un
-        rango;
-  \item \textbf{un asentamiento lento hacia una asíntota}, con una constante de
-        \emph{horas} ---mucho mayor que los 29,5 s del polo conocido, pero
-        compatible con la absorción dieléctrica del electrolítico de 680 µF---.
-\end{itemize}
-
-Separarlas necesita más horas, y sobre todo una excursión térmica registrada:
-si el punto sigue la temperatura, es lo segundo. Queda anotado como pendiente.
-
-\paragraph{Y el argumento se sostiene igual, en las dos.} Cualquiera sea el
-mecanismo, el punto recorre \derivaBanda{} mV, o sea \derivaVeces{} veces los
-34 mV que la calibración consigue, y lo hace \emph{solo}, sin que nadie toque
-nada. Un valor fijo elegido en el banco no lo sigue: contra una rampa al menos
-se podría dimensionar para el promedio del turno, y contra esto no hay siquiera
-un valor al que apuntar. Sólo un lazo que mida y corrija en el lugar puede
-hacerlo.
+\paragraph{Y el argumento queda más filoso, no más débil.} Un trim de fábrica
+fijado al arrancar habría quedado a \derivaNeto{} mV al final ---dentro de lo que
+la calibración consigue--- y \textbf{equivocado por \derivaExtremo{} mV en el
+medio}. Ése es exactamente el problema: el punto recorre \derivaVeces{} veces lo
+que la corrección vale, y \emph{no tiene un valor al que apuntar}. Contra una
+rampa un valor fijo al menos se podría dimensionar para el promedio del turno;
+contra esto, no hay promedio que sirva. Sólo un lazo que mida y corrija en el
+lugar puede seguirlo.
 
 \subsection{Y calibrar no mete ruido}
 
@@ -517,10 +511,10 @@ Vale 3,3 bits de rango dinámico, más otros 2,3 si además se quita el pedestal
 Hoy informa \texttt{ok=1} arrancando cerca y \texttt{ok=0} arrancando del riel,
 con el mismo resultado físico en los dos: es contabilidad de pasos, no
 calibración. Diagnosticado, y el ensayo T3 lo confirma solo. \\[2mm]
-\textbf{5.} & \textbf{Dejar correr la deriva más horas.} Con \derivaHoras{} h la banda es de \derivaBanda{} mV y dejó de
-crecer, pero no alcanza para separar vagabundeo acotado de un asentamiento
-lento. Hace falta más registro y, sobre todo, la temperatura anotada en
-paralelo: si el punto la sigue, es asentamiento. \\
+\textbf{5.} & \textbf{Dejar correr la deriva más horas.} A las \derivaHoras{} h ya quedo claro que vagabundea y no se va ---bajo
+\derivaExtremo{} mV y volvio---. Lo que falta ahora es otra cosa: la
+temperatura anotada en paralelo, para saber si el vagabundeo la sigue o es
+independiente. Eso decide si hay que recalibrar por reloj o por termometro. \\
 \bottomrule
 \end{longtable}
 
