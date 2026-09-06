@@ -1236,3 +1236,125 @@ tiempo— y se convierte a iteraciones donde se usa.
 
 **Ninguno de estos dos defectos es del proyecto de autotest: los dos estaban en
 el firmware que va al campo, y los dos se encontraron por dejar de duplicar.**
+
+---
+
+## 18. LA CALIBRACIÓN DEL FIRMWARE EMPEORABA LA CADENA — y por qué
+
+Con el firmware unificado, la calibración del nodo por fin **espera** lo que
+tiene que esperar: `cal` pasó de contestar a los 59,7 s —lo que suman los cuatro
+timeouts— a tardar **149 s**, que es exactamente lo que predicen 2 τ por etapa
+más el lazo. Pero el resultado era peor que no hacer nada:
+
+| | ch0 (PGA) | ch1 (BP) | ch2 (ADDER) | ch3 (LP) |
+|---|---:|---:|---:|---:|
+| **antes** de calibrar, IDAC en cero | −20 mV | −11 mV | −42 mV | **+98 mV** |
+| **después** de `cal` | −25 mV | −18 mV | **−3642 mV** | **+2405 mV** |
+
+*(mV reales respecto de Vref)*
+
+Se le entregó una cadena **con los cuatro taps a menos de 100 mV de Vref** y la
+dejó con el LP contra el riel de arriba. No es que no converja: converge al
+revés, y a toda velocidad.
+
+### La causa
+
+```c
+if (stage->adc_channel == 3u) {          /* ← la condición equivocada */
+    stage_gain_x1000 = cal_pi_geo_lp_chord_gain_x1000(...);
+}
+```
+
+La referencia del LP tiene una transferencia marcadamente no lineal —entre la
+mitad negativa y la positiva la pendiente cambia por un factor 2,6— así que su
+etapa usa la pendiente de cuerda de una **tabla medida** en lugar de una
+ganancia constante. La condición que activaba esa tabla preguntaba *qué tap mira
+la etapa*, y eso fue equivalente a *qué actuador mueve* exactamente mientras cada
+etapa miraba su propio tap.
+
+**Al pasar a dos actuadores, el ADDER también mira el canal 3.** Desde entonces
+tomaba la curva del LP como si fuera la suya: una ganancia **positiva** en un
+lazo cuya ganancia real es **negativa** (−2039: subir la referencia del ADDER
+*baja* la salida del LP). Realimentación positiva pura → el riel.
+
+El defecto es mío, introducido junto con la mejora de la sección 10, y es el
+mismo patrón que el de la sección 17.3: **una condición escrita sobre algo que
+resultaba equivalente a lo que se quería decir, hasta que dejó de serlo.**
+
+### El arreglo
+
+La condición ahora es explícita y no inferible: un campo `usa_curva_lp` en la
+tabla de etapas, en 1 sólo para GEO_LP. La pregunta correcta no es qué tap mira
+sino **qué actuador mueve**.
+
+---
+
+## 19. El lazo medía el pasado — y es la tercera vez que aparece el mismo error
+
+Encendí el canal de diagnóstico del PSoC y volví a correr `cal` capturando los
+497 eventos que emite. Lo que muestran, para la etapa del ADDER:
+
+| evento | valor | qué significa |
+|---|---|---|
+| `CAL_STAGE_BEGIN` | 2, luego 3 | corren sólo las dos etapas en secuencia ✓ |
+| `CAL_STAGE_TARGET32` | 0 | el objetivo es Vref ✓ |
+| `CAL_PI_GAIN32` | `0xFFFFF809` = **−2039** | la ganancia medida, con su signo ✓ |
+| `CAL_AMUX_IN` | 3 | mira el tap del LP ✓ |
+| `CAL_STAGE_MEAS32` al entrar | **39.191** counts | = 747,5 mV de banco |
+| `CAL_STAGE_MEAS32` al salir | **39.190** counts | |
+
+39.191 counts / 52.428,8 counts por volt = 747,5 mV de banco, que coincide con
+los 747,3 mV que lee el instrumento por su lado: **la escala del lazo y la del
+instrumento son la misma**, y eso quedó descartado como sospechoso.
+
+Lo que no coincide con nada es la última fila. **En toda la etapa, mientras el
+lazo movía la referencia, la medida pasó de 39.191 a 39.190 cuentas.** No es que
+corrigiera mal: es que estaba mirando el pasado.
+
+### La causa
+
+```c
+if (dac_changed) {
+#if CAL_PI_USE_DIRECT_ADC
+    /* La siguiente lectura directa ya integra 30 ms de conversiones. */
+    g_cal_pi.control_hold_remaining = 0u;
+#else
+    g_cal_pi.control_hold_remaining = cfg->settle_samples;
+#endif
+```
+
+El comentario es cierto y es irrelevante. Esos 30 ms son lo que tarda el
+**decimador del ADC**; lo que hay que esperar es la **cadena**, que tarda τ ≈
+29,5 s. Sin esa espera el lazo mueve la referencia, vuelve a medir 30 ms después
+—cuando la planta todavía no reaccionó—, concluye que su corrección no hizo nada
+y vuelve a mover. Es un integrador cargando contra una planta que aún no
+contestó, y termina siempre igual: en el riel.
+
+### Es un patrón, no un descuido aislado
+
+Es la **tercera** aparición del mismo error, y las tres en el mismo lugar del
+código: donde entró el lector directo de ADC se sustituyó el tiempo de la planta
+por el del ADC.
+
+| # | dónde | qué se puso | qué hacía falta |
+|---|---|---|---|
+| 1 | espera de planta al entrar a la etapa (§17.3) | `settle_remaining = 1` | 2 τ ≈ 59 s |
+| 2 | conversión de esperas (§17.4) | contar iteraciones como muestras | 78 muestras por iteración |
+| 3 | espera después de cada paso | `control_hold_remaining = 0` | 1 τ ≈ 29,5 s |
+
+Es lo mismo que hace el procedimiento desde la PC —el que **sí** converge—:
+30 s de espera por paso grueso y 59 s por paso fino. El firmware tenía el
+algoritmo correcto y el reloj equivocado.
+
+### Lo que cuesta, y por qué no es un defecto
+
+Con las esperas correctas, una calibración honesta de esta cadena son dos etapas
+por (2 τ de entrada + hasta 5 pasos de 1 τ) ≈ **412 s**. Hubo que subir el
+watchdog del PSoC de 400 a 900 s y el plazo del ESP de 420 a 900 s.
+
+**Con τ = 30 s no existe forma de calibrar esta cadena en menos de varios
+minutos.** Es lo que pide la física del polo de C1 contra R4, no una
+ineficiencia del algoritmo. Para un nodo que se calibra una vez al desplegarse,
+siete minutos es un costo razonable —y es un número que la tesis puede
+defender—. La espera por paso quedó ajustable en caliente (`calparam paso`) por
+si conviene negociarla.
