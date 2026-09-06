@@ -1,0 +1,492 @@
+% =====================================================================
+% Informe de la semana --- nodo de adquisición de geófono
+% Se compila con:  lualatex informe.tex   (dos veces, por las referencias)
+% NO con pdflatex: usa fontspec.
+% o con el script:  compilar.ps1
+%
+% OJO con los guiones: la raya (U+2014) y el guion medio (U+2013) NO existen
+% en ec-lmr10, que es lo que toma lualatex con fontenc T1, y desaparecen del PDF
+% sin mas aviso que una linea "Missing character" en el log. Se escriben --- y
+% -- , que es lo que LaTeX espera.
+%
+% Las figuras las genera src/interfaces/python/figuras_semana.py a partir
+% de los JSON crudos. Ningún número de este documento está escrito a mano
+% sin que exista el archivo de datos que lo respalda; la sección final
+% dice dónde está cada uno.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+% LUALATEX YA ES UTF-8 NATIVO, asi que inputenc/fontenc no van: con ellos
+% los caracteres de un byte alto se remapean mal y el PDF sale con '¿'
+% convertido en '£' y '×' en 'Œ'. Se ve en el PDF y NO en el log, que es
+% lo peor: compila limpio y sale mal.
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+\usepackage[spanish,es-noquoting,es-nolists,es-noshorthands]{babel}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{seqsplit}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage[colorlinks=true,linkcolor=azuloscuro,urlcolor=azuloscuro]{hyperref}
+
+\definecolor{azuloscuro}{HTML}{1F4E79}
+\definecolor{rojo}{HTML}{C0392B}
+\definecolor{verde}{HTML}{1E8449}
+\definecolor{grisclaro}{HTML}{F2F2F2}
+
+\newcommand{\si}{\textcolor{verde}{\textbf{sí}}}
+\newcommand{\no}{\textcolor{rojo}{\textbf{no}}}
+% Las rutas son una sola palabra y no rompen: se salen de la columna.
+% Este \ruta deja cortar despues de cada barra, que es donde uno lo
+% esperaria, y no en cualquier lado.
+\newcommand{\ruta}[1]{{\ttfamily\small\seqsplit{#1}}}
+
+\title{\vspace{-1.5cm}\textbf{Nodo de adquisición de geófono}\\[2mm]
+       \large Resultados de la semana del 31 de agosto al 6 de septiembre de 2026}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.2cm}
+
+% =====================================================================
+\section*{Lo que hay que saber si se lee una sola página}
+
+\textbf{El nodo se calibra solo.} Arrancando con las cuatro referencias en cero
+---el estado de un nodo recién encendido en el campo--- y sin computadora conectada,
+lleva el tap del filtro pasabajos desde fuera del rango medible hasta
+\textbf{34 mV de $V_{ref}$}, en 579~s. Es la primera vez que lo hace.
+
+El apartado de la tesis sobre autocalibración queda \textbf{completo}: las cuatro
+preguntas que lo sostienen tienen ahora respuesta medida.
+
+\begin{center}
+\begin{tabular}{p{9.2cm} c p{4.4cm}}
+\toprule
+\textbf{pregunta} & & \textbf{evidencia} \\
+\midrule
+¿Sin calibrar el nodo funciona? & \no &
+  12 de 14 combinaciones de ganancia arrancan con una etapa que no transmite \\[1mm]
+¿Alcanza con calibrar una vez en fábrica? & \no &
+  el punto se va 24 mV/h y la corrección son 34 mV \\[1mm]
+¿El nodo puede calibrarse solo? & \si &
+  de fuera de rango a 34 mV de $V_{ref}$, en 579 s, sin PC \\[1mm]
+¿Calibrar empeora el ruido? & \no &
+  el RMS no crece a lo largo de 3,2 h \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{3mm}
+\noindent\textbf{El hallazgo que lo destrabó todo} fue que el firmware se
+detenía \emph{63 códigos antes} del punto donde la cadena empieza a responder,
+por un límite simétrico que nadie había pedido. La figura~\ref{fig:adder} lo
+muestra de una mirada.
+
+\vspace{2mm}
+\noindent\textbf{Y el error de método que más costó} fue mío: barrí un actuador
+hasta el límite que le ponía el propio firmware y leí el resultado como una
+propiedad del circuito. Lo hice dos veces seguidas en la misma pregunta. Está
+contado en la sección~\ref{sec:metodo} porque enseña más que el resultado.
+
+% =====================================================================
+\section{El estado del nodo}
+
+\subsection{Qué funciona hoy}
+
+\begin{itemize}
+  \item \textbf{Autocalibración desde el peor caso.} Con las cuatro referencias
+        en cero y la cadena contra el riel, el nodo la centra sin ayuda externa.
+  \item \textbf{Un solo firmware.} El proyecto de autotest dejó de ser una copia
+        del de campo: cada fuente compartida existe una vez y la otra la incluye.
+        El grabador \emph{se niega a programar} si alguien vuelve a copiar un
+        archivo.
+  \item \textbf{Batería de ensayos armada} para la sesión de cambio de
+        resistencias, con las trampas de la semana metidas como guardas.
+\end{itemize}
+
+\subsection{Números vigentes}
+
+\begin{center}
+\begin{tabular}{l r p{4.6cm}}
+\toprule
+\textbf{magnitud} & \textbf{valor} & \textbf{de dónde sale} \\
+\midrule
+Escala del banco            & 19,9157 & mV reales por mV de banco; dos puntos con tester \\
+$V_{ref}$                   & 2,415 V                            & tester \\
+$V_{dda}$                   & 4,826 V                            & tester \\
+Ventana observable          & 880,4 a 1122,7 & mV de banco; recta anclada en 0 V y $V_{dda}$ \\
+$\tau$ de la planta         & 29,5 s                             & cuatro caminos independientes \\
+Paso del ADDER sobre el LP  & 61,4 & mV reales por código; barrido en lazo abierto \\
+Código que centra la cadena & $-191$                             & barrido en lazo abierto \\
+Duración de una calibración & 579 s                              & medido, dos veces \\
+Error que consigue          & 34 mV                              & medido, dos veces \\
+Máximo PGAout estable a ×50 & ×1                                 & tres corridas \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =====================================================================
+\section{El hallazgo principal: el firmware se detenía antes del codo}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{../../lab/planta/figuras/adder_curva_20260906.png}
+\caption{Barrido del IDAC del ADDER en lazo abierto, mirando el tap del filtro
+pasabajos. La meseta plana de la derecha es el LP saturado: no transmite nada,
+haga lo que haga la etapa de arriba. La línea roja es donde el firmware se
+detenía. El codo está inmediatamente después.}
+\label{fig:adder}
+\end{figure}
+
+El filtro pasabajos, saturado, \textbf{no responde en absoluto} hasta que la
+contribución del ADDER cruza un umbral cerca del código $-135$. Antes de ese
+punto la etapa de arriba puede recorrer volts sin que se vea nada aguas abajo.
+
+\begin{center}
+\begin{tabular}{r r l}
+\toprule
+\textbf{código del ADDER} & \textbf{tap del LP [mV banco]} & \\
+\midrule
+0 a $-128$ & 748,0 & plano; \textcolor{rojo}{aquí cortaba el firmware} \\
+$-144$     & 765,6 & primer movimiento \\
+$-160$     & 874,1 & \\
+$-176$     & 948,3 & entra en la ventana observable \\
+$\mathbf{-191}$ & \textbf{1001,8} & \textbf{$V_{ref}$, cadena centrada} \\
+$-240$     & 1122,9 & riel superior \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+El límite del firmware era \ruta{CAL\_DAC\_MAX\_CHANGE\_GEO\_SUM}~$=128$, y era
+\emph{simétrico}. El propio comentario del código ya decía que con eso se perdía
+el tramo $-178\ldots-128$ ``que sí es útil'', y anotaba los límites asimétricos
+como mejora pendiente. Ese tramo perdido era exactamente el que hacía falta.
+
+\subsection{La comprobación que lo separó de la explicación cómoda}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{../../lab/planta/figuras/rescate_comparado.png}
+\caption{A la izquierda, moviendo el ADDER hasta el límite del firmware: su
+propio tap recorre 1,73 V y el del LP no se mueve. A la derecha, moviendo el LP
+en todo su recorrido: tampoco. Con estos dos solos la conclusión ``el camino
+está cortado'' parece inevitable, y es falsa.}
+\label{fig:rescate}
+\end{figure}
+
+% =====================================================================
+\section{La autocalibración}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{../../lab/planta/figuras/calibracion_antes_despues.png}
+\caption{Los cuatro taps antes y después de \texttt{cal}, sin computadora. El
+tap del PGA queda donde estaba porque es el offset de entrada amplificado ×50,
+que se aceptó explícitamente: no está en el riel, le sobran 1,5 V hasta masa.}
+\label{fig:cal}
+\end{figure}
+
+La trayectoria muestra el diseño funcionando en dos fases. El ADDER cruza
+\emph{a ciegas} los $\sim$190 códigos que separan el reposo del punto útil
+---donde ninguna medida significa nada--- y recién cuando el tap entra en la ventana
+observable el lazo cerrado toma el control y el LP hace el ajuste fino.
+
+\begin{center}
+\begin{tabular}{l r l}
+\toprule
+\textbf{etapa} & \textbf{medida del lazo} & \\
+\midrule
+ADDER, al entrar  & 748,5  & fuera de la ventana: no se puede realimentar \\
+ADDER, al salir   & 1001,4 & el rescate en lazo abierto lo trajo a $V_{ref}$ +35 mV \\
+LP, paso 1        & 1002,2 & +11 mV \\
+LP, paso 2        & \textbf{999,9} & \textbf{$-$35 mV} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Las siete correcciones que hicieron falta}
+
+Ninguna era de sintonía, y las siete eran silenciosas: no daban error y
+devolvían números de aspecto normal.
+
+\begin{enumerate}\itemsep2pt
+  \item La espera de la planta vivía en una rama de preprocesador que no compila.
+  \item Las esperas se contaban en iteraciones del lazo pero se declaran en
+        muestras del ADC, que son 78 veces más cortas.
+  \item El lazo no esperaba nada después de mover la referencia: medía el pasado.
+  \item La curva no lineal del LP se le aplicaba también al ADDER, invirtiéndole
+        el signo del lazo.
+  \item Recortar la tabla de etapas dejó al instrumento sin poder escribir dos de
+        las cuatro referencias, sin avisar.
+  \item El límite simétrico frenaba al ADDER antes del codo.
+  \item El rescate en lazo abierto quedó antes del control de espera y se
+        disparaba cada 30 ms en vez de una vez por $\tau$.
+\end{enumerate}
+
+Las tres primeras son la misma confusión repetida: usar el tiempo del ADC
+(30 ms) donde hacía falta el de la cadena ($\tau = 29{,}5$ s).
+
+% =====================================================================
+\section{¿Vale la autocalibración lo que cuesta?}
+
+\subsection{Sin calibrar, la mayoría de las configuraciones no existen}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{../../lab/planta/figuras/sin_calibrar_20260906_0856.png}
+\caption{Con las cuatro referencias en cero, o sea el nodo sin sistema de
+calibración. Las combinaciones en rojo arrancan con al menos una etapa contra el
+riel: no capturan nada. No llevan magnitud porque en esa zona la lectura no mide
+el tap, y ponerle un número sería inventar precisión.}
+\label{fig:sincal}
+\end{figure}
+
+\textbf{12 de 14 combinaciones} de ganancia arrancan con una etapa que no
+transmite. Las dos que no son ×1\,×1 (peor tap a 128 mV de $V_{ref}$) y ×2\,×1
+(426 mV).
+
+La medida se rehízo el 6 de septiembre porque la primera versión no era
+reproducible: la misma configuración daba resultados opuestos según de dónde
+viniera la cadena. Volver de la saturación tarda mucho más que $2\tau$, así que
+con espera fija cada punto heredaba el estado del anterior. Ahora se espera a
+que la cadena \emph{deje de moverse}, el orden alterna ganancias altas y bajas
+para que un efecto de historia se vea como incoherencia, y la configuración de
+campo se repite como control.
+
+\subsection{Y un ajuste de fábrica tampoco alcanzaría}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{../../lab/planta/figuras/deriva_tendencia.png}
+\caption{El punto calibrado, sin volver a tocarlo. La banda verde es lo que la
+calibración consigue: la tendencia sola se la come en 1,4 h.}
+\label{fig:deriva}
+\end{figure}
+
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+banda recorrida en 3,2 h            & 123 mV \\
+tendencia                           & $-24$ mV/h \\
+vagabundeo sobre la tendencia       & 16 mV RMS \\
+error que la calibración consigue   & 34 mV \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Cómo se separó la tendencia del transitorio.} La tasa medida iba
+bajando ---257, 41, 28 mV/h--- y eso admite dos lecturas opuestas: o es la cola del
+transitorio de la propia calibración decayendo, y entonces no hay deriva, o es
+deriva real con la cola encima. Se distinguen por la \emph{forma}: una cola decae
+monótonamente, y las tasas por tramo fueron $-35{,}9$, $+22{,}3$, $-46{,}6$,
+$-38{,}4$ y $-5{,}6$ mV/h. No decae. Y el cambio de signo tampoco la vuelve puro
+vagabundeo, porque con 16 mV de residuo un tramo de media hora admite pendientes
+de cualquier signo: la recta se lleva 75 de los 123 mV.
+
+\subsection{Y calibrar no mete ruido}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{../../lab/planta/figuras/ruido_exp4d.png}
+\caption{El ruido del tap del LP con la cadena calibrada y quieta. No crece, y
+la componente de red es marginal frente al total.}
+\label{fig:ruido}
+\end{figure}
+
+% =====================================================================
+\section{El ADC usa el 4,8\,\% de su rango}
+
+Dos incógnitas que parecían independientes resultaron ser el mismo número.
+
+El LSB del ADC en su propia entrada son 19,07 µV. Multiplicado por la escala
+verificada con tester, \textbf{una cuenta son 379,9 µV de tensión real en el
+tap}. Y los bits que eso cuesta:
+\[
+  \log_2(19{,}9157) = 4{,}32 \quad\Longrightarrow\quad 18 - 4{,}32 = \mathbf{13{,}68\ \text{bits}}
+\]
+Verificado por el otro camino, contando cuentas: los 4,826 V útiles ocupan
+12.703 cuentas, o sea 13,63 bits. Coinciden dentro de 0,05 bits.
+
+\textbf{Los 4,4 bits no se pierden dentro del ADC: se gastan antes de llegar.}
+Hay una atenuación de $\approx 19{,}92:1$ entre el tap y la entrada, y el
+convertidor termina usando el 4,8\,\% de su rango. Si esa atenuación se redujera
+a $2:1$ ---lo justo para meter 5 V en $\pm 2{,}5$ V--- la adquisición ganaría
+\textbf{3,3 bits} sin tocar el ADC ni el algoritmo.
+
+Las otras tres configuraciones del ADC, de rango más angosto, \textbf{hoy no se
+pueden usar}: los taps se sientan en 0,96--1,12 V a la entrada, que supera su
+fondo de escala, y dan la vuelta a valores negativos \emph{con el bit de válido
+en~1}. Sólo servirían si antes se quita el pedestal, y ahí serían otros 2,3 bits.
+
+% =====================================================================
+\section{Un error de método, contado porque enseña más que el resultado}
+\label{sec:metodo}
+
+Concluí dos veces seguidas, con evidencia aparentemente sólida, que el ADDER no
+podía rescatar al filtro pasabajos saturado. Barrí su referencia hasta $-128$
+códigos y el tap del LP no se movió ni un milivoltio mientras el tap propio del
+ADDER recorría 1,73 V (figura~\ref{fig:rescate}). Escribí la conclusión, cambié
+el orden de la calibración y lo registré.
+
+$-128$ no era un límite físico: era el límite que el propio firmware le pone a
+esa etapa, y yo había elegido el rango del barrido copiando ese número.
+Siguiendo hasta $-144$ el tap se movió por primera vez, y en $-191$ la cadena
+quedó centrada. \textbf{El umbral estaba dieciséis códigos más allá de donde
+corté.}
+
+Lo destapó un dato viejo, no una idea: un archivo guardado decía que el
+procedimiento que sí funcionaba usaba el código $-191$, imposible para el
+firmware. Sin ese archivo me habría quedado con la conclusión falsa.
+
+\begin{quote}\itshape
+Antes de concluir de un barrido que tocó su borde, hay que preguntarse de dónde
+salió ese borde. Si salió de una constante del firmware, de un límite o de un
+valor copiado de otro lado, el barrido tiene que extenderse hasta el límite del
+hardware, y recién ahí se concluye.
+\end{quote}
+
+% =====================================================================
+\section{Dónde está cada cosa en el repositorio}
+
+\subsection{Documentos}
+
+\begin{longtable}{p{7.6cm} p{8.4cm}}
+\toprule
+\textbf{archivo} & \textbf{qué tiene} \\
+\midrule
+\endhead
+\ruta{docs/MEDICIONES\_2026-09-05.md} &
+  El registro completo, 28 secciones. Las secciones superadas llevan una marca
+  que dice cuál las corrige; el cuerpo no se toca, porque el recorrido importa \\
+\ruta{docs/MEDICIONES\_2026-09-04.md} &
+  Matriz de acople y curvas propias. Ocho secciones marcadas como corregidas \\
+\ruta{lab/HANDOFF\_GOAL\_2026-09-05.md} &
+  Estado de la tarea. \emph{Empezar por acá} \\
+\ruta{lab/PLAN\_RESISTENCIAS\_LUNES.md} &
+  El protocolo de la sesión de resistencias, con los comandos que existen \\
+\bottomrule
+\end{longtable}
+
+\subsection{Firmware}
+
+\begin{longtable}{p{7.6cm} p{8.4cm}}
+\toprule
+\textbf{ruta} & \textbf{qué es} \\
+\midrule
+\endhead
+\ruta{src/firmware/psoc/AcondicionamientoAnalogico.cydsn/} &
+  \textbf{El proyecto de campo. Fuente de verdad de todo} \\
+\ruta{\ \ calibration.c} &
+  El lazo: rescate en lazo abierto, esperas de planta, PI \\
+\ruta{\ \ calibration\_tables*.h} &
+  Todos los números por etapa, con su justificación medida al lado \\
+\ruta{src/firmware/psoc/AcondicionamientoAnalogicoTest/} &
+  El de laboratorio: \emph{incluye} al de campo, no lo copia \\
+\ruta{\ \ psoc\_selftest\_primitivas.inc} &
+  Lo único propio: las primitivas de medición \\
+\ruta{src/firmware/psoc/program\_psoc.ps1} &
+  Compila y graba. Verifica la sincronía y se niega a grabar si se rompió \\
+\ruta{src/firmware/esp32/.../main\_selftest.cpp} &
+  El secuenciador del banco y los comandos del enlace \\
+\bottomrule
+\end{longtable}
+
+\subsection{Banco y análisis}
+
+\begin{longtable}{p{7.6cm} p{8.4cm}}
+\toprule
+\textbf{ruta} & \textbf{qué hace} \\
+\midrule
+\endhead
+\ruta{src/interfaces/python/escala\_banco.py} &
+  \textbf{La conversión banco$\rightarrow$volts, en un solo lugar}. Y la ventana
+  donde la lectura significa algo \\
+\ruta{src/interfaces/python/asentamiento.py} &
+  Esperar a que la cadena deje de moverse, en vez de un tiempo fijo \\
+\ruta{src/interfaces/python/lunes/} &
+  \textbf{La batería de ensayos}, seis módulos y un runner \\
+\ruta{src/interfaces/python/exp\_deriva.py} &
+  EXP4c y EXP4d: deja el nodo calibrado y registra durante horas \\
+\ruta{src/interfaces/python/analizar\_deriva.py} &
+  Distingue tendencia, vagabundeo y cola de transitorio \\
+\ruta{src/interfaces/python/figuras\_semana.py} &
+  \textbf{Genera todas las figuras de este informe} desde los JSON crudos \\
+\ruta{src/interfaces/python/figura\_sin\_calibrar.py} &
+  La figura del argumento de la tesis \\
+\bottomrule
+\end{longtable}
+
+\subsection{Datos crudos}
+
+Todo en \ruta{lab/planta/}, un JSON por ensayo con fecha en el nombre.
+
+\begin{longtable}{p{7.6cm} p{8.4cm}}
+\toprule
+\textbf{archivo} & \textbf{qué contiene} \\
+\midrule
+\endhead
+\ruta{rescate\_addr\_largo.json} &
+  El barrido completo del ADDER $\rightarrow$ figura~\ref{fig:adder} \\
+\ruta{rescate\_lazo\_abierto.json}, \ruta{rescate\_lp.json} &
+  Los dos ensayos de rescate $\rightarrow$ figura~\ref{fig:rescate} \\
+\ruta{cal\_traza.json} &
+  La calibración que funcionó, con su trayectoria $\rightarrow$ figura~\ref{fig:cal} \\
+\ruta{sin\_calibrar\_20260906\_0856.json} &
+  Las 17 combinaciones de ganancia $\rightarrow$ figura~\ref{fig:sincal} \\
+\ruta{deriva\_20260906\_0954.json} &
+  EXP4c y EXP4d $\rightarrow$ figuras~\ref{fig:deriva} y~\ref{fig:ruido} \\
+\ruta{figuras/} &
+  Las figuras generadas, en PNG \\
+\bottomrule
+\end{longtable}
+
+\subsection{Cómo rehacer cualquier cosa de este informe}
+
+\begin{verbatim}
+cd src/interfaces/python
+
+python -m lunes.correr_lunes antes      # la huella de la placa
+python -m lunes.t1_autoridad 2          # la curva del ADDER
+python -m lunes.t3_cal_firmware         # ¿se calibra solo?
+python -m lunes.t2_sin_calibrar         # las combinaciones de ganancia
+python exp_deriva.py                    # EXP4c + EXP4d, corre horas
+
+python figuras_semana.py                # regenera todas las figuras
+python analizar_deriva.py               # el veredicto sobre la deriva
+\end{verbatim}
+
+% =====================================================================
+\section{Lo que queda}
+
+\begin{longtable}{p{1.2cm} p{14.8cm}}
+\toprule
+& \\
+\endhead
+\textbf{1.} & \textbf{La sesión de resistencias.} Bajar el filtro pasabajos a
+1,8 k$\Omega$: gana 8,3× de resolución en el ajuste fino y sigue cubriendo
+10,4 pasos del actuador grueso, así que por el lado de los huecos es seguro.
+La batería está armada. \\[2mm]
+\textbf{2.} & \textbf{El cero de la referencia del ADDER está corrido 358 mV.}
+El 75\,\% de su recorrido se gasta en llegar al punto de operación. No es la
+resistencia en serie ---su alcance en volts es el correcto--- sino el punto de
+reposo. Es una pregunta de esquemático. \\[2mm]
+\textbf{3.} & \textbf{Dónde vive la atenuación de 20:1} entre el tap y el ADC.
+Vale 3,3 bits de rango dinámico, más otros 2,3 si además se quita el pedestal. \\[2mm]
+\textbf{4.} & \textbf{Que el nodo informe éxito también desde el peor caso.}
+Hoy informa \texttt{ok=1} arrancando cerca y \texttt{ok=0} arrancando del riel,
+con el mismo resultado físico en los dos: es contabilidad de pasos, no
+calibración. Diagnosticado, y el ensayo T3 lo confirma solo. \\[2mm]
+\textbf{5.} & \textbf{Dejar correr la deriva más horas.} Con 3,2 h el número es
+$-24$ mV/h; cuanto más largo el registro, más firme. \\
+\bottomrule
+\end{longtable}
+
+\end{document}

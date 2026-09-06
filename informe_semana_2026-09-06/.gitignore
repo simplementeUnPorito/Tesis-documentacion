@@ -1,0 +1,7 @@
+# Los intermedios de LaTeX no van al repo: los regenera compilar.ps1.
+# El PDF SI va, porque el punto de este informe es poder abrirlo sin compilar.
+*.aux
+*.log
+*.out
+*.toc
+compilacion.log
