@@ -1358,3 +1358,65 @@ ineficiencia del algoritmo. Para un nodo que se calibra una vez al desplegarse,
 siete minutos es un costo razonable —y es un número que la tesis puede
 defender—. La espera por paso quedó ajustable en caliente (`calparam paso`) por
 si conviene negociarla.
+
+---
+
+## 20. Las dos preguntas abiertas del ADC son la misma pregunta
+
+Quedaron dos incógnitas anotadas como pendientes, y parecían independientes:
+
+1. *¿Por qué el factor banco→real es 19,92?* No es el LSB del ADC (19,073 µV) ni
+   el `DEC_DIV` (32).
+2. *¿Por qué la resolución efectiva son ~380 µV* y no los 19 µV que darían 18
+   bits? Elías lo preguntó así: *"el ADC en teoría tiene 18 bits en 5 V de rango,
+   o sea debería poder ver 0,2 µV"*.
+
+Son el mismo número visto dos veces.
+
+### La cuenta
+
+El banco convierte cuentas a microvolts con la escala del propio ADC:
+
+$$\text{LSB}_{\text{ADC}} = \frac{2{,}5\ \text{V}}{2^{17}} = 19{,}0735\ \mu\text{V por cuenta}$$
+
+Y la recta banco→real, medida con tester contra los rieles:
+
+$$1\ \text{mV de banco} = 19{,}9157\ \text{mV reales}$$
+
+Multiplicando: **una cuenta del ADC son 379,9 µV de tensión real en el tap.** Ése
+es exactamente el "380 µV" de la segunda pregunta. Y los bits que eso cuesta:
+
+$$\log_2(19{,}9157) = 4{,}32\ \text{bits} \qquad 18 - 4{,}32 = \mathbf{13{,}68\ bits}$$
+
+Verificado por el otro camino, contando cuentas directamente: los 4,826 V útiles
+van de la cuenta 46.158 a la 58.861, o sea **12.703 cuentas = 13,63 bits**. Las
+dos cuentas coinciden dentro de 0,05 bits.
+
+| | |
+|---|---:|
+| LSB del ADC en su propia entrada | 19,07 µV |
+| LSB referido al tap | **379,9 µV** |
+| Rango útil usado del ADC | **4,8 %** de las 262.144 cuentas |
+| Resolución efectiva | **13,6 bits** de los 18 |
+
+### Qué significa
+
+Los 4,4 bits no se pierden dentro del ADC: **se gastan antes de llegar**. Hay una
+atenuación de ≈ 19,92 : 1 entre el tap y la entrada del ADC, y el ADC termina
+usando el 4,8 % de su rango para cubrir los 5 V de la cadena.
+
+Eso convierte dos preguntas difusas en **una sola pregunta concreta y de
+hardware: dónde vive esa atenuación de 20:1.** Candidatos a descartar el lunes,
+que se resuelven con el esquemático y el tester:
+
+- un divisor resistivo en el camino AMux → ADC;
+- que el rango real de la configuración del ADC no sea el ±2,5 V que supone
+  `selftest_config_range_uv()` (aunque ningún rango físico del ΔΣ llega a los
+  ±49,8 V que harían falta para explicarlo así entero);
+- que la entrada diferencial esté referida a un punto dividido.
+
+**Y hace que valga la pena preguntarlo:** si esa atenuación se redujera a 2:1 —lo
+que alcanza para que 5 V entren en ±2,5 V— la adquisición ganaría **3,3 bits**
+sin tocar el ADC ni el algoritmo. Es la mejora de rango dinámico más barata que
+apareció en todo el fin de semana, y va a la lista del lunes junto con las
+resistencias.
