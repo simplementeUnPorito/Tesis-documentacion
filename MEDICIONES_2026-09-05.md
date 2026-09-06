@@ -1594,3 +1594,63 @@ Datos: `lab/planta/sin_calibrar_20260906_0856.json`
 `set_idac` y el script abortó en vez de producir un dato sin sentido. La
 verificación hizo lo que tenía que hacer; lo que faltaba era reintentar antes de
 rendirse, y eso ya está corregido.)*
+
+
+---
+
+## 24. §21 CONFIRMADA, y con mejor evidencia que la que la origino
+
+§22.1 dejo la seccion 21 en duda por una razon buena: la conclusion se apoyaba
+en que la lectura de ch3 no se movia, y esa lectura estaba en la zona ciega, o
+sea que podia no moverse aunque el tap si se moviera. El ensayo que lo decide es
+mover el ADDER **en lazo abierto** -sin lazo no hay nada que interpretar- y
+mirar los dos taps a la vez.
+
+### Medido el 2026-09-06, PGA x50, PGAout x1, el resto de los IDAC en cero
+
+| IDAC del ADDER | ch2, su propio tap | ch3, el tap del LP |
+|---:|---:|---:|
+| 0 | 1122,1 (contra el riel) | 748,1 |
+| −32 | 1104,3 | 748,0 |
+| −64 | 1081,7 | 748,0 |
+| −96 | 1058,7 | 747,9 |
+| −128 | **1035,2** | **747,9** |
+
+*(mV de banco; el ADC se puso explicitamente en ±2,5 V, que es lo que faltaba en
+el primer intento de este mismo ensayo)*
+
+**El ADDER movio su propio tap 87 mV de banco = 1,73 V reales**, saliendo de su
+riel y llegando al medio de su recorrido. **El tap del LP se movio 0,2 mV de
+banco, que es ruido.**
+
+La matriz de acople del 2026-09-04 predice para ADDER→ch3 unos 3823 µV/código:
+con 128 códigos serían **489 mV de banco** de movimiento. Se midieron **0,2**.
+No es que la matriz sea imprecisa acá: **el camino está cortado.**
+
+### Entonces
+
+§21 se sostiene, y ahora sobre evidencia mucho mejor: no es que la lectura no se
+moviera, es que **el tap no se movió mientras la etapa de arriba recorría 1,73 V**.
+La saturación del LP bloquea la transmisión, y el ADDER —que en el punto donde
+se midió la matriz tiene 7,3× más autoridad que el LP— no sirve para el rescate.
+
+Queda pendiente la contraparte, que es la que acota bien la afirmación: mover
+sólo el LP desde el mismo estado. Si su referencia lo saca, la conclusión es
+"el rescate lo tiene que hacer el LP". Si tampoco lo saca, no es una cuestión de
+elegir actuador y lo que hay que revisar es si el punto de reposo es alcanzable
+con las resistencias que hay —y eso apunta directo a la sesión del lunes—.
+
+### Lo que se implementó, y vale en los dos casos
+
+Un **rescate en lazo abierto** en el firmware. El PI ahora se pregunta, antes de
+mirar el número, si el número significa algo: `cal_medida_en_ventana()` compara
+contra la ventana observable —46.158 a 58.862 cuentas, derivada de la recta
+verificada con tester— y, si está afuera, no realimenta: empuja un octavo del
+recorrido del actuador en la dirección que se conoce por el signo de la
+ganancia, espera 1 τ, y vuelve a mirar. Si el actuador llega a su extremo y el
+tap sigue sin verse, cierra la etapa con `ok=0`, que es la verdad, en lugar de
+gastar el timeout empujando.
+
+El chequeo que existía, `cal_pi_measurement_valid()`, sólo preguntaba si el
+número entraba en el rango del ADC — y por eso nunca decía que no: 39.190 de
+131.072 entran cómodas.
