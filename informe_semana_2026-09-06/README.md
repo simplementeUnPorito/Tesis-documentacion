@@ -11,9 +11,15 @@ a buscarla.
 .\compilar.ps1
 ```
 
-Regenera las figuras desde los JSON crudos y compila. No hay ningún número en el
-informe que no salga de un archivo de datos; si un ensayo se rehace, se corre
-esto y el informe se actualiza solo.
+Regenera las figuras desde los JSON crudos y compila. **No hay ningún número en
+el informe que esté escrito a mano**: los de la deriva y el ruido salen a
+`numeros.tex` —que genera `figuras_semana.py` y no hay que editar— y el resto
+está en las figuras. Si un ensayo se rehace, se corre esto y el informe queda al
+día solo.
+
+Eso importa más de lo que parece con el registro de deriva, que sigue corriendo:
+un informe que dice «3,2 h» cuando ya van 5 no está desactualizado, está
+equivocado.
 
 ## Dos cosas que hacen falta saber si algo falla
 

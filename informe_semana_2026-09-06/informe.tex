@@ -52,6 +52,11 @@
 \author{}
 \date{}
 
+% Los numeros de la deriva y el ruido los escribe figuras_semana.py desde
+% el mismo JSON que las figuras. El registro sigue corriendo, asi que
+% tenerlos a mano seria tenerlos viejos.
+\input{numeros}
+
 \begin{document}
 \maketitle
 \vspace{-1.2cm}
@@ -75,11 +80,11 @@ preguntas que lo sostienen tienen ahora respuesta medida.
 ¿Sin calibrar el nodo funciona? & \no &
   12 de 14 combinaciones de ganancia arrancan con una etapa que no transmite \\[1mm]
 ¿Alcanza con calibrar una vez en fábrica? & \no &
-  el punto se va 24 mV/h y la corrección son 34 mV \\[1mm]
+  el punto se va \derivaTasa{} mV/h y la corrección son 34 mV \\[1mm]
 ¿El nodo puede calibrarse solo? & \si &
   de fuera de rango a 34 mV de $V_{ref}$, en 579 s, sin PC \\[1mm]
 ¿Calibrar empeora el ruido? & \no &
-  el RMS no crece a lo largo de 3,2 h \\
+  el RMS no crece a lo largo de \derivaHoras{} h \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -267,16 +272,16 @@ campo se repite como control.
 \centering
 \includegraphics[width=\textwidth]{../../lab/planta/figuras/deriva_tendencia.png}
 \caption{El punto calibrado, sin volver a tocarlo. La banda verde es lo que la
-calibración consigue: la tendencia sola se la come en 1,4 h.}
+calibración consigue: la tendencia sola se la come en \derivaCome{} h.}
 \label{fig:deriva}
 \end{figure}
 
 \begin{center}
 \begin{tabular}{lr}
 \toprule
-banda recorrida en 3,2 h            & 123 mV \\
-tendencia                           & $-24$ mV/h \\
-vagabundeo sobre la tendencia       & 16 mV RMS \\
+banda recorrida en \derivaHoras{} h        & \derivaBanda{} mV \\
+tendencia                           & $-$\derivaTasa{} mV/h \\
+vagabundeo sobre la tendencia       & \derivaResiduo{} mV RMS \\
 error que la calibración consigue   & 34 mV \\
 \bottomrule
 \end{tabular}
@@ -286,10 +291,11 @@ error que la calibración consigue   & 34 mV \\
 bajando ---257, 41, 28 mV/h--- y eso admite dos lecturas opuestas: o es la cola del
 transitorio de la propia calibración decayendo, y entonces no hay deriva, o es
 deriva real con la cola encima. Se distinguen por la \emph{forma}: una cola decae
-monótonamente, y las tasas por tramo fueron $-35{,}9$, $+22{,}3$, $-46{,}6$,
-$-38{,}4$ y $-5{,}6$ mV/h. No decae. Y el cambio de signo tampoco la vuelve puro
-vagabundeo, porque con 16 mV de residuo un tramo de media hora admite pendientes
-de cualquier signo: la recta se lleva 75 de los 123 mV.
+monótonamente, y las tasas por tramo fueron
+\textbf{\derivaTramos{}} mV/h. No decae. Y el cambio de signo
+tampoco la vuelve puro vagabundeo, porque con \derivaResiduo{} mV de residuo
+un tramo corto admite pendientes de cualquier signo: la recta se lleva
+\derivaRecta{} de los \derivaBanda{} mV.
 
 \subsection{Y calibrar no mete ruido}
 
@@ -484,8 +490,8 @@ Vale 3,3 bits de rango dinámico, más otros 2,3 si además se quita el pedestal
 Hoy informa \texttt{ok=1} arrancando cerca y \texttt{ok=0} arrancando del riel,
 con el mismo resultado físico en los dos: es contabilidad de pasos, no
 calibración. Diagnosticado, y el ensayo T3 lo confirma solo. \\[2mm]
-\textbf{5.} & \textbf{Dejar correr la deriva más horas.} Con 3,2 h el número es
-$-24$ mV/h; cuanto más largo el registro, más firme. \\
+\textbf{5.} & \textbf{Dejar correr la deriva más horas.} Con \derivaHoras{} h el número es
+$-$\derivaTasa{} mV/h sobre \derivaHoras{} h; cuanto más largo el registro, más firme. \\
 \bottomrule
 \end{longtable}
 
