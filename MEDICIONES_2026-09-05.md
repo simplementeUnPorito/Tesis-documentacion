@@ -1533,3 +1533,64 @@ sólo se vuelven usables si se quita el pedestal**, es decir si la entrada del
 ADC se referencia de modo que un tap centrado lea cerca de cero en vez de
 ~1,0 V. Ahí ±0,512 V alcanzaría, y son **2,3 bits** que se suman a los 3,3 de
 §20. Va a la lista del lunes: es la misma pregunta de hardware.
+
+---
+
+## 23. §15 REHECHA — el argumento de la tesis, ahora sobre una medida reproducible
+
+§15 quedó marcada para rehacer porque la misma configuración medida dos veces
+daba resultados opuestos: volver de la saturación tarda mucho más que 2 τ y cada
+punto heredaba el estado del anterior. Se rehizo el **2026-09-06** con tres
+cambios de método:
+
+1. **se espera a que la cadena deje de moverse**, no un tiempo fijo
+   (`asentamiento.py`): se mide cada τ/4 y se corta cuando dos miradas seguidas
+   difieren menos de 1,5 mV de banco, con techo en 6 τ;
+2. **el orden alterna** ganancias altas y bajas, para que un efecto de historia
+   aparezca como incoherencia y no como una tendencia prolija;
+3. **la configuración de campo se repite** como control.
+
+### El resultado
+
+**12 de 14 combinaciones arrancan con al menos una etapa contra el riel.**
+
+Las dos que no son **×1 ×1** (peor tap a 128 mV de Vref) y **×2 ×1** (426 mV) —
+exactamente las mismas dos que había encontrado §15. La conclusión sobrevive al
+cambio de método.
+
+| PGA × PGAout | veredicto |
+|---|---|
+| ×1 ×1 | en rango, peor tap **128 mV** |
+| ×2 ×1 | en rango, peor tap **426 mV** |
+| ×8 ×1 | EN RIEL (LP) |
+| ×1 ×2, ×1 ×4, ×2 ×2, ×2 ×4, ×8 ×2, ×8 ×4, ×32 ×1, ×32 ×2, ×32 ×4, ×50 ×1, ×50 ×4 | EN RIEL (ADDER y LP) |
+
+**Control de reproducibilidad**: la configuración de campo (×50 ×1) medida dos
+veces separadas por siete puntos dio taps de 959,3 / 1003,5 / 1121,8 / 747,7 y
+959,5 / 1006,9 / 1121,4 / 747,9 de banco. Mismo veredicto, y los cuatro taps
+dentro de 3,4 mV de banco. **La medida es reproducible**; la de ayer no lo era.
+
+### Por qué las railadas no llevan un número
+
+En la tabla y en la figura, las combinaciones railadas **no tienen magnitud**.
+No es una omisión: por debajo de 880 de banco la lectura no mide el tap (§22.1),
+así que convertirla a milivoltios da una cifra con aspecto de medida que no lo
+es. Los "5058 mV" que salían de esa conversión no van a la tesis.
+
+Lo que sí está medido es el veredicto, y es lo que el argumento necesita: esa
+combinación arranca con una etapa que no transmite.
+
+### Lo que el método nuevo destapó, y vale por sí solo
+
+En el punto ×1 ×1 la cadena **seguía moviéndose 50 mV de banco —1 V real— a los
+59 s**, que es justo donde la espera fija de 2 τ daba la medida por buena. La
+cola después decae limpia con razón 0,72 cada 10 s, o sea **τ = 30,4 s**: una
+cuarta confirmación independiente del τ de la planta, y esta vez gratis.
+
+Figura: `lab/planta/figuras/sin_calibrar_20260906_0856.png`
+Datos: `lab/planta/sin_calibrar_20260906_0856.json`
+
+*(Quedaron sin medir ×50 ×2 y el tercer control, porque el firmware rechazó un
+`set_idac` y el script abortó en vez de producir un dato sin sentido. La
+verificación hizo lo que tenía que hacer; lo que faltaba era reintentar antes de
+rendirse, y eso ya está corregido.)*
