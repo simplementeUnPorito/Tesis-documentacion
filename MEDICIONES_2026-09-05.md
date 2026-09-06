@@ -1738,3 +1738,44 @@ al orden **ADDER, LP** y GEO a **una sola pasada**.
 - La **ventana observable** y el hecho de que el ADC no avise cuando la abandona.
 - Que **el LP no puede rescatarse solo**: a +255 no mueve su propio tap ni un
   milivoltio. Eso sí quedó medido y no depende del clamp.
+
+
+---
+
+## 26. La curva completa del ADDER sobre el tap del LP
+
+El barrido en lazo abierto no sólo contestó la pregunta de §25: dejó
+caracterizado el actuador entero, que es lo que hacía falta para dimensionar
+cualquier cosa. PGA ×50, PGAout ×1, los otros tres IDAC en cero:
+
+| IDAC del ADDER | ch3 [banco] | ch3 [V real] | |
+|---:|---:|---:|---|
+| 0 … −128 | 748,0 | — | plano; el LP saturado no transmite |
+| −144 | 765,6 | — | arranca a moverse |
+| −160 | 874,1 | — | |
+| −176 | 948,3 | 1,353 | entra en la ventana observable |
+| **−191** | **1001,8** | **2,419** | **Vref** |
+| −208 | 1050,2 | 3,382 | |
+| −224 | 1096,4 | 4,302 | |
+| −240 | 1122,9 | 4,829 | riel de arriba |
+| −255 | 1122,9 | 4,829 | saturado |
+
+### Los tres números que salen de acá
+
+**Pendiente en la región lineal.** De −176 a −224: 148,1 mV de banco en 48
+códigos = **3,085 mV de banco por código = 61,4 mV reales por código**. La matriz
+de acople del 2026-09-04 decía 3,823 mV de banco por código: coincide dentro del
+20 %, así que la matriz estaba bien *en la región donde el actuador actúa* — el
+problema nunca fue su valor sino aplicarla donde la etapa está saturada.
+
+**Ventana útil del actuador.** El ADDER sirve para centrar entre −176 y −240:
+**64 códigos**, y Vref cae en −191. Quedan ~15 códigos de margen hacia arriba
+antes de que ch3 toque el riel, o sea unos **920 mV reales de cabecera**.
+
+**El 60 % del recorrido no sirve para nada.** De los 255 códigos, los primeros
+~135 no mueven el tap (el LP está saturado) y los últimos ~15 están contra el
+riel. Eso es una observación de diseño, no de firmware: **la referencia del
+ADDER está mal centrada respecto de lo que la cadena necesita**, y corregirlo es
+justamente cambiar su resistencia. Va derecho a la sesión del lunes, y ahora con
+el número: hace falta correr el punto de reposo unos **191 códigos × 1875 µV =
+358 mV** en la referencia.
