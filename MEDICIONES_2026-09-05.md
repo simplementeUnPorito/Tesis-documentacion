@@ -1473,3 +1473,63 @@ pasa a **dos pasadas**. La espera de entrada completa (2 τ) se paga sólo en la
 primera; en la segunda la cadena ya viene cerca y alcanza 1 τ.
 
 Costo: ~950 s. El watchdog del PSoC y el plazo del ESP pasan a 1500 s.
+
+---
+
+## 22. §21 ESTÁ EN DUDA POR MI PROPIA CULPA, y las otras resoluciones del ADC no sirven
+
+### 22.1 El agujero en §21
+
+La conclusión de §21 —*"el ADDER no puede rescatar un LP saturado"*— se apoya en
+que durante 42 pasos del ADDER la lectura de ch3 no se movió. Tiene un agujero
+que vi al mirar el ADC por otro motivo.
+
+Esa lectura fue de **39.182 a 39.199 cuentas**, o sea ~747,5 de banco. Y la recta
+banco→real dice que 747,5 son **−2,65 V**, que es imposible: el tap no puede
+estar por debajo de masa. Además el ADC **no está saturado** ahí: 39.190 de
+131.072 es el 30 % de su rango.
+
+O sea que por debajo de ~880 de banco **la lectura no es una medida del tap**.
+Lo más probable es que se esté violando el rango de modo común del buffer de
+entrada del ΔΣ, que da lecturas sin sentido sin saturar ni avisar.
+
+Si es así, durante esos 42 pasos **el ADDER pudo haber estado moviendo el tap
+todo el tiempo sin que se viera**, y el salto que le atribuí al LP pudo ser
+simplemente el momento en que el tap volvió a la ventana observable, empujado por
+los 42 pasos acumulados.
+
+Es exactamente el error de método que señalé en §21 —una relación medida en un
+punto, aplicada donde no vale— cometido por mí en la misma sección.
+
+**El experimento que lo decide** es mover sólo el ADDER, en lazo abierto, de a
+saltos grandes, y ver si el tap vuelve a la ventana. Sin lazo no hay nada que
+interpretar. Las dos respuestas cambian el firmware y de maneras distintas:
+
+- **si vuelve** → el problema no es de autoridad sino que **el lazo estaba
+  ciego**, y el arreglo es un rescate en **lazo abierto** con un código calculado
+  de las ganancias medidas, antes de cerrar el lazo;
+- **si no vuelve** → §21 se sostiene y el LP tiene que ir primero.
+
+### 22.2 Las otras tres configuraciones del ADC no se pueden usar
+
+Elías pidió evaluar cambiar la resolución del ADC entre mediciones. Medido: el
+mismo tap leído con las cuatro configuraciones da
+
+| config | rango | ch0 informa | ch3 informa |
+|---|---|---:|---:|
+| CF_2V5 | ±2,5 V | 961.074 µV | 748.252 µV |
+| CF_0V512 | ±0,512 V | 583.390 µV | 492.457 µV |
+| CF_1V024 | ±1,024 V | sin lectura | **−1.158.812 µV** |
+| CF_0V625 | ±0,625 V | sin lectura | **−712.146 µV** |
+
+**No sirven, y por una razón simple: los taps se sientan en 0,96–1,12 V en la
+entrada del ADC, que es más que el fondo de escala de las tres angostas.**
+Sobrepasan el rango y **dan la vuelta a valores negativos** —un tap que está
+arriba de Vref informa −1,16 V— y lo hacen **con el bit de válido en 1**. Es una
+falla silenciosa esperando a que alguien use esos rangos.
+
+Y da la condición para que la idea de Elías funcione: **las resoluciones altas
+sólo se vuelven usables si se quita el pedestal**, es decir si la entrada del
+ADC se referencia de modo que un tap centrado lea cerca de cero en vez de
+~1,0 V. Ahí ±0,512 V alcanzaría, y son **2,3 bits** que se suman a los 3,3 de
+§20. Va a la lista del lunes: es la misma pregunta de hardware.
