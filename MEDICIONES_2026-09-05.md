@@ -1884,3 +1884,75 @@ tabla y está anotado para el lunes.
 
 `t3_cal_firmware` ya decodifica los eventos que distinguen los dos casos, así
 que la próxima corrida lo dice sola sin volver a instrumentar.
+
+
+---
+
+## 28. EXP4c y EXP4d — la mitad que faltaba del argumento
+
+Con el nodo calibrado **por sí mismo** —no por la PC— y sin volver a tocarlo, se
+registraron los cuatro taps cada minuto y el ruido del tap del LP cada cinco.
+PGA ×50, PGAout ×1.
+
+### EXP4c: el punto se va
+
+Sobre 3,2 h y 180 muestras, el tap del LP:
+
+| | |
+|---|---:|
+| banda recorrida | **123 mV** |
+| tendencia (recta) | **−24 mV/h**, o sea −75 mV en las 3,2 h |
+| vagabundeo sobre la tendencia | 16 mV RMS |
+| error que la calibración consigue | 34 mV |
+
+**La tendencia sola se come toda la corrección en 1,4 h.** Un trim de fábrica no
+alcanza para un turno de campo: hay que recalibrar en el lugar, y eso es
+exactamente lo que justifica que el sistema sea automático.
+
+**Cómo se separó tendencia de transitorio, que es donde estaba la trampa.** La
+tasa medida iba bajando —257, 41, 28 mV/h— y eso tiene dos lecturas opuestas: o
+es la cola del transitorio de la propia calibración decayendo, y entonces no hay
+deriva, o es deriva real con la cola encima. Se distinguen por la forma:
+
+| tramo | tasa |
+|---|---:|
+| 0,00–0,61 h | −35,9 mV/h |
+| 0,63–1,23 h | **+22,3 mV/h** |
+| 1,25–1,88 h | −46,6 mV/h |
+| 1,89–2,49 h | −38,4 mV/h |
+| 2,51–3,16 h | −5,6 mV/h |
+
+Una cola decae monótonamente y ésta no: sube, baja, cambia de signo. Así que
+**no es un transitorio**. Y el cambio de signo tampoco la vuelve puro
+vagabundeo, porque con 16 mV de residuo un tramo de media hora admite pendientes
+de cualquier signo: la recta se lleva 75 mV y el residuo son 16, o sea que la
+tendencia domina.
+
+*(Estuve a punto de escribir las dos conclusiones equivocadas, una en cada
+dirección: primero llamé "deriva de 28 mV/h" a algo cuyos tramos cambiaban de
+signo, y al corregirlo lo llamé "vagabundeo, no rampa" cuando la recta explicaba
+tres cuartas partes del recorrido. El criterio que quedó en `analizar_deriva.py`
+compara la excursión de la recta contra el residuo, en vez de mirar los signos.)*
+
+### EXP4d: calibrar no mete ruido
+
+Del mismo registro, gratis:
+
+| | |
+|---|---:|
+| RMS del tap del LP | 401 µV de banco (min 381, max 476) |
+| componente de 50 Hz | 11 µV de banco (min 0, max 57) |
+
+**El RMS no crece a lo largo de las 3,2 h**, así que la objeción obvia al
+sistema —que corregir el offset meta ruido— queda cerrada con una serie y no con
+una medida suelta. Y los 11 µV de 50 Hz contra 401 de RMS dicen que lo que se ve
+es banda ancha del geófono, no red eléctrica.
+
+### El apartado de la tesis, ahora completo
+
+| pregunta | respuesta | dónde |
+|---|---|---|
+| ¿sin calibrar el nodo funciona? | **no**: 12 de 14 combinaciones arrancan con una etapa que no transmite | §23 |
+| ¿alcanza con calibrar una vez en fábrica? | **no**: el punto se va 24 mV/h y la corrección son 34 mV | §28 |
+| ¿el nodo puede calibrarse solo? | **sí**: de la zona ciega a 34 mV de Vref, en 579 s, sin PC | §27 |
+| ¿calibrar empeora el ruido? | **no**: el RMS no crece en 3,2 h | §28 |
