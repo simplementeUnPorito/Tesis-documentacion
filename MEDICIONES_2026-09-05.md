@@ -1862,10 +1862,25 @@ Siete correcciones, y ninguna era de sintonía:
 Las siete eran silenciosas: ninguna daba error, todas devolvían números de
 aspecto normal.
 
-### Lo que queda, y es chico
+### El `ok=0`, resuelto media hora después
 
-El firmware informa `ok=0` pese a dejar el LP a 34 mV. El lazo llegó; lo que no
-alcanzó fue el presupuesto de pasos del LP para acumular las tres muestras
-consecutivas dentro de la banda muerta que su criterio de cierre exige. Es un
-número de tabla, no un problema de fondo, y conviene ajustarlo para que el nodo
-informe éxito cuando efectivamente lo tuvo.
+La corrida de arriba informó `ok=0` pese a dejar el LP a 34 mV, y eso quedó
+anotado como pendiente. Se resolvió solo, y la respuesta confirma el diagnóstico:
+
+**una segunda corrida, arrancando desde el punto que había dejado la primera,
+informó `#CAL 1` en 120 s**, con el LP otra vez a −34 mV de Vref.
+
+O sea que el criterio de cierre funciona. Lo que pasa es que **arrancando desde
+el riel se le acaba el presupuesto de pasos antes de poder confirmar**: el
+rescate en lazo abierto consume la mayor parte, y cuando el PI por fin entra en
+la banda muerta no le quedan iteraciones para acumular las tres muestras
+consecutivas que su criterio exige. Arrancando cerca, no gasta el rescate y
+cierra cómodo.
+
+Las dos corridas dejan el mismo resultado físico —34 mV—, así que **no es un
+problema de calibración sino de contabilidad**: subir el presupuesto de pasos
+del LP hace que el nodo informe éxito también en el peor caso. Es un número de
+tabla y está anotado para el lunes.
+
+`t3_cal_firmware` ya decodifica los eventos que distinguen los dos casos, así
+que la próxima corrida lo dice sola sin volver a instrumentar.
