@@ -53,8 +53,7 @@
 \date{}
 
 % Los numeros de la deriva y el ruido los escribe figuras_semana.py desde
-% el mismo JSON que las figuras. El registro sigue corriendo, asi que
-% tenerlos a mano seria tenerlos viejos.
+% el mismo JSON que las figuras. EXP4c se cerro el 2026-09-07 a las 08:01.
 \input{numeros}
 
 \begin{document}
@@ -276,9 +275,16 @@ calibración consigue.}
 \label{fig:deriva}
 \end{figure}
 
-Sobre \derivaHoras{} h y \derivaMuestras{} muestras, el tap del filtro pasabajos
-recorrió una banda de \textbf{\derivaBanda{} mV}, que son
+Sobre \derivaHoras{} h, el archivo contiene \derivaMuestrasTotales{} instantes;
+\derivaMuestras{} tienen una lectura válida del tap del filtro pasabajos. Ese
+tap recorrió una banda de \textbf{\derivaBanda{} mV}, que son
 \textbf{\derivaVeces{} veces} los 34 mV que la calibración consigue.
+
+La auditoría encontró \lecturasTapNulas{} valores nulos entre
+\lecturasTapTotales{} lecturas de taps (\lecturasTapNulasPct{}\,\%). El campo
+histórico \texttt{lecturas\_fallidas=0} no contaba respuestas vacías; el error
+quedó corregido en el registrador para las próximas corridas. Los nulos se
+ignoran, no se interpolan.
 
 \paragraph{El registro completo corrige la lectura provisional.}
 A las 7,1 h el punto había vuelto cerca del valor inicial y parecía un
@@ -315,7 +321,9 @@ pero no reemplaza un sensor junto a la placa ni permite atribuir causalidad.
 
 \subsection{Y calibrar no mete ruido}
 
-Se informa la \textbf{mediana} y no el promedio: sobre \ruidoN{} medidas hubo
+Se informa la \textbf{mediana} y no el promedio: el piso típico fue
+\ruidoRms{} µV RMS sobre \ruidoN{} medidas válidas
+(faltan \ruidoFaltante{} de los \ruidoEsperado{} bloques previstos). Hubo
 \ruidoPicos{} por encima del doble del valor típico, hasta \ruidoMax{} µV
 (\ruidoVecesMax{} veces la mediana). Esas excitaciones son compatibles con
 ruido ambiente ---pasos o tránsito en la lomada---, no con un cambio del piso
