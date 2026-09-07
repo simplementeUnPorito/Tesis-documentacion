@@ -48,7 +48,7 @@
 \newcommand{\ruta}[1]{{\ttfamily\small\seqsplit{#1}}}
 
 \title{\vspace{-1.5cm}\textbf{Nodo de adquisición de geófono}\\[2mm]
-       \large Resultados de la semana del 31 de agosto al 6 de septiembre de 2026}
+       \large Resultados de la semana del 31 de agosto al 6 de septiembre de 2026; cierre de EXP4c el 7}
 \author{}
 \date{}
 
@@ -78,17 +78,11 @@ preguntas que lo sostienen tienen ahora respuesta medida.
 \textbf{pregunta} & & \textbf{evidencia} \\
 \midrule
 ¿Sin calibrar el nodo funciona? & \no &
-  12 de 14 combinaciones de ganancia arrancan con una etapa que no transmite 
-
-
+  12 de 14 combinaciones de ganancia arrancan con una etapa que no transmite \\[1mm]
 ¿Alcanza con calibrar una vez en fábrica? & \no &
-  el punto recorre \derivaVeces{} veces la corrección y no tiene un valor al que apuntar 
-
-
+  el punto recorre \derivaVeces{} veces la corrección y presenta tendencia lenta \\[1mm]
 ¿El nodo puede calibrarse solo? & \si &
-  de fuera de rango a 34 mV de $V_{ref}$, en 579 s, sin PC 
-
-
+  de fuera de rango a 34 mV de $V_{ref}$, en 579 s, sin PC \\[1mm]
 ¿Calibrar empeora el ruido? & \no &
   el RMS no crece a lo largo de \derivaHoras{} h \\
 \bottomrule
@@ -286,41 +280,48 @@ Sobre \derivaHoras{} h y \derivaMuestras{} muestras, el tap del filtro pasabajos
 recorrió una banda de \textbf{\derivaBanda{} mV}, que son
 \textbf{\derivaVeces{} veces} los 34 mV que la calibración consigue.
 
-\paragraph{Y no se va: vagabundea.}
-Con \derivaHoras{} h el recorrido habla solo:
+\paragraph{El registro completo corrige la lectura provisional.}
+A las 7,1 h el punto había vuelto cerca del valor inicial y parecía un
+vagabundeo acotado. Era demasiado pronto para cerrar esa interpretación: el
+registro posterior cruzó el origen y siguió moviéndose. Sobre la ventana
+completa, el resumen descriptivo es una tendencia de
+\textbf{\derivaTasaSignada{} mV/h}, con un residuo de
+\textbf{\derivaResiduo{} mV RMS} alrededor de la recta.
 
 \begin{quote}
 arrancó en \derivaArranco{} mV \quad$\rightarrow$\quad bajó hasta
 \textbf{\derivaExtremo{} mV} a las \derivaExtremoH{} h \quad$\rightarrow$\quad
-y volvió a \derivaAhora{} mV.\[1mm]
+y terminó en \derivaAhora{} mV.\\[1mm]
 \textbf{Desplazamiento neto en \derivaHoras{} h: \derivaNeto{} mV. Excursión
 recorrida: \derivaBanda{} mV.}
 \end{quote}
 
-\textbf{Volvió.} Eso descarta las dos explicaciones que competían: un
-asentamiento lento hacia una asíntota no regresa, y una rampa sostenida tampoco.
-Lo que hay es un movimiento \emph{acotado}, que va y viene.
+El retorno observado a mitad de la corrida demuestra que el movimiento no es
+monótono, pero \emph{no} demuestra que la banda esté cerrada. La descripción
+compatible con el registro largo es \textbf{tendencia lenta con vagabundeo
+superpuesto}. La recta no se extrapola hasta el riel: se usa sólo para resumir
+esta ventana, donde acumula \derivaRectaSignada{} mV.
 
-Vale la pena decir cómo se llegó acá, porque escribí la conclusión de tres
-maneras incompatibles antes de esta. La tasa medida iba bajando ---257, 41,
-28 mV/h--- y a las 3,2 h ajustar una recta daba $-24$ mV/h, que parecía una
-deriva clara. No lo era: a un movimiento acotado también se le ajusta una recta y
-le da pendiente distinta de cero, y esa pendiente se achica sola a medida que
-entran muestras. Ninguna estadística de ajuste lo dice mejor que los tres números
-de arriba.
-
-\paragraph{Y el argumento queda más filoso, no más débil.} Un trim de fábrica
-fijado al arrancar habría quedado a \derivaNeto{} mV al final ---dentro de lo que
-la calibración consigue--- y \textbf{equivocado por \derivaExtremo{} mV en el
-medio}. Ése es exactamente el problema: el punto recorre \derivaVeces{} veces lo
-que la corrección vale, y \emph{no tiene un valor al que apuntar}. Contra una
-rampa un valor fijo al menos se podría dimensionar para el promedio del turno;
-contra esto, no hay promedio que sirva. Sólo un lazo que mida y corrija en el
-lugar puede seguirlo.
+\paragraph{El argumento de la calibración automática se sostiene.} Un trim de
+fábrica no mantiene el tap dentro de los 34 mV que consigue la calibración: la
+tendencia consume ese margen en aproximadamente \derivaCome{} h, y el recorrido
+total ya es \derivaVeces{} veces mayor. Sólo un lazo que vuelva a medir en el
+lugar puede corregir tanto el desplazamiento lento como las excursiones
+superpuestas. El mecanismo físico requiere temperatura medida en el propio
+banco. Como indicio, la temperatura exterior modelada recorrió
+\tempMin--\tempMax{} °C y su correlación contemporánea con el tap fue
+$r=\tempCorr{}$ sobre \tempN{} muestras interpoladas. La relación es sugestiva,
+pero no reemplaza un sensor junto a la placa ni permite atribuir causalidad.
 
 \subsection{Y calibrar no mete ruido}
 
-Se informa la 	extbf{mediana} y no el promedio: sobre uidoN{} medidas hubo uidoPicos{} muy por encima del resto ---hasta 8010 µV, veinte veces lo típico---, casi seguro alguien caminando cerca o un auto en la lomada. Ese pico corre el promedio un 23\,\%, y lo que se quiere medir es el ruido de la \emph{cadena}, que no puede depender de si pasó un auto. El punto no se descarta: está en la figura y se dice cuántos son.
+Se informa la \textbf{mediana} y no el promedio: sobre \ruidoN{} medidas hubo
+\ruidoPicos{} por encima del doble del valor típico, hasta \ruidoMax{} µV
+(\ruidoVecesMax{} veces la mediana). Esas excitaciones son compatibles con
+ruido ambiente ---pasos o tránsito en la lomada---, no con un cambio del piso
+de la cadena. Los puntos no se descartan: siguen en los datos y en la figura.
+El promedio queda en \ruidoPromedio{} µV, un \ruidoSesgoPromedio{}\,\% por
+encima de la mediana, por eso no se usa como estimador del piso.
 
 \begin{figure}[h!]
 \centering
@@ -472,6 +473,8 @@ Todo en \ruta{lab/planta/}, un JSON por ensayo con fecha en el nombre.
   Las 17 combinaciones de ganancia $\rightarrow$ figura~\ref{fig:sincal} \\
 \ruta{deriva\_20260906\_0954.json} &
   EXP4c y EXP4d $\rightarrow$ figuras~\ref{fig:deriva} y~\ref{fig:ruido} \\
+\ruta{temperatura\_exterior\_20260906\_20260907.json} &
+  Proxy meteorológico horario de Open-Meteo; no es un sensor del banco \\
 \ruta{figuras/} &
   Las figuras generadas, en PNG \\
 \bottomrule
@@ -486,8 +489,9 @@ python -m lunes.correr_lunes antes      # la huella de la placa
 python -m lunes.t1_autoridad 2          # la curva del ADDER
 python -m lunes.t3_cal_firmware         # ¿se calibra solo?
 python -m lunes.t2_sin_calibrar         # las combinaciones de ganancia
-python exp_deriva.py                    # EXP4c + EXP4d, corre horas
+python exp_deriva.py --horas 24         # EXP4c + EXP4d, corte limpio
 
+python descargar_temperatura_deriva.py  # proxy exterior, no sensor del banco
 python figuras_semana.py                # regenera todas las figuras
 python analizar_deriva.py               # el veredicto sobre la deriva
 \end{verbatim}
@@ -513,10 +517,10 @@ Vale 3,3 bits de rango dinámico, más otros 2,3 si además se quita el pedestal
 Hoy informa \texttt{ok=1} arrancando cerca y \texttt{ok=0} arrancando del riel,
 con el mismo resultado físico en los dos: es contabilidad de pasos, no
 calibración. Diagnosticado, y el ensayo T3 lo confirma solo. \\[2mm]
-\textbf{5.} & \textbf{Dejar correr la deriva más horas.} A las \derivaHoras{} h ya quedo claro que vagabundea y no se va ---bajo
-\derivaExtremo{} mV y volvio---. Lo que falta ahora es otra cosa: la
-temperatura anotada en paralelo, para saber si el vagabundeo la sigue o es
-independiente. Eso decide si hay que recalibrar por reloj o por termometro. \\
+\textbf{5.} & \textbf{Medir temperatura en el propio banco.} El registro largo
+ya separa la lectura prematura de 7,1 h de la tendencia posterior. Falta un
+sensor junto a la placa para distinguir deriva térmica de otros mecanismos y
+decidir si conviene recalibrar por reloj, por temperatura o por ambos. \\
 \bottomrule
 \end{longtable}
 
