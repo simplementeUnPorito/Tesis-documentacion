@@ -1,0 +1,46 @@
+\section{De la captación puntual al registro MASW}
+\label{sec:metodologia}
+
+\subsection{Qué se mide en un punto}
+
+Un geófono vertical transforma la velocidad relativa de su masa interna respecto del terreno en una tensión. Una captura puntual conserva la evolución temporal de esa componente después del impacto. De ella pueden obtenerse amplitud, contenido espectral y tiempo relativo al disparo, pero un único punto no permite separar una velocidad de propagación de un tiempo de inicio desconocido. Para medir propagación se necesita relacionar registros obtenidos a distancias conocidas.
+
+La traza útil comienza antes del impacto para estimar el ruido y continúa durante una ventana suficiente para contener el movimiento de interés. El canal HAMMER aporta la referencia del golpe; el canal GEO conserva la respuesta del terreno y del sensor. Repetir impactos en la misma posición permite rechazar golpes anómalos, corregir pequeños desplazamientos temporales y promediar. Si las realizaciones útiles contienen señal coherente y ruido no correlacionado, promediar $N_g$ golpes mejora idealmente la relación señal a ruido en un factor proporcional a $\sqrt{N_g}$. Esta mejora depende de que la fuente, el acoplamiento y el trigger sean repetibles.
+
+La transformada temporal
+\begin{equation}
+U_j(f)=\sum_{n=0}^{N-1}u_j[n]
+e^{-\mathrm{i}2\pi fn/f_s}
+\label{eq:dft}
+\end{equation}
+conserva amplitud y fase complejas para la posición $j$. Aquí $u_j[n]$ es la muestra $n$, $N$ la longitud de la ventana y $f_s$ la frecuencia de muestreo. Filtrar, recortar o desplazar las trazas modifica su fase; por ello esos pasos deben aplicarse con parámetros conocidos y quedar registrados.
+
+\subsection{Dos receptores: SASW}
+
+El análisis espectral de ondas superficiales (SASW) emplea dos receptores separados una distancia $\Delta x$. Si $\Delta\phi_{\mathrm{prop}}(f)$ es la rama desenvolvida de la diferencia de fase asociada a la propagación entre ambos, la velocidad de fase aparente es
+\begin{equation}
+c_{\mathrm{ap}}(f)=\frac{2\pi f\,\Delta x}{|\Delta\phi_{\mathrm{prop}}(f)|}.
+\label{eq:sasw}
+\end{equation}
+La expresión muestra los datos que el instrumento debe preservar: la geometría, la frecuencia y la fase relativa. Su aplicación exige desenvolver la fase y distinguir la contribución que se sigue entre frecuencias. Con dos canales no existe redundancia espacial interna para comprobar si un máximo corresponde al modo buscado o a interferencia \citep{Foti2014}.
+
+La separación $\Delta x$ introduce un compromiso. Una distancia mayor acumula más fase, pero también aumenta la atenuación y la posibilidad de superar múltiplos de $2\pi$. Una distancia menor reduce esa ambigüedad, aunque puede dejar diferencias comparables con el error de fase del instrumento. En campo se repite el ensayo con diferentes separaciones; en esta plataforma, la progresión a varios offsets permite resolver el mismo compromiso con redundancia espacial.
+
+\subsection{Varios receptores: MASW}
+
+MASW extiende la misma idea a $N_r$ posiciones $x_j$. Tras transformar cada traza temporal $u_j(t)$ a su espectro complejo $U_j(f)$, se prueban velocidades $c$ y se compensan las fases esperadas:
+\begin{equation}
+P(f,c)=\frac{1}{N_r}\left|
+\sum_{j=1}^{N_r}\frac{U_j(f)}{|U_j(f)|}
+e^{\mathrm{i}2\pi f x_j/c}\right|.
+\label{eq:phase-shift}
+\end{equation}
+Cuando la velocidad de prueba coincide con la propagación dominante, las contribuciones se suman de forma coherente. El mapa $P(f,c)$ permite identificar tendencias espaciales con una redundancia que no aporta el par de geófonos \citep{Park1998,Park1999}.
+
+El espaciado entre posiciones limita los números de onda que pueden representarse sin aliasing espacial y la apertura total limita las longitudes de onda mayores que reciben soporte del arreglo. Aumentar la frecuencia de muestreo electrónica no compensa una geometría insuficiente. El diseño debe conservar la información disponible, mientras que el protocolo de campo debe escoger separación, apertura y distancia inicial de acuerdo con la banda y las velocidades esperadas.
+
+Antes de calcular ese mapa se forma un registro multicanal: cada fila o traza corresponde a una posición. En la campaña secuencial cada una se refiere a su propio impacto instrumentado; esto no demuestra equivalencia de fase entre golpes distintos. Representarlo como amplitud frente a tiempo y distancia produce el \emph{waterfall} o registro en cascada. Éste es el punto de llegada de la primera presentación. La obtención de una curva y su inversión requieren decisiones adicionales de procesamiento y se reservan para la siguiente etapa.
+
+La formación del registro sigue una secuencia verificable: se valida cada archivo, se asocia con su posición, se recorta respecto del impacto, se excluyen capturas incompletas, se remuestrean las tasas históricas a una base común, se alinean por el pico del canal HAMMER y se promedian por offset. Sólo entonces se ordenan las trazas por distancia. Con nodos simultáneos la geometría se adquiere en un único golpe; con un receptor desplazado se depende de una repetibilidad de fuente que aquí no se considera validada. Ambos casos producen la misma estructura de datos, pero no aportan la misma evidencia sobre sincronización ni sobre variaciones temporales del sitio.
+
+Esta distinción fija el alcance de la demostración. La campaña secuencial prueba que la cadena captura trazas reales y que el software puede construir el waterfall. La arquitectura distribuida indica cómo se escalará la medida, pero la equivalencia de fase y tiempo entre placas debe validarse antes de usarla para una adquisición MASW simultánea.

@@ -1,0 +1,51 @@
+\section{Evidencia de adquisición y trabajo futuro}
+\label{sec:evidencia}
+
+La campaña disponible se realizó con una fuente fija y un receptor desplazado secuencialmente a 21 posiciones entre 10 y \SI{50}{m}, con paso nominal de \SI{2}{m}. En cada posición se repitieron impactos y se conservaron la señal del martillo y la respuesta del geófono. Esta geometría permite comprobar el flujo completo desde una captura puntual hasta un conjunto ordenado por distancia, pero no prueba la operación simultánea de 21 nodos ni la repetibilidad energética de la fuente.
+
+Después de revisar, alinear y promediar los golpes de cada posición, las trazas se reúnen en el registro de la figura~\ref{fig:waterfall}. El eje espacial corresponde a posiciones sucesivas del mismo receptor. Se trata, por tanto, de un \textbf{registro multicanal sintetizado por posiciones con una fuente activa repetida cuya variabilidad no se cuantifica aquí}; no debe describirse como una adquisición multicanal simultánea. Existen antecedentes del uso de un solo receptor desplazado para formar imágenes de dispersión bajo condiciones controladas, aunque el protocolo publicado fija el receptor y desplaza la fuente, a diferencia de esta campaña \citep{LinAshlock2016}.
+
+\begin{table*}[!tb]
+\centering
+\scriptsize
+\caption{Parámetros y decisiones del conjunto mostrado.}
+\begin{tabularx}{0.96\textwidth}{@{}lYY@{}}
+\toprule
+Elemento & Valor o procedimiento & Alcance de la información \\
+\midrule
+Geometría & 21 offsets de 10 a \SI{50}{m}; paso \SI{2}{m}; apertura \SI{40}{m} & Un receptor desplazado; una excitación distinta por captura \\
+Inventario & 607 candidatos; 9 excluidos manualmente; 598 incorporados al manifiesto & El motivo persistido de exclusión es ``no aceptado'', sin umbral cuantitativo recuperable \\
+Tasas históricas & 455 registros a \SI{1020}{Hz} y 143 a \SI{2929}{Hz} & Remuestreo a \SI{1020}{Hz} dentro del grupo antes del promedio \\
+Filtrado & Butterworth pasa-bajos de orden 10 a \SI{80}{Hz}, aplicado en fase cero & No desplaza los arribos; el crudo permanece conservado \\
+Alineación & Pico absoluto del canal HAMMER; tiempo común respecto del impacto & Corrige el origen de cada golpe, no demuestra equivalencia espectral entre impactos \\
+Waterfall mostrado & Grupo activo: 473 pares HAMMER--GEO; 20--37 golpes por offset, mediana 21 & Promedio por offset y normalización independiente por traza \\
+Ganancia y rango & Persistidos por archivo, sin configuración única en la campaña histórica & La normalización impide usar esta figura para comparar amplitud entre offsets \\
+\bottomrule
+\end{tabularx}
+\label{tab:campana}
+\end{table*}
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.88\textwidth,keepaspectratio]{f_registros_cascada.png}
+\caption{Waterfall de 21 posiciones secuenciales. Cada traza promedia 20 a 37 impactos alineados por HAMMER y se normaliza por separado, por lo que no conserva atenuación entre offsets. La traza HAMMER usa los 473 pares del grupo activo; no hubo 21 canales simultáneos. Fuente: elaboración propia.}
+\label{fig:waterfall}
+\end{figure*}
+
+El alcance demostrado es la captación y el almacenamiento con un GEO, la identificación eléctrica parcial del frente y la construcción del waterfall. El manifiesto general incorporó 598 de 607 candidatos; la figura usa 473 pares HAMMER--GEO del grupo activo y los 125 restantes no intervienen en sus promedios. Ninguna cifra representa observaciones independientes, pues se repiten golpes por offset. Permanecen pendientes la validación mecánica extremo a extremo, el ruido equivalente de entrada y la equivalencia temporal entre placas. El perfil $V_S(z)$ y la inversión se reservan para la segunda presentación.
+
+\section{Limitaciones y siguiente etapa}
+\label{sec:futuro}
+
+
+\textbf{Fuente de excitación.} Se ensayará una fuente más energética y repetible para reforzar la banda baja, manteniendo el martillo instrumentado como referencia temporal y medida de la variación entre golpes.
+
+\textbf{Validación multicanal.} Antes de afirmar simultaneidad se aplicará una señal común a varias placas y se medirán ganancia, fase, desfase inicial y deriva de reloj.
+
+\textbf{Caracterización metrológica.} Se medirán ruido por ganancia, respuesta ante una excitación mecánica conocida e incertidumbre desde el geófono hasta los datos almacenados.
+
+\textbf{Procesamiento.} La segunda presentación analizará rigurosamente la extracción de dispersión y los algoritmos de inversión: sensibilidad a geometría, selección modal, parametrización y no unicidad. Hasta entonces no se presenta un perfil $V_S(z)$ como resultado.
+
+\textbf{Recursos y continuidad.} La propuesta PINV01-317 fue presentada y no resultó adjudicada \citep{PINV01317}. Se buscará financiación para fabricar y validar varios receptores; si no se obtiene, se continuará con un receptor desplazado secuencialmente, mejorando fuente y trazabilidad.
+
+\textbf{Criterio de cierre.} La siguiente entrega sólo denominará multicanal simultánea a una captura respaldada por la prueba de señal común y sus errores de inicio y deriva. Asimismo, una curva de dispersión deberá indicar apertura, separación, banda útil, región sin aliasing y criterio de selección modal. La comparación de algoritmos de inversión se hará sobre datos sintéticos y de campo conservando parametrización, función de ajuste y sensibilidad; sus diferencias se reportarán como parte de la no unicidad y no como precisión del instrumento. Estos criterios separan resultados electrónicos, procesamiento y conclusión geotécnica.

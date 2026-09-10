@@ -1,0 +1,127 @@
+\section{Propagación de ondas mecánicas en medios elásticos}
+\label{sec:fundamentos}
+
+La selección de MASW sólo fija la técnica general; para traducirla a requisitos electrónicos debe establecerse primero qué ondas se generan, qué propiedad del terreno modifica su velocidad y por qué un registro en superficie contiene información de diferentes profundidades. Se parte de un medio elástico homogéneo y luego se incorpora la superficie libre y la estratificación del suelo real.
+
+\subsection{Velocidades en un medio elástico}
+\label{sec:medio-elastico}
+
+En un sólido elástico, homogéneo e isótropo, la relación entre tensión y deformación queda descrita por la densidad $\rho$ y los parámetros de Lamé $\lambda$ y $\mu$. El parámetro $\mu$ es el módulo de corte; $\lambda$ interviene en la respuesta volumétrica. Las velocidades de las ondas de compresión y de corte son
+\begin{equation}
+V_P=\sqrt{\frac{\lambda+2\mu}{\rho}},
+\qquad
+V_S=\sqrt{\frac{\mu}{\rho}}.
+\label{eq:velocidades}
+\end{equation}
+La segunda expresión permite escribir el módulo de corte a pequeñas deformaciones como
+\begin{equation}
+G_{\max}=\rho V_S^2.
+\label{eq:rigidez}
+\end{equation}
+Por tanto, medir la velocidad de una onda S proporciona una vía directa para caracterizar la rigidez inicial del material si se dispone de una estimación de densidad. En suelos habituales la densidad varía dentro de un intervalo mucho menor que $V_S$ y, además, la velocidad aparece elevada al cuadrado; por ello la variación de $G_{\max}$ queda dominada por la variación de $V_S$ \citep{Kramer1996,Foti2014}.
+
+Estas expresiones surgen de la ecuación de movimiento. Si $\mathbf{u}(\mathbf{x},t)$ es el desplazamiento de un punto material, el equilibrio lineal sin fuerzas de volumen puede escribirse como
+\begin{equation}
+\rho\,\frac{\partial^2\mathbf{u}}{\partial t^2}
+=(\lambda+\mu)\nabla(\nabla\!\cdot\!\mathbf{u})+
+\mu\nabla^2\mathbf{u}.
+\label{eq:navier}
+\end{equation}
+La descomposición de Helmholtz separa el desplazamiento en una parte irrotacional, asociada a cambios de volumen, y otra solenoidal, asociada a corte:
+\begin{equation}
+\mathbf{u}=\nabla\phi+\nabla\times\mathbf{\Psi},
+\qquad \nabla\cdot\mathbf{\Psi}=0.
+\label{eq:helmholtz}
+\end{equation}
+Al sustituirla en la ecuación~\eqref{eq:navier}, el potencial escalar $\phi$ satisface una ecuación de onda con velocidad $V_P$, mientras que el potencial vectorial $\mathbf{\Psi}$ satisface otra con velocidad $V_S$. Esta separación no introduce dos materiales distintos: describe dos formas independientes en que el mismo medio puede deformarse.
+
+Las velocidades P y S también se relacionan mediante el coeficiente de Poisson $\nu$:
+\begin{equation}
+\nu=\frac{V_P^2-2V_S^2}{2\left(V_P^2-V_S^2\right)}.
+\label{eq:poisson}
+\end{equation}
+Esta relación permite acotar una magnitud cuando sólo se observa la otra, pero no convierte ambas velocidades en equivalentes. En particular, la onda P responde a cambios volumétricos y puede quedar fuertemente condicionada por el agua intersticial; la onda S deforma el esqueleto del suelo por corte y mantiene una relación más directa con la rigidez que interesa a la caracterización geotécnica \citep{Kramer1996}.
+
+La aproximación elástica representa el régimen de deformaciones pequeñas. El suelo real disipa energía y sus módulos dependen del nivel de deformación; por ello $G_{\max}$ no es el módulo que debe emplearse sin corrección para cualquier carga estática. En este trabajo funciona como propiedad de referencia para relacionar una medición cinemática con la respuesta inicial del terreno, no como sustituto de todos los parámetros obtenidos mediante ensayos geotécnicos.
+
+\subsection{Ondas P y S}
+\label{sec:ondas-cuerpo}
+
+Las ondas P y S se denominan ondas de cuerpo porque se propagan por el volumen del medio. En una onda P el movimiento de las partículas es paralelo a la dirección de propagación: el material atraviesa ciclos de compresión y dilatación. En una onda S el movimiento es perpendicular a esa dirección y produce deformación de corte sin cambio de volumen. Se distingue la polarización SV cuando el desplazamiento transversal pertenece al plano vertical de propagación, y SH cuando es horizontal y perpendicular a ese plano.
+
+\begin{table}[!tb]
+\centering
+\footnotesize
+\caption{Movimientos relevantes para la configuración vertical empleada.}
+\begin{tabularx}{\columnwidth}{@{}lYY@{}}
+\toprule
+Onda & Movimiento de partícula & Relación con la medida \\
+\midrule
+P & Paralelo a la propagación & Aporta componentes verticales y longitudinales \\
+SV & Transversal en el plano vertical & Se acopla con P en la superficie libre \\
+SH & Horizontal y transversal & No es observada por el geófono vertical \\
+Rayleigh & Elíptico en el plano vertical & Observable dominante buscado \\
+\bottomrule
+\end{tabularx}
+\label{tab:ondas}
+\end{table}
+
+En el modelo homogéneo cada tipo de onda se propaga con una velocidad constante. El terreno real, en cambio, presenta interfaces entre materiales de diferente densidad y rigidez. Al alcanzar una interfaz, una onda incidente se refleja y se transmite; además puede producirse conversión entre componentes P y SV. La continuidad de desplazamientos y tensiones determina las amplitudes resultantes. Una sucesión de capas hace que esas contribuciones interfieran y que el movimiento observado en la superficie sea la suma de recorridos con diferentes fases \citep{Foti2014}.
+
+La impedancia mecánica combina densidad y velocidad. Un contraste de impedancia hace que parte de la energía regrese y parte continúe en la capa siguiente. El ángulo de propagación también cambia para conservar la componente horizontal del número de onda. En consecuencia, una interfaz no sólo altera amplitudes: modifica recorridos y fases. MASW no necesita identificar por separado cada reflexión; aprovecha el patrón coherente que resulta de la interacción del campo completo con las capas.
+
+La amplitud también disminuye con la distancia. Fuera del campo cercano puede representarse de forma simplificada por
+\begin{equation}
+\frac{A(r,f)}{A(r_0,f)}=
+\left(\frac{r_0}{r}\right)^p
+e^{-\alpha(f)(r-r_0)},
+\label{eq:atenuacion}
+\end{equation}
+donde $A(r,f)$ es la amplitud a la distancia $r$ y frecuencia $f$, $r_0$ es una distancia de referencia, $p$ representa la divergencia geométrica y $\alpha(f)$ la atenuación material. Para el caso ideal, $p=1$ en ondas de cuerpo y $p=1/2$ en ondas superficiales. Esta diferencia ayuda a explicar por qué, a distancias útiles para un tendido somero, el movimiento superficial puede dominar el registro de un impacto vertical \citep{Foti2014}.
+
+\subsection{Superficie libre y onda Rayleigh}
+\label{sec:rayleigh}
+
+En la frontera entre el suelo y el aire las tensiones normales y tangenciales deben anularse. Una onda P o SV aislada no satisface por sí sola esa condición; una solución modal acoplada combina componentes P y SV evanescentes, cuyas amplitudes decaen con la profundidad. Esta solución es la onda Rayleigh: avanza paralela a la superficie mientras las partículas describen un movimiento elíptico en el plano vertical. Para valores habituales no negativos del coeficiente de Poisson en suelos, su velocidad de fase $c_R$ se sitúa aproximadamente entre el 87\,\% y el 96\,\% de $V_S$ \citep{Foti2014}.
+
+Para una onda que avanza en la dirección $x$, las componentes pueden representarse mediante factores $e^{\mathrm{i}(kx-\omega t)}$ y funciones que decrecen con la coordenada vertical. Aquí $k$ es el número de onda y $\omega=2\pi f$ la frecuencia angular. Imponer tensión nula en la superficie produce un sistema homogéneo para las amplitudes P y SV. Una solución distinta de cero sólo existe cuando el determinante se anula; en un semiespacio homogéneo esa condición conduce a la ecuación característica de Rayleigh. Si $\xi=c_R/V_S$ y $\kappa=(V_S/V_P)^2$, puede escribirse como
+\begin{equation}
+\xi^6-8\xi^4+(24-16\kappa)\xi^2
+-16(1-\kappa)=0.
+\label{eq:rayleigh}
+\end{equation}
+La raíz física es menor que uno, por lo que la onda Rayleigh se propaga más lentamente que la onda S del mismo medio. La ecuación también muestra que $c_R$ depende principalmente de $V_S$ y, en menor grado, de la relación entre $V_P$ y $V_S$.
+
+El movimiento elíptico no mantiene la misma amplitud ni el mismo sentido a toda profundidad. Cerca de la superficie domina la combinación que registra el sensor vertical; al alejarse de ella las componentes disminuyen y pueden cambiar de fase relativa. Por eso la onda se denomina superficial aunque involucre un volumen finito de terreno.
+
+La componente vertical del movimiento Rayleigh puede captarse con el geófono vertical empleado en este proyecto. Las ondas Love, asociadas a movimiento SH atrapado en capas, son horizontales y transversales; se mencionan para delimitar el alcance, pero no forman parte de la magnitud observada por la configuración implementada.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.94\textwidth,keepaspectratio]{b_dispersion_profundidad.png}
+\caption{Sensibilidad de las ondas Rayleigh a la profundidad en un medio estratificado. Una frecuencia alta involucra principalmente la capa superficial; una frecuencia baja moviliza un volumen mayor y combina la respuesta de varias capas. Reproducida de \citet{Foti2014}, figura 1.2.}
+\label{fig:dispersion-profundidad}
+\end{figure*}
+
+\subsection{Longitud de onda, estratificación y dispersión}
+\label{sec:dispersion}
+
+Para una frecuencia $f$, la longitud de una onda Rayleigh es
+\begin{equation}
+\lambda_R(f)=\frac{c_R(f)}{f}.
+\label{eq:longitud-onda}
+\end{equation}
+El desplazamiento disminuye con la profundidad en una escala comparable con $\lambda_R$. Las longitudes cortas son sensibles al material somero; las largas involucran capas más profundas. No existe una correspondencia puntual entre una frecuencia y una cota: las sensibilidades se distribuyen y superponen. Como regla de alcance se emplea un intervalo aproximado entre $\lambda_{R,\max}/3$ y $\lambda_{R,\max}/2$, dependiente del perfil y de la resolución; no representa la profundidad exacta de cada observación \citep{Foti2018}.
+
+En un semiespacio homogéneo $c_R$ no depende de la frecuencia. En un suelo estratificado, cada longitud de onda pondera de manera distinta las capas y la velocidad de fase pasa a depender de $f$. Esa dispersión es el observable aprovechado por MASW: el registro no mide directamente un espesor ni una rigidez, sino el cambio de fase con la distancia para diferentes frecuencias. La relación estrecha entre $c_R$ y $V_S$ explica por qué esa dependencia puede utilizarse posteriormente para estudiar la variación de rigidez con la profundidad.
+
+En un conjunto de capas, las condiciones de continuidad se aplican en cada interfaz y la condición de tensión nula se conserva en la superficie. El resultado general puede expresarse, sin resolverlo todavía, como
+\begin{equation}
+F\!\left(f,c_R;V_{S,i},V_{P,i},\rho_i,h_i\right)=0,
+\label{eq:dispersion-general}
+\end{equation}
+donde $h_i$ es el espesor de la capa $i$ y las demás variables describen sus propiedades. Para una misma frecuencia pueden existir varias raíces, llamadas modos. La adquisición debe ofrecer suficiente continuidad espacial y relación señal a ruido para reconocer la tendencia dominante antes de decidir qué modo se interpreta. Esa decisión pertenece al procesamiento posterior y no altera qué debe conservar el instrumento.
+
+Conviene distinguir velocidad de fase y velocidad de grupo. La primera, $c_R=\omega/k$, describe el avance de una fase concreta y es la magnitud estimada por la diferencia de fase entre receptores. La segunda, $d\omega/dk$, describe el avance de una envolvente. En un medio dispersivo no son iguales. El método implementado se formula en términos de velocidad de fase; por ello la coherencia temporal y espacial de la fase es un requisito central de la electrónica.
+
+El impacto vertical es además una fuente práctica para este propósito. Una parte importante de la energía elástica radiada en la superficie se propaga como onda Rayleigh y su divergencia geométrica es menor que la de las ondas de cuerpo. La fuente manual disponible puede así producir un observable útil sin requerir perforaciones, aunque la energía conseguida a bajas frecuencias limita las longitudes de onda y profundidades alcanzables.

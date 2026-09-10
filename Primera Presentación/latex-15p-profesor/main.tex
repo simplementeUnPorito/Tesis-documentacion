@@ -1,0 +1,67 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{dblfloatfix}
+\usepackage[section]{placeins}
+\usepackage{balance}
+\usepackage{xurl}
+\usepackage[round,authoryear]{natbib}
+\usepackage{hyperref}
+
+\geometry{margin=2.35cm}
+\setlength{\columnsep}{0.68cm}
+\raggedbottom
+\setlist[itemize]{leftmargin=*,itemsep=0.15em,topsep=0.25em}
+\sisetup{output-decimal-marker={,}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\graphicspath{{figuras/}}
+\addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\twocolumn[
+  \begin{center}
+    {\LARGE\bfseries Diseño e implementación de un sistema electrónico
+     multicanal del tipo IoT para caracterización geotécnica del suelo
+     mediante ondas sísmicas\par}
+    \vspace{0.65em}
+    {\large\itshape Proyecto final de carrera -- Primera presentación\par}
+    \vspace{0.75em}
+    {\footnotesize
+     \begin{tabular}{@{}ll@{\hspace{2.5em}}ll@{}}
+       \textbf{Alumno:} & Elías David Álvarez Martínez &
+       \textbf{Carrera:} & Ingeniería Electrónica.\\
+       \textbf{Matrícula:} & Y24127 &
+       \textbf{Tutor:} & Enrique A. Vargas Cabral, Ph.D.\\
+     \end{tabular}\par}
+    \vspace{1em}
+  \end{center}
+]
+
+\input{secciones/01_introduccion_seleccion}
+\input{secciones/02_fundamentos}
+\input{secciones/03_metodologia_medicion}
+\input{secciones/04_diseno_electronico}
+\input{secciones/05_evidencia_futuro}
+
+\FloatBarrier
+\balance
+\bibliographystyle{apalike}
+{\footnotesize\bibliography{referencias}}
+
+\end{document}
