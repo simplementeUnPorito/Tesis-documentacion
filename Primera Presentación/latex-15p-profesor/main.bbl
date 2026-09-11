@@ -1,13 +1,5 @@
 \begin{thebibliography}{}
 
-\bibitem[{Analog Devices}, 2026]{AnalogDevicesADXL355}
-{Analog Devices} (2026).
-\newblock {ADXL355}: Low-noise, low-drift, low-power 3-axis {MEMS}
-  accelerometer.
-\newblock \url{https://www.analog.com/en/products/ADXL355.html}.
-\newblock Página de producto y hoja de datos ADXL354/ADXL355. Consulta: 31 de
-  agosto de 2026.
-
 \bibitem[Breslin, 2020]{Breslin2020}
 Breslin, M. (2020).
 \newblock Groundborne noise and vibration: Instrumentation \& data processing.
@@ -16,18 +8,8 @@ Breslin, M. (2020).
 \newblock Diapositiva 10: ilustración de geófonos acreditada a Deutsches
   Elektronen-Synchrotron (DESY).
 
-\bibitem[{Convocatoria PINV01-317}, 2024]{PINV01317}
-{Convocatoria PINV01-317} (2024).
-\newblock Sistema electrónico multicanal para generación y captación de
-  ondas sísmicas orientado a la caracterización geotécnica del suelo hasta
-  50 metros de profundidad.
-\newblock Technical report, Propuesta de proyecto de investigación (formulario
-  PINV01-317B).
-\newblock Propuesta de financiación no aceptada; antecedente directo de esta
-  tesis.
-
-\bibitem[{Espressif Systems}, 2026]{EspressifESPNow}
-{Espressif Systems} (2026).
+\bibitem[{Espressif Systems}, sf]{EspressifESPNow}
+{Espressif Systems} (s.f.).
 \newblock {ESP-NOW}: {ESP-IDF} programming guide, {ESP32}.
 \newblock
   \url{https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html}.
@@ -51,12 +33,21 @@ Foti, S., Lai, C.~G., Rix, G.~J., and Strobbia, C. (2014).
 \newblock \href{https://doi.org/10.1201/b17268}{doi:
   \nolinkurl{10.1201/b17268}}.
 
-\bibitem[{Güralp Systems}, sf]{Guralp3ESPC}
-{Güralp Systems} (s.f.).
-\newblock {3ESPC} portable broadband seismometer.
-\newblock \url{https://www.guralp.com/documents/DAS-C3E-0001.pdf}.
-\newblock Hoja de datos DAS-C3E-0001, Issue P, sin fecha. Sin precio público
-  en la fuente consultada. Consulta: 31 de agosto de 2026.
+\bibitem[{Gautam Das G} and {Praveen Sekar}, 2017]{InfineonAN68403}
+{Gautam Das G} and {Praveen Sekar} (2017).
+\newblock {PSoC 3 and PSoC 5LP} analog signal chain calibration.
+\newblock Technical Report AN68403, documento 001-68403, Rev.~*G, Cypress
+  Semiconductor.
+\newblock 19 de abril de 2017.
+  \url{https://www.infineon.com/assets/row/public/documents/cross-divisions/42/infineon-an68403-psoc-3-and-psoc-5lp-analog-signal-chain-calibration-applicationnotes-en.pdf}.
+
+\bibitem[{Infineon Technologies AG}, 2024]{InfineonPSoC}
+{Infineon Technologies AG} (2024).
+\newblock {PSoC 5LP}: {CY8C58LP} family datasheet.
+\newblock
+  \url{https://www.infineon.com/assets/row/public/documents/30/49/infineon-psoc-5lp-cy8c58lp-datasheet-datasheet-en.pdf}.
+\newblock Documento 001-84932, Rev.~*O, 11 de diciembre de 2024; publicación
+  original de Cypress Semiconductor.
 
 \bibitem[Kramer, 1996]{Kramer1996}
 Kramer, S.~L. (1996).
@@ -107,8 +98,8 @@ Park, C.~B., Richter, J., Rodrigues, R., and Cirone, A. (2018).
   \url{https://www.pcb.com/contentstore/docs/pcb_corporate/vibration/products/specsheets/086d20_j.pdf}.
 \newblock Consulta: 20 de agosto de 2026.
 
-\bibitem[{PCB Piezotronics}, 2026]{PCBSignalConditioning}
-{PCB Piezotronics} (2026).
+\bibitem[{PCB Piezotronics}, sf]{PCBSignalConditioning}
+{PCB Piezotronics} (s.f.).
 \newblock Signal conditioning basics for icp and charge output sensors.
 \newblock
   \url{https://www.pcb.com/resources/technical-information/signal-conditioning-basics}.
@@ -135,11 +126,11 @@ Samtani, N.~C. and Nowatzki, E.~A. (2006).
 \newblock Product brochure:
   \url{https://cdn.sparkfun.com/datasheets/Sensors/Accelerometers/SM-24%20Brochure.pdf}.
 
-\bibitem[Smith, 1997]{Smith1997}
-Smith, S.~W. (1997).
-\newblock {\em The Scientist and Engineer's Guide to Digital Signal
-  Processing}.
-\newblock California Technical Publishing.
-\newblock Texto del autor: \url{https://www.dspguide.com/pdfbook.htm}.
+\bibitem[{SparkFun Electronics}, 2026]{SparkFunSM24}
+{SparkFun Electronics} (2026).
+\newblock Geophone --- {SM-24}, with insulating disc.
+\newblock
+  \url{https://www.sparkfun.com/geophone-sm-24-with-insulating-disc.html}.
+\newblock Precio publicado: USD 69,95. Consulta: 31 de agosto de 2026.
 
 \end{thebibliography}

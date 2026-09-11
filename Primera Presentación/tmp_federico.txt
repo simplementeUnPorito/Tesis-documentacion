@@ -1,0 +1,608 @@
+           Universidad Católica ”Nuestra Señora de la Asunción”
+                   Facultad de Ciencias y Tecnologı́as
+           Departamento de Ingenierı́a Electrónica e Informática
+
+         Diseño e implementación de un caudalı́metro
+         ultrasónico de bajo costo relativo del tipo IoT
+             Proyecto final de carrera - Primera presentación
+                                                 Diciembre 2023
+
+Alumno: Federico Daniel Morán Fretes                         Carrera: Ingenierı́a Electrónica.
+Matricula: Y05297
+Tutor: Enrique A. Vargas Cabral, Ph.D.
+
+                                                    Resumen
+Se tiene como objetivo de este proyecto de fin de grado el diseño, implementación y evaluación experimental
+de un caudalı́metro basado en tecnologı́as ultrasónicas para su utilización en cauces hı́dricos o canales abiertos
+para una medición continua. El sistema sensorial a ser desarrollado debe ser de bajo coste relativo, para lo
+cual se utilizan técnicas avanzadas de adquisición y procesamiento digital de señales. El sistema podrá ser
+utilizado para la determinación de caudales en tuberı́as de riego, canales, desvı́os, zanjas o alcantarillas. Se
+presentan los fundamentos teóricos que se han tenido en cuenta para estudiar la propagación de las ondas
+mecánicas en los fluidos. Principalmente se presentan los algoritmos más utilizados en sistemas ultrasónicos
+para medir el tiempo de vuelo. TOF por sus siglas en ingles, y como a partir de este podemos determinar
+varias variables, como la distancia entre los transductores, la velocidad de propagación de la onda en el
+medio o bien la temperatura del fluido en el medio. Se propone una mejora de los algoritmos de mediciones
+más populares actualmente y se lleva a cabo un experimento práctico, utilizando el microcontrolador PSoC-
+5LP como arquitectura de procesamiento e implementación de los algoritmos para la estimación del TOF,
+para ası́ comparar el rendimiento de los métodos más populares con el método propuesto y como ciertas
+modificaciones en la forma de excitación del transductor son muy beneficiosas para el sistema de medición
+siempre y cuando se este trabajando con transductores altamente sintonizados como es el caso de la primera
+bancada experimental la cual se realizo con transductores para aire. Los trabajos futuros incluyendo la
+decisión de la arquitectura de los transductores en el medio en el que se desea realizar las mediciones ası́
+como el montaje de una bancada hidráulica experimental para probar la arquitectura elegida, también
+incluyen la implementación de un sub-muestreo y reconstrucción de la señal para luego ser procesada, y por
+ultimo el sistema de comunicación y de energı́a autónomo para que pueda ser considerado un sistema del
+tipo IOT (Internet of Things, por sus siglas en inglés)
+
+
+1.     Introducción
+     Los ultrasonidos tienen una amplia gama de aplicaciones tanto en la ciencia como en la ingenierı́a,
+especialmente en las mediciones de distancia y velocidad de fluidos. Los avances tecnológicos han llevado a
+la implementación de métodos de procesamiento de señales digitales más complejos, lo que ha resultado en
+sistemas de medición más precisos. Como resultado, el equipamiento de alta precisión está cada vez más al
+alcance económico [6].
+Aunque también es común medir la fase de los ecos ultrasónicos, este trabajo se centrará en el método de
+medición de tiempo de vuelo (TOF, por sus siglas en inglés). El tiempo de vuelo es el tiempo que tarda
+
+
+
+                                                         1
+                                                                                                         VoBo
+                                                                                                         01/12/2023
+una onda ultrasónica en viajar desde el transmisor hasta el receptor. La medición del tiempo de vuelo se
+clasifica como una estimación del tiempo de retardo. El transductor produce una onda ultrasónica que viaja
+a través de un medio donde puede reflejarse en un objetivo o viajar directamente hasta el receptor el cual
+es responsable de detectar la llegada de la onda. El sistema de medición TOF es responsable de determinar
+el intervalo de tiempo transcurrido entre la emisión y la recepción de la onda mecánica. [5].
+Existen varios métodos para estimar el tiempo de vuelo (TOF) de una señal de eco. Los métodos más
+comúnmente utilizados incluyen la detección de cruces por cero, el método de ajuste de curvas [2], el criterio
+de información de Akaike [1], la detección de umbral y la implementación de técnicas de correlación cruzada
+[5].
+Se pueden utilizar diferentes técnicas para emitir estas ondas ultrasónicas, las más comúnmente utilizadas
+son la de generación de ondas continuas y la técnica de pulso-eco. También existen métodos más complejos
+que involucran la modulación de ondas continuas o de pulso [5]. Sin embargo, existen restricciones al utilizar
+transductores ultrasónicos en el aire, ya que dichos transductores están altamente ajustados a frecuencias
+de trabajo especı́ficas. Esto se debe a la impedancia mecánica entre el transductor y el medio en el que
+se pretende propagar la onda generada, que en este caso es el aire [13]. Para asegurar que la energı́a de la
+onda generada por el transductor pase de manera más eficiente al medio, es necesario excitar el transductor
+a la frecuencia a la que está ajustado. Si esto no se hace, la señal sufrirá una atenuación significativa, lo
+que reducirá la calidad de las mediciones. Debido a esta restricción de ajuste y a nuestro objetivo de medir
+intervalos de tiempo, se prefiere la técnica de pulso-eco sobre la de ondas continuas. Además la técnica de
+medición con ondas continuas solo puede medir un pequeño intervalo de tiempo debido a que en ese caso
+la información del retardo se encuentre en el la fase de la señal y solo podemos medir el desfasaje desde 0
+hasta 2π.
+La técnica de medición de correlación cruzada es uno de los métodos más robustos y precisos para estimar el
+tiempo de vuelo. Sin embargo, se puede mejorar aún más para este caso especı́fico. La estimación del tiempo
+de vuelo basada en técnicas de correlación cruzada asume que la señal recibida es una réplica desplazada en
+el tiempo de la señal de referencia. El TOF se considera como el retardo de tiempo. Sin embargo, la precisión
+de la medición está limitada porque la señal recibida está corrompida por ruido e interferencias debido a
+la diafonı́a en el canal de transmisión y a las reflexiones de sonido. Además, la forma de onda de la señal
+recibida no es una réplica desplazada en el tiempo de la señal de referencia debido a la distorsión de la forma
+de onda causada por la estructura interna compleja del medio [1].
+
+
+2.    Fundamentos teóricos
+Las ecuaciones de ondas acústicas no pueden ser obtenidas de manera directa, como es el caso de las ecuaciones
+de ondas electromagnéticas que se obtienen de las ecuaciones de Maxwell, estas son aproximadas combinando
+la ecuación de termodinámica de estado, la ecuación cinemática de la continuidad y la ecuación dinámica de
+Navier-Stokes. Las Variables fundamentales en la dinámica de fluidos son la velocidad ν, la presión p y la
+densidad ρ. Estas variables son especificas en una posición del espacio ⃗r en un dado instante t, considerando
+un marco de formulación Euleriana[21].
+Las ecuaciones y principios fundamentales para la dinámica de fluidos son [12]:
+      Ecuación de continuidad o principio de conservación de la masa:
+
+                                                   ∂ρ
+                                                      + ∇.(ρ⃗v ) = 0                                         (1)
+                                                   ∂t
+      Este principio permite la obtención de la ecuación cinemática de continuidad que relaciona la densidad
+      del fluido con campo de velocidad.
+
+
+
+
+                                                        2
+      Principio de conservación del momento lineal:
+
+                                                   ∂⃗v
+                                               ρ       + ρ(⃗v .∇)⃗v = ∇.p + F⃗                                   (2)
+                                                   ∂t
+      La tasa de variación del momento de un elemento del fluido es igual a la fuerza aplicada sobre el mismo.
+      Constituye la segunda ley de Newton y a partir de la misma se obtiene la ecuación de Navier-Stokes,
+      las cuales expresan matemáticamente la conservación del momento y la conservación de la masa para
+      los fluidos newtonianos, equivalente a tres ecuaciones escalares diferenciales parciales, una para cada
+      dirección espacial.
+      Principio de conservación de la energı́a:
+
+                                ∂T                                  T ∂ρ    ∂ρ
+                        ρCp (      + (⃗v .∇)T ) = −(∇.⃗q) + τ : S −       (    + (⃗v .∇)p) + Q                   (3)
+                                ∂t                                  ρ ∂T p ∂t
+
+Donde:
+      ρ es la densidad (unidad SI: kg/m3 )
+      ⃗v es el vector velocidad (unidad SI: m/s)
+      p es la presión (unidad SI: P a)
+      τ es el tensor de estrés viscoso (unidad SI: P a)
+      F⃗ es el vector de fuerza de volumen (unidad SI: N/m3 )
+      Cp es la capacidad de calorı́fica especı́fica a una presión constante (unidad SI: J/(kg.K))
+      T es la temperatura absoluta (unidad SI: K)
+      ⃗q es el vector de flujo de calor (unidad SI: W/m2 )
+      Q contiene las fuentes de calor (unidad SI: W/m3 )
+      S es la tensión de velocidad de deformación
+Para modelar la influencia que tiene el fluido de fondo en la propagación de las ondas mecánicas, necesitamos
+definir la presión de fluido de fondo p0 y la velocidad media del fluido de fondo v⃗0 . Si se utiliza un material
+que depende de la temperatura, también está presente el campo T0 de temperatura media de flujo de fondo.
+Se consideran que la presión y la velocidad del fluido son constantes.
+El estado del fluido se caracteriza por medio de un conjunto de variables de campo densidad, presión,
+velocidad. Previendo la aplicación de un esquema perturbativo en el medio, se considera que el efecto acústico
+de la onda produce pequeñas variaciones en el fluido lo cual se encuentra inicialmente en un estado de
+equilibrio caracterizado por el conjunto de valores ρ0 ; p0 ; v⃗0 . La onda acústica tiene por efecto perturbar este
+estado de equilibrio y los valores de las variables de campo pueden ser expandidos alrededor de los valores
+de equilibrio de la siguiente manera:
+
+
+                                               ρ = ρ0 + ρ1 + ρ2 + ...                                            (4)
+                                               p = p0 + p1 + p2 + ...                                            (5)
+                                               ⃗v = v⃗0 + v⃗1 + v⃗2 + ...                                        (6)
+
+Las ecuaciones que modelan la propagación de ondas mecánicas en un fluido estacionario, asumen un com-
+portamiento en el que no hay intercambio de calor entre las diferentes partes del fluido y del medio que
+lo rodea. Se utilizan las ecuaciones de Euler linealizadas, también conocidas como ecuaciones mecánicas
+lineales para medios en movimiento. Las ecuaciones son válidas para cualquier fluido de fondo estacionario
+siempre que no haya gradientes demasiado grandes en las propiedades de fondo. Se muestra a continuación
+
+
+                                                            3
+la Ecuación 7 de continuidad, la Ecuación 8 de momento y la Ecuación 9 de estado, siendo fp la entrada de
+la ecuación de continuidad y fv es la entrada de la ecuación de momento[22].
+
+                              ∂ρ
+                                  + (v⃗0 .∇)ρ + (⃗v .∇)ρ0 + ρ(∇.v⃗0 ) + ρ0 (∇.⃗v ) = fp                     (7)
+                              ∂t
+                               ∂⃗v                              1       ρ
+                                   + (v⃗0 .∇)⃗v + (⃗v .∇)v⃗0 + ∇p − 2 ∇p0 = fv                              (8)
+                               ∂t                               ρ0     ρ0
+                                                              p
+                                                        ρ= 2                                                (9)
+                                                             c0
+
+3.     Métodos de detección de señal
+3.1.    Ajuste de Curvas
+Hay varias formas de implementar el método de ajuste de curva, una de las más comunes es aplicar el método
+de mı́nimos cuadrados no lineales para ajustar una curva al inicio del eco ultrasónico con el fin de producir
+una medición de TOF imparcial. Por lo general, se ajusta una curva parabólica de la forma a0 (t − t0 )2 a la
+envolvente de la señal alrededor del borde ascendente del eco [2].
+Otro enfoque común es el ajuste lineal. Aquı́, se utiliza el método de mı́nimos cuadrados no lineales para
+ajustar una lı́nea al segmento ascendente de la envolvente entre dos puntos. Estos puntos suelen corresponder
+al punto donde la envolvente alcanza el 10 % y el 90 % de su valor máximo de amplitud. Una vez que se
+determina la lı́nea e interpola para obtener una mejor resolución, esta se intersecta con una lı́nea horizontal
+que corresponde al 50 % de la amplitud máxima de la envolvente. Este punto de intersección se toma como el
+TOF. Alternativamente, el TOF puede ser el punto de intersección de la lı́nea ajustada con la lı́nea horizontal
+de amplitud cero.
+El ajuste lineal también se puede realizar determinando la lı́nea utilizando el punto que corresponde al
+gradiente máximo de energı́a de la envolvente [11].
+
+3.2.    AIC
+En el método del Criterio de Información de Akaike (AIC), se considera el tiempo de vuelo (TOF) de un
+pulso ultrasónico desde el transmisor hasta el receptor como el punto de transición temporal que divide la
+señal en dos procesos estacionarios diferentes. La función AIC se puede utilizar para determinar el punto de
+transición[1]. La función se define de la siguiente manera:
+                         AIC(k) = k log10 (var(s(1, k))) + N log10 (var(s(k + 1, N )))
+donde N es el número de muestras de datos en la señal recibida y s(1, k) y s(k + 1, N ) son los segmentos de
+señal antes y después del punto k. Los términos var(s(1, k)) y var(s(k + 1, N )) representan las varianzas de
+los dos segmentos de señal [1].
+La función AIC de la señal de eco produce una curva con una pendiente negativa. Un cambio en la pendiente
+ocurre en el momento en que comienza el eco, es crucial identificar con precisión este punto de cambio de
+pendiente para medir la distancia entre los transductores emisor y receptor.
+Para identificar este punto de cambio de pendiente, se deriva la curva de la función AIC, lo que resulta en
+una señal donde el punto de máxima amplitud corresponde al punto de inicio del eco.
+Para medir la distancia utilizando este método, se toma un eco de referencia y se identifica su punto de
+inicio. El punto de máxima amplitud de la derivada de la función AIC se toma como el punto de referencia
+de distancia cero. Luego, se digitaliza el siguiente eco y se realiza el mismo procedimiento para identificar su
+punto de inicio. Se calcula la diferencia en el número de muestras entre el punto de referencia y el punto de
+inicio del nuevo eco. A partir de esta diferencia, se calcula el TOF, conociendo previamente la velocidad de
+la onda en el medio y la frecuencia de muestreo del sistema.
+
+
+
+                                                         4
+3.3.    Correlación de la señal de cco
+El método de correlación cruzada se implementa comúnmente de la siguiente manera: El eco recibido sR (t)
+se correlaciona con la señal transmitida sT (t), utilizando la siguiente expresión:
+
+                                                  Z −∞
+                                         c(t) =          sT (τ )sR (t + τ )dτ                                (10)
+                                                  ∞
+
+el punto de máxima amplitud de correlación se utiliza para calcular el tiempo de vuelo (TOF). Debido a
+la duración finita de la señal la onda mecánica, existe un intervalo de tiempo entre la transmisión de los
+pulsos y la recepción de los ecos. La única información relevante para el calculo de tiempo de vuelo es el
+recuento de muestras que caen dentro de dicho intervalo[5]. Para mejorar la resolución y precisión, se utilizan
+comúnmente técnicas de interpolación con la correlación.
+En este caso, los ecos recibidos se han correlacionado con un eco de referencia que corresponde al punto de
+referencia de distancia cero. Nos referimos a este eco de referencia como el ”patrón”porque buscamos una
+forma de onda que se asemeje estrechamente a ella a través de la correlación. El punto de máxima amplitud
+en la correlación representa la ubicación donde se ha detectado el patrón en la señal recibida. El tiempo de
+vuelo se puede estimar conociendo la velocidad de la onda en el medio, la frecuencia de muestreo del sistema
+y la cantidad de muestras entre el eco de referencia, es decir, el patrón, y el eco recibido.
+
+3.4.    Correlación de la derivada de la envolvente
+La correlación del eco encuentra desafı́os al trabajar con un pulso de ancho de banda estrecho. Esto se debe
+a que se vuelve fácil confundir el pico de amplitud máxima de la correlación con puntos adyacentes a él
+cuando hay ruido en la señal, esto puede resultar en un error de medición de distancia de varios milı́metros.
+Para abordar este problema, proponemos dos mejoras: utilizar la derivada de la envolvente de la señal de
+eco para realizar la correlación con el patrón y cambiar la forma del pulso de ultrasonido en el medio para
+hacer que el sistema sea más robusto contra el ruido.
+El procedimiento de medición es el siguiente: se emite una señal de duración finita y se captura el eco
+resultante con un receptor. Se halla la envolvente del eco utilizando la transformada de Hilbert, esta luego
+es demodulada con un filtro. Finalmente, se deriva la envolvente demodulada para obtener la señal que se
+utilizara para la correlación.
+Para realizar la correlación, se selecciona un patrón de referencia el cual es un segmento de la señal de
+envolvente derivada. Se procede a buscar el punto de referencia de distancia cero realizando la correlación
+entre el patrón de referencia seleccionado y la misma señal de la cual se tomó dicho patrón. El punto de
+máxima amplitud del resultado de la correlación se utiliza como el punto de referencia de distancia cero.
+Se sigue el mismo procedimiento descrito anteriormente para las siguientes señales de eco recibidas: se halla
+su envolvente, se la demodular y se deriva. Luego se realiza la correlación con el patrón de referencia obtenido
+anteriormente. Se busca el punto de máxima amplitud de la correlación y se calcula la distancia en función
+del número de muestras que se encuentran entre el punto de referencia cero y el punto de máxima amplitud
+de la nueva correlación, la frecuencia de muestreo del sistema y la velocidad de la onda en el medio.
+
+
+
+
+                                                           5
+                      Figura 1: Diagrama de Bloques el proceso de estimación de TOF.
+
+
+Este procedimiento implica analizar dos puntos crı́ticos: por qué se realiza la derivada de la envolvente
+demodulada y qué segmento de la señal derivada se elige como patrón de referencia.
+El filtro de correlación es esencialmente una suma ponderada o un promedio dependiente de la amplitud,
+donde los puntos con mayor amplitud contribuyen más. Por lo tanto, al correlacionar la envolvente de la
+señal, los puntos con mayor amplitud, aquellos que se encuentran en la meseta del pico, contribuyen más.
+Sin embargo, este segmento de la señal contiene varios puntos con amplitudes muy similares, y los picos son
+altamente susceptibles al ruido, especialmente cuando la relación señal-ruido es baja. Como resultado, se
+vuelve desafiante identificar con precisión el punto de amplitud máxima. Esto es crucial porque seleccionar
+incorrectamente un solo punto, o muestra, puede resultar en un error de medición de uno o varios milı́metros,
+dependiendo del sistema de emisión y adquisición utilizado.
+La derivación de la señal hace que los puntos con grandes amplitudes pero con pocos cambios respecto a sus
+adyacentes se conviertan en mı́nimos, y los puntos con amplitudes más bajas pero con cambios mayores se
+conviertan en máximos. Este enfoque aprovecha los puntos donde la señal presenta un cambio mayor en la
+amplitud entre sus puntos adyacentes, es decir, donde la pendiente de la señal es más pronunciada. Como se
+muestra en la Figura 4, el punto de máxima pendiente en la envolvente se convierte en el punto de máxima
+amplitud en la señal derivada. Al hacer esto, nos aseguramos de que los puntos con el mayor cambio, que
+son menos susceptibles al ruido, tengan más peso en la suma ponderada de la correlación. Esto hace que el
+sistema sea más robusto y menos propenso a errores al seleccionar el punto de máxima amplitud.
+Al realizar la correlación solo con la envolvente resulta más fácil cometer un error al seleccionar el punto
+máximo, ya que varios puntos tienen amplitudes muy similares y incluso una pequeña cantidad de ruido
+podrı́a alterar la elección.
+El otro punto importante es la selección del patrón de referencia para la correlación. Tı́picamente, los
+algoritmos de medición utilizan puntos especı́ficos para determinar el tiempo de llegada de la señal. En
+el caso de las señales de ultrasonido, los puntos más frecuentemente utilizados se pueden observar en la
+Figura 7, indicados en la derivada de la envolvente de un eco experimental. A diferencia de otros métodos
+de medición que utilizan uno o más de los puntos A, B, C, D o E, [13], en este caso, al realizar la correlación
+con el patrón, utilizamos todos los puntos dentro de la sección seleccionada del patrón.
+Por lo tanto, es importante elegir la sección de la señal de referencia que se utilizará como patrón para la
+correlación de manera apropiada. Para hacer esto, buscamos el área de la señal que presenta la información
+más relevante. Utilizando la señal de la Figura 7, la sección elegida como patrón serı́a desde el punto A hasta
+el punto D. Recordemos que el punto C, ubicado en el pico de la señal, corresponde al punto de máxima
+pendiente de la envolvente del eco, que es el punto que queremos identificar. En la Figura 5, se presenta el
+patrón de referencia después de haber seleccionado el segmento correspondiente.
+
+
+
+                                                        6
+                                            Figura 2: Señal del Eco.
+
+
+
+
+                                             Figura 3: Envolvente.
+
+
+
+
+                                              Figura 4: Derivada.
+
+
+
+
+                              Figura 5: Patrón de referencia para la correlación.
+
+        Figura 6: El eco, su envolvente, la derivada de la envolvente, y el patrón para la correlación.
+
+
+
+
+Figura 7: Puntos de la derivada que podrı́an ser utilizados para determinar el momento de llegada del eco.
+
+
+Para hacer que el sistema sea más robusto ante el ruido del medio y debido a las limitaciones de sintonización
+de los transductores, se aplicó una interferencia destructiva a la onda que se propaga a través del medio para
+que esta tenga una forma más gaussiana [7]. Este proceso se puede observar en la Figura 8. La interferencia
+se logró generando otra excitación en el transductor, pero con un desplazamiento de fase de 180 grados
+en comparación con la primera onda generada. El eco con forma gaussiana es menos sensible al ruido y
+proporciona información más relevante para la correlación debido a que hay más variaciones en la pendiente
+de la envolvente de la señal, por lo que también se puede mejorar el patrón de referencia para la correlación,
+como se puede ver en la Figura 11.
+
+
+
+
+                                                        7
+                                             Figura 8: Señal del Eco.
+
+
+
+
+                                              Figura 9: Envolvente.
+
+
+
+
+                                              Figura 10: Derivada.
+
+
+
+
+                             Figura 11: Patrón de referencia para la correlación..
+
+Figura 12: El eco con interferencia destructiva, su envolvente, la derivada de la envolvente, y el patrón para
+la correlación.
+
+
+4.     Diseño e implementación del hardware
+El sistema debe contar con tres partes principales, el circuito de acondicionamiento y digitalización de la
+señal, el procesador para el procesamiento digital de la señal, y el circuito de excitación de los transductores.
+Para llevar a cabo esta implementación con el objetivo de realizar un sistema de bajo costo se opto por
+utilizar el microcontrolador PSoC 5LP de la compañı́a Cypress debido a su bajo costo y su gran flexibilidad
+al poseer bloques analógicos y digitales reconfigurables y de buen rendimiento.
+Para las pruebas y comparaciones experimentales de los métodos de medida de tiempos de vuelo se utilizaron
+transductores ultrasónicos para aire, los cuales están sintonizados a una frecuencia de resonancia de 40Khz.
+En el circuito de acondicionamiento y digitalización de la señal se puede observar en la Figura [?], realizado en
+su totalidad con los componentes internos del PSoC. Se utiliza convertidor analógico-digital (ADC) en modo
+diferencial con una frecuencia de muestro de 400kHz para digitalizar la señal del eco, el ADC es comandado
+por dos compuertas AND, un FlipFlop y dos registros de control para que la digitalización de la señal
+inicie una vez que se haya terminado de excitar el transductor. Para poder digitalizar de manera correcta
+la señal del eco la misma se monta sobre 2.5 voltios utilizando un amplificador operacional para ası́ poder
+digitalizar la señal de manera correcta, debido a que el componente ADC solo es capaz de digitalizar voltajes
+positivos. La entrada de la señal del eco es acondicionada mediante dos amplificadores de transimpedancia
+(TIA), conectados de manera diferencial entre el pin de entrada de la señal del eco y el convertidor, estos se
+encargan de acondicionar el voltaje de la señal de entrada para ası́ aprovechar todo el rango dinámico del
+convertidor ADC y obtener una mejor resolución.
+Una vez digitalizada la señal del eco un DMA (Direct Memory Access) se encarga de llevar los datos hasta
+la primera etapa de procesamiento, esta se puede observar en la Figura 14 la misma consta de un bloque
+DSP (Digital Signal Procesor), que se encarga de filtrar la señal de entrada primero con un filtro pasa banda
+con una frecuencia central de 36Khz para eliminar los ruidos o señales que no se encuentran en el rango de
+sintonización del transductor. Esta señal, la cual es la componente en fase de la misma, es almacenada en
+
+
+                                                         8
+                        Figura 13: Circuito de Acondicionamiento y Digitalización.
+
+
+memoria y luego vuelta a filtrar con el mismo bloque DSB pero con un filtro de Hilbert para ası́ obtener
+la componente en cuadratura de la señal la cual también es almacenada en memoria. Una vez obtenidas
+las componentes en fase y en cuadratura de la señal de eco se procede a hallar la envolvente de la señal
+realizando la media cuadrática entre ambos componentes. Una vez obtenida la envolvente de la señal del
+eco se continua el procedimiento de medición de tiempo de de vuelo con el método que se ha explicado
+anteriormente, el procesamiento que queda se realiza de manera digital utilizando el microprocesador ARM
+Cortex-M3 del PSoC.
+
+
+
+
+                        Figura 14: Circuito de Acondicionamiento y Digitalización.
+
+El circuito de excitación también fue implementado en tu totalidad con componentes internos, Figura 15.
+Este cuenta con un componente personalizado, implementado en el bloque FPGA del PSoC y escrito en
+lenguaje Verilog, al cual llamamos “Pulser”, el mismo se encarga de generar las señales de excitación para
+el transductor emisor. El Pulser es comandado por un registro de control para poder controlarlo desde el
+programa del microprocesador, y por un PWM que se utiliza como Trigger para sincronizar la emisión del
+pulso con el inicio de la digitalización de la señal. Por ultimo se conecta al PSoC un sensor AM2315 para
+poner medir la temperatura del medio y asi podes calcular la velocidad de propagación de la onda mecánica.
+
+
+
+
+                                                     9
+                         Figura 15: Circuito de Acondicionamiento y Digitalización.
+
+
+5.     Diseño del Experimento
+Para probar el método de detección de TOF, se estableció un banco de pruebas con dos transductores de
+ultrasonido sintonizados a una frecuencia de 40 kHz, un emisor y un receptor, junto con una regla óptica
+Newport PRL-36 calibrada utilizada como referencia de distancia. Los procedimientos de procesamiento de
+señales digitales y cálculo de distancia se realizaron en Matlab para estas primeras pruebas.
+Para probar la efectividad del eco con interferencia destructiva, se tomaron 100 muestras de eco normal y 100
+muestras de eco con interferencia en el mismo punto. Los transductores, emisor y receptor, se colocaron a una
+distancia de 30 cm. Se añadió ruido gaussiano blanco de manera artificial utilizando Matlab, y la distancia
+se midió utilizando el método de correlación de eco para ambos conjuntos de datos, con y sin interferencia.
+Los resultados de esta prueba se muestran en la Figura 16. Como se puede observar, el eco con interferencia
+es más robusto y efectivo al ser identificado a través de la correlación. Al utilizar el eco sin interferencias,
+las mediciones de distancia fluctúan más y presentan mayores errores.
+Basándose en los resultados obtenidos utilizando el eco con interferencia destructiva, se concluye que en un
+medio de ancho de banda reducido, el uso de métodos de correlación con una longitud efectiva de señal más
+corta (la porción considerada para análisis o procesamiento) ofrece mejores resultados.
+
+
+
+
+Figura 16: Comparación de errores en la medición de distancia utilizando eco normal y eco con interferencia
+destructiva.
+
+
+
+
+                                                        10
+6.    Presentación de los resultados
+Los métodos AIC y Correlación del Eco se consideran los principales métodos para comparar el rendimiento
+del método de la correlación de la derivada de la envolvente. Para probar la precisión de estos métodos
+frente al ruido, se agregó artificialmente ruido blanco gaussiano a un conjunto de datos que consiste en 100
+mediciones de eco en el mismo punto, con una distancia de 30 cm entre el transmisor y el receptor.
+La Figura 17 muestra el comportamiento de estos tres métodos midiendo la distancia 100 veces en el mismo
+punto con una relación señal-ruido (SNR) de 35 dB. Se puede observar que la correlación del eco es bastante
+constante, pero produce errores de hasta 8 mm. El método AIC es muy susceptible al ruido, no mantiene
+las mediciones en el rango correcto y produce errores de más de 7 mm. Por otro lado, la correlación de la
+derivada de la envolvente tiene un pico máximo de error por debajo de 3 mm.
+
+
+
+
+        Figura 17: Comparación del error entre los métodos utilizando una señal con SNR = 35dB.
+
+La Figura 18 muestra las mismas mediciones con los mismos métodos pero con una relación señal-ruido
+(SNR) de 5 dB. Se puede observar que la correlación del eco sigue siendo constante, pero presenta errores de
+más de 8 mm. El método AIC no funciona bien con este nivel de ruido, no es constante en las mediciones,
+presenta un desplazamiento sostenido (offset) de 5 mm y errores de casi 10 mm. El método de correlación
+de la derivada es menos constante que la correlación del eco, pero presenta errores de medición de menos de
+3 mm.
+La precisión de los métodos se probó en el mismo banco de pruebas, con mediciones tomadas a intervalos de
+1 cm comenzando a una distancia de 40 cm entre los transductores y terminando a 60 cm. El punto medio de
+la sección, que está a 50 cm, se utilizó como punto de referencia de distancia cero. Se tomaron diez ecos en
+cada punto de medición para determinar el error promedio y la desviación estándar (STD) en cada intervalo.
+Se introdujo ruido blanco gaussiano artificial con Matlab. Los resultados se muestran en la Figura 20 y 21
+para dos niveles diferentes de relación señal-ruido (SNR).
+Con un SNR de 35, el método AIC muestra una STD razonable pero tiene un error promedio más alto que
+los otros métodos. La correlación del eco tiene un error promedio cercano a cero, pero su STD aumenta a
+medida que aumenta la distancia, alcanzando una desviación de hasta 4 mm. La correlación de la derivada
+de la envolvente tiene un error promedio muy bajo, por debajo de 1.5 mm en todo el rango, y una STD
+también inferior a 1.5 mm en todo el rango.
+En la Figura 21 con un SNR de 5 dB, el método AIC ya no realiza mediciones precisas, presentando un
+desplazamiento negativo de más de 4 mm en todo el rango. La correlación del eco tiene un error promedio
+bajo, pero con una STD fluctuante que alcanza más de 4 mm de desviación. La correlación de la derivada
+
+
+
+                                                      11
+        Figura 18: Comparación del error entre los métodos utilizando una señal con SNR = 5dB.
+
+
+de la envolvente tiene un error promedio bajo, muy similar al de la correlación del eco, por debajo de 2 mm,
+pero con una STD más constante y valores más bajos de desviación, también por debajo de 2 mm.
+La Figura 19 ilustra el comportamiento del método de correlación de la derivada de la envolvente utilizando
+el mismo conjunto de datos anteriores pero con diferentes niveles de SNR. Se puede observar que el compor-
+tamiento de la técnica se mantiene estable y consistente para valores de SNR superiores a 15 dB, con una
+desviación estándar máxima de 0.8 mm y un error promedio máximo de 1.2 mm. Sin embargo, con solo 5
+dB de SNR, comienzan a ocurrir errores más grandes, lo que resulta en un error promedio de 1.5 mm y una
+desviación estándar de hasta 1.9 mm.
+
+
+
+
+  Figura 19: Comportamiento del método de la derivada de la envolvente con diferentes niveles de SNR.
+
+
+
+
+                                                     12
+                                                      0.3
+
+
+
+
+                                           Figura 20: SNR = 35dB.
+                                                      0.5
+
+
+
+
+                                           Figura 21: SNR = 5dB.
+
+                         Figura 22: Comparación de error y STD entre los métodos.
+
+
+
+7.    Conclusiones y trabajos futuros
+Con el trabajo realizado hasta el momento se ha obtenido una buena base bibliográfica sobre los métodos
+más populares de estimación de TOF y como funcionan. Llevando a cabo el experimento practico se ha
+comprobado como el algoritmo propuesto, utilizando al derivada de la envolvente para realizar la correlación,
+presenta un mejor desempeño al estimar el tiempo de vuelo utilizando la arquitectura de pruebas para los
+transductores en el aire, mostrando ası́ sus ventajas y desventajas y como se compara con los demás algoritmos
+bajos distintas situaciones de distancia y ruido. Es importante resaltar la notable mejora de las estimaciones
+de TOF con todos los algoritmos probados cuando se utilizada la interferencia destructiva en la señal de
+extinción del transductor emisor.
+Es importante destacar que este método, que utiliza la derivada de la envolvente para realizar la correlación,
+no es universalmente aplicable y puede no ser bueno en todos los casos. Sin embargo, como se ha demostrado,
+ofrece mejoras significativas al trabajar con transductores que tienen un ancho de banda limitado debido
+a limitaciones de impedancia mecánica. Lo mismo ocurre con la forma de extinción del transductor con la
+interferencia destructiva, funciona bien cuando se utiliza en transductores muy sintonizados, pero en otras
+ocasiones, donde es posible realizar modulaciones de los pulsos excitadores con transductores que posean
+más ancho de banda, puede que nos sea la mejor opción.
+Para los trabajos futuros queda por decidir cual sera la arquitectura de los transductores en el medio para
+realizar poder realizar las mediciones de caudal en cauces, esto implica un cambio importante debido que se
+deberán de utilizar transductores con impedancias mecánicas preparados para funcionar en el agua. Estos
+transductores ultrasónicos para agua están sintonizados a una frecuencia nominal de 975kHz lo cual presenta
+un problema ya que la tasa máxima de digitalización de la arquitectura elegida, PSoC 5LP, solo llega a
+1MHz. Para poder solucionar este problema se deberá de realizar un sub-muestro (digitalización por debajo
+de la frecuencia de Nyquist) y una posterior reconstrucción de la señal con procesamiento digital para ası́
+poder seguir usando el PSoC para implementar el sistema y podes mantenerlo en un bajo coste relativo.
+
+
+                                                      13
+Se tendrá un problema equivalente en el circuito de acondicionamiento de la señal de entrada al digitalizar
+del PSoC debido a que los amplificadores operacionales internos que se han utilizado no poseen ancho
+de banda suficiente para amplificar de manera correcta las señales de los ecos ultrasónicos de 975KHz
+aproximadamente, por lo cual se deberá de construir un circuito de acondicionamiento externo al PSoC
+que pueda cumplir con el ancho de banda requerido con la señal. También habrá que construir un filtro
+antialiasing de manera externa previo al circuito de acondicionamiento de la señal.
+Por ultimo quedara por implementar el sistema de comunicación y de energı́a autónoma para poder cumplir
+con los necesidades de los sistemas IOT. Cabe resaltar que otro desafió presente sera la optimización del
+sistema en cuando a consumo de recursos de memoria del chip ARM Cortex M-3 del PSoC para que todos
+los procesamiento digitales puedan ser llevados a cabo de manera exitosa.
+
+
+Referencias
+ [1] Yong Bao and Jiabin Jia. Improved time-of-flight estimation method for acoustic tomography system.
+     IEEE Transactions on Instrumentation and Measurement, 2020.
+ [2] Billur Barshan. Fast processing techniques for accurate ultrasonic range measurements. Measurement
+     Science and Technology, 2000.
+ [3] Enrique Antenor Vargas Cabral. Caracterizacion de reflectores e irregularidades superficiales por ultra-
+     sonidos en aire. PhD thesis, Universidad Complutense de Madrid, October 2003.
+ [4] P. P. P. J. S. d. F. Jean Carlos Fabiano dos Santos. Recovering of corrupted ultrasonic waves, for
+     determination of tof using the zero-crosing detection technique. IEEE Transactions on Instrumentation
+     and Measurement, 2019.
+ [5] C. Offelli D. Petri E. Sardini D. Marioli, C. Narduzzi and A. Taroni. Digital time-of-flight measurement
+     for ultrasonic sensors. IEEE Transactions on Instrumentation and Measurement. Meas., vol. 41, no. 1,
+     pp. 93–97, Feb. 1992.
+ [6] Sergey Gerasimov and Igor Zhelbakov. Improving accuracy of the arrival time determining of a flowmeter
+     acoustic signals by the correlation method. International Russian Automation Conference, 2020.
+ [7] Ji-De Huang, Chih-Kung Lee, Chau-Shioung Yeh, Wen-Jong Wu, and Chih-Ting Lin. High-precision ul-
+     trasonic ranging system platform based on peak-detected self-interference technique. IEEE Transactions
+     on Instrumentation and Measurement, 60(12):3775–3780, 2011.
+ [8] Texas Instruments. Tdc1000 ultrasonic sensing analog front end (afe) for level sensing, flow sensing,
+     concentration sensing, and proximity sensing applications, 2015.
+ [9] Texas Instruments. Msp430fr604x(1), msp430fr603x(1) ultrasonic sensing msp430™microcontrollers for
+     water-metering applications, 2018.
+[10] J. C. Jackson, R. Summan, G. I. Dobie, S. M. Whiteley, and G. Hayward. Time-of-flight measurement
+     techniques for airborne ultrasonic ranging. IEEE transactions on intrumentation and measurement.
+[11] L-B. Mu B. Liu L. Tian, K-J. Xu. Energy peak fitting of echo based signal processing method for
+     ultrasonic gas flow meter. Measurement, 2017.
+[12] L. D. Landau and E. M. Lifshitz. Fluid Mechanics. London: Pergamon Press, 2 ed.,., 1987.
+[13] L. C. Lynnworth. Ultrasonic Measurementfor Process Control - Theory, Techuiques, Applications. Aca-
+     demic Press., 1989.
+[14] Gustavo M. Osorio. Diseño e implementación de un anemómetro ultrasónico aplicando técnicas de
+     submuestreo. Unpublished Manuscript, 2015.
+[15] Angelo M. Sabatini. Correlation receivers using laguerre filter banks for modelling narrowband ultra-
+     sonic echoes and estimating their time-of-flights. IEEE Transactions on Ultrasonic, Ferroelectrics and
+     Frequency Control, 44(6), Nov 1997.
+
+
+                                                     14
+[16] Inc. Steiner & Martins. Ultrasonic flow sensors, 975 khz 2.5 mpa.
+[17] Sihao Sun, Shiyang Li, Luan Lin, Yaqi Yuan, and Minguir Li. A novel signal processing methor based
+     on cross-correlacion and interpolation for tof measurement. IEEE International Conference on Signal
+     and Image Processing, 2019.
+[18] E. A. Vargas and R. C. Ruiz. Criterio de resolucion axial para la tenica pulso-eco. IEEE transactions
+     on intrumentation and measurement, June 2004.
+[19] R. G. Vaughan, N. L. Scott, and D. R. White. The theory og bandpass sampling. IEEE transactions
+     on signal processing, page 4, September 1991.
+[20] J. G. Webster. The measurement, intrumentation and sensors. pages 801–809, 1999.
+[21] Enrique Vargas y José Gomez. Manipulación de partı́culas por medio de ondas mecánicas. Tesis de
+     grado, 2017.
+[22] Enrique Vargas y Ulises Clemotte. Dise no e implementaci on de un caudal ımetro ultras onico utilizando
+     t ecnicas de tiempo de vuelo. Tesis de grado, 2021.
+
+
+
+
+                                                    15
+

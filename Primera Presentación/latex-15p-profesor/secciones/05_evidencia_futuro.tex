@@ -1,51 +1,64 @@
-\section{Evidencia de adquisición y trabajo futuro}
-\label{sec:evidencia}
+\section{Resultados parciales}
+\label{sec:resultados}
 
-La campaña disponible se realizó con una fuente fija y un receptor desplazado secuencialmente a 21 posiciones entre 10 y \SI{50}{m}, con paso nominal de \SI{2}{m}. En cada posición se repitieron impactos y se conservaron la señal del martillo y la respuesta del geófono. Esta geometría permite comprobar el flujo completo desde una captura puntual hasta un conjunto ordenado por distancia, pero no prueba la operación simultánea de 21 nodos ni la repetibilidad energética de la fuente.
+Las pruebas disponibles cubren progresivamente la cadena, desde el acondicionamiento hasta el registro de campo. Los barridos eléctricos verificaron continuidad, ganancia y fase de las rutas internas hasta el ADC. Al combinar la transferencia medida con el modelo nominal del SM-24, la figura~\ref{fig:caracterizacion-electrica} muestra la respuesta esperada del conjunto geófono--electrónica. La comparación distingue el resultado medido de la electrónica de la predicción que incorpora al transductor.
 
-Después de revisar, alinear y promediar los golpes de cada posición, las trazas se reúnen en el registro de la figura~\ref{fig:waterfall}. El eje espacial corresponde a posiciones sucesivas del mismo receptor. Se trata, por tanto, de un \textbf{registro multicanal sintetizado por posiciones con una fuente activa repetida cuya variabilidad no se cuantifica aquí}; no debe describirse como una adquisición multicanal simultánea. Existen antecedentes del uso de un solo receptor desplazado para formar imágenes de dispersión bajo condiciones controladas, aunque el protocolo publicado fija el receptor y desplaza la fuente, a diferencia de esta campaña \citep{LinAshlock2016}.
+La calibración automática corrigió la continua etapa por etapa antes de adquirir. Las señales de la figura~\ref{fig:calibracion-etapas} convergen hacia sus referencias y los códigos obtenidos se conservan por configuración de ganancia. Una vez calibrado el frente, el PSoC digitaliza y traslada las muestras por las rutas DMA de la figura~\ref{fig:hardware-digital}; la comunicación y la interfaz operan después sobre una captura que ya quedó almacenada localmente.
 
-\begin{table*}[!tb]
-\centering
-\scriptsize
-\caption{Parámetros y decisiones del conjunto mostrado.}
-\begin{tabularx}{0.96\textwidth}{@{}lYY@{}}
-\toprule
-Elemento & Valor o procedimiento & Alcance de la información \\
-\midrule
-Geometría & 21 offsets de 10 a \SI{50}{m}; paso \SI{2}{m}; apertura \SI{40}{m} & Un receptor desplazado; una excitación distinta por captura \\
-Inventario & 607 candidatos; 9 excluidos manualmente; 598 incorporados al manifiesto & El motivo persistido de exclusión es ``no aceptado'', sin umbral cuantitativo recuperable \\
-Tasas históricas & 455 registros a \SI{1020}{Hz} y 143 a \SI{2929}{Hz} & Remuestreo a \SI{1020}{Hz} dentro del grupo antes del promedio \\
-Filtrado & Butterworth pasa-bajos de orden 10 a \SI{80}{Hz}, aplicado en fase cero & No desplaza los arribos; el crudo permanece conservado \\
-Alineación & Pico absoluto del canal HAMMER; tiempo común respecto del impacto & Corrige el origen de cada golpe, no demuestra equivalencia espectral entre impactos \\
-Waterfall mostrado & Grupo activo: 473 pares HAMMER--GEO; 20--37 golpes por offset, mediana 21 & Promedio por offset y normalización independiente por traza \\
-Ganancia y rango & Persistidos por archivo, sin configuración única en la campaña histórica & La normalización impide usar esta figura para comparar amplitud entre offsets \\
-\bottomrule
-\end{tabularx}
-\label{tab:campana}
-\end{table*}
+La coordinación inalámbrica se ensayó de manera exploratoria con tres nodos esclavos. Durante 128 órdenes START se observaron en osciloscopio los flancos GPIO generados por los ESP32 al ejecutar la orden. La separación entre esos marcadores se encontró aproximadamente entre 200 y \SI{400}{\micro s}. El resultado demuestra la operación multiesclavo y proporciona una primera magnitud del arranque distribuido; no mide todavía el inicio efectivo de los ADC ni la deriva de sus relojes.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.88\textwidth,keepaspectratio]{f_registros_cascada.png}
-\caption{Waterfall de 21 posiciones secuenciales. Cada traza promedia 20 a 37 impactos alineados por HAMMER y se normaliza por separado, por lo que no conserva atenuación entre offsets. La traza HAMMER usa los 473 pares del grupo activo; no hubo 21 canales simultáneos. Fuente: elaboración propia.}
+\includegraphics[width=0.64\textwidth,keepaspectratio]{f_contenido_baja_frecuencia.png}
+\caption{Densidad espectral y relación señal--ruido de las capturas, agrupadas por distancia. La zona sombreada identifica la banda baja de interés y la línea vertical la frecuencia natural nominal del SM-24.}
+\label{fig:contenido-baja}
+\end{figure*}
+
+\subsection{Contenido espectral de las capturas}
+
+Para estimar la banda realmente observable se comparó, por impacto, una ventana posterior al marcador con una ventana de ruido previa. La figura~\ref{fig:contenido-baja} reúne 265 impactos en 15 distancias con al menos tres registros utilizables. La mediana de la relación señal--ruido fue 0,5 dB entre 1 y 5 Hz y 2,1 dB entre 5 y 10 Hz; aumentó a 16,7 dB entre 10 y 20 Hz y a 24,4 dB entre 20 y 50 Hz. Ninguna de las 15 distancias superó 10 dB de mediana por debajo de 10 Hz.
+
+El resultado es extremo a extremo y, por ello, combina fuente, acoplamiento, terreno, geófono y electrónica: no permite atribuir la limitación a un único bloque. Sí establece una decisión experimental inmediata. Aumentar la energía y la repetibilidad de la excitación en baja frecuencia es necesario para evaluar cuánto puede aprovecharse la compensación del receptor y para extender la banda útil del registro.
+
+\subsection{Registro espacial sintetizado}
+
+La campaña desplazó un receptor entre 21 posiciones de 10 a \SI{50}{m}, con un paso de \SI{2}{m}. En cada posición se repitió el impacto, se alinearon las capturas con la referencia del martillo y se obtuvo una traza representativa. El resultado se ordenó por distancia para formar el waterfall de la figura~\ref{fig:waterfall}.
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.67\textwidth,keepaspectratio]{f_waterfall_4s.png}
+\caption{Waterfall sintetizado con 21 posiciones secuenciales y un único receptor desplazado. Se muestran los primeros 4 s posteriores al impacto; cada traza está normalizada para visualizar su evolución temporal.}
 \label{fig:waterfall}
 \end{figure*}
 
-El alcance demostrado es la captación y el almacenamiento con un GEO, la identificación eléctrica parcial del frente y la construcción del waterfall. El manifiesto general incorporó 598 de 607 candidatos; la figura usa 473 pares HAMMER--GEO del grupo activo y los 125 restantes no intervienen en sus promedios. Ninguna cifra representa observaciones independientes, pues se repiten golpes por offset. Permanecen pendientes la validación mecánica extremo a extremo, el ruido equivalente de entrada y la equivalencia temporal entre placas. El perfil $V_S(z)$ y la inversión se reservan para la segunda presentación.
+La progresión temporal observada entre posiciones confirma que la plataforma y el flujo de procesamiento permiten construir un registro espacio--tiempo. No corresponde a 21 receptores simultáneos: cada fila procede de una excitación distinta y la normalización impide comparar amplitudes absolutas. La evidencia alcanzada sostiene la afirmación central de esta etapa: se desarrolló una plataforma orientada a MASW, verificada parcialmente mediante ensayos de sus subsistemas y evidencia preliminar de campo.
 
-\section{Limitaciones y siguiente etapa}
-\label{sec:futuro}
+\begin{table*}[!tb]
+\centering
+\footnotesize
+\caption{Alcance de las evidencias presentadas.}
+\begin{tabularx}{0.94\textwidth}{@{}lYY@{}}
+\toprule
+Evidencia & Qué permite afirmar & Qué no establece todavía \\
+\midrule
+Barridos eléctricos & Transferencia de las rutas internas y continuidad hasta el ADC & Calibración mecánica del geófono completo \\
+Calibración de continua & Ajuste automático por etapa antes de adquirir & Igualdad de respuesta entre varios receptores \\
+Tres esclavos, 128 START & Operación distribuida y marcadores GPIO separados aproximadamente 200--400 $\mu$s & Inicio y deriva de los ADC \\
+Espectros de campo & SNR insuficiente bajo 10 Hz en el conjunto observado & Causa única de la pérdida de energía \\
+Waterfall secuencial & Registro espacio--tiempo de 21 posiciones sintetizadas & Adquisición simultánea o caracterización geotécnica final \\
+\bottomrule
+\end{tabularx}
+\label{tab:alcance-resultados}
+\end{table*}
 
+\section{Trabajo futuro}
 
-\textbf{Fuente de excitación.} Se ensayará una fuente más energética y repetible para reforzar la banda baja, manteniendo el martillo instrumentado como referencia temporal y medida de la variación entre golpes.
+Se fijan cuatro hitos verificables. Primero se construirá o incorporará una fuente más energética y repetible, cuya mejora se evaluará repitiendo el análisis espectral y comparando energía y SNR por banda. Segundo, una misma señal analógica se aplicará a varios nodos GEO para medir sobre los datos ADC el desfase inicial, la deriva temporal y las diferencias de ganancia y fase. Tercero, esos resultados se utilizarán para calibrar la respuesta relativa de los receptores y validar la adquisición simultánea.
 
-\textbf{Validación multicanal.} Antes de afirmar simultaneidad se aplicará una señal común a varias placas y se medirán ganancia, fase, desfase inicial y deriva de reloj.
+Finalmente se ampliará el arreglo si se obtienen recursos para más sensores; en caso contrario se continuará con adquisición secuencial, mejorando la fuente y la trazabilidad de cada posición. Una vez consolidado el registro se estudiarán rigurosamente la formación de imágenes de dispersión, la selección modal y los algoritmos de inversión. Esas etapas pertenecen a la segunda presentación y no se utilizan aquí para atribuir propiedades geotécnicas al emplazamiento.
 
-\textbf{Caracterización metrológica.} Se medirán ruido por ganancia, respuesta ante una excitación mecánica conocida e incertidumbre desde el geófono hasta los datos almacenados.
+La evaluación de la nueva fuente conservará una geometría fija y un número definido de repeticiones. Se compararán el espectro del impacto, la energía recibida y la SNR por bandas, además de la variación entre golpes. El objetivo no será sólo elevar la amplitud total, sino demostrar una mejora reproducible en la banda baja sin saturar el frente analógico. También se registrarán las condiciones de acoplamiento para separar, en lo posible, cambios de la fuente y del montaje.
 
-\textbf{Procesamiento.} La segunda presentación analizará rigurosamente la extracción de dispersión y los algoritmos de inversión: sensibilidad a geometría, selección modal, parametrización y no unicidad. Hasta entonces no se presenta un perfil $V_S(z)$ como resultado.
+La validación multinodo seguirá un protocolo común de tasa, ganancia y duración. A partir de la señal compartida se estimará el retardo inicial entre secuencias ADC, su evolución durante la ventana y las diferencias de magnitud y fase. Se repetirán las mediciones después de rearmar los nodos para informar dispersión e incertidumbre, no únicamente un caso favorable. Sólo después de cumplir esos controles se comparará un arreglo simultáneo con el registro secuencial; ambos recorridos permanecerán disponibles porque responden a disponibilidades instrumentales distintas.
 
-\textbf{Recursos y continuidad.} La propuesta PINV01-317 fue presentada y no resultó adjudicada \citep{PINV01317}. Se buscará financiación para fabricar y validar varios receptores; si no se obtiene, se continuará con un receptor desplazado secuencialmente, mejorando fuente y trazabilidad.
-
-\textbf{Criterio de cierre.} La siguiente entrega sólo denominará multicanal simultánea a una captura respaldada por la prueba de señal común y sus errores de inicio y deriva. Asimismo, una curva de dispersión deberá indicar apertura, separación, banda útil, región sin aliasing y criterio de selección modal. La comparación de algoritmos de inversión se hará sobre datos sintéticos y de campo conservando parametrización, función de ajuste y sensibilidad; sus diferencias se reportarán como parte de la no unicidad y no como precisión del instrumento. Estos criterios separan resultados electrónicos, procesamiento y conclusión geotécnica.
+El cierre de esta etapa exigirá resultados reproducibles y trazables. Para la fuente se informarán la distribución por bandas y la variación entre repeticiones; para los receptores, los errores relativos antes y después de calibrar; y para la coordinación, el retardo y la deriva calculados directamente sobre las muestras. Estos criterios evitarán confundir el funcionamiento de la comunicación con una sincronización metrológica y permitirán decidir, con evidencia, si el sistema está listo para procesar dispersión.
