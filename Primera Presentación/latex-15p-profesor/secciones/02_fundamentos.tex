@@ -1,131 +1,95 @@
 \section{Propagación en medios elásticos}
 \label{sec:fundamentos}
 
-Un impacto aplicado sobre la superficie altera localmente el estado de equilibrio del suelo. Esa perturbación se transmite porque cada elemento material ejerce fuerzas sobre los elementos vecinos. Para relacionar lo que se registra en la superficie con las características del terreno es necesario comenzar por esa respuesta mecánica y distinguir las formas de movimiento que admite un medio elástico.
+Un impacto aplicado sobre la superficie altera localmente el estado de equilibrio del suelo. Esa perturbación se transmite, pues cada elemento material ejerce fuerzas sobre sus vecinos. Para relacionar la respuesta observada con las características del terreno es necesario comprender tal comportamiento mecánico y distinguir las formas de movimiento que admite un medio elástico.
 
-\subsection{Respuesta de un medio elástico}
+\subsection{Ondas de cuerpo en un medio elástico}
 \label{sec:medio-elastico}
 
-En el régimen de pequeñas deformaciones, un sólido homogéneo e isótropo puede describirse mediante su densidad $\rho$ y los parámetros de Lamé $\lambda$ y $\mu$. El primero participa en la respuesta volumétrica y el segundo es el módulo de corte. Si $\mathbf{u}(\mathbf{x},t)$ representa el desplazamiento de un punto material, el equilibrio lineal sin fuerzas de volumen es \citep{Kramer1996,Foti2014}
+En el régimen de pequeñas deformaciones se representa el terreno mediante un medio continuo: se sigue el desplazamiento medio de volúmenes infinitesimales en lugar del movimiento de cada grano. Bajo las hipótesis iniciales de homogeneidad e isotropía, su respuesta puede describirse paramétricamente mediante la densidad $\rho$ y los parámetros de Lamé $\lambda$ y $\mu$. La densidad gobierna la inercia; $\lambda$ participa en la oposición al cambio de volumen, y $\mu$ es el módulo de corte que cuantifica la oposición al cambio de forma. Si $\mathbf{u}(\mathbf{x},t)$ es el desplazamiento, el equilibrio lineal queda expresado por \citep{Kramer1996,Foti2014}
 \begin{equation}
 \rho\,\frac{\partial^2\mathbf{u}}{\partial t^2}
 =(\lambda+\mu)\nabla(\nabla\!\cdot\!\mathbf{u})+
 \mu\nabla^2\mathbf{u}.
 \label{eq:navier}
 \end{equation}
-Esta descripción idealiza el terreno como un continuo: no sigue grano por grano, sino el desplazamiento medio de un volumen pequeño frente a la escala del ensayo. La hipótesis homogénea permite reconocer primero los mecanismos elementales; más adelante, la estratificación reintroduce los cambios de propiedades con la profundidad. La hipótesis elástica, por su parte, supone que al cesar una perturbación pequeña el material tiende a recuperar su configuración. La inercia se opone a esa restitución y hace que la perturbación no permanezca localizada, sino que se propague.
+Esta idealización permite reconocer de primera mano los mecanismos elementales de propagación. La estratificación incorporará después los cambios de propiedades con la profundidad.
 
-La aceleración de un elemento queda así vinculada con dos mecanismos de deformación: el cambio de volumen y el corte. La descomposición de Helmholtz los separa mediante un potencial escalar $\phi$ y otro vectorial $\mathbf{\Psi}$:
+La aceleración de cada volumen elemental puede provenir de una deformación volumétrica o de corte. La descomposición de Helmholtz separa ambos movimientos mediante un potencial escalar $\phi$ y uno vectorial $\mathbf{\Psi}$ \citep{Foti2014}:
 \begin{equation}
 \mathbf{u}=\nabla\phi+\nabla\times\mathbf{\Psi},
 \qquad \nabla\cdot\mathbf{\Psi}=0.
 \label{eq:helmholtz}
 \end{equation}
-Al sustituir esta expresión en la ecuación de movimiento aparecen dos soluciones independientes. La primera produce compresiones y dilataciones; la segunda produce deformaciones de corte. Éste es el origen físico de las ondas P y S.
+Al sustituirla en la ecuación~\eqref{eq:navier} aparecen dos soluciones independientes. La primera produce compresiones y dilataciones en la dirección de avance y se denomina onda P, inicial asociada en inglés con \emph{primary} y \emph{pressure}. La segunda produce deformación transversal de corte y se denomina onda S, por \emph{secondary} y \emph{shear}. Sin introducir aún una fuente concreta, estas soluciones muestran que un mismo material admite dos formas de transportar una perturbación.
 
-Aplicando divergencia y rotacional a la ecuación~\eqref{eq:navier}, ambos potenciales satisfacen ecuaciones de onda con constantes diferentes:
-\begin{equation}
-\nabla^2\phi-\frac{1}{V_P^2}\frac{\partial^2\phi}{\partial t^2}=0,
-\qquad
-\nabla^2\mathbf{\Psi}-\frac{1}{V_S^2}\frac{\partial^2\mathbf{\Psi}}{\partial t^2}=0.
-\label{eq:ondas-potenciales}
-\end{equation}
-Estas expresiones no presuponen todavía una fuente ni un receptor particulares. Indican que el mismo medio admite dos maneras independientes de transportar una perturbación, cada una gobernada por una combinación diferente de sus propiedades. Identificarlas antes de hablar de la superficie evita atribuir al método de medida un fenómeno que pertenece al propio terreno.
-
-\subsection{Ondas P y S}
-\label{sec:ondas-cuerpo}
-
-En una onda P el movimiento de las partículas es paralelo a la dirección de propagación. El material atraviesa ciclos de compresión y dilatación, por lo que intervienen tanto $\lambda$ como $\mu$. En una onda S el movimiento es perpendicular a la propagación y no cambia el volumen; su restitución depende del módulo de corte. Las velocidades resultantes son
+Las velocidades de propagación correspondientes son
 \begin{equation}
 V_P=\sqrt{\frac{\lambda+2\mu}{\rho}},
 \qquad
 V_S=\sqrt{\frac{\mu}{\rho}}.
 \label{eq:velocidades}
 \end{equation}
-La velocidad describe aquí el avance de un mismo estado de la perturbación a través del medio; no es la velocidad instantánea de cada partícula. Como la onda P moviliza la respuesta volumétrica y la de corte, en un mismo material se propaga más rápido que la onda S. La separación entre el movimiento de las partículas y el avance de la perturbación es importante: el receptor permanece en una posición fija y observa cómo varía localmente el movimiento cuando el frente pasa por ella.
+$V_P$ y $V_S$ describen el avance del patrón de deformación; no son velocidades medias ni instantáneas de las partículas, que sólo oscilan alrededor de su posición de equilibrio. Un receptor permanece en una localización fija y observa esa oscilación cuando el frente de onda pasa por ella. La figura~\ref{fig:ondas-ps} muestra la diferencia entre el movimiento longitudinal P y el transversal S.
 
-La segunda relación conduce directamente a
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=0.98\columnwidth]{ondas_p_s.png}
+\caption{Deformación y movimiento local asociados con ondas P y S. En P las partículas oscilan paralelamente al avance; en S lo hacen en dirección transversal. Adaptada de \citet{Kearey2002}, a partir de Bolt.}
+\label{fig:ondas-ps}
+\end{figure}
+
+La segunda relación de la ecuación~\eqref{eq:velocidades} conduce a
 \begin{equation}
 G_{\max}=\rho V_S^2,
 \label{eq:rigidez}
 \end{equation}
-donde $G_{\max}$ es el módulo de corte correspondiente a deformaciones pequeñas. Esta vinculación explica el interés geotécnico de observar movimientos gobernados por corte: si se dispone de una estimación de densidad, su propagación aporta información sobre la rigidez inicial del suelo \citep{Kramer1996,Foti2014}. No reemplaza los parámetros de diseño obtenidos bajo cargas mayores, pues el suelo disipa energía y su rigidez cambia con el nivel de deformación.
+donde $G_{\max}$ es el módulo de corte a pequeñas deformaciones. Esta vinculación es de gran interés geotécnico, pues la propagación de las ondas S aporta información sobre la rigidez inicial del suelo cuando se dispone de una estimación de densidad \citep{Kramer1996,Foti2014}. Vale la pena recalcar que tal estimación no reemplaza los parámetros de diseño bajo cargas mayores: este modelo lineal no incorpora disipación energética ni el comportamiento plástico del material.
+
+\subsection{Interfaces y conversión de modos}
+
+Las ondas S admiten dos polarizaciones. La componente SV se mueve dentro del plano vertical de propagación, mientras que la componente SH lo hace horizontalmente y perpendicular a ese plano. Esta distinción se vuelve relevante al alcanzar las condiciones de frontera del material. Puede encontrarse el contacto con otro material o una superficie libre; en ambos casos se hablará de una interfaz.
+
+Cuando una componente P o SV incide oblicuamente sobre el contacto entre dos sólidos, los contrastes de densidad y rigidez reparten su energía entre ondas reflejadas y transmitidas y permiten conversión P--SV, como resume la figura~\ref{fig:conversion-interfaz}. La componente SH permanece desacoplada de P y SV en una interfaz plana entre medios elásticos isótropos: sólo produce componentes SH reflejadas y transmitidas \citep{Foti2014,Sun2003}.
 
 \begin{figure}[!tb]
 \centering
-\begin{tikzpicture}[x=0.72cm,y=0.72cm,>=Latex,font=\scriptsize]
-  \draw[->,thick] (0,2.7)--(5.3,2.7) node[right]{avance};
-  \foreach \x in {0.5,1.2,...,4.7}{\draw[->,blue!70!black] (\x,2.25)--++(0.48,0);}
-  \node[anchor=east,font=\bfseries] at (0,2.25){P};
-  \draw[->,thick] (0,1.25)--(5.3,1.25) node[right]{avance};
-  \foreach \x in {0.5,1.2,...,4.7}{\draw[->,orange!85!black] (\x,0.78)--++(0,0.62);}
-  \node[anchor=east,font=\bfseries] at (0,0.95){SV};
-  \draw[thick] (0,-0.15)--(5.3,-0.15);
-  \node[anchor=east] at (0,-0.15){interfaz};
-  \draw[->,purple!80!black,thick] (0.7,-1.05)--(2.45,-0.15);
-  \draw[->,purple!80!black,thick] (2.45,-0.15)--(4.2,-1.05);
-  \draw[->,teal!70!black,thick] (2.45,-0.15)--(4.15,0.55);
-  \node[align=center] at (2.55,-1.45){reflexión, transmisión\\y conversión P--SV};
-\end{tikzpicture}
-\caption{Las ondas P y S se distinguen por la dirección del movimiento de las partículas respecto del avance. Al alcanzar una interfaz, el campo se refleja, se transmite y puede convertir componentes.}
-\label{fig:p-s-interfaz}
+\includegraphics[width=0.80\columnwidth]{conversion_interfaz.png}
+\caption{Reflexión, transmisión y conversión P--SV de una onda P al alcanzar una interfaz entre dos medios elásticos. Adaptada de \citet{Sun2003}.}
+\label{fig:conversion-interfaz}
 \end{figure}
 
-La onda S puede polarizarse en dos direcciones. Se denomina SV cuando el movimiento transversal pertenece al plano vertical de propagación y SH cuando es horizontal y perpendicular a ese plano. Esta distinción resulta importante al llegar a una frontera. El terreno real no es infinito: contiene contactos entre materiales diferentes y termina en una superficie libre.
+El límite superior del terreno es una interfaz particular: el aire no puede sostener esfuerzos de corte y, en la superficie libre, deben satisfacerse condiciones de tensión nula. Allí las componentes reflejadas interactúan y aparecen soluciones cuya energía se concentra cerca de la superficie.
 
 \subsection{Ondas superficiales}
 
-Cuando una onda P o S alcanza una interfaz ---el contacto entre materiales con propiedades distintas--- parte de su energía se refleja y parte se transmite. Los contrastes de densidad y rigidez modifican amplitudes, recorridos y fases, y permiten conversiones entre P y SV. El límite superior del terreno es un caso particular: como el aire no sostiene esfuerzos de corte, las tensiones normal y tangencial deben anularse en esa superficie libre. Para satisfacer esas condiciones aparecen modos cuya energía se concentra cerca de la superficie y cuya amplitud disminuye con la profundidad: las ondas superficiales \citep{Foti2014,Foti2018}.
+Antes de clasificarlas conviene fijar la geometría. En una línea de medida, la dirección longitudinal une la fuente con los puntos de observación; la vertical es normal a la superficie y la dirección transversal completa el sistema. Una fuente aplicada en la superficie excita simultáneamente ondas de cuerpo y superficiales. Corresponde al sistema de medida privilegiar el movimiento de interés entre todos los presentes.
 
-Las ondas superficiales no requieren una excitación distinta: son soluciones modales que combinan componentes compatibles con las condiciones mecánicas de la frontera. Una fuente superficial puede excitar a la vez ondas de cuerpo, reflexiones, conversiones y movimiento guiado cerca de la superficie. El sistema de medida se diseña para privilegiar uno de esos movimientos, no para crearlo.
+Las soluciones modales compatibles con las condiciones mecánicas de la frontera y cuya energía permanece principalmente en la zona somera se denominan ondas superficiales. En medios estratificados pueden distinguirse dos familias según las ondas de cuerpo que las conforman y, en consecuencia, su polarización. El movimiento SH guiado por las capas da origen a las ondas Love, cuyas partículas se desplazan horizontalmente y en dirección transversal. En cambio, las componentes P y SV se acoplan en la superficie y producen movimiento dentro del plano vertical; a esta resultante se la denomina onda Rayleigh \citep{Foti2014,Foti2018}.
 
-En medios estratificados se distinguen dos familias principales. Las ondas Love corresponden a movimiento SH guiado por las capas: las partículas se desplazan horizontalmente y en dirección transversal al avance. Las ondas Rayleigh surgen del acoplamiento de componentes P y SV y producen movimiento dentro del plano vertical. Esta separación permite decidir cuál de ellas resulta pertinente antes de definir un método de medición \citep{Foti2014}.
-
-Ambas familias necesitan una frontera o una estructura estratificada que guíe el movimiento, pero no presentan la misma polarización. En una geometría lineal, la dirección longitudinal queda definida por la línea entre la fuente y las posiciones de observación; la vertical es normal a la superficie y la transversal completa el sistema. Esta referencia geométrica permite asociar cada familia con el componente físico que debería medir un transductor, sin introducir aún una tecnología de sensor concreta.
-
-\subsection{Onda Rayleigh}
+\subsection{Ondas Rayleigh}
 \label{sec:rayleigh}
 
-En una onda Rayleigh las partículas describen trayectorias elípticas en el plano vertical. En un semiespacio elástico homogéneo, su velocidad de fase ---la rapidez con que avanza una cresta de una componente armónica--- suele ser ligeramente menor que $V_S$ para los intervalos de propiedades habituales en suelos. Su movimiento contiene una componente vertical accesible desde la superficie. Una excitación predominantemente vertical favorece esta familia; la onda Love, en cambio, exige captar movimiento horizontal transversal. Por esta correspondencia entre fuente, polarización y componente observable, el proyecto se concentra en ondas Rayleigh \citep{Foti2014}.
+En una onda Rayleigh las partículas describen trayectorias elípticas en el plano vertical. Para propiedades habituales del suelo, su velocidad de fase es ligeramente menor que $V_S$. La combinación de una excitación predominantemente vertical y una componente vertical observable desde la superficie permite privilegiar este movimiento; por ello el proyecto se concentra en ondas Rayleigh y no en Love.
 
-La amplitud disminuye con la distancia por la expansión geométrica del frente y por la disipación del material. Sin embargo, al permanecer concentrada cerca de la superficie, la onda Rayleigh suele dominar los registros obtenidos a distancias apropiadas de un impacto vertical. La instrumentación no crea esa preferencia: aprovecha una forma de propagación que surge de las condiciones mecánicas de la frontera.
-
-El movimiento elíptico no se mantiene uniforme con la profundidad. En un semiespacio homogéneo su amplitud decrece y puede incluso cambiar el sentido de rotación cerca de la superficie según las propiedades elásticas. En un suelo estratificado, cada interfaz modifica ese patrón y pueden coexistir modos con distribuciones distintas. El interés práctico no reside en seguir una partícula aislada, sino en observar el comportamiento coherente que esas soluciones producen a lo largo de varias posiciones.
+La expansión geométrica también favorece su observación a cierta distancia de la fuente. En condiciones ideales de campo lejano, la amplitud de las ondas de cuerpo se reduce aproximadamente como $r^{-1}$ al distribuirse sobre un frente esférico, mientras que la de las ondas superficiales lo hace como $r^{-1/2}$ sobre un frente cilíndrico. Por esta menor tasa de decaimiento, las componentes Rayleigh suelen dominar el registro superficial \citep{Foti2014}.
 
 \subsection{Estratificación y dispersión}
 \label{sec:dispersion}
 
-En un semiespacio homogéneo, una onda Rayleigh de un modo determinado conserva la misma velocidad de fase para todas las frecuencias. Un suelo real está estratificado. Las componentes de mayor longitud de onda involucran un volumen más profundo, mientras que las longitudes menores se concentran cerca de la superficie. Como cada una pondera una combinación diferente de capas, dejan de avanzar de la misma manera. Esta dependencia de la velocidad de fase con la frecuencia se denomina dispersión \citep{Foti2014,Foti2018}.
-
-El efecto puede entenderse comparando dos componentes del mismo impacto. Una componente de longitud corta concentra gran parte de su movimiento en las capas someras y queda gobernada principalmente por ellas. Otra de longitud mayor extiende su campo sobre varias capas y responde a una combinación más profunda. Si esas capas no tienen la misma rigidez y densidad, los puntos de igual fase de ambas componentes avanzan a ritmos diferentes. El patrón de dispersión es, por tanto, una consecuencia de la estratificación y no una propiedad impuesta durante el procesamiento.
-
-La frecuencia indica cuántos ciclos se observan por unidad de tiempo; la longitud de onda indica la distancia espacial entre puntos equivalentes de esos ciclos. Ambas magnitudes quedan unidas por
+En un semiespacio homogéneo, un modo Rayleigh conserva la misma velocidad de fase para todas las frecuencias. El suelo real, en cambio, está estratificado. Las componentes de menor frecuencia y mayor longitud de onda involucran un volumen más profundo, mientras que las de mayor frecuencia se concentran cerca de la superficie. Como cada una pondera una combinación diferente de capas, avanzan con velocidades de fase distintas. Esta dependencia con la frecuencia se denomina dispersión \citep{Foti2014,Foti2018}.
 
 \begin{equation}
-\lambda_R(f)=\frac{c_R(f)}{f}.
+\lambda_R(f)=\frac{c_R(f)}{f},
 \label{eq:longitud-onda}
 \end{equation}
-Esta relación vincula la longitud de onda $\lambda_R$, la frecuencia $f$ y la velocidad de fase $c_R$, pero no asigna una profundidad única a cada frecuencia: las zonas de sensibilidad se superponen. La figura~\ref{fig:dispersion-profundidad} muestra cómo distintas componentes del mismo movimiento superficial interrogan volúmenes diferentes del terreno.
+relaciona longitud de onda $\lambda_R$, frecuencia $f$ y velocidad de fase $c_R$. No asigna una profundidad única a cada frecuencia, pero muestra por qué una longitud de onda mayor interroga una región más extensa. La figura~\ref{fig:rayleigh-frecuencia} ilustra cualitativamente esta diferencia de alcance mediante una aplicación estratificada sobre concreto.
 
-En consecuencia, un registro que sólo conserve el valor máximo de la señal sería insuficiente. Debe mantenerse su evolución temporal para separar frecuencias y su posición para comparar cómo avanza cada componente. Esa necesidad de observar tiempo y espacio es la que da origen a los procedimientos de ondas superficiales empleados en campo.
-
-\begin{figure}[!tb]
+\begin{figure*}[!tb]
 \centering
-\begin{tikzpicture}[x=0.76cm,y=0.63cm,>=Latex,font=\scriptsize]
-  \fill[orange!12] (0,0)--(6,0)--(6,-1)--(0,-1)--cycle;
-  \fill[blue!10] (0,-1)--(6,-1)--(6,-2.4)--(0,-2.4)--cycle;
-  \fill[green!10] (0,-2.4)--(6,-2.4)--(6,-4)--(0,-4)--cycle;
-  \draw[thick] (0,0)--(6,0) node[right]{superficie};
-  \draw (0,-1)--(6,-1); \draw (0,-2.4)--(6,-2.4);
-  \draw[very thick,teal!70!black,decorate,decoration={snake,amplitude=1.5mm,segment length=7mm}] (0.35,-0.38)--(3.05,-0.38);
-  \draw[very thick,purple!75!black,decorate,decoration={snake,amplitude=2mm,segment length=15mm}] (0.35,-1.8)--(5.55,-1.8);
-  \draw[<->,teal!70!black] (0.45,0.42)--(1.83,0.42) node[midway,above]{$\lambda_1$};
-  \draw[<->,purple!75!black] (0.45,-3.25)--(3.05,-3.25) node[midway,below]{$\lambda_2>\lambda_1$};
-  \node[align=left] at (4.55,-0.55){sensibilidad\\somera};
-  \node[align=left] at (4.55,-2.0){mayor volumen\\involucrado};
-\end{tikzpicture}
-\caption{Distintas longitudes de onda Rayleigh ponderan volúmenes diferentes. Si las capas no poseen las mismas propiedades, la velocidad de fase depende de la frecuencia y aparece dispersión.}
-\label{fig:dispersion-profundidad}
-\end{figure}
+\includegraphics[width=0.80\textwidth]{rayleigh_frecuencia_profundidad.png}
+\caption{Ejemplo cualitativo del alcance de ondas Rayleigh de distinta frecuencia: la componente de baja frecuencia involucra mayor profundidad y la de alta frecuencia concentra su sensibilidad cerca de la superficie. Adaptada de \citet{Sun2024}.}
+\label{fig:rayleigh-frecuencia}
+\end{figure*}
 
-La dispersión convierte una serie de registros superficiales en información útil: observar cómo cambia la señal con la frecuencia y la posición permite posteriormente estudiar la variación de rigidez. Antes de interpretar esa relación debe obtenerse un conjunto de trazas que conserve la forma temporal y la ubicación de cada medición. Esa exigencia conduce a los métodos de análisis de ondas Rayleigh.
+En consecuencia, resulta de interés obtener la evolución temporal y espacial de la señal para comparar el avance de cada componente frecuencial. La dispersión convierte ese conjunto de registros superficiales en información útil para reconocer el terreno: al observar cómo cambia la señal con la frecuencia y la posición puede construirse posteriormente un modelo compatible con la variación de rigidez. Esta necesidad conduce de manera natural a los métodos de análisis de ondas Rayleigh.

@@ -1,0 +1,17 @@
+This is BibTeX, Version 0.99e (MiKTeX 25.12)
+The top-level auxiliary file: main.aux
+The style file: apalike.bst
+Database file #1: referencias.bib
+Repeated entry---line 492 of file referencias.bib
+ : @book{Kearey2002
+ :                 ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 502 of file referencias.bib
+ : @mastersthesis{Sun2003
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 511 of file referencias.bib
+ : @article{Sun2024
+ :                 ,
+I'm skipping whatever remains of this entry
+(There were 3 error messages)
