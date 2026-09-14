@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper,twocolumn]{article}
+\documentclass[11pt,a4paper,twocolumn]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -17,11 +17,12 @@
 \usepackage{dblfloatfix}
 \usepackage[section]{placeins}
 \usepackage{balance}
+\usepackage{multicol}
 \usepackage{xurl}
 \usepackage[round,authoryear]{natbib}
 \usepackage{hyperref}
 
-\geometry{left=2.35cm,right=2.35cm,top=2.35cm,bottom=2.30cm}
+\geometry{left=2.15cm,right=2.15cm,top=2.15cm,bottom=2.10cm}
 \setlength{\columnsep}{0.68cm}
 \raggedbottom
 \setlist[itemize]{leftmargin=*,itemsep=0.15em,topsep=0.25em}
@@ -63,6 +64,12 @@
 
 \FloatBarrier
 \bibliographystyle{apalike}
-{\footnotesize\bibliography{referencias}}
+\begin{figure*}[p]
+\begin{minipage}{\textwidth}
+\begin{multicols}{2}
+\footnotesize\bibliography{referencias}
+\end{multicols}
+\end{minipage}
+\end{figure*}
 
 \end{document}

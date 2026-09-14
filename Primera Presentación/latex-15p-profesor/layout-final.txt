@@ -1,0 +1,816 @@
+ Diseño e implementación de un sistema electrónico
+multicanal del tipo IoT para caracterización geotécnica
+          del suelo mediante ondas sísmicas
+                        Proyecto final de carrera – Primera presentación
+         Alumno:       Elías David Álvarez Martínez       Carrera:   Ingeniería Electrónica.
+         Matrícula:    Y24127                             Tutor:     Enrique A. Vargas Cabral, Ph.D.
+
+
+
+Resumen                                                   a la penetración con recuperación de muestras
+                                                          en puntos discretos, mientras que CPT y CPTu
+   La caracterización del terreno sustenta decisio-       generan perfiles continuos durante la penetra-
+nes estructurales y de control de vital importan-         ción. Los ensayos downhole y crosshole permiten
+cia durante el proyecto, la ejecución y el segui-         estimar propiedades dinámicas entre puntos co-
+miento de una obra civil. Este trabajo desarrolla         nocidos, pero requieren uno o varios pozos. Por
+una plataforma electrónica orientada al análi-            su naturaleza, estas técnicas resultan indispensa-
+sis multicanal de ondas superficiales (MASW),             bles cuando se necesitan muestras o verificaciones
+compuesta por nodos de captación con geófo-               puntuales, aunque su intervención física y cober-
+nos SM-24, acondicionamiento y adquisición en             tura localizada dificultan extenderlas a toda la
+PSoC 5LP, coordinación inalámbrica mediante               obra o repetirlas después de construir (Samtani
+ESP32 y un nodo instrumentado para registrar              and Nowatzki, 2006; Foti et al., 2014).
+la excitación. Las evidencias obtenidas en campo             Como complemento, los procedimientos de su-
+permitieron construir un registro espacial con un         perficie aplican una perturbación y observan va-
+receptor desplazado y reconocer, mediante análi-          riables medibles desde la misma superficie. Las
+sis espectral, una relación señal–ruido insuficien-       características temporales, espaciales y espectra-
+te en la banda baja de interés. Estos resultados          les de la respuesta contienen información sobre
+determinan los siguientes hitos: aumentar la ener-        las propiedades mecánicas del medio. De este mo-
+gía y repetibilidad de la excitación, completar           do puede realizarse un reconocimiento preliminar
+la validación temporal entre nodos y extender el          antes de perforar, localizar con mejor criterio los
+análisis a la formación de imágenes de dispersión,        ensayos invasivos, completar la información en-
+selección modal e inversión.                              tre sondeos y repetir la observación durante la
+                                                          vida de la obra. Ambos enfoques son, por tanto,
+1.    Introducción                                        complementarios: el reconocimiento superficial
+                                                          orienta dónde investigar con mayor detalle y los
+   En una obra civil, conocer el terreno condicio-        ensayos directos aportan la comprobación locali-
+na decisiones estructurales y de control que son          zada (Foti et al., 2014, 2018).
+de vital importancia para su seguridad y desem-              Los métodos de superficie se han popularizado
+peño. Antes de construir se debe reconocer la             por estas ventajas, pero su acceso sigue siendo
+sucesión de materiales y estimar parámetros con           difícil para muchos interesados. Un arreglo re-
+los cuales dimensionar la fundación. Durante la           quiere sensores de costo elevado, instrumentación
+ejecución se controla la uniformidad de rellenos y        analógica delicada, conversión, almacenamiento,
+capas compactadas; posteriormente, nuevas me-             coordinación temporal y procesamiento de las se-
+diciones permiten investigar cambios, daños o             ñales. El propósito de este trabajo es afrontar en
+sectores que requieren mantenimiento. El recono-          conjunto esos problemas y desarrollar una plata-
+cimiento inicial constituye un requisito de diseño,       forma cómoda de operar, abierta a ampliaciones
+mientras que el seguimiento posterior exige obser-        y de menor costo relativo, sin perder las magni-
+var el terreno sin alterar la estructura existente        tudes necesarias para interpretar los registros.
+(Samtani and Nowatzki, 2006; Park et al., 2018).             Se propone utilizar el PSoC 5LP por su ver-
+   Los ensayos geotécnicos tradicionales aportan          satilidad y por la combinación poco habitual,
+información directa y localizada. El ensayo de            entre microcontroladores comerciales, de bloques
+penetración estándar (SPT) combina resistencia            analógicos configurables, conversión y lógica di-
+
+
+                                                      1
+gital en un mismo dispositivo. En conjunto con
+un ESP32, cada nodo puede acondicionar, ad-
+quirir, almacenar, coordinarse inalámbricamente
+y presentar su estado al operador. También se
+instrumenta el elemento de excitación y se lo
+incorpora como un nodo más de la red, de ma-
+nera que cada respuesta quede asociada con el
+impacto que la produjo.
+   Si bien la disponibilidad inicial de un solo re-
+ceptor obliga a repetir la adquisición en posicio-
+nes sucesivas, el diseño permanece abierto y fue
+concebido para incorporar varios nodos recepto-
+res. Para establecer qué deben medir y preservar
+esos nodos, primero es necesario comprender la            Figura 1: Deformación y movimiento local asocia-
+respuesta mecánica del terreno, las formas de             dos con ondas P y S. En P las partículas oscilan
+propagación que admite y el tipo de movimiento            paralelamente al avance; en S lo hacen en di-
+que puede observarse desde la superficie.                 rección transversal. Adaptada de Kearey et al.
+                                                          (2002), a partir de Bolt.
+2.     Propagación en medios elás-
+       ticos                                                La aceleración de cada volumen elemental pue-
+                                                          de provenir de una deformación volumétrica o
+   Un impacto aplicado sobre la superficie altera         de corte. La descomposición de Helmholtz sepa-
+localmente el estado de equilibrio del suelo. Esa         ra ambos movimientos mediante un potencial
+perturbación se transmite, pues cada elemento             escalar ϕ y uno vectorial Ψ (Foti et al., 2014):
+material ejerce fuerzas sobre sus vecinos. Para
+relacionar la respuesta observada con las caracte-               u = ∇ϕ + ∇ × Ψ,         ∇ · Ψ = 0.      (2)
+rísticas del terreno es necesario comprender tal          Al sustituirla en la ecuación (1) aparecen dos
+comportamiento mecánico y distinguir las formas           soluciones independientes. La primera produce
+de movimiento que admite un medio elástico.               compresiones y dilataciones en la dirección de
+                                                          avance y se denomina onda P, inicial asociada
+2.1.   Ondas de cuerpo en un medio elás-                  en inglés con primary y pressure. La segunda
+       tico                                               produce deformación transversal de corte y se
+   En el régimen de pequeñas deformaciones se re-         denomina onda S, por secondary y shear. Sin
+presenta el terreno mediante un medio continuo:           introducir aún una fuente concreta, estas solu-
+se sigue el desplazamiento medio de volúmenes             ciones muestran que un mismo material admite
+infinitesimales en lugar del movimiento de cada           dos formas de transportar una perturbación.
+grano. Bajo las hipótesis iniciales de homogenei-            Las velocidades de propagación correspondien-
+dad e isotropía, su respuesta puede describirse           tes son
+paramétricamente mediante la densidad ρ y los
+                                                                         s
+                                                                             λ + 2µ                µ
+                                                                                               r
+parámetros de Lamé λ y µ. La densidad gobierna                    VP =              ,   VS =         .   (3)
+                                                                                ρ                  ρ
+la inercia; λ participa en la oposición al cambio
+de volumen, y µ es el módulo de corte que cuan-           VP y VS describen el avance del patrón de defor-
+tifica la oposición al cambio de forma. Si u(x, t)        mación; no son velocidades medias ni instantá-
+es el desplazamiento, el equilibrio lineal queda          neas de las partículas, que sólo oscilan alrededor
+expresado por (Kramer, 1996; Foti et al., 2014)           de su posición de equilibrio. Un receptor per-
+                                                          manece en una localización fija y observa esa
+           ∂2u
+       ρ       = (λ + µ)∇(∇·u) + µ∇2 u.        (1)        oscilación cuando el frente de onda pasa por ella.
+           ∂t2                                            La figura 1 muestra la diferencia entre el movi-
+Esta idealización permite reconocer de primera            miento longitudinal P y el transversal S.
+mano los mecanismos elementales de propaga-                 La segunda relación de la ecuación (3) conduce
+ción. La estratificación incorporará después los          a
+cambios de propiedades con la profundidad.                                  Gmáx = ρVS2 ,               (4)
+
+                                                      2
+                                                          corte y, en la superficie libre, deben satisfacerse
+                                                          condiciones de tensión nula. Allí las componentes
+                                                          reflejadas interactúan y aparecen soluciones cuya
+                                                          energía se concentra cerca de la superficie.
+
+                                                          2.3.    Ondas superficiales
+                                                             Antes de clasificarlas conviene fijar la geome-
+                                                          tría. En una línea de medida, la dirección longitu-
+                                                          dinal une la fuente con los puntos de observación;
+                                                          la vertical es normal a la superficie y la direc-
+                                                          ción transversal completa el sistema. Una fuente
+                                                          aplicada en la superficie excita simultáneamente
+                                                          ondas de cuerpo y superficiales. Corresponde al
+Figura 2: Reflexión, transmisión y conversión P–          sistema de medida privilegiar el movimiento de
+SV de una onda P al alcanzar una interfaz entre           interés entre todos los presentes.
+dos medios elásticos. Gráfico aportado por el                Las soluciones modales compatibles con las
+autor; descripción física según Foti et al. (2014).       condiciones mecánicas de la frontera y cuya ener-
+                                                          gía permanece principalmente en la zona some-
+donde Gmáx es el módulo de corte a pequeñas              ra se denominan ondas superficiales. En medios
+deformaciones. Esta vinculación es de gran inte-          estratificados pueden distinguirse dos familias
+rés geotécnico, pues la propagación de las ondas          según las ondas de cuerpo que las conforman y,
+S aporta información sobre la rigidez inicial del         en consecuencia, su polarización. El movimiento
+suelo cuando se dispone de una estimación de              SH guiado por las capas da origen a las ondas
+densidad (Kramer, 1996; Foti et al., 2014). Vale          Love, cuyas partículas se desplazan horizontal-
+la pena recalcar que tal estimación no reemplaza          mente y en dirección transversal. En cambio, las
+los parámetros de diseño bajo cargas mayores:             componentes P y SV se acoplan en la superficie
+este modelo lineal no incorpora disipación energé-        y producen movimiento dentro del plano vertical;
+tica ni el comportamiento plástico del material.          a esta resultante se la denomina onda Rayleigh
+                                                          (Foti et al., 2014, 2018).
+2.2.   Interfaces y conversión de modos
+                                                          2.4.    Ondas Rayleigh
+   Las ondas S admiten dos polarizaciones. La
+componente SV se mueve dentro del plano verti-               En una onda Rayleigh las partículas describen
+cal de propagación, mientras que la componente            trayectorias elípticas en el plano vertical. En un
+SH lo hace horizontalmente y perpendicular a              semiespacio homogéneo con propiedades habitua-
+ese plano. Esta distinción se vuelve relevante al         les del suelo, su velocidad de fase es ligeramente
+alcanzar las condiciones de frontera del material.        menor que VS . La combinación de una excitación
+Puede encontrarse el contacto con otro material           predominantemente vertical y una componente
+o una superficie libre; en ambos casos se hablará         vertical observable desde la superficie permite
+de una interfaz.                                          privilegiar este movimiento; por ello el proyecto
+   Cuando una componente P o SV incide obli-              se concentra en ondas Rayleigh y no en Love.
+cuamente sobre el contacto entre dos sólidos,                La expansión geométrica también favorece su
+los contrastes de densidad y rigidez reparten su          observación a cierta distancia de la fuente. En
+energía entre ondas reflejadas y transmitidas y           condiciones ideales de campo lejano, la amplitud
+permiten conversión P–SV, como resume la figu-            de las ondas de cuerpo se reduce aproximada-
+ra 2. La componente SH permanece desacoplada              mente como r−1 al distribuirse sobre un frente
+de P y SV en una interfaz plana entre medios              esférico, mientras que la de las ondas superficiales
+elásticos isótropos: sólo produce componentes SH          lo hace como r−1/2 sobre un frente cilíndrico. Por
+reflejadas y transmitidas (Foti et al., 2014; Sun,        esta menor tasa de decaimiento, las componentes
+2003).                                                    Rayleigh suelen dominar el registro superficial
+   El límite superior del terreno es una interfaz         (Foti et al., 2014).
+particular: el aire no puede sostener esfuerzos de
+
+
+                                                      3
+Figura 3: Ejemplo cualitativo del alcance de ondas Rayleigh de distinta frecuencia: la componente de
+baja frecuencia involucra mayor profundidad y la de alta frecuencia concentra su sensibilidad cerca
+de la superficie. Adaptada de Sun et al. (2024).
+
+
+2.5.   Estratificación y dispersión                      3.    Análisis de ondas Rayleigh
+   En un semiespacio homogéneo, un modo Ray-               Para observar dispersión deben conservarse
+leigh conserva la misma velocidad de fase para           dos dimensiones: la evolución temporal del movi-
+todas las frecuencias. El suelo real, en cambio,         miento y la posición donde se obtuvo cada traza.
+está estratificado. Las componentes de menor             Un receptor aislado describe lo ocurrido en un
+frecuencia y mayor longitud de onda involucran           punto; comparar puntos separados permite re-
+un volumen más profundo, mientras que las de             conocer cómo se desplaza la fase de una misma
+mayor frecuencia se concentran cerca de la super-        componente. Si xm es la posición y tn el instante
+ficie. Como cada una pondera una combinación             de muestreo, el registro se organiza como
+diferente de capas, avanzan con velocidades de
+fase distintas. Esta dependencia con la frecuencia                    U [m, n] = uz (xm , tn ).        (6)
+se denomina dispersión (Foti et al., 2014, 2018).
+                                                         Cada fila es una traza temporal y el conjunto
+                          cR (f )                        forma una matriz espacio–tiempo. Una llegada
+                λR (f ) =         ,           (5)
+                            f                            coherente aparece como una tendencia entre po-
+relaciona longitud de onda λR , frecuencia f y           siciones, siempre que se conserven la geometría
+velocidad de fase cR . No asigna una profundi-           y la referencia temporal.
+dad única a cada frecuencia, pero muestra por               Una primera técnica es el análisis espectral de
+qué una longitud de onda mayor interroga una             ondas superficiales (SASW). Utiliza dos recepto-
+región más extensa. La figura 3 ilustra cualitati-       res y estima, para cada frecuencia, la diferencia
+vamente esta diferencia de alcance mediante una          de fase entre ambos. Su configuración es com-
+aplicación estratificada sobre concreto.                 pacta, pero la fase medida admite ambigüedades
+   En consecuencia, resulta de interés obtener           de un número entero de ciclos y la escasa re-
+la evolución temporal y espacial de la señal pa-         dundancia dificulta separar interferencias; por
+ra comparar el avance de cada componente fre-            ello suele requerir separaciones adicionales (Foti
+cuencial. La dispersión convierte ese conjunto de        et al., 2014).
+registros superficiales en información útil para            En cambio, el análisis multicanal de ondas su-
+reconocer el terreno: al observar cómo cambia la         perficiales (MASW) extiende la observación a nu-
+señal con la frecuencia y la posición puede cons-        merosos receptores o posiciones. La continuidad
+truirse posteriormente un modelo compatible con          espacial permite reconocer tendencias coheren-
+la variación de rigidez. Esta necesidad conduce          tes aun en presencia de ruido y distinguir mejor
+de manera natural a los métodos de análisis de           contribuciones superpuestas. Desde su introduc-
+ondas Rayleigh.                                          ción se ha popularizado para la caracterización
+                                                         somera porque trabaja desde la superficie, cu-
+                                                         bre un tramo del terreno en una campaña y
+
+                                                     4
+conserva registros que pueden reprocesarse con              Margen dinámico. La señal cercana a la fuen-
+distintos criterios (Park et al., 1998, 1999; Foti       te puede coexistir con respuestas atenuadas en
+et al., 2018).                                           posiciones lejanas. Se requiere ganancia progra-
+   El costo instrumental crece con cada posi-            mable por captura, protección frente a saturación
+ción observada simultáneamente: se requiere otro         y resolución suficiente para conservar las trazas
+transductor, acondicionamiento, conversión y             débiles.
+una base temporal comparable. Cuando no se                  Referencia temporal y geometría. Cada
+dispone del arreglo completo, puede sintetizarse         muestra debe quedar referida al golpe y cada
+la dimensión espacial desplazando un receptor y          archivo debe conservar posición, ganancia, fre-
+repitiendo la excitación bajo condiciones contro-        cuencia de muestreo y versión del hardware. En
+ladas, estrategia demostrada por Lin and Ash-            una operación futura con varios nodos también
+lock (2016). Cada traza proviene entonces de un          deberá verificarse el error relativo de sus bases
+impacto diferente, por lo que deben registrarse          de tiempo.
+tanto la posición como la excitación asociada. El           Operación de campo. El instrumento debe
+diseño propuesto admite este recorrido secuencial        trabajar sin infraestructura externa, almacenar
+y queda abierto a incorporar varios receptores.          una copia local y permitir revisar inmediatamen-
+   La elección de MASW fija las magnitudes que           te si el golpe y la respuesta fueron captados antes
+debe preservar la adquisición: banda suficiente          de abandonar la posición. Estos requerimientos
+para las componentes de interés, amplitud y fase,        traducen al instrumento las condiciones de ad-
+espaciado temporal estable, referencia del im-           quisición y control de calidad recomendadas para
+pacto y geometría de cada registro. El primer            ensayos de ondas superficiales (Foti et al., 2018).
+elemento de esta cadena es el transductor que
+convierte el movimiento vertical del terreno en          4.1.   Geófono utilizado
+una señal eléctrica. La disponibilidad del geófono
+SM-24 y su respuesta limitada bajo la frecuen-              El receptor disponible es un geófono vertical
+cia natural originan las decisiones del sistema de       pasivo SM-24, de frecuencia natural nominal
+adquisición descritas a continuación.                    10 Hz, sensibilidad 28,8 V s/m y amortiguamien-
+                                                         to dependiente de la carga (Sensor Nederland
+                                                         B.V., 2006). No fue elegido porque represente
+4.    Sistema de adquisición                             el transductor ideal, sino porque se encontraba
+                                                         disponible y permitía construir el primer canal
+   La aplicación del método exige convertir el           sin adquirir un sensor de banda ancha. Esta res-
+movimiento vertical del terreno en una señal             tricción material define el problema electrónico:
+eléctrica sin perder la relación temporal entre          por debajo de su resonancia, la tensión entregada
+posiciones. Esa tarea comienza en el receptor            disminuye rápidamente respecto del movimiento
+disponible y continúa en una cadena de acondi-           del terreno, justamente en la región asociada con
+cionamiento, conversión y almacenamiento. El             longitudes de onda mayores.
+sistema separa el nodo GEO, conectado al geó-               Geófonos de menor frecuencia natural o sismó-
+fono, el nodo HAMMER, conectado al martillo              metros de banda ancha reducirían esa dificultad,
+instrumentado, y un maestro que coordina la se-          pero cada posición simultánea exigiría un trans-
+sión. Cada nodo conserva localmente la captura           ductor adicional. Como referencia de orden, los
+y sus parámetros; la comunicación transporta             precios públicos consultados sitúan el SM-24 alre-
+órdenes y resultados, pero no forma parte del            dedor de 70 USD y un geófono vertical de 4,5 Hz
+lazo temporal de muestreo.                               entre 92 y 154 USD por elemento, antes de incor-
+                                                         porar el resto del canal (SparkFun Electronics,
+Requerimientos derivados de la medida                    2026; R. T. Clark, 2026). El proyecto ensaya otra
+   Banda y fase. Las longitudes de onda ma-              vía: caracterizar el SM-24 disponible y extender
+yores corresponden a frecuencias menores; por            de manera controlada su banda útil mediante
+ello la banda baja condiciona el alcance. La cade-       acondicionamiento.
+na debe evitar introducir variaciones de fase no            Si xg es el desplazamiento del chasis solidario
+conocidas dentro de la banda analizada y debe            al suelo y u = xm − xg el desplazamiento relativo
+registrar a una frecuencia suficiente para impedir       de la masa, el equilibrio mecánico es
+aliasing temporal.
+                                                                     mü + cu̇ + ku = −mẍg .           (7)
+
+                                                     5
+Figura 4: Cadena funcional de medida: el impacto excita el terreno, el geófono transforma el
+movimiento vertical y la electrónica acondiciona, digitaliza y conserva la traza.
+
+
+
+
+Figura 5: Izquierda: principio del geófono de bobina móvil. Derecha: respuesta nominal del SM-24
+referida a velocidad y aceleración del terreno. Fuentes: ilustración del principio reproducida de Breslin
+(2020) y modelo elaborado a partir de Sensor Nederland B.V. (2006).
+
+
+donde m es la masa móvil, c reúne el amorti-             ganancia programable, rama pasabanda de com-
+guamiento mecánico y eléctrico, y k representa           pensación, suma con el camino directo y filtrado
+la rigidez de la suspensión. Con ωn = k/m y              antialias. La entrada diferencial rechaza pertur-
+                                         p
+
+ζ = c/(2mωn ), y considerando que la tensión in-         baciones comunes en el cable del geófono. La
+ducida es proporcional a u̇, la respuesta respecto       etapa PGA adapta el nivel a la captura sin fijar
+de la velocidad del terreno adopta la forma de un        una única ganancia para todas las distancias.
+sistema de segundo orden pasa-altos. Lejos por              El acondicionamiento se basa en el principio
+encima de ωn la salida es aproximadamente pro-           propuesto por Ma et al. (2023). En lugar de plan-
+porcional a velocidad; por debajo, la atenuación         tear una deconvolución exacta de la respuesta
+crece.                                                   del geófono, que amplificaría tanto la señal como
+   Si G0 es la sensibilidad electromecánica, la          el ruido de baja frecuencia, se busca un compen-
+salida es Vo = G0 u̇. Con condiciones iniciales          sador que aumente su amortiguamiento efectivo.
+nulas, la respuesta referida a la aceleración del        Al implementarlo mediante una rama pasabanda
+terreno Ag (s) queda                                     se aplana la respuesta alrededor de ωn y se ex-
+                                                         tiende la banda referida a aceleración, a costa de
+             Vo (s)              s
+  Ha (s) =          = −G0 2                 . (8)        atenuar la señal. Esa pérdida se recupera distri-
+             Ag (s)      s + 2ζ0 ωn s + ωn2              buyendo la ganancia entre las etapas disponibles.
+Esta forma pasabanda es la base de la compen-            Para formar el compensador, una copia filtrada
+sación elegida. El amortiguamiento ζ0 incluye            de la señal original se resta del camino directo.
+pérdidas mecánicas y eléctricas; por ello la im-            El compensador ideal transforma el amortigua-
+pedancia de entrada del frente también carga             miento nominal ζ0 en un valor mayor ζ1 :
+la bobina y modifica la respuesta. La entrada
+                                                                                s2 + 2ζ0 ωn s + ωn2
+se diseñó con impedancia alta y simétrica para                    Hcomp (s) =                       .    (9)
+                                                                                s2 + 2ζ1 ωn s + ωn2
+no introducir una carga diferente entre unidades
+(Sensor Nederland B.V., 2006; Ma et al., 2023).          Al separar el término constante se obtiene una
+                                                         ruta directa menos una contribución pasabanda:
+4.2.   Frente analógico
+                                                                                  2(ζ1 − ζ0 )ωn s
+  El frente se implementó dentro de un PSoC                   Hcomp (s) = 1 −                      .    (10)
+                                                                                s + 2ζ1 ωn s + ωn2
+                                                                                 2
+y organiza cinco funciones: entrada diferencial,
+
+                                                     6
+Figura 6: Frente analógico implementado: entrada diferencial, ganancia programable, rama pasabanda
+ajustable, sumador y filtro pasa-bajos anterior al ADC. Se reproduce el esquemático completo. Fuente:
+elaboración propia en PSoC Creator.
+
+                   Tabla 1: Lectura funcional del esquemático completo de la figura 6.
+ Etapa               Entrada y salida                Función                        Parámetros esenciales
+ Entrada y PGA       SM-24 diferencial → PGA         Rechazo de modo común y        Entrada simétrica; ganancia
+                                                     adaptación de nivel            ×1 a ×50
+ Pasabanda (BP)      Copia del PGA → rama BP         Generar la contribución        Centro próximo a 10,2 Hz;
+                                                     correctora bajo resonancia     potenciómetro analógico
+ Sumador             Camino directo y BP →           Combinar rutas y recuperar     Aproximadamente ×3.6 en la
+                     SUM                             nivel                          rama compensada
+ Pasa-bajos (LP)     SUM → LP                        Limitar contenido antes del    Topología MFB; ganancia
+                                                     muestreo                       aproximada ×5
+ MUX y ADC           PGA, BP, SUM o LP →             Observar etapas, calibrar y    VDAC por etapa; ADC
+                     ADC                             digitalizar                    delta–sigma
+
+
+
+La arquitectura implementa físicamente esas dos                un potenciómetro analógico como grado de li-
+rutas. Para el bajo factor de calidad requerido, la            bertad: al modificar la proporción entre la rama
+rama inversora emplea un par RC en la entrada                  BP y el camino unitario pueden compensarse
+y otro en la realimentación. Sus quiebres ideales              tolerancias y acercarse entre sí las respuestas de
+son                                                            diferentes nodos.
+               1                          1                       Con los valores implementados se obtiene una
+   flow =             ,     fhigh =             .   (11)       frecuencia central próxima a 10,2 Hz y un amor-
+            2πRin Cin                   2πRf Cf
+                                                               tiguamiento efectivo de diseño ζ1 ≃ 937. La res-
+Los valores se buscaron sobre componentes co-                  puesta compensada queda fuertemente atenuada
+merciales incorporando el modelo no ideal del                  y esa pérdida debe recuperarse con ganancia.
+amplificador. En el camino pasabanda se añadió                 Para evitar concentrar el margen en un único
+
+                                                           7
+bloque, se distribuyó entre entrada instrumental           bloque implementado. Para la etapa i se calcula
+(×2), PGA (×1 a ×50), sumador (×3,6 en la ra-                                       127
+ma compensada) y pasa-bajos (×5). El producto                           ȳi [n] =         h[r]yi [n − r],
+                                                                                    X
+máximo es cercano a ×1800. Este reparto expli-                                      r=0                               (12)
+ca por qué los offsets y el ruido de cada etapa                         ei [n] = ȳi [n] − ri ,
+requieren atención específica.
+   La etapa final limita la banda antes del conver-        donde h[r] son los coeficientes del FIR pasa-bajos
+tidor. Se utilizó una topología de realimentación          de calibración. El residual, expresado inicialmen-
+múltiple: las etapas previas ya presentan baja             te en cuentas ADC, se convierte a códigos equi-
+impedancia de salida y no se necesita la alta              valentes del DAC:
+impedancia de entrada característica de otras                                                     qADC
+                                                                                                          
+alternativas. La frecuencia de corte y la tasa de                     εi [n] = round ei [n]            .              (13)
+                                                                                                  qDAC
+muestreo se seleccionan en conjunto; el filtro ana-
+lógico reduce el contenido que podría plegarse             Los pasos qADC y qDAC corresponden a los ran-
+y el procesamiento digital restringe después la            gos configurados. Se anula εi dentro de la banda
+banda usada por el análisis.                               muerta para obtener eei . El código del VDAC
+   La ganancia no se fija globalmente para toda            se corrige mediante una acción proporcional–
+una campaña. Después de observar una captura               integral en forma posicional,
+de prueba, el operador combina la ganancia del                                     si
+                                                                                       
+PGA con el rango bipolar del ADC para utilizar                 d∗i [n] = di,0 −         kP,i eei [n]
+                                                                                  |Ki |
+la mayor fracción posible de la escala disponible.                                                  n−1              (14)
+Esta selección permite privilegiar resolución cuan-                                        + kI,i         eei [q] .
+                                                                                                    X
+
+do la señal es débil y conservar margen cuando su                                                   q=0
+amplitud aumenta. Ambos parámetros quedan
+                                                           Aquí Ki es la ganancia de continua desde el ajus-
+almacenados junto con la traza.
+                                                           te hasta la salida observada, si = sgn(Ki ) y di,0
+                                                           el código base. El error eei se anula dentro de la
+4.3.   Por qué la compensación exige                       banda muerta; el integrador se reinicia al ingre-
+       calibrar la continua                                sar en ella. La orden se limita al intervalo de
+   La ganancia necesaria para recuperar la rama            códigos permitido para cada VDAC. Con el geó-
+compensada también amplifica las derivas de con-           fono en reposo se recorre cada etapa, se ajusta su
+tinua. Los amplificadores operacionales integra-           referencia y sólo después se habilita la siguiente.
+dos en el PSoC 5LP no son dispositivos de deriva           Durante la adquisición los controladores quedan
+nula: presentan tensión de offset y variación con          desactivados y los códigos permanecen constan-
+temperatura, y cada etapa suma su contribución             tes; de ese modo la calibración no introduce polos
+a la siguiente (Infineon Technologies AG, 2024;            adicionales en la cadena de medida.
+Gautam Das G and Praveen Sekar, 2017). Sin                    Fuera de una banda muerta, el controlador
+corrección, una salida puede acercarse a un riel           actualiza el código; dentro de ella se exige perma-
+aun con el geófono en reposo y consumir el mar-            nencia durante un número mínimo de muestras.
+gen reservado para la señal. La extensión hacia            La saturación suspende la integración en la direc-
+baja frecuencia conduce así, de manera directa,            ción que empeoraría el error. Este tratamiento
+a calibrar la continua antes de cada campaña.              evita oscilaciones alrededor de la referencia y
+   El propio PSoC aporta los recursos para ce-             limita el tiempo de búsqueda.
+rrar esa calibración. Un multiplexor lleva al ADC             El orden PGA, pasabanda, sumador y pasa-
+las salidas de PGA, pasabanda, sumador y pasa-             bajos es obligatorio porque corregir una etapa
+bajos; los convertidores digital–analógico VDAC            cambia el nivel de continua que reciben las si-
+ajustan las referencias de cada etapa y el procesa-        guientes. Entre etapas se reinicia el FIR y se
+dor coordina la secuencia (Infineon Technologies           espera su asentamiento. Al finalizar se prueba
+AG, 2024; Gautam Das G and Praveen Sekar,                  un código vecino y se conserva sólo si reduce el
+2017). Durante la calibración se reutiliza el filtro       residuo. Los valores válidos se guardan por con-
+digital programable como estimador de continua             figuración de ganancia en EEPROM junto con
+FIR de 128 coeficientes, máximo disponible en el           versión, máscara de validez y CRC. Una corri-
+                                                           da fallida no reemplaza una calibración anterior
+                                                           válida.
+
+                                                       8
+Figura 7: Salidas por etapa medidas con osciloscopio durante la calibración. Las curvas filtradas se
+reconstruyen a partir de esas capturas para visualizar el asentamiento de continua.
+
+
+4.4.   Caracterización del frente                         absoluta del generador y permite observar tanto
+                                                          la ganancia como el desfase añadido por cada
+   Para verificar el comportamiento eléctrico se
+                                                          ruta.
+realizaron diferentes mediciones con barridos se-
+                                                             Los barridos verifican la transferencia eléctrica
+noidales de frecuencias solapadas y se observa-
+                                                          y el margen de ajuste del potenciómetro. La
+ron simultáneamente las salidas internas. Los
+                                                          curva geófono–ADC se obtiene combinando la
+cocientes espectrales entre entrada y salida per-
+                                                          transferencia medida con el modelo nominal del
+miten estimar magnitud y fase sin depender de
+                                                          SM-24 y muestra la forma pasabanda esperada
+la amplitud absoluta del generador; la coherencia
+                                                          para el conjunto. Esta última es una predicción,
+delimita la región útil de cada barrido. Se carac-
+                                                          no una medición mecánica: no fue posible realizar
+terizaron la rama pasabanda, el compensador, el
+                                                          una calibración extremo a extremo por falta del
+pasa-bajos y la ruta completa hasta el ADC.
+                                                          equipamiento especializado capaz de imponer al
+   Los barridos cubrieron bandas superpuestas
+                                                          geófono un movimiento conocido y trazable.
+desde 10 mHz hasta 200 kHz. La interpretación
+se restringió a las zonas con amplitud y cohe-
+rencia suficientes; extender una curva fuera de           4.5.   Asistencia digital y captura de un
+ellas confundiría la respuesta del instrumento                   punto
+con el piso de medición. Se identificó la ruta com-         La calibración automática ya requiere multiple-
+pleta PGA–ADC y, por separado, la rama de                 xores, ADC, DAC y una secuencia de control; los
+compensación respecto de la salida del PGA. La            mismos recursos digitales se aprovechan después
+comparación por cociente elimina la amplitud              para obtener una traza trazable. El convertidor
+
+
+                                                      9
+Figura 8: Comparación normalizada entre el modelo nominal del SM-24 y la respuesta prevista al
+combinarlo con la transferencia eléctrica medida hasta el ADC. La extensión en baja frecuencia es
+una predicción de la cadena, no una calibración mecánica.
+
+
+delta–sigma digitaliza la salida del filtro analó-         intercambiar banda por duración de captura:
+gico. Un canal DMA lleva la salida del ADC a
+memoria, otro la conduce al filtro digital imple-                     1 D−1                         2604
+                                                           yD [k] =                              fs,sal =  Hz.
+                                                                        X
+                                                                            x[kD+m],
+mentado en hardware y un tercero almacena la                          D m=0                           D
+salida filtrada. El DMA resuelve estos traslados                                                           (16)
+entre periféricos y memoria; el procesador confi-          El factor utilizado debe conservar la banda de
+gura la captura y copia las muestras aceptadas             interés y contar con atenuación suficiente antes
+para formar los lotes que se conservarán (Infineon         de la nueva frecuencia de Nyquist. Todos estos
+Technologies AG, 2024).                                    parámetros acompañan el archivo para que el eje
+   En el prototipo se configuró el ADC delta–              temporal pueda reconstruirse sin depender de la
+sigma a 2604 muestras/s y 18 bits nominales,               interfaz que realizó la descarga.
+con rangos bipolares de ±2,5, ±1,024, ±0,625 y                Una máquina de estados en lógica programable
+±0,512 V; la hoja de datos documenta las capaci-           coordina el disparo, la habilitación del conver-
+dades del bloque utilizado (Infineon Technologies          tidor, el conteo de muestras y el cierre de la
+AG, 2024). Para un rango ±VR y B bits, el paso             ventana. De este modo la duración y el instante
+ideal es                                                   de inicio no dependen de latencias variables del
+                           2VR                             firmware. Al finalizar, el bloque informa el estado
+                   qADC = B .                  (15)
+                            2                              al procesador, que añade metadatos y escribe el
+En ±2,5 V resulta aproximadamente 19,1 µV por              registro en almacenamiento local. La copia local
+código. Este número es resolución nominal, no              desacopla la integridad de la captura de even-
+ruido medido ni número efectivo de bits. La elec-          tuales pérdidas o demoras de la comunicación
+ción de rango se coordina con la ganancia para             inalámbrica.
+aprovechar la escala disponible.                              Para el nodo i, con reloj fs,i = fs (1 + ϵi ), el
+   Un promedio y diezmado entero D permite                 tiempo de la muestra n es
+                                                                                               n
+                                                                        ti [n] = t0,i +                .    (17)
+                                                                                          fs (1 + ϵi )
+                                                           El término t0,i representa el instante de arranque
+
+                                                      10
+                           PSoC 5LP · arquitectura de adquisición
+                                                                                                          1 · Acondicionamiento y conversión
+
+
+   Entrada física                     AFE seleccionado por hardware                                                                ADC delta–sigma                      Calibración PI + EEPROM
+   Geófono SM-24    señal analógica   GEO: HPF → PGAgain → BP → SUM →                    Multiplexor analógico
+                                                                                                                                           18 bit · EOC                 El ARM mide cada etapa y ajusta VDAC/PGA.
+    o martillete                      LP                                                     selección de etapa
+                                                                                                                                         Fs nativa 2604 Hz              Perfiles independientes GEO/HAMMER.
+                                      HAMMER: PGA → LP
+
+                                                                                                          códigos VDAC / PGA
+
+
+
+                                                                                                                 2 · Camino digital de muestras
+
+
+
+                                                             Ruta RAW               DMA de señal cruda
+                                                                                    ADC → RAM · 3 bytes
+                                                                                                                                                                                                                      SRAM
+                                                                                                                                                                                                                    buffers DMA
+                                                                                                                                                                                                                    ring de lotes
+                                                                                                                                                                                                                                                                 microSD
+                                                                                                                                                                                                                        lotes                                   registro local
+                                                                                                                                    Filter / DFB                                                                                                SPI            captura extensa
+                                                             Ruta FIR                 DMA hacia FIR                                                                     DMA de salida FIR
+                                                                                                                                    FIR adquisición                                                                 SPI + FatFs
+                                                                                     ADC → entrada FIR                                                                   salida FIR → RAM
+                                                                                                                                   o FIR calibración                                                            drenaje concurrente
+
+
+
+
+                                                                                                           3 · Control, sincronización y enlace
+                                                                                                                                                                                                                                           dump de lotes
+                                                                                                                                  Gateo DRQ: RAW · ADC→DFB · DFB→RAM
+                                                                                                                                              tres salidas DRQ                      Timers fixed
+                                                                                       Control Registers                                                                                                                    SYNC_IN →
+                                                                                                                                                                                    UART RX watchdog
+                                                                                        ctrl[7:0] · cfg[7:0]                                                                                                                 EdgeDetect
+                                                                                                                                                                                    Ping / calibración
+                                                                                       fuente · N−1 · pulsos                    Máquina de estados                                  LED · capture watchdog                    button →
+                                      ARM Cortex-M3 · firmware C        configura
+                                                                                                                                Observa:                                 TC (diagnóstico)
+                                                                                                                                                                                      ARM: polling de STATUS_TC
+                                                                                                                                                                                                                             Debouncer
+                                                                                                                                                                                                                                              SYNC GPIO
+                                      Configura ADC/DMA/AFE                                                                     EOC · nrq ADC/FIR · sync · botón · TC                                                                                         ESP32 esclavo
+                                      parsea comandos                                                                                                                                       sync_det / button_pos                                             comandos · SYNC
+                                      copia muestras y forma lotes                                                  estado + irq Cuenta 30 muestras/lote                                                                                                   recibe lotes y diagnóstico
+                                      calibra · almacena · transmite                     Status + IRQ                                                                                                                                 UART RX / I²C TX
+                                                                                                                                y finaliza exactamente N lotes.
+                                                                                        state · status · error                                                                      Enlace con ESP
+                                                                                      interrupción de estado                                                                        UART: solo RX de comandos
+     Botón local                                                                                                                                                                    I²C master: lotes / ACK / diagnóstico
+                                                                                                         comandos / lotes
+                                                                                                                            button_pos
+
+
+
+
+Figura 9: Arquitectura implementada en el PSoC 5LP. El ADC alimenta en paralelo la ruta cruda
+y la ruta FIR de 128 coeficientes mediante tres canales DMA; la lógica gobierna disparo, conteo y
+cierre, mientras el procesador configura y forma los lotes almacenados.
+
+
+y ϵi el error relativo del reloj local. La prepara-                                                                                             Cada registro conserva nodo, posición, tasa de
+ción previa de la captura y el disparo por lógica                                                                                            muestreo, rango del ADC, ganancia, ruta cruda
+dedicada reducen el trabajo que debe ejecutar el                                                                                             o filtrada, número de muestras y estado de cali-
+procesador al iniciar la ventana.                                                                                                            bración. El servidor valida el paquete, preserva el
+                                                                                                                                             original y ejecuta el procesamiento sobre copias
+4.6.        Fuente instrumentada                                                                                                             derivadas. La geometría se incorpora antes de
+                                                                                                                                             utilizar las trazas, por lo que el registro queda
+   La excitación manual se realiza con un martillo                                                                                           preparado para alineación, selección y análisis
+que incorpora un sensor de impacto PCB 086D20.                                                                                               sin depender del nombre del archivo.
+Este transductor ICP registra la forma y el instan-
+te del contacto; su banda resulta suficiente para
+                                                                                                                                             4.8.                 Arquitectura de múltiples nodos
+reconocer un golpe único, rebotes o contactos
+múltiples (PCB Piezotronics, 2025, sf). Su señal                                                                                                La arquitectura admite un maestro, varios no-
+se acondiciona y digitaliza en un PSoC, de modo                                                                                              dos GEO y un nodo HAMMER. El maestro envía
+que la fuente constituye un nodo HAMMER con                                                                                                  primero una orden de armado y comprueba que
+la misma estructura de control y almacenamien-                                                                                               los esclavos estén preparados; después transmi-
+to que los receptores GEO. Así, el elemento de                                                                                               te una única orden de inicio por difusión. Cada
+excitación deja de ser una referencia externa y                                                                                              esclavo genera localmente el flanco que dispara
+pasa a formar parte de la red de adquisición.                                                                                                su PSoC. El arranque depende de la recepción y
+                                                                                                                                             ejecución de esa orden; la cadencia posterior de
+4.7.        Interfaz de operación e ingesta                                                                                                  muestreo queda gobernada por el reloj local. La
+                                                                                                                                             captura termina y se almacena dentro de cada
+   La interfaz web del maestro permite configurar                                                                                            nodo antes de transferirse.
+ganancia, rango, duración y ruta de señal; armar                                                                                                El enlace inalámbrico utiliza ESP-NOW, que
+los nodos; iniciar la captura y revisar inmedia-                                                                                             permite intercambio directo entre dispositivos
+tamente las señales de martillo y geófono. Esta                                                                                              sin un punto de acceso convencional (Espressif
+revisión permite repetir una posición si se observa                                                                                          Systems, sf). Se separan mensajes de orden, con-
+falta de acoplamiento, un golpe múltiple o ruido                                                                                             firmación y transferencia; los datos permanecen
+excesivo. Después, el operador puede descargar                                                                                               respaldados si una entrega falla. El protocolo
+una copia local, descartar la captura o enviarla                                                                                             multiesclavo está implementado y fue sometido
+al servidor mediante la ingesta automática.
+
+                                                                                                                               11
+         (a) Fuente de excitación disponible.
+
+                                                                                                                 (b) Interfaz de operación.
+
+Figura 10: Elementos de campo separados funcionalmente: la fuente instrumentada produce y registra
+el impacto; la interfaz configura la sesión y permite revisar, conservar, descartar o enviar cada captura.
+                                                                                                                                            GPIO15 del maestro: sólo marcador de osciloscopio
+
+
+   UI web / MATLAB                             ESP32 maestro                                     ESP32 esclavos                                         PSoC + ADC
+
+                             ARM(n)
+
+                                                                     CMD_ARM · broadcast
+
+                                                                            ARM_ACK
+
+                          START(N lotes)
+
+                                                                          PRESTART(N)
+
+                                                                                                                            UART: setN + preStart
+
+                                                                 HOT_WAIT_ACK · todos listos
+
+                                                                         START · broadcast
+
+                                                                                                                            flanco disparo al PSoC
+RETORNO STORE-AND-FORWARD
+
+    Captura exportable                          Reensamblado                                        Buffer local                                         Captura local
+      señal + metadatos                    REQ_BATCH · secuencia · CRC                        store-and-forward · MsgData                            ADC → SD / arena del nodo
+
+
+
+
+Figura 11: Secuencia multinodo implementada. ARM reserva y prepara recursos; PRESTART
+configura el número de lotes y deja al PSoC en espera; una única orden START por difusión produce
+localmente el flanco hacia cada PSoC. La captura se almacena antes del retorno por lotes.
+
+
+a una primera prueba temporal con marcadores                                                 firman ese estado, el maestro transmite START
+GPIO. Esa prueba se presenta en la sección 4.9;                                              una sola vez por difusión. Cada ESP32 genera
+caracteriza la ejecución del START en los ESP32,                                             entonces, desde su propia rutina de recepción, el
+no el comienzo efectivo del muestreo en varios                                               flanco que inicia la lógica del PSoC. Esta secuen-
+ADC.                                                                                         cia evita enviar órdenes sucesivas a cada receptor
+   La transferencia se realiza después de cerrar la                                          y busca reducir la dispersión de arranque.
+ventana. Cada captura queda almacenada en el                                                    La preparación previa, la difusión única, el
+nodo y se divide en lotes numerados que pueden                                               disparo local por hardware y el almacenamiento
+solicitarse otra vez si el enlace falla. Versiones,                                          independiente reducen el trabajo pendiente al
+CRC e indicadores de cantidad de muestras, des-                                              comenzar la captura. La primera caracterización
+bordamiento y cierre incompleto permiten dis-                                                temporal de este mecanismo se presenta junto
+tinguir una traza íntegra de un archivo parcial.                                             con los resultados parciales.
+Esta política prioriza la conservación del original                                             Duración, tasa, ganancia, rango y ruta se apli-
+sobre la velocidad de descarga.                                                              can antes del armado y se confirman nodo por
+   El armado se divide en fases para reducir el tra-                                         nodo. Si alguno no puede reservar memoria, res-
+bajo pendiente en el instante crítico. ARM com-                                              taurar su calibración o armar el convertidor, la
+prueba disponibilidad y reserva memoria. PRES-                                               sesión no se declara completa. Identificadores de
+TART comunica al PSoC la longitud de la captu-                                               sesión y secuencia impiden mezclar confirmacio-
+ra, reinicia contadores y mantiene preparada la                                              nes tardías, archivos parciales o lotes duplicados
+ruta DMA. Sólo cuando todos los esclavos con-                                                con una captura válida.
+
+                                                                                    12
+4.9.     Resultados parciales                              4.9.2.   Registro espacial sintetizado
+   Las pruebas disponibles cubren progresivamen-              La campaña desplazó un receptor entre 21 po-
+te la cadena, desde el acondicionamiento hasta             siciones de 10 a 50 m, con un paso de 2 m. En
+el registro de campo. Los barridos eléctricos veri-        cada posición se repitió el impacto, se alinearon
+ficaron continuidad, ganancia y fase de las rutas          las capturas con la referencia del martillo y se
+internas hasta el ADC. Al combinar la transfe-             obtuvo una traza representativa. El resultado se
+rencia medida con el modelo nominal del SM-24,             ordenó por distancia para formar el waterfall de
+la figura 8 muestra la respuesta esperada del              la figura 13.
+conjunto geófono–electrónica. La comparación                  La progresión temporal observada entre po-
+distingue el resultado medido de la electrónica            siciones confirma que la plataforma y el flujo
+de la predicción que incorpora al transductor.             de procesamiento permiten construir un registro
+   La calibración automática corrigió la continua          espacio–tiempo. No corresponde a 21 recepto-
+etapa por etapa antes de adquirir. Las señales de          res simultáneos: cada fila procede de una excita-
+la figura 7 convergen hacia sus referencias y los          ción distinta y la normalización impide comparar
+códigos obtenidos se conservan por configuración           amplitudes absolutas. La evidencia alcanzada
+de ganancia. Una vez calibrado el frente, el PSoC          sostiene la afirmación central de esta etapa: se
+digitaliza y traslada las muestras por las rutas           desarrolló una plataforma orientada a MASW,
+DMA de la figura 9; la comunicación y la interfaz          verificada parcialmente mediante ensayos de sus
+operan después sobre una captura que ya quedó              subsistemas y evidencia preliminar de campo.
+almacenada localmente.
+   La coordinación inalámbrica se ensayó de ma-
+nera exploratoria con tres nodos esclavos. Duran-
+te 128 órdenes START se observaron en oscilos-
+copio los flancos GPIO generados por los ESP32
+al ejecutar la orden. La separación entre esos
+marcadores se encontró aproximadamente entre
+200 y 400 µs. El resultado demuestra la operación
+multiesclavo y proporciona una primera magni-
+tud del arranque distribuido; no mide todavía
+el inicio efectivo de los ADC ni la deriva de sus
+relojes.
+
+4.9.1.    Contenido espectral de las captu-
+          ras
+   Para estimar la banda realmente observable se
+comparó, por impacto, una ventana posterior al
+marcador con una ventana de ruido previa. La
+figura 12 reúne 265 impactos en 15 distancias con
+al menos tres registros utilizables. La mediana
+de la relación señal–ruido fue 0,5 dB entre 1 y
+5 Hz y 2,1 dB entre 5 y 10 Hz; aumentó a 16,7
+dB entre 10 y 20 Hz y a 24,4 dB entre 20 y 50
+Hz. Ninguna de las 15 distancias superó 10 dB
+de mediana por debajo de 10 Hz.
+   El resultado es extremo a extremo y, por ello,
+combina fuente, acoplamiento, terreno, geófono y
+electrónica: no permite atribuir la limitación a un
+único bloque. Se propone aumentar la energía y la
+repetibilidad de la excitación en baja frecuencia
+como siguiente intervención, para evaluar cuánto
+puede aprovecharse la compensación del receptor
+y si se extiende la banda útil del registro.
+
+
+                                                      13
+Figura 12: Densidad espectral y relación señal–ruido de las capturas, agrupadas por distancia. La
+zona sombreada identifica la banda baja de interés y la línea vertical la frecuencia natural nominal
+del SM-24.
+
+
+
+
+Figura 13: Waterfall sintetizado con 21 posiciones secuenciales y un único receptor desplazado. Se
+muestran los primeros 4 s posteriores al impacto; cada traza está normalizada para visualizar su
+evolución temporal.
+
+
+5.    Trabajo futuro                                      Se buscará financiación para varios sensores; si
+                                                          no se obtiene, se continuará mediante adquisi-
+  La siguiente intervención será mejorar la exci-         ción secuencial con un receptor desplazado y una
+tación en la banda baja de interés. Se propone            referencia de impacto en cada posición.
+incorporar una fuente más energética y repeti-               El análisis de dispersión, la selección modal y
+ble y comparar su efecto mediante los mismos              los algoritmos de inversión se reservan para la
+espectros y estimaciones de relación señal–ruido.         segunda presentación.
+La comparación deberá conservar la geometría
+y documentar el acoplamiento, para reconocer
+qué mejora se obtiene sobre el registro comple-
+                                                          Referencias
+to sin atribuir a la fuente todas las limitaciones        Breslin, M. (2020). Groundborne noise and vibration:
+observadas.                                                 Instrumentation & data processing. Presentación,
+                                                            Association of Noise Consultants, 10 de noviembre.
+  La ampliación del arreglo dependerá de los
+                                                            https://www.association-of-noise-consultants
+recursos disponibles para incorporar receptores.            .co.uk/wp-content/uploads/2020/11/Groundborne
+
+
+                                                     14
+  -Noise-and-Vibration-Instrumentation-Data-Pro                     Park, C. B., Richter, J., Rodrigues, R., and Cirone, A.
+  cessing-Mike-Breslin.pdf. Diapositiva 10: ilustra-                  (2018). MASW applications for road construction and
+  ción de geófonos acreditada a Deutsches Elektronen-                 maintenance. The Leading Edge, 37(10):724–730. doi:
+  Synchrotron (DESY).                                                 10.1190/tle37100724.1.
+
+Espressif Systems (s.f.). ESP-NOW: ESP-IDF program-                 PCB Piezotronics (2025). Model 086d20 icp impact ham-
+  ming guide, ESP32. https://docs.espressif.com/p                     mer: Specification sheet, revision j. https://www.pcb.
+  rojects/esp-idf/en/stable/esp32/api-reference                       com/contentstore/docs/pcb_corporate/vibration/
+  /network/esp_now.html. Consulta: 31 de agosto de                    products/specsheets/086d20_j.pdf. Consulta: 20
+  2026.                                                               de agosto de 2026.
+
+Foti, S., Hollender, F., Garofalo, F., Albarello, D., As-           PCB Piezotronics (s.f.). Signal conditioning basics for icp
+  ten, M., Bard, P.-Y., Comina, C., Cornou, C., Cox,                  and charge output sensors. https://www.pcb.com/re
+  B., Di Giulio, G., Forbriger, T., Hayashi, K., Lunedei,             sources/technical-information/signal-conditi
+  E., Martin, A., Mercerat, D., Ohrnberger, M., Pog-                  oning-basics. Consulta: 20 de agosto de 2026.
+  gi, V., Renalier, F., Sicilia, D., and Socco, V. (2018).
+  Guidelines for the good practice of surface wave analy-           R. T. Clark (2026). RTC 4.5 Hz 375 Ohm Vertical Geopho-
+  sis: a product of the InterPACIFIC project. Bulle-                   ne. https://rtclark.com/product/rtc-4-5hz-375
+  tin of Earthquake Engineering, 16(6):2367–2420. doi:                 ohm-vertical-geophone/. Precio publicado: USD
+  10.1007/s10518-017-0206-7.                                           92–154, según opción. Consulta: 31 de agosto de 2026.
+
+Foti, S., Lai, C. G., Rix, G. J., and Strobbia, C. (2014).          Samtani, N. C. and Nowatzki, E. A. (2006). Soils and foun-
+  Surface Wave Methods for Near-Surface Site Charac-                  dations reference manual, volume I. Technical Report
+  terization. CRC Press, Boca Raton, FL, USA. doi:                    FHWA-NHI-06-088, Federal Highway Administration,
+  10.1201/b17268.                                                     National Highway Institute. https://www.fhwa.dot
+                                                                      .gov/engineering/geotech/pubs/nhi06088.pdf.
+Gautam Das G and Praveen Sekar (2017). PSoC 3 and
+  PSoC 5LP analog signal chain calibration. Techni-                 Sensor Nederland B.V. (2006). SM-24 Geophone Element.
+  cal Report AN68403, documento 001-68403, Rev. *G,                   Product brochure: https://cdn.sparkfun.com/datas
+  Cypress Semiconductor. 19 de abril de 2017. https:                  heets/Sensors/Accelerometers/SM-24%20Brochure
+  //www.infineon.com/assets/row/public/documents                      .pdf.
+  /cross-divisions/42/infineon-an68403-psoc-3-a
+  nd-psoc-5lp-analog-signal-chain-calibration-a                     SparkFun Electronics (2026). Geophone — SM-24, with
+  pplicationnotes-en.pdf.                                             insulating disc. https://www.sparkfun.com/geoph
+                                                                      one- sm- 24- with- insulating- disc.html. Precio
+Infineon Technologies AG (2024). PSoC 5LP: CY8C58LP                   publicado: USD 69,95. Consulta: 31 de agosto de 2026.
+   family datasheet. https://www.infineon.com/asset
+   s/row/public/documents/30/49/infineon-psoc-5                     Sun, S. (2003). The use of common scatter point gathers
+   lp-cy8c58lp-datasheet-datasheet-en.pdf. Docu-                      to detect amplitude variation with offset. Master’s
+   mento 001-84932, Rev. *O, 11 de diciembre de 2024;                 thesis, University of Calgary, Calgary, Alberta. Figura
+   publicación original de Cypress Semiconductor.                     1.1. https://www.crewes.org/Documents/GraduateT
+                                                                      heses/2003/Sun-MSc-2003.pdf.
+Kearey, P., Brooks, M., and Hill, I. (2002). An Introduction
+  to Geophysical Exploration. Blackwell Science, Oxford,            Sun, X., Cui, Y., Chen, J., Yi, S., Li, X., and Chen,
+  3 edition. Figura de ondas de cuerpo adaptada de la                 L. (2024). MFRWA: A multi-frequency rayleigh wave
+  Fig. 3.3, acreditada allí a Bolt (1982).                            approximation method for concrete carbonation depth
+                                                                      evaluation. Buildings, 14(6):1821. doi: 10.3390/buil
+Kramer, S. L. (1996). Geotechnical Earthquake Enginee-                dings14061821.
+  ring. Prentice Hall.
+
+Lin, S. and Ashlock, J. C. (2016). Surface-wave testing
+  of soil sites using multichannel simulation with one-
+  receiver. Soil Dynamics and Earthquake Engineering,
+  87:82–92. doi: 10.1016/j.soildyn.2016.04.013.
+
+Ma, K., Wu, J., Ma, Y., Xu, B., Qi, S., and Jiang,
+ X. (2023). An effective method for improving low-
+ frequency response of geophone. Sensors, 23(6):3082.
+ doi: 10.3390/s23063082.
+
+Park, C. B., Miller, R. D., and Xia, J. (1998). Imaging
+  dispersion curves of surface waves on multi-channel
+  record. In SEG Technical Program Expanded Abstracts
+  1998, pages 1377–1380. doi: 10.1190/1.1820161.
+
+Park, C. B., Miller, R. D., and Xia, J. (1999). Multichannel
+  analysis of surface waves. Geophysics, 64(3):800–808.
+  doi: 10.1190/1.1444590.
+
+
+                                                               15
+

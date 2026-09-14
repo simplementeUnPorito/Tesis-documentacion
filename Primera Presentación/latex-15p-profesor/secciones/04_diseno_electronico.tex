@@ -10,7 +10,7 @@ La aplicación del método exige convertir el movimiento vertical del terreno en
 \label{fig:cadena-medida}
 \end{figure*}
 
-\subsection{Requerimientos derivados de la medida}
+\subsection*{Requerimientos derivados de la medida}
 
 \textbf{Banda y fase.} Las longitudes de onda mayores corresponden a frecuencias menores; por ello la banda baja condiciona el alcance. La cadena debe evitar introducir variaciones de fase no conocidas dentro de la banda analizada y debe registrar a una frecuencia suficiente para impedir aliasing temporal.
 
@@ -71,7 +71,7 @@ El frente se implementó dentro de un PSoC y organiza cinco funciones: entrada d
 Etapa & Entrada y salida & Función & Parámetros esenciales \\
 \midrule
 Entrada y PGA & SM-24 diferencial $\rightarrow$ PGA & Rechazo de modo común y adaptación de nivel & Entrada simétrica; ganancia $\times1$ a $\times50$ \\
-Pasabanda (BP) & Copia del PGA $\rightarrow$ rama BP & Generar la contribución correctora bajo resonancia & Centro próximo a \SI{10.2}{Hz}; potenciómetro digital \\
+Pasabanda (BP) & Copia del PGA $\rightarrow$ rama BP & Generar la contribución correctora bajo resonancia & Centro próximo a \SI{10.2}{Hz}; potenciómetro analógico \\
 Sumador & Camino directo y BP $\rightarrow$ SUM & Combinar rutas y recuperar nivel & Aproximadamente $\times3.6$ en la rama compensada \\
 Pasa-bajos (LP) & SUM $\rightarrow$ LP & Limitar contenido antes del muestreo & Topología MFB; ganancia aproximada $\times5$ \\
 MUX y ADC & PGA, BP, SUM o LP $\rightarrow$ ADC & Observar etapas, calibrar y digitalizar & VDAC por etapa; ADC delta--sigma \\
@@ -103,7 +103,7 @@ f_{\mathrm{low}}=\frac{1}{2\pi R_{\mathrm{in}}C_{\mathrm{in}}},
 f_{\mathrm{high}}=\frac{1}{2\pi R_{\mathrm f}C_{\mathrm f}}.
 \label{eq:quiebres}
 \end{equation}
-Los valores se buscaron sobre componentes comerciales incorporando el modelo no ideal del amplificador. En el camino pasabanda se añadió un potenciómetro analógico de control digital como grado de libertad: al modificar la proporción entre la rama BP y el camino unitario pueden compensarse tolerancias y acercarse entre sí las respuestas de diferentes nodos.
+Los valores se buscaron sobre componentes comerciales incorporando el modelo no ideal del amplificador. En el camino pasabanda se añadió un potenciómetro analógico como grado de libertad: al modificar la proporción entre la rama BP y el camino unitario pueden compensarse tolerancias y acercarse entre sí las respuestas de diferentes nodos.
 
 Con los valores implementados se obtiene una frecuencia central próxima a \SI{10.2}{Hz} y un amortiguamiento efectivo de diseño $\zeta_1\simeq937$. La respuesta compensada queda fuertemente atenuada y esa pérdida debe recuperarse con ganancia. Para evitar concentrar el margen en un único bloque, se distribuyó entre entrada instrumental ($\times2$), PGA ($\times1$ a $\times50$), sumador ($\times3{,}6$ en la rama compensada) y pasa-bajos ($\times5$). El producto máximo es cercano a $\times1800$. Este reparto explica por qué los offsets y el ruido de cada etapa requieren atención específica.
 
@@ -118,15 +118,26 @@ La ganancia necesaria para recuperar la rama compensada también amplifica las d
 
 El propio PSoC aporta los recursos para cerrar esa calibración. Un multiplexor lleva al ADC las salidas de PGA, pasabanda, sumador y pasa-bajos; los convertidores digital--analógico VDAC ajustan las referencias de cada etapa y el procesador coordina la secuencia \citep{InfineonPSoC,InfineonAN68403}. Durante la calibración se reutiliza el filtro digital programable como estimador de continua FIR de 128 coeficientes, máximo disponible en el bloque implementado. Para la etapa $i$ se calcula
 \begin{equation}
-\bar y_i[n]=\frac{1}{128}\sum_{r=0}^{127}y_i[n-r],
-\qquad e_i[n]=r_i-\bar y_i[n],
+\begin{split}
+\bar y_i[n]&=\sum_{r=0}^{127}h[r]y_i[n-r],\\
+e_i[n]&=\bar y_i[n]-r_i,
+\end{split}
 \label{eq:estimador-dc}
 \end{equation}
-y el código del VDAC se corrige mediante una acción proporcional--integral discreta,
+donde $h[r]$ son los coeficientes del FIR pasa-bajos de calibración. El residual, expresado inicialmente en cuentas ADC, se convierte a códigos equivalentes del DAC:
 \begin{equation}
-d_i[n+1]=d_i[n]+K_{P,i}\bigl(e_i[n]-e_i[n-1]\bigr)+K_{I,i}e_i[n].
+\varepsilon_i[n]=\operatorname{round}\!\left(e_i[n]\frac{q_{\mathrm{ADC}}}{q_{\mathrm{DAC}}}\right).
+\end{equation}
+Los pasos $q_{\mathrm{ADC}}$ y $q_{\mathrm{DAC}}$ corresponden a los rangos configurados. Se anula $\varepsilon_i$ dentro de la banda muerta para obtener $\widetilde e_i$. El código del VDAC se corrige mediante una acción proporcional--integral en forma posicional,
+\begin{equation}
+\begin{split}
+d_i^*[n]=d_{i,0}-\frac{s_i}{|K_i|}\biggl(
+&k_{P,i}\widetilde e_i[n]\\
+&+k_{I,i}\sum_{q=0}^{n-1}\widetilde e_i[q]\biggr).
+\end{split}
 \label{eq:pi-calibracion}
 \end{equation}
+Aquí $K_i$ es la ganancia de continua desde el ajuste hasta la salida observada, $s_i=\operatorname{sgn}(K_i)$ y $d_{i,0}$ el código base. El error $\widetilde e_i$ se anula dentro de la banda muerta; el integrador se reinicia al ingresar en ella. La orden se limita al intervalo de códigos permitido para cada VDAC.
 Con el geófono en reposo se recorre cada etapa, se ajusta su referencia y sólo después se habilita la siguiente. Durante la adquisición los controladores quedan desactivados y los códigos permanecen constantes; de ese modo la calibración no introduce polos adicionales en la cadena de medida.
 
 Fuera de una banda muerta, el controlador actualiza el código; dentro de ella se exige permanencia durante un número mínimo de muestras. La saturación suspende la integración en la dirección que empeoraría el error. Este tratamiento evita oscilaciones alrededor de la referencia y limita el tiempo de búsqueda.
@@ -136,7 +147,7 @@ El orden PGA, pasabanda, sumador y pasa-bajos es obligatorio porque corregir una
 \begin{figure*}[!tb]
 \centering
 \includegraphics[width=0.88\textwidth,keepaspectratio]{f_senales_por_etapa.png}
-\caption{Salidas internas durante una calibración. Las curvas muestran el asentamiento de los ajustes de continua de cada etapa, no una respuesta del terreno.}
+\caption{Salidas por etapa medidas con osciloscopio durante la calibración. Las curvas filtradas se reconstruyen a partir de esas capturas para visualizar el asentamiento de continua.}
 \label{fig:calibracion-etapas}
 \end{figure*}
 
@@ -158,7 +169,7 @@ Los barridos verifican la transferencia eléctrica y el margen de ajuste del pot
 \subsection{Asistencia digital y captura de un punto}
 \label{sec:digital}
 
-La calibración automática ya requiere multiplexores, ADC, DAC y una secuencia de control; los mismos recursos digitales se aprovechan después para obtener una traza trazable. El convertidor delta--sigma digitaliza la salida del filtro analógico. El traslado de muestras no depende de la atención del procesador: un canal DMA lleva la salida del ADC a memoria, otro la conduce al filtro digital implementado en hardware y un tercero almacena la salida filtrada. El procesador configura la captura y decide qué ruta se conserva, pero no copia muestra por muestra \citep{InfineonPSoC}.
+La calibración automática ya requiere multiplexores, ADC, DAC y una secuencia de control; los mismos recursos digitales se aprovechan después para obtener una traza trazable. El convertidor delta--sigma digitaliza la salida del filtro analógico. Un canal DMA lleva la salida del ADC a memoria, otro la conduce al filtro digital implementado en hardware y un tercero almacena la salida filtrada. El DMA resuelve estos traslados entre periféricos y memoria; el procesador configura la captura y copia las muestras aceptadas para formar los lotes que se conservarán \citep{InfineonPSoC}.
 
 En el prototipo se configuró el ADC delta--sigma a \SI{2604}{muestras/s} y 18 bits nominales, con rangos bipolares de $\pm2{,}5$, $\pm1{,}024$, $\pm0{,}625$ y $\pm0{,}512$ V; la hoja de datos documenta las capacidades del bloque utilizado \citep{InfineonPSoC}. Para un rango $\pm V_R$ y $B$ bits, el paso ideal es
 \begin{equation}
@@ -177,19 +188,19 @@ El factor utilizado debe conservar la banda de interés y contar con atenuación
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.97\textwidth,keepaspectratio]{arquitectura_digital_detallada.png}
+\includegraphics[page=1,width=0.99\textwidth,keepaspectratio]{diagramas_publicacion.pdf}
 \caption{Arquitectura implementada en el PSoC~5LP. El ADC alimenta en paralelo la ruta cruda y la ruta FIR de 128 coeficientes mediante tres canales DMA; la lógica gobierna disparo, conteo y cierre, mientras el procesador configura y forma los lotes almacenados.}
 \label{fig:hardware-digital}
 \end{figure*}
 
-Una máquina de estados en lógica programable coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la ventana. De este modo la duración y el instante de inicio no dependen de latencias variables del firmware. Al finalizar, el bloque informa el estado al procesador, que añade metadatos y escribe el registro en almacenamiento local. La copia local desacopla la integridad de la captura de eventuales pérdidas o demoras de la comunicación inalámbrica.
+Una máquina de estados en lógica programable coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la ventana. Una vez recibido el disparo, la lógica gobierna el conteo y cierre de la ventana sin depender de la atención del firmware. Al finalizar, el bloque informa el estado al procesador, que añade metadatos y escribe el registro en almacenamiento local. La copia local desacopla la integridad de la captura de eventuales pérdidas o demoras de la comunicación inalámbrica.
 
 Para el nodo $i$, con reloj $f_{s,i}=f_s(1+\epsilon_i)$, el tiempo de la muestra $n$ es
 \begin{equation}
 t_i[n]=t_{0,i}+\frac{n}{f_s(1+\epsilon_i)}.
 \label{eq:tiempo-muestra}
 \end{equation}
-La lógica dedicada estabiliza el conteo local y retira la latencia del procesador, pero no elimina la diferencia de arranque $t_{0,i}-t_{0,j}$ ni la deriva asociada a $\epsilon_i-\epsilon_j$. Ambas deben medirse entre placas. Esta separación evita presentar determinismo interno como si fuera sincronización multicanal validada.
+El término $t_{0,i}$ representa el instante de arranque y $\epsilon_i$ el error relativo del reloj local. La preparación previa de la captura y el disparo por lógica dedicada reducen el trabajo que debe ejecutar el procesador al iniciar la ventana.
 
 \subsection{Fuente instrumentada}
 \label{sec:fuente}
@@ -207,26 +218,26 @@ Cada registro conserva nodo, posición, tasa de muestreo, rango del ADC, gananci
 \centering
 \begin{minipage}[c]{0.46\textwidth}
   \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{fuente_excitacion_actual.jpg}
-  \small (a) Fuente de excitación disponible.
+  \includegraphics[width=\linewidth,height=4.3cm,keepaspectratio]{principio_icp.png}\par
+  \small (a) Principio de conexión ICP.
 \end{minipage}\hfill
 \begin{minipage}[c]{0.51\textwidth}
   \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{i_web_maestro_claro.png}
+  \includegraphics[width=\linewidth,keepaspectratio]{i_web_maestro_claro.png}\par
   \small (b) Interfaz de operación.
 \end{minipage}
-\caption{Elementos de campo separados funcionalmente: la fuente instrumentada produce y registra el impacto; la interfaz configura la sesión y permite revisar, conservar, descartar o enviar cada captura.}
+\caption{(a) Conexión del transductor ICP de la fuente instrumentada, con alimentación de corriente constante y desacoplamiento de la señal \citep{PCBSignalConditioning}. (b) Interfaz para configurar, revisar, conservar, descartar o enviar cada captura.}
 \label{fig:fuente-interfaz}
 \end{figure*}
 
 \subsection{Arquitectura de múltiples nodos}
 \label{sec:multicanal}
 
-La arquitectura admite un maestro, varios nodos GEO y un nodo HAMMER. El maestro envía primero una orden de armado y comprueba que los esclavos estén preparados; después transmite una única orden de inicio por difusión. Cada esclavo genera localmente el flanco que dispara su PSoC, por lo que el muestreo no queda gobernado por la llegada individual de paquetes. La captura termina y se almacena dentro de cada nodo antes de transferirse.
+La arquitectura admite un maestro, varios nodos GEO y un nodo HAMMER. El maestro envía primero una orden de armado y comprueba que los esclavos estén preparados; después transmite una única orden de inicio por difusión. Cada esclavo genera localmente el flanco que dispara su PSoC. El arranque depende de la recepción y ejecución de esa orden; la cadencia posterior de muestreo queda gobernada por el reloj local. La captura termina y se almacena dentro de cada nodo antes de transferirse.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.98\textwidth,keepaspectratio]{secuencia_start_multinodo.png}
+\includegraphics[page=2,width=0.99\textwidth,keepaspectratio]{diagramas_publicacion.pdf}
 \caption{Secuencia multinodo implementada. ARM reserva y prepara recursos; PRESTART configura el número de lotes y deja al PSoC en espera; una única orden START por difusión produce localmente el flanco hacia cada PSoC. La captura se almacena antes del retorno por lotes.}
 \label{fig:arquitectura-multicanal}
 \end{figure*}
@@ -235,29 +246,8 @@ El enlace inalámbrico utiliza ESP-NOW, que permite intercambio directo entre di
 
 La transferencia se realiza después de cerrar la ventana. Cada captura queda almacenada en el nodo y se divide en lotes numerados que pueden solicitarse otra vez si el enlace falla. Versiones, CRC e indicadores de cantidad de muestras, desbordamiento y cierre incompleto permiten distinguir una traza íntegra de un archivo parcial. Esta política prioriza la conservación del original sobre la velocidad de descarga.
 
-El armado se divide en fases para reducir el trabajo pendiente en el instante crítico. ARM comprueba disponibilidad y reserva memoria. PRESTART comunica al PSoC la longitud de la captura, reinicia contadores y mantiene preparada la ruta DMA. Sólo cuando todos los esclavos confirman ese estado, el maestro transmite CMD\_START una sola vez por difusión. Cada ESP32 genera entonces, desde su propia rutina de recepción, el flanco SYNC\_TO\_PSOC que inicia la lógica local. Esta secuencia evita enviar órdenes sucesivas a cada receptor y reduce la dispersión de arranque.
+El armado se divide en fases para reducir el trabajo pendiente en el instante crítico. ARM comprueba disponibilidad y reserva memoria. PRESTART comunica al PSoC la longitud de la captura, reinicia contadores y mantiene preparada la ruta DMA. Sólo cuando todos los esclavos confirman ese estado, el maestro transmite START una sola vez por difusión. Cada ESP32 genera entonces, desde su propia rutina de recepción, el flanco que inicia la lógica del PSoC. Esta secuencia evita enviar órdenes sucesivas a cada receptor y busca reducir la dispersión de arranque.
 
-La primera caracterización de este mecanismo utilizó tres esclavos y 128 repeticiones. Los marcadores GPIO observados presentaron separaciones del orden de 200--\SI{400}{\micro s}; el resultado se detalla junto con las demás evidencias parciales. Recibir la misma orden no basta por sí solo para garantizar alineación de fase entre las muestras. Sin embargo, la preparación previa, la difusión única, el disparo local por hardware y el almacenamiento independiente eliminan fuentes evitables de latencia y dejan el desfase residual listo para una medición específica sobre los ADC.
+La preparación previa, la difusión única, el disparo local por hardware y el almacenamiento independiente reducen el trabajo pendiente al comenzar la captura. La primera caracterización temporal de este mecanismo se presenta junto con los resultados parciales.
 
 Duración, tasa, ganancia, rango y ruta se aplican antes del armado y se confirman nodo por nodo. Si alguno no puede reservar memoria, restaurar su calibración o armar el convertidor, la sesión no se declara completa. Identificadores de sesión y secuencia impiden mezclar confirmaciones tardías, archivos parciales o lotes duplicados con una captura válida.
-
-\subsection{Integración de la plataforma}
-\label{sec:integracion}
-
-La plataforma integra dos recorridos que se encuentran en una misma sesión. En el nodo GEO, el movimiento vertical atraviesa el geófono, el frente compensado, el ADC y las rutas DMA hasta la memoria local. En el nodo HAMMER, el impacto se acondiciona y digitaliza para proporcionar una referencia de cada excitación. El ESP32 de cada nodo recibe la configuración, arma el PSoC y conserva la captura; el maestro coordina el conjunto y presenta las señales al operador.
-
-La operación comienza al seleccionar duración, tasa, rango, ganancia y ruta de señal. El maestro envía ARM y cada esclavo reserva memoria, restaura su calibración y prepara la adquisición. Sólo después de recibir las confirmaciones se difunde START. El PSoC ejecuta localmente el disparo, el conteo y el cierre, de modo que la transferencia inalámbrica ocurre fuera de la ventana crítica de muestreo.
-
-La división de funciones conserva el determinismo donde resulta necesario. El PSoC gobierna el multiplexor, el ADC, el FIR, los canales DMA y el número exacto de muestras; el ESP32 atiende configuración, estados, comunicación y entrega. Así, una consulta de la interfaz o una retransmisión no modifica el espaciado local de la traza. El final de la ventana queda indicado por la lógica y sólo entonces el procesador prepara los metadatos y habilita el vaciado.
-
-Cada orden pertenece a una sesión identificada. Antes de aceptar START, el esclavo comprueba que la configuración recibida coincide con la memoria reservada y con el estado del PSoC. Los lotes de datos conservan nodo, secuencia y control de integridad; si una entrega se pierde, puede solicitarse nuevamente sin repetir la adquisición. Esta política desacopla la calidad temporal del muestreo de la latencia variable del enlace inalámbrico.
-
-Al concluir la captura, los nodos mantienen el original en almacenamiento local y lo entregan en lotes numerados con control de integridad. La interfaz permite revisar inmediatamente saturación, ausencia de señal o golpes múltiples. Si el registro se conserva, la ingesta automática asocia las trazas, la referencia del impacto, la geometría y los parámetros de adquisición; si se descarta, no se incorpora al procesamiento posterior.
-
-La geometría se incorpora como parte de la sesión y no se infiere del nombre del archivo. Para cada traza se conservan posición, tipo de nodo, tasa de muestreo, rango del ADC, ganancia, ruta cruda o filtrada y estado de calibración. El original permanece inmutable; alineación, promediado, normalización y representación generan derivados asociados a sus parámetros. Esto permite repetir el análisis sin alterar la evidencia adquirida.
-
-Esta integración permite pasar de una captura puntual a dos formas de extensión. La primera repite el mismo nodo GEO en posiciones conocidas y sintetiza un registro espacial. La segunda incorpora varios nodos GEO a la red y conserva la misma secuencia de armado y transferencia. La implementación soporta ambas rutas; la primera produjo el waterfall presentado en este trabajo y la segunda cuenta con una prueba preliminar del START entre tres esclavos.
-
-En la adquisición secuencial, el nodo HAMMER aporta el origen temporal de cada repetición y permite reconocer golpes múltiples antes de formar el promedio. En la adquisición con varios GEO, el mismo HAMMER sigue asociando la respuesta con la excitación, mientras que el START común reduce las diferencias de arranque. Son referencias complementarias: la primera describe cuándo ocurrió el impacto y la segunda coordina los nodos; ninguna permite por sí sola deducir la equivalencia entre sus relojes ADC.
-
-El alcance logrado es, por tanto, el de una plataforma orientada a MASW verificada por subsistemas: el frente fue caracterizado eléctricamente, la calibración y la captura digital operan en el PSoC, y la coordinación e ingesta permiten organizar registros de campo. La equivalencia temporal y metrológica extremo a extremo entre varios receptores constituye el paso experimental siguiente.

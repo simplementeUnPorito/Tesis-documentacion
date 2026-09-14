@@ -1,4 +1,4 @@
-\section{Resultados parciales}
+\subsection{Resultados parciales}
 \label{sec:resultados}
 
 Las pruebas disponibles cubren progresivamente la cadena, desde el acondicionamiento hasta el registro de campo. Los barridos eléctricos verificaron continuidad, ganancia y fase de las rutas internas hasta el ADC. Al combinar la transferencia medida con el modelo nominal del SM-24, la figura~\ref{fig:caracterizacion-electrica} muestra la respuesta esperada del conjunto geófono--electrónica. La comparación distingue el resultado medido de la electrónica de la predicción que incorpora al transductor.
@@ -14,13 +14,19 @@ La coordinación inalámbrica se ensayó de manera exploratoria con tres nodos e
 \label{fig:contenido-baja}
 \end{figure*}
 
-\subsection{Contenido espectral de las capturas}
+\subsubsection{Contenido espectral de las capturas}
+
+Se utilizaron ventanas de un segundo inmediatamente antes y después del marcador del impacto. A cada segmento se le restó su media y se le aplicó una ventana Hann; el espectro se normalizó por la energía de esa ventana y la tasa de muestreo. Para cada distancia se obtuvo la mediana de los espectros posteriores, $P_{\mathrm{post}}(f)$, y de los previos, $P_{\mathrm{pre}}(f)$. El cociente representado es
+\begin{equation}
+\mathrm{SNR}_{\mathrm{ap}}(f)=10\log_{10}\!\left(\frac{P_{\mathrm{post}}(f)}{P_{\mathrm{pre}}(f)}\right).
+\end{equation}
+Se trata de una relación señal--ruido aparente: la ventana posterior también contiene ruido. Un valor próximo a cero indica que el impacto apenas se distingue del nivel previo en esa banda. La duración de un segundo limita el detalle espectral a una escala del orden de \SI{1}{Hz}; el relleno con ceros sólo interpola la representación. Por ello se interpretan bandas y tendencias entre distancias, no picos estrechos aislados.
 
 Para estimar la banda realmente observable se comparó, por impacto, una ventana posterior al marcador con una ventana de ruido previa. La figura~\ref{fig:contenido-baja} reúne 265 impactos en 15 distancias con al menos tres registros utilizables. La mediana de la relación señal--ruido fue 0,5 dB entre 1 y 5 Hz y 2,1 dB entre 5 y 10 Hz; aumentó a 16,7 dB entre 10 y 20 Hz y a 24,4 dB entre 20 y 50 Hz. Ninguna de las 15 distancias superó 10 dB de mediana por debajo de 10 Hz.
 
-El resultado es extremo a extremo y, por ello, combina fuente, acoplamiento, terreno, geófono y electrónica: no permite atribuir la limitación a un único bloque. Sí establece una decisión experimental inmediata. Aumentar la energía y la repetibilidad de la excitación en baja frecuencia es necesario para evaluar cuánto puede aprovecharse la compensación del receptor y para extender la banda útil del registro.
+El resultado es extremo a extremo y, por ello, combina fuente, acoplamiento, terreno, geófono y electrónica: no permite atribuir la limitación a un único bloque. Se propone aumentar la energía y la repetibilidad de la excitación en baja frecuencia como siguiente intervención, para evaluar cuánto puede aprovecharse la compensación del receptor y si se extiende la banda útil del registro.
 
-\subsection{Registro espacial sintetizado}
+\subsubsection{Registro espacial sintetizado}
 
 La campaña desplazó un receptor entre 21 posiciones de 10 a \SI{50}{m}, con un paso de \SI{2}{m}. En cada posición se repitió el impacto, se alinearon las capturas con la referencia del martillo y se obtuvo una traza representativa. El resultado se ordenó por distancia para formar el waterfall de la figura~\ref{fig:waterfall}.
 
@@ -33,32 +39,14 @@ La campaña desplazó un receptor entre 21 posiciones de 10 a \SI{50}{m}, con un
 
 La progresión temporal observada entre posiciones confirma que la plataforma y el flujo de procesamiento permiten construir un registro espacio--tiempo. No corresponde a 21 receptores simultáneos: cada fila procede de una excitación distinta y la normalización impide comparar amplitudes absolutas. La evidencia alcanzada sostiene la afirmación central de esta etapa: se desarrolló una plataforma orientada a MASW, verificada parcialmente mediante ensayos de sus subsistemas y evidencia preliminar de campo.
 
-\begin{table*}[!tb]
-\centering
-\footnotesize
-\caption{Alcance de las evidencias presentadas.}
-\begin{tabularx}{0.94\textwidth}{@{}lYY@{}}
-\toprule
-Evidencia & Qué permite afirmar & Qué no establece todavía \\
-\midrule
-Barridos eléctricos & Transferencia de las rutas internas y continuidad hasta el ADC & Calibración mecánica del geófono completo \\
-Calibración de continua & Ajuste automático por etapa antes de adquirir & Igualdad de respuesta entre varios receptores \\
-Tres esclavos, 128 START & Operación distribuida y marcadores GPIO separados aproximadamente 200--400 $\mu$s & Inicio y deriva de los ADC \\
-Espectros de campo & SNR insuficiente bajo 10 Hz en el conjunto observado & Causa única de la pérdida de energía \\
-Waterfall secuencial & Registro espacio--tiempo de 21 posiciones sintetizadas & Adquisición simultánea o caracterización geotécnica final \\
-\bottomrule
-\end{tabularx}
-\label{tab:alcance-resultados}
-\end{table*}
+
 
 \section{Trabajo futuro}
 
-Se fijan cuatro hitos verificables. Primero se construirá o incorporará una fuente más energética y repetible, cuya mejora se evaluará repitiendo el análisis espectral y comparando energía y SNR por banda. Segundo, una misma señal analógica se aplicará a varios nodos GEO para medir sobre los datos ADC el desfase inicial, la deriva temporal y las diferencias de ganancia y fase. Tercero, esos resultados se utilizarán para calibrar la respuesta relativa de los receptores y validar la adquisición simultánea.
+La siguiente intervención será mejorar la excitación en la banda baja de interés. Se propone incorporar una fuente más energética y repetible y comparar su efecto mediante los mismos espectros y estimaciones de relación señal--ruido. La comparación deberá conservar la geometría y documentar el acoplamiento, para reconocer qué mejora se obtiene sobre el registro completo sin atribuir a la fuente todas las limitaciones observadas.
 
-Finalmente se ampliará el arreglo si se obtienen recursos para más sensores; en caso contrario se continuará con adquisición secuencial, mejorando la fuente y la trazabilidad de cada posición. Una vez consolidado el registro se estudiarán rigurosamente la formación de imágenes de dispersión, la selección modal y los algoritmos de inversión. Esas etapas pertenecen a la segunda presentación y no se utilizan aquí para atribuir propiedades geotécnicas al emplazamiento.
+La ampliación del arreglo dependerá de los recursos disponibles para incorporar receptores. Se buscará financiación para varios sensores; si no se obtiene, se continuará mediante adquisición secuencial con un receptor desplazado y una referencia de impacto en cada posición.
 
-La evaluación de la nueva fuente conservará una geometría fija y un número definido de repeticiones. Se compararán el espectro del impacto, la energía recibida y la SNR por bandas, además de la variación entre golpes. El objetivo no será sólo elevar la amplitud total, sino demostrar una mejora reproducible en la banda baja sin saturar el frente analógico. También se registrarán las condiciones de acoplamiento para separar, en lo posible, cambios de la fuente y del montaje.
+El análisis de dispersión, la selección modal y los algoritmos de inversión se reservan para la segunda presentación.
 
-La validación multinodo seguirá un protocolo común de tasa, ganancia y duración. A partir de la señal compartida se estimará el retardo inicial entre secuencias ADC, su evolución durante la ventana y las diferencias de magnitud y fase. Se repetirán las mediciones después de rearmar los nodos para informar dispersión e incertidumbre, no únicamente un caso favorable. Sólo después de cumplir esos controles se comparará un arreglo simultáneo con el registro secuencial; ambos recorridos permanecerán disponibles porque responden a disponibilidades instrumentales distintas.
-
-El cierre de esta etapa exigirá resultados reproducibles y trazables. Para la fuente se informarán la distribución por bandas y la variación entre repeticiones; para los receptores, los errores relativos antes y después de calibrar; y para la coordinación, el retardo y la deriva calculados directamente sobre las muestras. Estos criterios evitarán confundir el funcionamiento de la comunicación con una sincronización metrológica y permitirán decidir, con evidencia, si el sistema está listo para procesar dispersión.
+% Apartado de validación futura reservado para definir con el tutor, según comentario del autor.

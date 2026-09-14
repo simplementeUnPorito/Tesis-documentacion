@@ -55,7 +55,7 @@ Cuando una componente P o SV incide oblicuamente sobre el contacto entre dos só
 \begin{figure}[!tb]
 \centering
 \includegraphics[width=0.80\columnwidth]{conversion_interfaz.png}
-\caption{Reflexión, transmisión y conversión P--SV de una onda P al alcanzar una interfaz entre dos medios elásticos. Adaptada de \citet{Sun2003}.}
+\caption{Reflexión, transmisión y conversión P--SV de una onda P al alcanzar una interfaz entre dos medios elásticos. Gráfico aportado por el autor; descripción física según \citet{Foti2014}.}
 \label{fig:conversion-interfaz}
 \end{figure}
 
@@ -67,10 +67,17 @@ Antes de clasificarlas conviene fijar la geometría. En una línea de medida, la
 
 Las soluciones modales compatibles con las condiciones mecánicas de la frontera y cuya energía permanece principalmente en la zona somera se denominan ondas superficiales. En medios estratificados pueden distinguirse dos familias según las ondas de cuerpo que las conforman y, en consecuencia, su polarización. El movimiento SH guiado por las capas da origen a las ondas Love, cuyas partículas se desplazan horizontalmente y en dirección transversal. En cambio, las componentes P y SV se acoplan en la superficie y producen movimiento dentro del plano vertical; a esta resultante se la denomina onda Rayleigh \citep{Foti2014,Foti2018}.
 
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.80\textwidth]{rayleigh_frecuencia_profundidad.png}
+\caption{Ejemplo cualitativo del alcance de ondas Rayleigh de distinta frecuencia: la componente de baja frecuencia involucra mayor profundidad y la de alta frecuencia concentra su sensibilidad cerca de la superficie. Adaptada de \citet{Sun2024}.}
+\label{fig:rayleigh-frecuencia}
+\end{figure*}
+
 \subsection{Ondas Rayleigh}
 \label{sec:rayleigh}
 
-En una onda Rayleigh las partículas describen trayectorias elípticas en el plano vertical. Para propiedades habituales del suelo, su velocidad de fase es ligeramente menor que $V_S$. La combinación de una excitación predominantemente vertical y una componente vertical observable desde la superficie permite privilegiar este movimiento; por ello el proyecto se concentra en ondas Rayleigh y no en Love.
+En una onda Rayleigh las partículas describen trayectorias elípticas en el plano vertical. En un semiespacio homogéneo con propiedades habituales del suelo, su velocidad de fase es ligeramente menor que $V_S$. La combinación de una excitación predominantemente vertical y una componente vertical observable desde la superficie permite privilegiar este movimiento; por ello el proyecto se concentra en ondas Rayleigh y no en Love.
 
 La expansión geométrica también favorece su observación a cierta distancia de la fuente. En condiciones ideales de campo lejano, la amplitud de las ondas de cuerpo se reduce aproximadamente como $r^{-1}$ al distribuirse sobre un frente esférico, mientras que la de las ondas superficiales lo hace como $r^{-1/2}$ sobre un frente cilíndrico. Por esta menor tasa de decaimiento, las componentes Rayleigh suelen dominar el registro superficial \citep{Foti2014}.
 
@@ -85,11 +92,6 @@ En un semiespacio homogéneo, un modo Rayleigh conserva la misma velocidad de fa
 \end{equation}
 relaciona longitud de onda $\lambda_R$, frecuencia $f$ y velocidad de fase $c_R$. No asigna una profundidad única a cada frecuencia, pero muestra por qué una longitud de onda mayor interroga una región más extensa. La figura~\ref{fig:rayleigh-frecuencia} ilustra cualitativamente esta diferencia de alcance mediante una aplicación estratificada sobre concreto.
 
-\begin{figure*}[!tb]
-\centering
-\includegraphics[width=0.80\textwidth]{rayleigh_frecuencia_profundidad.png}
-\caption{Ejemplo cualitativo del alcance de ondas Rayleigh de distinta frecuencia: la componente de baja frecuencia involucra mayor profundidad y la de alta frecuencia concentra su sensibilidad cerca de la superficie. Adaptada de \citet{Sun2024}.}
-\label{fig:rayleigh-frecuencia}
-\end{figure*}
+
 
 En consecuencia, resulta de interés obtener la evolución temporal y espacial de la señal para comparar el avance de cada componente frecuencial. La dispersión convierte ese conjunto de registros superficiales en información útil para reconocer el terreno: al observar cómo cambia la señal con la frecuencia y la posición puede construirse posteriormente un modelo compatible con la variación de rigidez. Esta necesidad conduce de manera natural a los métodos de análisis de ondas Rayleigh.
