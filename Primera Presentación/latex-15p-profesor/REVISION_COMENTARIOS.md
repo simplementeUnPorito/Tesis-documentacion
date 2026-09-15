@@ -40,6 +40,45 @@ Entregable: `main.pdf`. Se conservaron las versiones anteriores; esta revisión 
 | No resultados de dispersión o inversión | Reservados a la segunda presentación. |
 | Validación futura para decidir con el profesor | No se impone un protocolo en el texto; reserva indicada sólo como comentario del LaTeX. |
 
+## Segunda ronda (anotaciones 2026-09-14, `annotations_20260914_135135.md`)
+
+Versión anterior preservada en `_version_2026-09-14_manana/`.
+
+| Anotación | Cambio |
+|---|---|
+| Resumen promete demasiado | Cierre reducido a la mejora de la excitación. |
+| Primera frase de la introducción repite el resumen | Reformulada. |
+| «en lugar del movimiento de cada grano» | Sustitución de la estructura granular por un medio continuo. |
+| Aclaración VP/VS ≠ velocidad de partícula | Eliminada. |
+| «La estratificación incorporará después…» | Eliminada. |
+| G_max y ensayos invasivos | Apoyo mutuo downhole/crosshole ↔ superficie. |
+| Aire y agua | Los fluidos no sostienen corte (sin afirmar incompresibilidad). |
+| 2.3 desordenada | Fusionada con 2.4: superficie libre → Love/Rayleigh → c_R ≈ V_S → decaimiento. Geometría de la línea y «la fuente excita ambas» movidas al inicio de la sección 3. |
+| Figura 3 | Reemplazada por la de Foti et al. (2014), a ancho de columna. |
+| Inicio brusco de la sección 4 | Primero se dice que el geófono es vertical; «los nodos GEO»; se agrega figura de arquitectura. |
+| «En una operación futura…» | Reescrito como requerimiento. |
+| Repetición de por qué SM-24 | Referencia a la sección 3. |
+| Costo de otros sensores | Explícito. |
+| Figura 6 con mucho blanco | Recortada (`f_frente_analogico_crop.png`). |
+| Ecuación FIR innecesaria | Eliminada: se reutiliza el filtro con coeficientes de corte muy bajo. |
+| Ecuación PI vs. Urucom | Notación de Urucom: ε, banda muerta Δ_i ≥ max(1,⌈|K_i|⌉), c_{i,base}, q_x = V_span/N_x. |
+| Título 4.3 | «Calibración de la continua». |
+| Servo de continua | Mencionado como solución clásica y por qué no se usa. |
+| Saturar la etapa | Agregado. |
+| Anti-windup | Nombrado. |
+| Resumir con el diagrama | Figura del flujo de calibración (`d_calibracion_offset.png`) y texto reducido. |
+| «traza trazable» | «traza con referencia temporal y metadatos completos». |
+| Falta figura PGA–ADC | Agregada junto a la respuesta geófono–ADC. |
+| Fórmulas de q_ADC y diezmado repetidas | Eliminadas; q_ADC se define una sola vez en 4.3. |
+| «resolución nominal, no ruido…» | Eliminada. |
+| Imagen de la máquina de estados / figura 9 fea | Reemplazada por el TopDesign digital (`f_hardware_digital.png`). |
+| ICP genérico | Reemplazado por el circuito del nodo HAMMER en el PSoC. |
+| Resultados repiten arquitectura | Frase eliminada. |
+| «falta imagen» al cierre | Referencia a la figura de arquitectura de la plataforma. |
+| Flujo operativo | Agregado en 4.7. |
+
+Para no pasar de 15 páginas: SNR y waterfall lado a lado; PGA–ADC y geófono–ADC lado a lado.
+
 ## Procedencia de los gráficos aportados
 
 - P/S: referencia a Kearey, Brooks y Hill, con crédito a Bolt recogido allí.

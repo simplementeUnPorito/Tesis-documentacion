@@ -1,7 +1,9 @@
 \section{Análisis de ondas Rayleigh}
 \label{sec:metodologia}
 
-Para observar dispersión deben conservarse dos dimensiones: la evolución temporal del movimiento y la posición donde se obtuvo cada traza. Un receptor aislado describe lo ocurrido en un punto; comparar puntos separados permite reconocer cómo se desplaza la fase de una misma componente. Si $x_m$ es la posición y $t_n$ el instante de muestreo, el registro se organiza como
+Una fuente aplicada en la superficie excita simultáneamente ondas de cuerpo y superficiales; corresponde al sistema de medida privilegiar, entre todas ellas, el movimiento de interés. Para fijar la geometría se define una línea de medida: la dirección longitudinal une la fuente con los puntos de observación, la vertical es normal a la superficie y la dirección transversal completa el sistema.
+
+Para observar dispersión deben conservarse dos dimensiones: la evolución temporal del movimiento y la posición donde se obtuvo cada traza. Un receptor aislado describe lo ocurrido en un punto; comparar puntos separados sobre la línea permite reconocer cómo se desplaza la fase de una misma componente. Si $x_m$ es la posición longitudinal y $t_n$ el instante de muestreo, el registro de la componente vertical $u_z$ se organiza como
 \begin{equation}
 U[m,n]=u_z(x_m,t_n).
 \label{eq:registro-xt}
@@ -14,4 +16,4 @@ En cambio, el análisis multicanal de ondas superficiales (MASW) extiende la obs
 
 El costo instrumental crece con cada posición observada simultáneamente: se requiere otro transductor, acondicionamiento, conversión y una base temporal comparable. Cuando no se dispone del arreglo completo, puede sintetizarse la dimensión espacial desplazando un receptor y repitiendo la excitación bajo condiciones controladas, estrategia demostrada por \citet{LinAshlock2016}. Cada traza proviene entonces de un impacto diferente, por lo que deben registrarse tanto la posición como la excitación asociada. El diseño propuesto admite este recorrido secuencial y queda abierto a incorporar varios receptores.
 
-La elección de MASW fija las magnitudes que debe preservar la adquisición: banda suficiente para las componentes de interés, amplitud y fase, espaciado temporal estable, referencia del impacto y geometría de cada registro. El primer elemento de esta cadena es el transductor que convierte el movimiento vertical del terreno en una señal eléctrica. La disponibilidad del geófono SM-24 y su respuesta limitada bajo la frecuencia natural originan las decisiones del sistema de adquisición descritas a continuación.
+La elección de MASW fija las magnitudes que debe preservar la adquisición: banda suficiente para las componentes de interés, amplitud y fase, espaciado temporal estable, referencia del impacto y geometría de cada registro. El primer elemento de esta cadena es el transductor que convierte el movimiento vertical del terreno en una señal eléctrica. El receptor disponible fue el geófono SM-24: no representa el transductor ideal, pero permitía construir el primer canal sin adquirir un sensor de banda ancha. Su respuesta limitada bajo la frecuencia natural origina las decisiones del sistema de adquisición descritas a continuación.

@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\bibitem[Bangash et~al., 2017]{Bangash2017}
+Bangash, A.~A., Khan, K.~A., and Akhter, G. (2017).
+\newblock Spreadsheets for understanding seismic energy partitioning equations.
+\newblock {\em Computer Applications in Engineering Education}, 25(3):441--448.
+
 \bibitem[Breslin, 2020]{Breslin2020}
 Breslin, M. (2020).
 \newblock Groundborne noise and vibration: Instrumentation \& data processing.
@@ -41,6 +46,14 @@ Foti, S., Lai, C.~G., Rix, G.~J., and Strobbia, C. (2014).
 \newblock 19 de abril de 2017.
   \url{https://www.infineon.com/assets/row/public/documents/cross-divisions/42/infineon-an68403-psoc-3-and-psoc-5lp-analog-signal-chain-calibration-applicationnotes-en.pdf}.
 
+\bibitem[{Geometrics}, 2023]{GeometricsPrice2023}
+{Geometrics} (2023).
+\newblock Seismic price list 2023.
+\newblock Lista del fabricante, revisión junio de 2023:
+  \url{https://www.geometrics.com/wp-content/uploads/2023/07/Seismic_Pricelist_2023_rev0623.pdf}.
+\newblock Referencia histórica; el archivo ya no se encontraba disponible en
+  la consulta de 2026.
+
 \bibitem[{Infineon Technologies AG}, 2024]{InfineonPSoC}
 {Infineon Technologies AG} (2024).
 \newblock {PSoC 5LP}: {CY8C58LP} family datasheet.
@@ -48,6 +61,13 @@ Foti, S., Lai, C.~G., Rix, G.~J., and Strobbia, C. (2014).
   \url{https://www.infineon.com/assets/row/public/documents/30/49/infineon-psoc-5lp-cy8c58lp-datasheet-datasheet-en.pdf}.
 \newblock Documento 001-84932, Rev.~*O, 11 de diciembre de 2024; publicación
   original de Cypress Semiconductor.
+
+\bibitem[Kafadar, 2020]{Kafadar2020}
+Kafadar, O. (2020).
+\newblock A geophone-based and low-cost data acquisition and analysis system
+  designed for microtremor measurements.
+\newblock {\em Geoscientific Instrumentation, Methods and Data Systems},
+  9:365--373.
 
 \bibitem[Kearey et~al., 2002]{Kearey2002}
 Kearey, P., Brooks, M., and Hill, I. (2002).
@@ -68,6 +88,13 @@ Lin, S. and Ashlock, J.~C. (2016).
 \newblock {\em Soil Dynamics and Earthquake Engineering}, 87:82--92.
 \newblock \href{https://doi.org/10.1016/j.soildyn.2016.04.013}{doi:
   \nolinkurl{10.1016/j.soildyn.2016.04.013}}.
+
+\bibitem[Llorens et~al., 2016]{Llorens2016}
+Llorens, C.~D., Molina, J., Giner, J.~A., Ivorra, S., and Zornoza, P.~R.
+  (2016).
+\newblock Development and programming of {Geophonino}: A low cost
+  {Arduino}-based seismic recorder for vertical geophones.
+\newblock {\em Computers \& Geosciences}, 94:1--10.
 
 \bibitem[Ma et~al., 2023]{Ma2023}
 Ma, K., Wu, J., Ma, Y., Xu, B., Qi, S., and Jiang, X. (2023).
@@ -97,6 +124,13 @@ Park, C.~B., Richter, J., Rodrigues, R., and Cirone, A. (2018).
 \newblock {\em The Leading Edge}, 37(10):724--730.
 \newblock \href{https://doi.org/10.1190/tle37100724.1}{doi:
   \nolinkurl{10.1190/tle37100724.1}}.
+
+\bibitem[{PASI srl}, 2022]{PASIPrice2022}
+{PASI srl} (2022).
+\newblock {GEA24 Price List --- January 2022}.
+\newblock Copia pública de la lista del fabricante:
+  \url{https://es.scribd.com/document/602682047/GEA-24-PRICE-LIST-JANUARY-2022}.
+\newblock Referencia histórica; precios ex works Turín.
 
 \bibitem[{PCB Piezotronics}, 2025]{PCB086D20}
 {PCB Piezotronics} (2025).
@@ -147,13 +181,5 @@ Sun, S. (2003).
 \newblock Master's thesis, University of Calgary, Calgary, Alberta.
 \newblock Figura 1.1.
   \url{https://www.crewes.org/Documents/GraduateTheses/2003/Sun-MSc-2003.pdf}.
-
-\bibitem[Sun et~al., 2024]{Sun2024}
-Sun, X., Cui, Y., Chen, J., Yi, S., Li, X., and Chen, L. (2024).
-\newblock {MFRWA}: A multi-frequency rayleigh wave approximation method for
-  concrete carbonation depth evaluation.
-\newblock {\em Buildings}, 14(6):1821.
-\newblock \href{https://doi.org/10.3390/buildings14061821}{doi:
-  \nolinkurl{10.3390/buildings14061821}}.
 
 \end{thebibliography}

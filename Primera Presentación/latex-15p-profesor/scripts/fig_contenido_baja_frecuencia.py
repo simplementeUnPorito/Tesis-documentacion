@@ -112,7 +112,7 @@ for k, dd in enumerate(dists):
     tabla.append(fila)
 
 estilo(ax1)
-ax1.set_ylabel("Densidad espectral de la señal [dB]", fontsize=9, color=TINTA)
+ax1.set_ylabel("Densidad espectral [dB]", fontsize=9, color=TINTA)
 ax1.set_xlim(0.5, 60)
 if False: ax1.set_title("Contenido espectral real del canal de geófono en campo "
               f"({sum(len(acc[d]['S']) for d in dists)} golpes, "
@@ -120,7 +120,7 @@ if False: ax1.set_title("Contenido espectral real del canal de geófono en campo
               fontsize=10.5, color=TINTA, loc="left", pad=10)
 ax1.axvspan(1, 10, color="#c1543a", alpha=0.10, zorder=0)
 ax1.text(1.05, ax1.get_ylim()[1] - 3,
-         "banda baja de interes",
+         "banda baja de interés",
          fontsize=7.6, color="#c1543a", va="top")
 ax1.axvline(10, color="#999999", lw=1.0, ls=(0, (4, 3)))
 ax1.text(10.4, ax1.get_ylim()[0] + 4, "$f_n$ del SM-24", fontsize=7.5, color=TENUE)
@@ -129,7 +129,8 @@ estilo(ax2)
 ax2.axhline(0, color="#b8b8b8", lw=1.2)
 ax2.axhline(10, color="#b8b8b8", lw=0.9, ls=(0, (4, 3)))
 ax2.text(0.53, 10.6, "SNR = 10 dB", fontsize=7.4, color=TENUE)
-ax2.set_ylabel("SNR señal/ruido previo [dB]", fontsize=9, color=TINTA)
+ax2.set_ylabel("SNR aparente [dB]", fontsize=9, color=TINTA)
+fig.align_ylabels([ax1, ax2])
 ax2.set_xlabel("Frecuencia [Hz]", fontsize=9, color=TINTA)
 ax2.set_xlim(0.5, 60)
 ax2.axvspan(1, 10, color="#c1543a", alpha=0.10, zorder=0)

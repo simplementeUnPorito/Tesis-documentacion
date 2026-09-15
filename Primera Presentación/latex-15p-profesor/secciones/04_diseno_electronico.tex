@@ -1,11 +1,11 @@
 \section{Sistema de adquisición}
 \label{sec:diseno}
 
-La aplicación del método exige convertir el movimiento vertical del terreno en una señal eléctrica sin perder la relación temporal entre posiciones. Esa tarea comienza en el receptor disponible y continúa en una cadena de acondicionamiento, conversión y almacenamiento. El sistema separa el nodo GEO, conectado al geófono, el nodo HAMMER, conectado al martillo instrumentado, y un maestro que coordina la sesión. Cada nodo conserva localmente la captura y sus parámetros; la comunicación transporta órdenes y resultados, pero no forma parte del lazo temporal de muestreo.
+El receptor elegido es un geófono vertical: responde sólo a la componente vertical del movimiento del terreno, que es la que concentra la onda Rayleigh observable desde la superficie. La aplicación del método exige convertir ese movimiento en una señal eléctrica sin perder la relación temporal entre posiciones. Esa tarea comienza en el geófono y continúa en una cadena de acondicionamiento, conversión y almacenamiento. El sistema separa los nodos GEO, conectados cada uno a un geófono; el nodo HAMMER, conectado al martillo instrumentado, y un maestro que coordina la sesión (figura~\ref{fig:arquitectura-nodos}). Cada nodo conserva localmente la captura y sus parámetros; la comunicación transporta órdenes y resultados, pero no forma parte del lazo temporal de muestreo.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.94\textwidth,keepaspectratio]{d_cadena_fuente_geofono.png}
+\includegraphics[width=0.94\textwidth,keepaspectratio]{fig04_d_cadena_fuente_geofono.png}
 \caption{Cadena funcional de medida: el impacto excita el terreno, el geófono transforma el movimiento vertical y la electrónica acondiciona, digitaliza y conserva la traza.}
 \label{fig:cadena-medida}
 \end{figure*}
@@ -16,39 +16,44 @@ La aplicación del método exige convertir el movimiento vertical del terreno en
 
 \textbf{Margen dinámico.} La señal cercana a la fuente puede coexistir con respuestas atenuadas en posiciones lejanas. Se requiere ganancia programable por captura, protección frente a saturación y resolución suficiente para conservar las trazas débiles.
 
-\textbf{Referencia temporal y geometría.} Cada muestra debe quedar referida al golpe y cada archivo debe conservar posición, ganancia, frecuencia de muestreo y versión del hardware. En una operación futura con varios nodos también deberá verificarse el error relativo de sus bases de tiempo.
+\textbf{Referencia temporal y geometría.} Cada muestra debe quedar referida al golpe y cada archivo debe conservar posición, ganancia, frecuencia de muestreo y versión del hardware. Con varios nodos simultáneos, sus bases de tiempo deben mantener un error relativo acotado durante toda la ventana de captura.
 
 \textbf{Operación de campo.} El instrumento debe trabajar sin infraestructura externa, almacenar una copia local y permitir revisar inmediatamente si el golpe y la respuesta fueron captados antes de abandonar la posición. Estos requerimientos traducen al instrumento las condiciones de adquisición y control de calidad recomendadas para ensayos de ondas superficiales \citep{Foti2018}.
 
 \subsection{Geófono utilizado}
 \label{sec:geofono}
 
-El receptor disponible es un geófono vertical pasivo SM-24, de frecuencia natural nominal \SI{10}{Hz}, sensibilidad \SI{28.8}{V.s/m} y amortiguamiento dependiente de la carga \citep{SM24}. No fue elegido porque represente el transductor ideal, sino porque se encontraba disponible y permitía construir el primer canal sin adquirir un sensor de banda ancha. Esta restricción material define el problema electrónico: por debajo de su resonancia, la tensión entregada disminuye rápidamente respecto del movimiento del terreno, justamente en la región asociada con longitudes de onda mayores.
+El SM-24, seleccionado por disponibilidad según se indicó en la sección~\ref{sec:metodologia}, es un geófono vertical pasivo de frecuencia natural nominal \SI{10}{Hz}, sensibilidad \SI{28.8}{V.s/m} y amortiguamiento dependiente de la carga \citep{SM24}. Esta restricción material define el problema electrónico: por debajo de su resonancia, la tensión entregada disminuye rápidamente respecto del movimiento del terreno, justamente en la región asociada con longitudes de onda mayores.
 
-Geófonos de menor frecuencia natural o sismómetros de banda ancha reducirían esa dificultad, pero cada posición simultánea exigiría un transductor adicional. Como referencia de orden, los precios públicos consultados sitúan el SM-24 alrededor de 70 USD y un geófono vertical de 4,5 Hz entre 92 y 154 USD por elemento, antes de incorporar el resto del canal \citep{SparkFunSM24,RTClark45}. El proyecto ensaya otra vía: caracterizar el SM-24 disponible y extender de manera controlada su banda útil mediante acondicionamiento.
+Geófonos de menor frecuencia natural o sismómetros de banda ancha reducirían esa dificultad, pero su costo es considerablemente mayor y cada posición simultánea exigiría un transductor adicional. Como referencia de orden, los precios públicos consultados sitúan el SM-24 alrededor de 70 USD y un geófono vertical de 4,5 Hz entre 92 y 154 USD por elemento, antes de incorporar el resto del canal \citep{SparkFunSM24,RTClark45}. Para 24 posiciones, sólo los elementos sensores suman cerca de 1.680 USD con el SM-24 y entre 2.200 y 3.700 USD con geófonos de 4,5 Hz; un sismómetro de banda ancha supera ampliamente esas cifras. El proyecto ensaya otra vía: caracterizar el SM-24 disponible y extender de manera controlada su banda útil mediante acondicionamiento.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.40\textwidth]{f_geofono_interior.png}\hfill
-\includegraphics[width=0.54\textwidth]{respuesta_sm24_modelo.png}
+\includegraphics[width=0.40\textwidth]{fig06_f_geofono_interior.png}\hfill
+\includegraphics[width=0.54\textwidth]{fig07_respuesta_sm24_modelo.png}
 \caption{Izquierda: principio del geófono de bobina móvil. Derecha: respuesta nominal del SM-24 referida a velocidad y aceleración del terreno. Fuentes: ilustración del principio reproducida de \citet{Breslin2020} y modelo elaborado a partir de \citet{SM24}.}
 \label{fig:geofono-respuesta}
 \end{figure*}
 
 Si $x_g$ es el desplazamiento del chasis solidario al suelo y $u=x_m-x_g$ el desplazamiento relativo de la masa, el equilibrio mecánico es
 \begin{equation}
-m\ddot u+c\dot u+ku=-m\ddot x_g.
+m\ddot u+c\dot u+ku=-m\ddot x_g,
 \label{eq:geofono-mecanico}
 \end{equation}
-donde $m$ es la masa móvil, $c$ reúne el amortiguamiento mecánico y eléctrico, y $k$ representa la rigidez de la suspensión. Con $\omega_n=\sqrt{k/m}$ y $\zeta=c/(2m\omega_n)$, y considerando que la tensión inducida es proporcional a $\dot u$, la respuesta respecto de la velocidad del terreno adopta la forma de un sistema de segundo orden pasa-altos. Lejos por encima de $\omega_n$ la salida es aproximadamente proporcional a velocidad; por debajo, la atenuación crece.
+donde $m$ es la masa móvil, $c$ el amortiguamiento mecánico y $k$ la rigidez de la suspensión. Con $\omega_n=\sqrt{k/m}$, el amortiguamiento total incorpora la carga eléctrica sobre la bobina:
+\begin{equation}
+\zeta=\frac{c}{2m\omega_n}+\frac{G_0^2}{2m\omega_n(R_i+R_L)},
+\label{eq:amortiguamiento}
+\end{equation}
+donde $G_0$ es la sensibilidad electromecánica, $R_i$ la resistencia interna de la bobina y $R_L$ la resistencia de carga del frente. Considerando que la tensión inducida es proporcional a $\dot u$, la respuesta respecto de la velocidad del terreno adopta la forma de un sistema de segundo orden pasa-altos. Lejos por encima de $\omega_n$ la salida es aproximadamente proporcional a velocidad; por debajo, la atenuación crece.
 
-Si $G_0$ es la sensibilidad electromecánica, la salida es $V_o=G_0\dot u$. Con condiciones iniciales nulas, la respuesta referida a la aceleración del terreno $A_g(s)$ queda
+La salida es $V_o=G_0\dot u$. Con condiciones iniciales nulas, la respuesta referida a la aceleración del terreno $A_g(s)$ queda
 \begin{equation}
 H_a(s)=\frac{V_o(s)}{A_g(s)}=
 -G_0\frac{s}{s^2+2\zeta_0\omega_n s+\omega_n^2}.
 \label{eq:geofono-aceleracion}
 \end{equation}
-Esta forma pasabanda es la base de la compensación elegida. El amortiguamiento $\zeta_0$ incluye pérdidas mecánicas y eléctricas; por ello la impedancia de entrada del frente también carga la bobina y modifica la respuesta. La entrada se diseñó con impedancia alta y simétrica para no introducir una carga diferente entre unidades \citep{SM24,Ma2023}.
+Esta forma pasabanda es la base de la compensación elegida. El amortiguamiento $\zeta_0$ es el de la ecuación~\eqref{eq:amortiguamiento} con la carga conectada; por ello la impedancia de entrada del frente también carga la bobina y modifica la respuesta. La entrada se diseñó con impedancia alta y simétrica para no introducir una carga diferente entre unidades \citep{SM24,Ma2023}.
 
 \subsection{Frente analógico}
 \label{sec:afe}
@@ -57,32 +62,14 @@ El frente se implementó dentro de un PSoC y organiza cinco funciones: entrada d
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=\textwidth,keepaspectratio]{f_frente_analogico.png}
-\caption{Frente analógico implementado: entrada diferencial, ganancia programable, rama pasabanda ajustable, sumador y filtro pasa-bajos anterior al ADC. Se reproduce el esquemático completo. Fuente: elaboración propia en PSoC Creator.}
+\includegraphics[width=\textwidth,keepaspectratio]{fig08_f_frente_analogico_crop.png}
+\caption{Frente analógico implementado: entrada diferencial, ganancia programable, rama pasabanda ajustable, sumador y filtro pasa-bajos anterior al ADC, con las referencias VDAC de cada etapa y el multiplexor de medición. Fuente: elaboración propia en PSoC Creator.}
 \label{fig:frente-analogico}
 \end{figure*}
 
-\begin{table*}[!tb]
-\centering
-\footnotesize
-\caption{Lectura funcional del esquemático completo de la figura~\ref{fig:frente-analogico}.}
-\begin{tabularx}{0.96\textwidth}{@{}lYYY@{}}
-\toprule
-Etapa & Entrada y salida & Función & Parámetros esenciales \\
-\midrule
-Entrada y PGA & SM-24 diferencial $\rightarrow$ PGA & Rechazo de modo común y adaptación de nivel & Entrada simétrica; ganancia $\times1$ a $\times50$ \\
-Pasabanda (BP) & Copia del PGA $\rightarrow$ rama BP & Generar la contribución correctora bajo resonancia & Centro próximo a \SI{10.2}{Hz}; potenciómetro analógico \\
-Sumador & Camino directo y BP $\rightarrow$ SUM & Combinar rutas y recuperar nivel & Aproximadamente $\times3.6$ en la rama compensada \\
-Pasa-bajos (LP) & SUM $\rightarrow$ LP & Limitar contenido antes del muestreo & Topología MFB; ganancia aproximada $\times5$ \\
-MUX y ADC & PGA, BP, SUM o LP $\rightarrow$ ADC & Observar etapas, calibrar y digitalizar & VDAC por etapa; ADC delta--sigma \\
-\bottomrule
-\end{tabularx}
-\label{tab:lectura-afe}
-\end{table*}
-
 El acondicionamiento se basa en el principio propuesto por \citet{Ma2023}. En lugar de plantear una deconvolución exacta de la respuesta del geófono, que amplificaría tanto la señal como el ruido de baja frecuencia, se busca un compensador que aumente su amortiguamiento efectivo. Al implementarlo mediante una rama pasabanda se aplana la respuesta alrededor de $\omega_n$ y se extiende la banda referida a aceleración, a costa de atenuar la señal. Esa pérdida se recupera distribuyendo la ganancia entre las etapas disponibles. Para formar el compensador, una copia filtrada de la señal original se resta del camino directo.
 
-El compensador ideal transforma el amortiguamiento nominal $\zeta_0$ en un valor mayor $\zeta_1$:
+El compensador que proponen \citet{Ma2023}, que transforma el amortiguamiento nominal $\zeta_0$ en un valor mayor $\zeta_1$, es entonces
 \begin{equation}
 H_{\mathrm{comp}}(s)=
 \frac{s^2+2\zeta_0\omega_n s+\omega_n^2}
@@ -103,50 +90,59 @@ f_{\mathrm{low}}=\frac{1}{2\pi R_{\mathrm{in}}C_{\mathrm{in}}},
 f_{\mathrm{high}}=\frac{1}{2\pi R_{\mathrm f}C_{\mathrm f}}.
 \label{eq:quiebres}
 \end{equation}
-Los valores se buscaron sobre componentes comerciales incorporando el modelo no ideal del amplificador. En el camino pasabanda se añadió un potenciómetro analógico como grado de libertad: al modificar la proporción entre la rama BP y el camino unitario pueden compensarse tolerancias y acercarse entre sí las respuestas de diferentes nodos.
+En el camino pasabanda se añadió un potenciómetro analógico como grado de libertad: al modificar la proporción entre la rama BP y el camino unitario pueden compensarse tolerancias y acercarse entre sí las respuestas de diferentes nodos.
 
-Con los valores implementados se obtiene una frecuencia central próxima a \SI{10.2}{Hz} y un amortiguamiento efectivo de diseño $\zeta_1\simeq937$. La respuesta compensada queda fuertemente atenuada y esa pérdida debe recuperarse con ganancia. Para evitar concentrar el margen en un único bloque, se distribuyó entre entrada instrumental ($\times2$), PGA ($\times1$ a $\times50$), sumador ($\times3{,}6$ en la rama compensada) y pasa-bajos ($\times5$). El producto máximo es cercano a $\times1800$. Este reparto explica por qué los offsets y el ruido de cada etapa requieren atención específica.
+Con los valores implementados se obtiene una frecuencia central próxima a \SI{10.2}{Hz} y un amortiguamiento efectivo de diseño $\zeta_1\simeq937$. La respuesta compensada queda fuertemente atenuada y esa pérdida debe recuperarse con ganancia. Para evitar concentrar el margen en un único bloque, se distribuyó entre entrada instrumental ($\times2$), PGA ($\times1$ a $\times50$), sumador ($\times3{,}6$ en la rama compensada) y pasa-bajos ($\times5$). El producto máximo es cercano a $\times1800$; su efecto sobre la continua de cada etapa se trata en la sección~\ref{sec:calibracion}.
 
-La etapa final limita la banda antes del convertidor. Se utilizó una topología de realimentación múltiple: las etapas previas ya presentan baja impedancia de salida y no se necesita la alta impedancia de entrada característica de otras alternativas. La frecuencia de corte y la tasa de muestreo se seleccionan en conjunto; el filtro analógico reduce el contenido que podría plegarse y el procesamiento digital restringe después la banda usada por el análisis.
+La etapa final limita la banda antes del convertidor. Se utilizó una topología de realimentación múltiple: las etapas previas ya presentan baja impedancia de salida y no se necesita la alta impedancia de entrada característica de otras alternativas. Su frecuencia de corte se eligió de acuerdo con las frecuencias esperadas en las señales sísmicas de interés.
 
 La ganancia no se fija globalmente para toda una campaña. Después de observar una captura de prueba, el operador combina la ganancia del PGA con el rango bipolar del ADC para utilizar la mayor fracción posible de la escala disponible. Esta selección permite privilegiar resolución cuando la señal es débil y conservar margen cuando su amplitud aumenta. Ambos parámetros quedan almacenados junto con la traza.
 
-\subsection{Por qué la compensación exige calibrar la continua}
+Los valores de todas las etapas se eligieron entre los componentes comerciales disponibles en el laboratorio, con asistencia de simulación por computadora que incorpora el modelo no ideal de los amplificadores.
+
+\subsection{Calibración de la continua}
 \label{sec:calibracion}
 
-La ganancia necesaria para recuperar la rama compensada también amplifica las derivas de continua. Los amplificadores operacionales integrados en el PSoC 5LP no son dispositivos de deriva nula: presentan tensión de offset y variación con temperatura, y cada etapa suma su contribución a la siguiente \citep{InfineonPSoC,InfineonAN68403}. Sin corrección, una salida puede acercarse a un riel aun con el geófono en reposo y consumir el margen reservado para la señal. La extensión hacia baja frecuencia conduce así, de manera directa, a calibrar la continua antes de cada campaña.
+La ganancia necesaria para recuperar la rama compensada también amplifica las derivas de continua. Los amplificadores operacionales integrados en el PSoC 5LP no son dispositivos de deriva nula: presentan tensión de offset y variación con temperatura, y cada etapa suma su contribución a la siguiente \citep{InfineonPSoC,InfineonAN68403}. Sin corrección, una salida puede acercarse a un riel aun con el geófono en reposo, consumir el margen reservado para la señal o directamente saturar la etapa e inutilizar el nodo.
 
-El propio PSoC aporta los recursos para cerrar esa calibración. Un multiplexor lleva al ADC las salidas de PGA, pasabanda, sumador y pasa-bajos; los convertidores digital--analógico VDAC ajustan las referencias de cada etapa y el procesador coordina la secuencia \citep{InfineonPSoC,InfineonAN68403}. Durante la calibración se reutiliza el filtro digital programable como estimador de continua FIR de 128 coeficientes, máximo disponible en el bloque implementado. Para la etapa $i$ se calcula
+La solución clásica es un servo de continua: un integrador con amplificadores operacionales observa la salida y realimenta su valor medio de forma permanente. Ese lazo agrega un polo en baja frecuencia justamente en la región que la compensación busca extender. Aquí la corrección se realiza antes de adquirir: durante la captura los controladores quedan desactivados y los códigos permanecen constantes, de modo que la calibración no introduce polos adicionales en la cadena de medida durante la adquisición.
+
+El propio PSoC aporta los recursos para cerrar esa calibración. Un multiplexor lleva al ADC las salidas de PGA, pasabanda, sumador y pasa-bajos; los convertidores digital--analógico VDAC ajustan las referencias de cada etapa y el procesador coordina la secuencia \citep{InfineonPSoC,InfineonAN68403}. El filtro digital programable del bloque de adquisición se reutiliza durante la calibración cargando otros coeficientes: un FIR de 128 coeficientes de muy baja frecuencia de corte. El residuo $e_i[n]=\hat y_i[n]-r_i$, con $\hat y_i[n]$ la salida del filtro para la etapa $i$ y $r_i$ la referencia en cuentas, se expresa en códigos equivalentes del DAC:
 \begin{equation}
-\begin{split}
-\bar y_i[n]&=\sum_{r=0}^{127}h[r]y_i[n-r],\\
-e_i[n]&=\bar y_i[n]-r_i,
-\end{split}
-\label{eq:estimador-dc}
+\varepsilon_i[n]=\operatorname{round}\!\left(e_i[n]\frac{q_{\mathrm{ADC}}}{q_{\mathrm{DAC}}}\right),
+\qquad q_x=\frac{V_{x,\mathrm{span}}}{N_x},
+\label{eq:escala}
 \end{equation}
-donde $h[r]$ son los coeficientes del FIR pasa-bajos de calibración. El residual, expresado inicialmente en cuentas ADC, se convierte a códigos equivalentes del DAC:
+donde $q_x$ es el paso de cuantización, $V_{x,\mathrm{span}}$ la excursión del rango y $N_x$ el número de niveles. Con $N_{\mathrm{ADC}}=2^{18}$, $V_{\mathrm{ADC,span}}=\SI{5}{V}$, $N_{\mathrm{DAC}}=2^{8}$ y $V_{\mathrm{DAC,span}}=\SI{4.096}{V}$ resultan $q_{\mathrm{ADC}}\approx\SI{19.1}{\micro V}$ y $q_{\mathrm{DAC}}=\SI{16}{mV}$ \citep{InfineonPSoC}. Para evitar la oscilación entre códigos adyacentes se aplica una banda muerta $\Delta_i\geq\max(1,\lceil|K_i|\rceil)$:
 \begin{equation}
-\varepsilon_i[n]=\operatorname{round}\!\left(e_i[n]\frac{q_{\mathrm{ADC}}}{q_{\mathrm{DAC}}}\right).
+\bar\varepsilon_i[n]=
+\begin{cases}
+0, & |\varepsilon_i[n]|\leq\Delta_i,\\
+\varepsilon_i[n], & \text{en otro caso}.
+\end{cases}
+\label{eq:banda-muerta}
 \end{equation}
-Los pasos $q_{\mathrm{ADC}}$ y $q_{\mathrm{DAC}}$ corresponden a los rangos configurados. Se anula $\varepsilon_i$ dentro de la banda muerta para obtener $\widetilde e_i$. El código del VDAC se corrige mediante una acción proporcional--integral en forma posicional,
+El código del VDAC se corrige con una acción proporcional--integral en forma posicional,
 \begin{equation}
-\begin{split}
-d_i^*[n]=d_{i,0}-\frac{s_i}{|K_i|}\biggl(
-&k_{P,i}\widetilde e_i[n]\\
-&+k_{I,i}\sum_{q=0}^{n-1}\widetilde e_i[q]\biggr).
-\end{split}
+c_i^*[n]=c_{i,\mathrm{base}}-s_i\!\left[
+\frac{k_{\mathrm{P},i}}{|K_i|}\bar\varepsilon_i[n]+\frac{k_{\mathrm{I},i}}{|K_i|}
+\sum_{q=0}^{n-1}\bar\varepsilon_i[q]\right],
 \label{eq:pi-calibracion}
 \end{equation}
-Aquí $K_i$ es la ganancia de continua desde el ajuste hasta la salida observada, $s_i=\operatorname{sgn}(K_i)$ y $d_{i,0}$ el código base. El error $\widetilde e_i$ se anula dentro de la banda muerta; el integrador se reinicia al ingresar en ella. La orden se limita al intervalo de códigos permitido para cada VDAC.
-Con el geófono en reposo se recorre cada etapa, se ajusta su referencia y sólo después se habilita la siguiente. Durante la adquisición los controladores quedan desactivados y los códigos permanecen constantes; de ese modo la calibración no introduce polos adicionales en la cadena de medida.
+donde $K_i$ es la ganancia de continua desde el VDAC hasta la salida observada, obtenida por análisis simbólico de cada etapa; $s_i=\operatorname{sgn}(K_i)$; $c_{i,\mathrm{base}}$ es el código base, y $k_{\mathrm{P},i}$ y $k_{\mathrm{I},i}$ son las constantes proporcional e integral. La orden se limita al rango de 0 a 255 códigos y, en el límite, la integración se suspende si empujaría más hacia la saturación (\emph{anti-windup}).
 
-Fuera de una banda muerta, el controlador actualiza el código; dentro de ella se exige permanencia durante un número mínimo de muestras. La saturación suspende la integración en la dirección que empeoraría el error. Este tratamiento evita oscilaciones alrededor de la referencia y limita el tiempo de búsqueda.
-
-El orden PGA, pasabanda, sumador y pasa-bajos es obligatorio porque corregir una etapa cambia el nivel de continua que reciben las siguientes. Entre etapas se reinicia el FIR y se espera su asentamiento. Al finalizar se prueba un código vecino y se conserva sólo si reduce el residuo. Los valores válidos se guardan por configuración de ganancia en EEPROM junto con versión, máscara de validez y CRC. Una corrida fallida no reemplaza una calibración anterior válida.
+La figura~\ref{fig:calibracion-flujo} resume la secuencia. El orden PGA, pasabanda, sumador y pasa-bajos es obligatorio porque corregir una etapa cambia la continua que reciben las siguientes; entre etapas se reinicia el FIR y se descartan las muestras de asentamiento. Los códigos válidos se guardan por ganancia en EEPROM con CRC, y una corrida fallida no reemplaza una calibración anterior válida.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.88\textwidth,keepaspectratio]{f_senales_por_etapa.png}
+\includegraphics[width=0.82\textwidth,keepaspectratio]{fig09_d_calibracion_offset.png}
+\caption{Lógica de la calibración de continua. Izquierda: orquestación de la corrida desde la solicitud hasta la restauración de la ruta de adquisición. Derecha: calibración de una etapa con estimación FIR, banda muerta, PI con \emph{anti-windup}, refinamiento del código final y límite de tiempo.}
+\label{fig:calibracion-flujo}
+\end{figure*}
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.46\textwidth,keepaspectratio]{fig10_f_senales_por_etapa.png}
 \caption{Salidas por etapa medidas con osciloscopio durante la calibración. Las curvas filtradas se reconstruyen a partir de esas capturas para visualizar el asentamiento de continua.}
 \label{fig:calibracion-etapas}
 \end{figure*}
@@ -155,80 +151,86 @@ El orden PGA, pasabanda, sumador y pasa-bajos es obligatorio porque corregir una
 
 Para verificar el comportamiento eléctrico se realizaron diferentes mediciones con barridos senoidales de frecuencias solapadas y se observaron simultáneamente las salidas internas. Los cocientes espectrales entre entrada y salida permiten estimar magnitud y fase sin depender de la amplitud absoluta del generador; la coherencia delimita la región útil de cada barrido. Se caracterizaron la rama pasabanda, el compensador, el pasa-bajos y la ruta completa hasta el ADC.
 
-Los barridos cubrieron bandas superpuestas desde \SI{10}{mHz} hasta \SI{200}{kHz}. La interpretación se restringió a las zonas con amplitud y coherencia suficientes; extender una curva fuera de ellas confundiría la respuesta del instrumento con el piso de medición. Se identificó la ruta completa PGA--ADC y, por separado, la rama de compensación respecto de la salida del PGA. La comparación por cociente elimina la amplitud absoluta del generador y permite observar tanto la ganancia como el desfase añadido por cada ruta.
+Los barridos cubrieron bandas superpuestas desde \SI{10}{mHz} hasta \SI{200}{kHz}. La interpretación se restringió a las zonas con coherencia suficiente; extender una curva fuera de ellas confundiría la respuesta del instrumento con el piso de medición. La figura~\ref{fig:caracterizacion-electrica}a muestra la ruta completa PGA--ADC junto con el modelo del circuito, la dispersión esperable por tolerancias y el recorrido del potenciómetro.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[width=0.88\textwidth]{f_respuesta_geofono_adc.png}
-\caption{Comparación normalizada entre el modelo nominal del SM-24 y la respuesta prevista al combinarlo con la transferencia eléctrica medida hasta el ADC. La extensión en baja frecuencia es una predicción de la cadena, no una calibración mecánica.}
+\includegraphics[width=0.52\textwidth,keepaspectratio]{fig11_f_ruta_pga_adc_sin_coherencia.png}\par
+\small (a) Ruta completa PGA--ADC.\par\smallskip
+\includegraphics[width=0.72\textwidth,keepaspectratio]{fig12_f_cadena_geo_adc_magcoh.png}\par
+\small (b) Cadena completa geófono--ADC.
+\caption{(a) Magnitud y fase medidas frente al modelo del circuito con los componentes actuales; las bandas indican la dispersión por tolerancias con el potenciómetro en todo su recorrido y recalibrado. (b) Sensibilidad normalizada del geófono solo, referida a aceleración y a velocidad; ruta medida desde la salida del PGA hasta la entrada del ADC en cascada con el SM-24 nominal; respuesta teórica ideal y envolvente de ajuste del potenciómetro entre 0 y \SI{2}{k\ohm}. Debajo, la coherencia local delimita el rango interpretable. La extensión en baja frecuencia es una predicción de la cadena, no una calibración mecánica.}
 \label{fig:caracterizacion-electrica}
 \end{figure*}
 
-Los barridos verifican la transferencia eléctrica y el margen de ajuste del potenciómetro. La curva geófono--ADC se obtiene combinando la transferencia medida con el modelo nominal del SM-24 y muestra la forma pasabanda esperada para el conjunto. Esta última es una predicción, no una medición mecánica: no fue posible realizar una calibración extremo a extremo por falta del equipamiento especializado capaz de imponer al geófono un movimiento conocido y trazable.
+La figura~\ref{fig:caracterizacion-electrica}b combina esa transferencia medida con el modelo nominal del SM-24 y la compara en una misma escala con el geófono solo, referido a velocidad y a aceleración, con la respuesta teórica ideal y con la envolvente que cubre el ajuste del potenciómetro. Es una predicción, no una medición mecánica: no fue posible realizar una calibración extremo a extremo por falta del equipamiento especializado capaz de imponer al geófono un movimiento conocido.
 
 \subsection{Asistencia digital y captura de un punto}
 \label{sec:digital}
 
-La calibración automática ya requiere multiplexores, ADC, DAC y una secuencia de control; los mismos recursos digitales se aprovechan después para obtener una traza trazable. El convertidor delta--sigma digitaliza la salida del filtro analógico. Un canal DMA lleva la salida del ADC a memoria, otro la conduce al filtro digital implementado en hardware y un tercero almacena la salida filtrada. El DMA resuelve estos traslados entre periféricos y memoria; el procesador configura la captura y copia las muestras aceptadas para formar los lotes que se conservarán \citep{InfineonPSoC}.
+La calibración automática ya requiere multiplexores, ADC, DAC y una secuencia de control; los mismos recursos digitales se aprovechan después para obtener una traza con referencia temporal y metadatos completos. El convertidor delta--sigma digitaliza la salida del filtro analógico. Un canal DMA lleva la salida del ADC a memoria, otro la conduce al filtro digital implementado en hardware y un tercero almacena la salida filtrada. El DMA resuelve estos traslados entre periféricos y memoria; el procesador configura la captura y copia las muestras aceptadas para formar los lotes que se conservarán \citep{InfineonPSoC}.
 
-En el prototipo se configuró el ADC delta--sigma a \SI{2604}{muestras/s} y 18 bits nominales, con rangos bipolares de $\pm2{,}5$, $\pm1{,}024$, $\pm0{,}625$ y $\pm0{,}512$ V; la hoja de datos documenta las capacidades del bloque utilizado \citep{InfineonPSoC}. Para un rango $\pm V_R$ y $B$ bits, el paso ideal es
-\begin{equation}
-q_{\mathrm{ADC}}=\frac{2V_R}{2^B}.
-\label{eq:cuantizacion}
-\end{equation}
-En $\pm\SI{2.5}{V}$ resulta aproximadamente \SI{19.1}{\micro V} por código. Este número es resolución nominal, no ruido medido ni número efectivo de bits. La elección de rango se coordina con la ganancia para aprovechar la escala disponible.
-
-Un promedio y diezmado entero $D$ permite intercambiar banda por duración de captura:
-\begin{equation}
-y_D[k]=\frac{1}{D}\sum_{m=0}^{D-1}x[kD+m],
-\qquad f_{s,\mathrm{sal}}=\frac{2604}{D}\ \mathrm{Hz}.
-\label{eq:diezmado}
-\end{equation}
-El factor utilizado debe conservar la banda de interés y contar con atenuación suficiente antes de la nueva frecuencia de Nyquist. Todos estos parámetros acompañan el archivo para que el eje temporal pueda reconstruirse sin depender de la interfaz que realizó la descarga.
+En el prototipo se configuró el ADC delta--sigma a \SI{2604}{muestras/s} y 18 bits nominales, con rangos bipolares de $\pm0{,}512$, $\pm0{,}625$, $\pm1{,}024$ y $\pm2{,}5$ V \citep{InfineonPSoC}; el paso resultante sigue la ecuación~\eqref{eq:escala}. La elección de rango se coordina con la ganancia para aprovechar la escala disponible. Un promedio y diezmado entero $D$ reduce la tasa a $2604/D$~Hz, lo que da al operador flexibilidad para intercambiar banda por duración de captura. Todos estos parámetros acompañan el archivo para que el eje temporal pueda reconstruirse sin depender de la interfaz que realizó la descarga.
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[page=1,width=0.99\textwidth,keepaspectratio]{diagramas_publicacion.pdf}
-\caption{Arquitectura implementada en el PSoC~5LP. El ADC alimenta en paralelo la ruta cruda y la ruta FIR de 128 coeficientes mediante tres canales DMA; la lógica gobierna disparo, conteo y cierre, mientras el procesador configura y forma los lotes almacenados.}
+\includegraphics[width=0.82\textwidth,keepaspectratio]{fig13_f_hardware_digital_sample.png}
+\caption{Hardware digital de adquisición implementado en el PSoC~5LP: máquina de estados \texttt{SignalController}, registros de control y estado, filtro digital, tres canales DMA (ADC a RAM, filtro a RAM y ADC al filtro), temporizador de vigilancia y EEPROM. Las flechas indican la entrada de muestras y las salidas hacia las referencias VDAC y la selección del multiplexor. Fuente: elaboración propia en PSoC Creator.}
 \label{fig:hardware-digital}
 \end{figure*}
 
-Una máquina de estados en lógica programable coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la ventana. Una vez recibido el disparo, la lógica gobierna el conteo y cierre de la ventana sin depender de la atención del firmware. Al finalizar, el bloque informa el estado al procesador, que añade metadatos y escribe el registro en almacenamiento local. La copia local desacopla la integridad de la captura de eventuales pérdidas o demoras de la comunicación inalámbrica.
+La máquina de estados \texttt{SignalController} de la figura~\ref{fig:hardware-digital}, implementada en lógica programable, coordina el disparo, la habilitación del convertidor, el conteo de muestras y el cierre de la ventana. Una vez recibido el disparo, la lógica gobierna la ventana sin depender de la atención del firmware. Al finalizar, el bloque informa el estado al procesador, que añade metadatos y escribe el registro en almacenamiento local. La copia local desacopla la integridad de la captura de eventuales pérdidas o demoras de la comunicación inalámbrica.
 
 Para el nodo $i$, con reloj $f_{s,i}=f_s(1+\epsilon_i)$, el tiempo de la muestra $n$ es
 \begin{equation}
-t_i[n]=t_{0,i}+\frac{n}{f_s(1+\epsilon_i)}.
+t_i[n]=t_{0,i}+\frac{n}{f_s(1+\epsilon_i)},
 \label{eq:tiempo-muestra}
 \end{equation}
-El término $t_{0,i}$ representa el instante de arranque y $\epsilon_i$ el error relativo del reloj local. La preparación previa de la captura y el disparo por lógica dedicada reducen el trabajo que debe ejecutar el procesador al iniciar la ventana.
+donde $t_{0,i}$ representa el instante de arranque y $\epsilon_i$ el error relativo del reloj local. La preparación previa de la captura y el disparo por lógica dedicada reducen el trabajo que debe ejecutar el procesador al iniciar la ventana.
 
 \subsection{Fuente instrumentada}
 \label{sec:fuente}
 
-La excitación manual se realiza con un martillo que incorpora un sensor de impacto PCB~086D20. Este transductor ICP registra la forma y el instante del contacto; su banda resulta suficiente para reconocer un golpe único, rebotes o contactos múltiples \citep{PCB086D20,PCBSignalConditioning}. Su señal se acondiciona y digitaliza en un PSoC, de modo que la fuente constituye un nodo HAMMER con la misma estructura de control y almacenamiento que los receptores GEO. Así, el elemento de excitación deja de ser una referencia externa y pasa a formar parte de la red de adquisición.
+La excitación manual se realiza con un martillo que incorpora un sensor de impacto PCB~086D20. Este transductor ICP registra la forma y el instante del contacto; su banda resulta suficiente para reconocer un golpe único, rebotes o contactos múltiples \citep{PCB086D20,PCBSignalConditioning}. El PSoC del nodo HAMMER lo alimenta con corriente constante, desacopla y protege la señal, y la lleva por un PGA y un pasa-bajos hasta el ADC (figura~\ref{fig:fuente-interfaz}a). Así, la fuente constituye un nodo con la misma estructura de control y almacenamiento que los receptores GEO, y el elemento de excitación pasa a formar parte de la red de adquisición.
+
+\begin{figure*}[!tb]
+\centering
+\begin{minipage}[c]{0.55\textwidth}
+  \centering
+  \includegraphics[width=\linewidth,keepaspectratio]{fig14_acondicionamiento_martillo_psoc.png}\par
+  \small (a) Acondicionamiento del martillo en el PSoC.
+\end{minipage}\hfill
+\begin{minipage}[c]{0.42\textwidth}
+  \centering
+  \includegraphics[width=\linewidth,keepaspectratio]{fig15_i_web_maestro_claro.png}\par
+  \small (b) Interfaz de operación.
+\end{minipage}
+\caption{(a) Nodo HAMMER: alimentación ICP por corriente constante, desacople y protección de la entrada, PGA, pasa-bajos y ADC con referencias VDAC. Fuente: elaboración propia en PSoC Creator. (b) Interfaz para configurar, revisar, conservar, descartar o enviar cada captura.}
+\label{fig:fuente-interfaz}
+\end{figure*}
 
 \subsection{Interfaz de operación e ingesta}
 \label{sec:interfaz}
 
-La interfaz web del maestro permite configurar ganancia, rango, duración y ruta de señal; armar los nodos; iniciar la captura y revisar inmediatamente las señales de martillo y geófono. Esta revisión permite repetir una posición si se observa falta de acoplamiento, un golpe múltiple o ruido excesivo. Después, el operador puede descargar una copia local, descartar la captura o enviarla al servidor mediante la ingesta automática.
-
-Cada registro conserva nodo, posición, tasa de muestreo, rango del ADC, ganancia, ruta cruda o filtrada, número de muestras y estado de calibración. El servidor valida el paquete, preserva el original y ejecuta el procesamiento sobre copias derivadas. La geometría se incorpora antes de utilizar las trazas, por lo que el registro queda preparado para alineación, selección y análisis sin depender del nombre del archivo.
+La interfaz web del maestro permite configurar ganancia, rango, duración y ruta de señal; armar los nodos; iniciar la captura y revisar inmediatamente las señales de martillo y geófono. Esta revisión permite repetir una posición si se observa falta de acoplamiento, un golpe múltiple o ruido excesivo. Después, el operador puede descartar la captura o descargarla y enviarla al servidor mediante la ingesta automática, según el flujo de la figura~\ref{fig:flujo-operativo}.
 
 \begin{figure*}[!tb]
 \centering
-\begin{minipage}[c]{0.46\textwidth}
-  \centering
-  \includegraphics[width=\linewidth,height=4.3cm,keepaspectratio]{principio_icp.png}\par
-  \small (a) Principio de conexión ICP.
-\end{minipage}\hfill
-\begin{minipage}[c]{0.51\textwidth}
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{i_web_maestro_claro.png}\par
-  \small (b) Interfaz de operación.
-\end{minipage}
-\caption{(a) Conexión del transductor ICP de la fuente instrumentada, con alimentación de corriente constante y desacoplamiento de la señal \citep{PCBSignalConditioning}. (b) Interfaz para configurar, revisar, conservar, descartar o enviar cada captura.}
-\label{fig:fuente-interfaz}
+\includegraphics[width=0.64\textwidth,keepaspectratio]{fig16_d_flujo_operativo.png}
+\caption{Flujo operativo de una sesión: configuración del maestro, calibración, captura sincronizada, revisión, conservación o descarte y envío al servidor de análisis.}
+\label{fig:flujo-operativo}
 \end{figure*}
+
+Cada registro conserva nodo, posición, tasa de muestreo, rango del ADC, ganancia, ruta cruda o filtrada, número de muestras y estado de calibración. El servidor valida el paquete, preserva el original y ejecuta el procesamiento sobre copias derivadas. La geometría se incorpora antes de utilizar las trazas, por lo que el registro queda preparado para alineación, selección y análisis sin depender del nombre del archivo.
+
+La revisión posterior se realiza en una interfaz de procesamiento de escritorio (figura~\ref{fig:interfaz-procesamiento}). Cada captura se alinea con el disparo detectado en el martillo, se le asigna la distancia y se marca como válida o rechazada; las trazas de una misma posición se superponen con su promedio para reconocer golpes defectuosos antes de agruparlas, filtrarlas y formar el registro espacial.
+
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\columnwidth,keepaspectratio]{fig20_interfaz_procesamiento.png}
+\caption{Interfaz de procesamiento: lista de capturas con distancia, disparo y estado; señal del martillo con el disparo detectado y respuesta del geófono alineada, superpuesta a las demás capturas de la misma posición.}
+\label{fig:interfaz-procesamiento}
+\end{figure}
 
 \subsection{Arquitectura de múltiples nodos}
 \label{sec:multicanal}
@@ -237,17 +239,20 @@ La arquitectura admite un maestro, varios nodos GEO y un nodo HAMMER. El maestro
 
 \begin{figure*}[!tb]
 \centering
-\includegraphics[page=2,width=0.99\textwidth,keepaspectratio]{diagramas_publicacion.pdf}
+\includegraphics[width=0.88\textwidth,keepaspectratio]{fig05_d_arquitectura_nodos.png}
+\caption{Arquitectura de la plataforma. El navegador sólo mantiene sesión con el maestro; éste direcciona por ESP-NOW a los nodos GEO y HAMMER, cuyo ESP32 controla el PSoC y almacena la captura en microSD o en memoria RAM.}
+\label{fig:arquitectura-nodos}
+\end{figure*}
+
+\begin{figure*}[!tb]
+\centering
+\includegraphics[width=0.99\textwidth,keepaspectratio]{fig17_diagramas_publicacion.png}
 \caption{Secuencia multinodo implementada. ARM reserva y prepara recursos; PRESTART configura el número de lotes y deja al PSoC en espera; una única orden START por difusión produce localmente el flanco hacia cada PSoC. La captura se almacena antes del retorno por lotes.}
 \label{fig:arquitectura-multicanal}
 \end{figure*}
 
-El enlace inalámbrico utiliza ESP-NOW, que permite intercambio directo entre dispositivos sin un punto de acceso convencional \citep{EspressifESPNow}. Se separan mensajes de orden, confirmación y transferencia; los datos permanecen respaldados si una entrega falla. El protocolo multiesclavo está implementado y fue sometido a una primera prueba temporal con marcadores GPIO. Esa prueba se presenta en la sección~\ref{sec:resultados}; caracteriza la ejecución del START en los ESP32, no el comienzo efectivo del muestreo en varios ADC.
+El enlace inalámbrico utiliza ESP-NOW, que permite intercambio directo entre dispositivos sin un punto de acceso convencional \citep{EspressifESPNow}. Se separan mensajes de orden, confirmación y transferencia; los datos permanecen respaldados si una entrega falla.
 
 La transferencia se realiza después de cerrar la ventana. Cada captura queda almacenada en el nodo y se divide en lotes numerados que pueden solicitarse otra vez si el enlace falla. Versiones, CRC e indicadores de cantidad de muestras, desbordamiento y cierre incompleto permiten distinguir una traza íntegra de un archivo parcial. Esta política prioriza la conservación del original sobre la velocidad de descarga.
 
 El armado se divide en fases para reducir el trabajo pendiente en el instante crítico. ARM comprueba disponibilidad y reserva memoria. PRESTART comunica al PSoC la longitud de la captura, reinicia contadores y mantiene preparada la ruta DMA. Sólo cuando todos los esclavos confirman ese estado, el maestro transmite START una sola vez por difusión. Cada ESP32 genera entonces, desde su propia rutina de recepción, el flanco que inicia la lógica del PSoC. Esta secuencia evita enviar órdenes sucesivas a cada receptor y busca reducir la dispersión de arranque.
-
-La preparación previa, la difusión única, el disparo local por hardware y el almacenamiento independiente reducen el trabajo pendiente al comenzar la captura. La primera caracterización temporal de este mecanismo se presenta junto con los resultados parciales.
-
-Duración, tasa, ganancia, rango y ruta se aplican antes del armado y se confirman nodo por nodo. Si alguno no puede reservar memoria, restaurar su calibración o armar el convertidor, la sesión no se declara completa. Identificadores de sesión y secuencia impiden mezclar confirmaciones tardías, archivos parciales o lotes duplicados con una captura válida.
