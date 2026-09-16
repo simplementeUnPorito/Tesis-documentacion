@@ -27,6 +27,15 @@ UART, mientras que el PSoC devuelve pings, diagnóstico y lotes por I2C como
 maestro. El inicio temporal de una adquisición no viaja por esos buses sino por
 la línea dedicada SYNC.
 
+Desde el 2026-09-16 el PSoC también es dueño de la calibración de la cadena
+analógica: aprende una vez las referencias lentas (IDAC0/IDAC1) cuando el
+operador lo autoriza, mantiene IDAC2/IDAC3 con un PI permanente fuera de
+adquisición y adjunta su estado a los metadatos de cada captura. El ESP solo
+transporta los comandos `ctl` (tramas `0xD0..0xD7`) y la telemetría clave/valor
+(`[0xAB][0xC6]`). Las ráfagas I2C de subida acoplan ruido en la cadena analógica
+durante ~0,5 s, por eso el PSoC las espacia cuando el lazo está estable. Detalle:
+`src/firmware/psoc/AcondicionamientoAnalogico.cydsn/CONTROL_UNIFICADO.md`.
+
 ## Reglas de dependencia
 
 - `src/firmware/psoc` y `src/firmware/esp32` se coordinan por UART de bajada,
