@@ -1,64 +1,79 @@
-\subsection{\revision{Resultados preliminares}}
+\subsection{Resultados preliminares}
 \label{sec:resultados}
 
-\revision{Los ensayos realizados permitieron evaluar progresivamente el funcionamiento de la plataforma, desde el acondicionamiento analógico hasta la adquisición de señales en campo. Estos resultados deben considerarse preliminares, ya que algunas características del sistema, particularmente la sincronización efectiva entre convertidores y la respuesta extremo a extremo en bajas frecuencias, requieren todavía una caracterización específica.}
+Los ensayos realizados permitieron evaluar progresivamente el funcionamiento de la plataforma, desde el acondicionamiento analógico hasta la adquisición de señales en campo. Estos resultados deben considerarse preliminares, ya que algunas características del sistema, particularmente la sincronización efectiva entre convertidores y la respuesta extremo a extremo en bajas frecuencias, requieren todavía una caracterización específica.
 
-\revision{La respuesta eléctrica del acondicionamiento fue caracterizada mediante barridos. Los resultados de la figura~\ref{fig:caracterizacion-electrica} permitieron contrastar la respuesta en magnitud y fase de la trayectoria PGA--ADC con el modelo del circuito. La extensión al conjunto geófono--acondicionamiento es una predicción basada en el modelo nominal del SM-24 y no una calibración mecánica extremo a extremo.}
+La respuesta eléctrica del acondicionamiento analógico fue caracterizada mediante los barridos descritos en la sección~\ref{sec:caracterizacion-afe}. Los resultados presentados en la figura~\ref{fig:caracterizacion-electrica} permitieron contrastar la respuesta en magnitud y fase de la trayectoria PGA--ADC con el modelo del circuito. Como se indicó anteriormente, la extensión de esta respuesta al conjunto geófono--acondicionamiento constituye una predicción basada en el modelo nominal del SM-24 y no una calibración mecánica extremo a extremo.
 
-La calibración automática corrigió la continua etapa por etapa antes de adquirir. Las señales de la figura~\ref{fig:calibracion-etapas} convergen hacia sus referencias y los códigos obtenidos se conservan por configuración de ganancia.
+El procedimiento automático de ajuste de offset descrito en la sección~\ref{sec:calibracion} fue evaluado sobre las diferentes etapas del acondicionamiento. Las señales mostradas en la figura~\ref{fig:calibracion-etapas} presentan la evolución de las salidas durante el proceso de ajuste y permiten observar su convergencia hacia los niveles de referencia. Los códigos obtenidos se conservan para las diferentes configuraciones de ganancia, de manera que puedan ser reutilizados y verificados antes de una nueva adquisición.
 
-\revision{La coordinación inalámbrica se ensayó de manera exploratoria con tres nodos esclavos. Durante 128 órdenes START se observaron en osciloscopio los flancos GPIO generados por los ESP32 al ejecutar la orden. El rango observado de separación entre esos marcadores fue aproximadamente de 200 a \SI{400}{\micro s}. El resultado demuestra la operación multiesclavo y proporciona una primera magnitud del arranque distribuido; no mide todavía el inicio efectivo de los ADC ni la deriva de sus relojes. Si una separación de ese orden, $\Delta t$, se trasladara al arranque de los convertidores, introduciría entre trazas un error de fase}
+La operación multicanal se evaluó inicialmente mediante tres nodos esclavos. Para 128 órdenes START se observaron con osciloscopio los flancos GPIO generados por los ESP32 al ejecutar la orden recibida por difusión. La separación temporal entre estos marcadores se encontró aproximadamente entre 200 y 400~$\mu$s. Este ensayo verifica la operación coordinada de múltiples nodos y proporciona una primera estimación de la dispersión introducida por el mecanismo distribuido de arranque. Sin embargo, los marcadores observados corresponden a los flancos generados por los ESP32 y no al inicio efectivo de la conversión en los ADC; tampoco permiten cuantificar la deriva posterior de las bases de tiempo locales.
+
+Si una diferencia temporal \(\Delta t\) de ese orden se trasladara efectivamente al inicio de las adquisiciones, produciría entre canales un error de fase dependiente de la frecuencia:
 \begin{equation}
-\Delta\varphi(f)=360^\circ f\,\Delta t,
-\label{eq:error-fase}
+	\Delta\phi(f)=360^\circ f\Delta t.
+	\label{eq:error-fase}
 \end{equation}
-donde $f$ es la frecuencia de la componente. Con $\Delta t=\SI{400}{\micro s}$ resulta cerca de $3^\circ$ a \SI{20}{Hz} y de $7^\circ$ a \SI{50}{Hz}; por eso la validación del arranque efectivo de los ADC condiciona la banda superior aprovechable.
+
+Para \(\Delta t=400\,\mu\text{s}\), el error correspondiente sería aproximadamente \(3^\circ\) a 20~Hz y \(7^\circ\) a 50~Hz. Estos valores muestran la necesidad de caracterizar directamente el inicio efectivo de los ADC y la estabilidad relativa de sus relojes antes de establecer la banda de frecuencia en la que puede garantizarse una determinada coherencia de fase entre canales.
 
 \begin{figure*}[!tb]
-\centering
-\begin{minipage}[b]{0.44\textwidth}
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{fig18_contenido_baja_frecuencia_v2.png}\par
-  \small (a) Espectro y SNR aparente.
-\end{minipage}\hfill
-\begin{minipage}[b]{0.54\textwidth}
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{fig19_waterfall_4s_v2.png}\par
-  \small \revision{(b) Registro espacio--tiempo sintetizado.}
-\end{minipage}
-\caption{(a) Densidad espectral y relación señal--ruido de las capturas, agrupadas por distancia; la zona sombreada identifica la banda baja de interés y la línea vertical la frecuencia natural nominal del SM-24. (b) Waterfall con 21 posiciones secuenciales y un único receptor desplazado: primeros 4 s posteriores al impacto, cada traza normalizada para visualizar su evolución temporal.}
-\label{fig:campo}
+	\centering
+	\begin{minipage}[b]{0.44\textwidth}
+		\centering
+		\includegraphics[width=\linewidth,keepaspectratio]{fig18_contenido_baja_frecuencia_v2.png}\par
+		\small (a) Espectro y SNR aparente.
+	\end{minipage}\hfill
+	\begin{minipage}[b]{0.54\textwidth}
+		\centering
+		\includegraphics[width=\linewidth,keepaspectratio]{fig19_waterfall_4s_v2.png}\par
+		\small (b) Registro espacio--tiempo sintetizado.
+	\end{minipage}
+	\caption{(a) Densidad espectral y relación señal--ruido de las capturas, agrupadas por distancia; la zona sombreada identifica la banda baja de interés y la línea vertical la frecuencia natural nominal del SM-24. (b) Registro espacio--tiempo con 21 posiciones secuenciales y un único receptor desplazado: primeros 4 s posteriores al impacto, con cada traza normalizada para visualizar su evolución temporal.}
+	\label{fig:campo}
 \end{figure*}
 
+
 \subsubsection{Contenido espectral de las capturas}
+\label{sec:contenido-espectral}
 
-Se utilizaron ventanas de un segundo inmediatamente antes y después del marcador del impacto. A cada segmento se le restó su media y se le aplicó una ventana Hann; el espectro se normalizó por la energía de esa ventana y la tasa de muestreo. Para cada distancia se obtuvo la mediana de los espectros posteriores, $P_{\mathrm{post}}(f)$, y de los previos, $P_{\mathrm{pre}}(f)$. El cociente representado es
+Para evaluar el contenido frecuencial registrado en los ensayos de campo se analizaron ventanas de un segundo inmediatamente anteriores y posteriores al marcador de cada impacto. A cada segmento se le eliminó su valor medio y se aplicó una ventana Hann. Los espectros obtenidos se normalizaron considerando la energía de la ventana y la frecuencia de muestreo. Para cada distancia se calcularon las medianas de los espectros posteriores al impacto, \(P_{\mathrm{post}}(f)\), y de los espectros correspondientes al intervalo previo, \(P_{\mathrm{pre}}(f)\). A partir de ellos se definió una relación señal--ruido aparente:
+
 \begin{equation}
-\mathrm{SNR}_{\mathrm{ap}}(f)=10\log_{10}\!\left(\frac{P_{\mathrm{post}}(f)}{P_{\mathrm{pre}}(f)}\right).
+	\mathrm{SNR}_{\mathrm{ap}}(f)
+	=
+	10\log_{10}
+	\left(
+	\frac{P_{\mathrm{post}}(f)}
+	{P_{\mathrm{pre}}(f)}
+	\right).
+	\label{eq:snr-ap}
 \end{equation}
-Se trata de una relación señal--ruido aparente: la ventana posterior también contiene ruido. Un valor próximo a cero indica que el impacto apenas se distingue del nivel previo en esa banda. La duración de un segundo limita el detalle espectral a una escala del orden de \SI{1}{Hz}; el relleno con ceros sólo interpola la representación. Por ello se interpretan bandas y tendencias entre distancias, no picos estrechos aislados.
 
-\revision{Para cada distancia se calcularon los espectros de las ventanas anteriores y posteriores de cada impacto; después se obtuvo la mediana de los espectros posteriores, $P_{\mathrm{post}}(f)$, y la mediana de los previos, $P_{\mathrm{pre}}(f)$, y se formó el cociente indicado en la ecuación anterior. La figura~\ref{fig:campo}a reúne 265 impactos en 15 distancias con al menos tres registros utilizables. La relación señal--ruido aparente calculada a partir de esos espectros medianos fue 0,5 dB entre 1 y 5 Hz y 2,1 dB entre 5 y 10 Hz; aumentó a 16,7 dB entre 10 y 20 Hz y a 24,4 dB entre 20 y 50 Hz. Ninguna de las 15 distancias superó 10 dB por debajo de 10 Hz.}
+Esta magnitud se denomina aparente porque la ventana posterior al impacto contiene simultáneamente la respuesta producida por la excitación y el ruido presente durante la adquisición. Un valor próximo a \(0\) dB indica que, en esa banda, la energía registrada después del impacto apenas se distingue de la existente previamente. Debido a la duración de un segundo de las ventanas analizadas, la resolución espectral efectiva es del orden de \(1\) Hz; el relleno con ceros utilizado para representar los espectros únicamente interpola su visualización y no aumenta dicha resolución. Por esta razón, el análisis se realiza sobre bandas y tendencias generales y no sobre picos espectrales aislados.
 
-El resultado es extremo a extremo y, por ello, combina fuente, acoplamiento, terreno, geófono y electrónica: no permite atribuir la limitación a un único bloque. Se propone aumentar la energía y la repetibilidad de la excitación en baja frecuencia como siguiente intervención, para evaluar cuánto puede aprovecharse la compensación del receptor y si se extiende la banda útil del registro.
+La figura~\ref{fig:campo}a reúne los resultados correspondientes a 265 impactos realizados en 15 distancias para las que se dispuso de al menos tres registros utilizables. La mediana de la relación señal--ruido aparente fue de \(0{,}5\) dB entre 1 y 5 Hz y de \(2{,}1\) dB entre 5 y 10 Hz. En bandas superiores aumentó a \(16{,}7\) dB entre 10 y 20 Hz y a \(24{,}4\) dB entre 20 y 50 Hz. Ninguna de las 15 distancias presentó una mediana superior a 10 dB por debajo de 10 Hz.
 
-\subsubsection{\revision{Registro espacio--tiempo sintetizado}}
+Estos resultados corresponden al comportamiento extremo a extremo del ensayo y, por tanto, incluyen conjuntamente las características del excitador, su acoplamiento con el terreno, la propagación en el medio, la respuesta del geófono y la cadena electrónica de adquisición. En consecuencia, no permiten atribuir la menor relación señal--ruido observada por debajo de 10 Hz a un único elemento del sistema. Los resultados indican, sin embargo, que la evaluación de la extensión de la banda útil hacia frecuencias inferiores requiere disponer de una excitación con suficiente energía y repetibilidad en esa región.
 
-La campaña desplazó un receptor entre 21 posiciones de 10 a \SI{50}{m}, con un paso de \SI{2}{m}. En cada posición se repitió el impacto, se alinearon las capturas con la referencia del martillo y se obtuvo una traza representativa. El resultado se ordenó por distancia para formar el waterfall de la figura~\ref{fig:campo}b.
+\subsubsection{Registro espacio--tiempo sintetizado}
+\label{sec:registro-espacio-tiempo}
 
-La progresión temporal observada entre posiciones confirma que la plataforma y el flujo de procesamiento permiten construir un registro espacio--tiempo. No corresponde a 21 receptores simultáneos: cada fila procede de una excitación distinta y la normalización impide comparar amplitudes absolutas.
+Para evaluar la capacidad del sistema de construir el registro requerido para el análisis de ondas superficiales, uno de los receptores fue desplazado entre 21 posiciones comprendidas entre 10 y 50~m, con un paso de 2~m. En cada posición se realizaron excitaciones sucesivas, las capturas se alinearon temporalmente utilizando la referencia proporcionada por el excitador instrumentado y se obtuvo una traza representativa. Finalmente, las trazas se ordenaron según su distancia al excitador para formar el registro mostrado en la figura~\ref{fig:campo}b.
 
+La progresión temporal observada entre las diferentes posiciones muestra que la plataforma y el procedimiento de adquisición permiten construir un registro espacio--tiempo a partir de mediciones realizadas en campo. Debe señalarse, sin embargo, que la figura~\ref{fig:campo}b no corresponde a una adquisición simultánea mediante 21 receptores: cada traza procede de una excitación diferente y de una posición sucesiva del receptor móvil. Asimismo, debido a que las trazas fueron normalizadas individualmente para facilitar la visualización de su evolución temporal, la representación no permite comparar directamente sus amplitudes absolutas.
 
-\section{\revision{Trabajos futuros}}
+\section{Trabajos futuros}
+\label{sec:trabajos-futuros}
 
-\revision{Los resultados preliminares permiten identificar las etapas necesarias para completar la evaluación de la plataforma y avanzar hacia su utilización en ensayos MASW. Estas actividades se orientan principalmente a mejorar la excitación en bajas frecuencias, caracterizar la coherencia temporal entre canales, ampliar el arreglo de receptores y completar el procesamiento de los registros obtenidos.}
+Los resultados preliminares permiten identificar las siguientes etapas necesarias para completar la evaluación de la plataforma y avanzar hacia su utilización en ensayos MASW. Estas actividades se orientan principalmente a mejorar la excitación en bajas frecuencias, caracterizar la coherencia temporal entre canales, ampliar el arreglo de receptores y completar el procesamiento de los registros obtenidos.
 
-\revision{La primera línea de trabajo consiste en mejorar la excitación en la banda de bajas frecuencias. Los resultados mostraron una relación señal--ruido aparente reducida por debajo de \SI{10}{Hz}. Como este resultado corresponde al comportamiento extremo a extremo del ensayo, no puede atribuirse exclusivamente al excitador, al geófono o al acondicionamiento electrónico. Se propone utilizar un excitador de mayor energía y repetibilidad y comparar los resultados manteniendo la misma geometría y condiciones de adquisición. Esta evaluación permitirá determinar en qué medida puede aprovecharse la compensación implementada para el SM-24 y extenderse la banda útil del registro.}
+La primera línea de trabajo consiste en mejorar la excitación en la banda de bajas frecuencias. Los resultados de la sección~\ref{sec:contenido-espectral} mostraron una relación señal--ruido aparente reducida por debajo de 10~Hz. Debido a que este resultado corresponde al comportamiento extremo a extremo del ensayo, no puede atribuirse exclusivamente al excitador, al geófono o al acondicionamiento electrónico. Se propone, por tanto, utilizar un excitador de mayor energía y repetibilidad y comparar los resultados manteniendo la misma geometría y condiciones de adquisición. Esta evaluación permitirá determinar en qué medida puede aprovecharse la compensación implementada para el SM-24 y extenderse la banda útil del registro.
 
-\revision{Una segunda línea corresponde a la caracterización temporal de la arquitectura multicanal. Las mediciones realizadas determinaron la dispersión entre los flancos generados por los ESP32, pero no el instante efectivo de inicio de los ADC ni la deriva relativa de sus bases de tiempo. Será necesario medir estas magnitudes directamente y establecer su estabilidad durante la ventana de adquisición. A partir de estos resultados podrá cuantificarse el error de fase entre canales en función de la frecuencia y determinar la banda en la que puede garantizarse la coherencia temporal requerida para el análisis multicanal.}
+Una segunda línea corresponde a la caracterización temporal de la arquitectura multicanal. Las mediciones realizadas hasta el momento determinaron la dispersión entre los flancos generados por los ESP32, pero no el instante efectivo de inicio de los ADC ni la deriva relativa de sus bases de tiempo. Será necesario medir estas magnitudes directamente y establecer su estabilidad durante la ventana de adquisición. A partir de estos resultados podrá cuantificarse el error de fase entre canales en función de la frecuencia y determinar la banda en la que puede garantizarse la coherencia temporal requerida para el análisis multicanal.
 
-\revision{También deberá completarse la caracterización de la estabilidad del acondicionamiento analógico, en particular del offset residual después del procedimiento de ajuste y de su variación con el tiempo y las condiciones de operación. Esta información permitirá complementar la caracterización en frecuencia y establecer con mayor precisión el margen dinámico disponible para las diferentes configuraciones de ganancia.}
+También deberá completarse la caracterización de la estabilidad del acondicionamiento analógico, en particular del offset residual después del procedimiento de ajuste y de su variación con el tiempo y las condiciones de operación. Esta información permitirá complementar la caracterización en frecuencia presentada en la sección~\ref{sec:caracterizacion-afe} y establecer con mayor precisión el margen dinámico disponible para las diferentes configuraciones de ganancia.
 
-\revision{La arquitectura desarrollada permite incorporar múltiples nodos GEO, por lo que una etapa posterior consistirá en ampliar el número de receptores disponibles y realizar adquisiciones simultáneas en diferentes posiciones. La configuración utilizada en los ensayos preliminares, con un receptor fijo de referencia y otro desplazado secuencialmente, permite evaluar el funcionamiento del sistema y construir registros espacio--tiempo, pero no sustituye completamente una adquisición MASW simultánea. La ampliación del arreglo permitirá evaluar la plataforma en condiciones más próximas a su utilización prevista.}
+La arquitectura desarrollada permite incorporar múltiples nodos GEO, por lo que una etapa posterior consistirá en ampliar el número de receptores disponibles y realizar adquisiciones simultáneas en diferentes posiciones. La configuración utilizada en los ensayos preliminares, con un receptor fijo de referencia y otro desplazado secuencialmente, permite evaluar el funcionamiento del sistema y construir registros espacio--tiempo, pero no sustituye completamente una adquisición MASW simultánea. La ampliación del arreglo permitirá evaluar la plataforma en condiciones más próximas a su utilización prevista.
 
-\revision{Finalmente, una vez consolidada la adquisición multicanal, deberá avanzarse en el procesamiento específico de los registros para extraer las curvas de dispersión, identificar los modos de propagación y realizar la inversión necesaria para estimar perfiles de velocidad de ondas S con la profundidad. Estas etapas permitirán pasar de la verificación de la plataforma de adquisición presentada en este trabajo a su utilización efectiva para la caracterización geotécnica mediante MASW.}
+Finalmente, una vez consolidada la adquisición multicanal, deberá avanzarse en el procesamiento específico de los registros para extraer las curvas de dispersión, identificar los modos de propagación y realizar la inversión necesaria para estimar perfiles de velocidad de ondas S con la profundidad. Estas etapas permitirán pasar de la verificación de la plataforma de adquisición presentada en este trabajo a su utilización efectiva para la caracterización geotécnica mediante MASW.
