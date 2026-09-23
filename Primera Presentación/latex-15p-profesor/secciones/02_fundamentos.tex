@@ -6,16 +6,16 @@ Un impacto aplicado sobre la superficie altera localmente el estado de equilibri
 \subsection{Ondas de cuerpo en un medio elástico}
 \label{sec:medio-elastico}
 
-En el régimen de pequeñas deformaciones, la estructura granular del suelo se sustituye por un medio continuo: cada volumen elemental agrupa un gran número de partículas y sus propiedades representan el comportamiento conjunto. Bajo las hipótesis iniciales de homogeneidad e isotropía, su respuesta puede describirse paramétricamente mediante la densidad $\rho$ y los parámetros de Lamé $\lambda$ y $\mu$. La densidad gobierna la inercia; $\lambda$ participa en la oposición al cambio de volumen, y $\mu$ es el módulo de corte que cuantifica la oposición al cambio de forma. Si $\mathbf{u}(\mathbf{x},t)$ es el desplazamiento, el equilibrio lineal queda expresado por \citep{Kramer1996,Foti2014}
+\revision{En el régimen de pequeñas deformaciones, el suelo puede modelarse como un medio continuo, en el que cada volumen elemental representa el comportamiento conjunto de un gran número de partículas. Bajo las hipótesis de homogeneidad e isotropía, su comportamiento elástico puede describirse mediante la densidad $\rho$ y los parámetros de Lamé $\lambda$ y $\mu$. La densidad determina la inercia del medio; $\lambda$ está relacionado con su respuesta ante cambios de volumen, mientras que $\mu$ corresponde al módulo de corte y cuantifica su resistencia a la deformación por corte. Si $\mathbf{u}(\mathbf{x},t)$ representa el campo de desplazamientos, la ecuación de movimiento para un medio elástico lineal queda expresada por \citep{Kramer1996,Foti2014}}
 \begin{equation}
 \rho\,\frac{\partial^2\mathbf{u}}{\partial t^2}
 =(\lambda+\mu)\nabla(\nabla\!\cdot\!\mathbf{u})+
 \mu\nabla^2\mathbf{u}.
 \label{eq:navier}
 \end{equation}
-Esta idealización permite reconocer de primera mano los mecanismos elementales de propagación.
+\revision{Esta idealización permite describir los mecanismos elementales de propagación en el régimen elástico.}
 
-La aceleración de cada volumen elemental puede provenir de una deformación volumétrica o de corte. La descomposición de Helmholtz separa ambos movimientos mediante un potencial escalar $\phi$ y uno vectorial $\mathbf{\Psi}$ \citep{Foti2014}:
+\revision{El campo de desplazamientos puede descomponerse en una componente asociada con cambios de volumen y otra asociada con deformaciones de corte. Mediante la descomposición de Helmholtz, ambas componentes pueden representarse a partir de un potencial escalar $\phi$ y un potencial vectorial $\mathbf{\Psi}$ \citep{Foti2014}:}
 \begin{equation}
 \mathbf{u}=\nabla\phi+\nabla\times\mathbf{\Psi},
 \qquad \nabla\cdot\mathbf{\Psi}=0.
@@ -30,7 +30,7 @@ V_P=\sqrt{\frac{\lambda+2\mu}{\rho}},
 V_S=\sqrt{\frac{\mu}{\rho}}.
 \label{eq:velocidades}
 \end{equation}
-Un receptor permanece en una localización fija y observa la oscilación local cuando el frente de onda pasa por ella. La figura~\ref{fig:ondas-ps} muestra la diferencia entre el movimiento longitudinal P y el transversal S.
+\revision{La figura~\ref{fig:ondas-ps} muestra la diferencia entre el movimiento longitudinal P y el transversal S.}
 
 \begin{figure}[!tb]
 \centering
@@ -39,18 +39,26 @@ Un receptor permanece en una localización fija y observa la oscilación local c
 \label{fig:ondas-ps}
 \end{figure}
 
-La segunda relación de la ecuación~\eqref{eq:velocidades} conduce a
+\revision{De la segunda relación de la ecuación~\eqref{eq:velocidades} se obtiene directamente}
 \begin{equation}
 G_{\max}=\rho V_S^2,
 \label{eq:rigidez}
 \end{equation}
-donde $G_{\max}$ es el módulo de corte a pequeñas deformaciones. Esta vinculación es de gran interés geotécnico, pues la propagación de las ondas S aporta información sobre la rigidez inicial del suelo cuando se dispone de una estimación de densidad \citep{Kramer1996,Foti2014}. La misma magnitud es la que miden los ensayos \emph{downhole} y \emph{crosshole}, de modo que los métodos de superficie y los invasivos pueden contrastarse mutuamente: la medición en pozo calibra la interpretación superficial y ésta extiende a todo el tramo lo observado en el pozo. Tal estimación no reemplaza los parámetros de diseño bajo cargas mayores: este modelo lineal no incorpora disipación energética ni el comportamiento plástico del material.
+\revision{donde $G_{\max}$ representa el módulo de corte del suelo en el régimen de pequeñas deformaciones. Esta relación resulta de particular interés para la caracterización geotécnica, ya que permite estimar la rigidez elástica inicial del terreno a partir de $V_S$, siempre que se disponga de una estimación de $\rho$ \citep{Kramer1996,Foti2014}. La velocidad $V_S$ también puede determinarse mediante ensayos \emph{downhole} y \emph{crosshole}; por ello, las estimaciones obtenidas mediante métodos de superficie pueden contrastarse con mediciones realizadas en pozo. Esta relación describe únicamente el comportamiento elástico a pequeñas deformaciones y no representa directamente la respuesta del suelo bajo niveles mayores de deformación.}
 
 \subsection{Interfaces y conversión de modos}
 
 Las ondas S admiten dos polarizaciones. La componente SV se mueve dentro del plano vertical de propagación, mientras que la componente SH lo hace horizontalmente y perpendicular a ese plano. Esta distinción se vuelve relevante al alcanzar las condiciones de frontera del material. Puede encontrarse el contacto con otro material o una superficie libre; en ambos casos se hablará de una interfaz.
 
-Cuando una componente P o SV incide oblicuamente sobre el contacto entre dos sólidos, los contrastes de densidad y rigidez reparten su energía entre ondas reflejadas y transmitidas y permiten conversión P--SV, como resume la figura~\ref{fig:conversion-interfaz}. La componente SH permanece desacoplada de P y SV en una interfaz plana entre medios elásticos isótropos: sólo produce componentes SH reflejadas y transmitidas \citep{Foti2014,Sun2003}.
+\revision{Cuando una onda alcanza la interfaz entre dos medios con diferentes propiedades elásticas, parte de la energía incidente puede reflejarse hacia el primer medio y parte transmitirse al segundo. Las direcciones de propagación están determinadas por las condiciones de continuidad y por las velocidades en ambos medios. Para una interfaz plana, la relación entre los ángulos de incidencia, reflexión y transmisión puede expresarse mediante la ley de Snell:}
+\begin{equation}
+\revision{\frac{\sin\theta_{P1}}{V_{P1}}=
+\frac{\sin\theta_{S1}}{V_{S1}}=
+\frac{\sin\theta_{P2}}{V_{P2}}=
+\frac{\sin\theta_{S2}}{V_{S2}}=p.}
+\label{eq:snell}
+\end{equation}
+\revision{Cuando la incidencia es oblicua puede producirse, además, conversión de modos: una onda P incidente puede generar ondas P y S reflejadas y transmitidas; de manera análoga, una onda S incidente puede generar componentes P y S. En un terreno estratificado estos procesos se repiten en interfaces sucesivas, de modo que la señal registrada en superficie es la superposición de contribuciones con trayectorias, velocidades y amplitudes diferentes \citep{Foti2014,Sun2003}.}
 
 \begin{figure}[!tb]
 \centering
@@ -64,9 +72,9 @@ El límite superior del terreno es una interfaz particular. El aire, al igual qu
 \subsection{Ondas superficiales}
 \label{sec:rayleigh}
 
-En la superficie libre las componentes reflejadas interactúan y aparecen soluciones cuya energía permanece principalmente en la zona somera; se denominan ondas superficiales. Según las ondas de cuerpo que las conforman se distinguen dos familias. El movimiento SH guiado por las capas da origen a las ondas Love, cuyas partículas se desplazan horizontalmente y en dirección transversal a la propagación. Las componentes P y SV, en cambio, se acoplan en la superficie y producen la onda Rayleigh, cuyas partículas describen trayectorias elípticas en el plano vertical, semejantes a las de las olas en el agua pero recorridas en la superficie en sentido retrógrado respecto de la propagación \citep{Foti2014,Foti2018}.
+\revision{La presencia de una superficie libre da lugar a modos de propagación cuya energía se concentra principalmente en sus proximidades, denominados ondas superficiales. En un medio elástico estratificado se distinguen principalmente las ondas Love y Rayleigh. Las ondas Love están asociadas con movimiento de corte horizontal (SH), transversal a la dirección de propagación. Las ondas Rayleigh resultan del acoplamiento de componentes P y SV y presentan movimiento en el plano vertical, con trayectorias aproximadamente elípticas \citep{Foti2014,Foti2018}. Estas ya no son ondas transversales de cuerpo, sino modos superficiales.}
 
-En un semiespacio homogéneo con propiedades habituales del suelo, la velocidad de fase de la onda Rayleigh es sólo ligeramente menor que $V_S$. Por ello, su medición es una vía indirecta y no invasiva hacia la rigidez de la ecuación~\eqref{eq:rigidez}. Además, su movimiento vertical puede excitarse con un golpe sobre la superficie y observarse con un único transductor vertical; por esta razón el proyecto se concentra en ondas Rayleigh y no en Love.
+\revision{En un semiespacio homogéneo con propiedades habituales del suelo, la velocidad de fase de la onda Rayleigh es sólo ligeramente menor que $V_S$. Esta relación explica su interés para la estimación de la rigidez elástica. Además, su componente vertical puede generarse mediante una perturbación superficial y registrarse con transductores de movimiento vertical. Junto con la rápida atenuación de las ondas Love, estas razones justifican que el proyecto se concentre en ondas Rayleigh.}
 
 La expansión geométrica también favorece su observación a cierta distancia de la fuente. En condiciones ideales de campo lejano, la amplitud de las ondas de cuerpo se reduce aproximadamente como $r^{-1}$ al distribuirse sobre un frente esférico, mientras que la de las ondas superficiales lo hace como $r^{-1/2}$ sobre un frente cilíndrico. Por esta menor tasa de decaimiento, las componentes Rayleigh suelen dominar el registro superficial \citep{Foti2014}.
 
@@ -87,4 +95,4 @@ vincula longitud de onda $\lambda_R$, frecuencia $f$ y velocidad de fase $c_R$. 
 \label{fig:rayleigh-frecuencia}
 \end{figure}
 
-En consecuencia, resulta de interés obtener la evolución temporal y espacial de la señal para comparar el avance de cada componente frecuencial. Al observar cómo cambia la señal con la frecuencia y la posición puede construirse posteriormente un modelo compatible con la variación de rigidez. Esta necesidad conduce de manera natural a los métodos de análisis de ondas Rayleigh.
+\revision{El análisis de este comportamiento requiere conservar tanto la evolución temporal de las señales como la posición en la que se obtiene cada registro. La observación conjunta de ambas dimensiones permite analizar cómo se propagan las diferentes componentes frecuenciales y estimar su velocidad de fase. La relación entre velocidad de fase y frecuencia constituye la curva de dispersión, a partir de la cual puede obtenerse posteriormente información sobre la variación de las propiedades mecánicas del terreno con la profundidad. Este principio constituye la base de los métodos de análisis de ondas superficiales.}

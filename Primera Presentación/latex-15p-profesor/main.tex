@@ -11,6 +11,7 @@
 \usepackage{enumitem}
 \usepackage{siunitx}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{babel,arrows.meta,positioning,calc,fit,decorations.pathmorphing}
 \usepackage{float}
@@ -31,6 +32,9 @@
 \graphicspath{{figuras/}}
 \addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
 \hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue}
+% Cambios solicitados por el tutor (23-09-2026). Al cerrar la revisión,
+% basta reemplazar esta definición por \newcommand{\revision}[1]{#1}.
+\newcommand{\revision}[1]{{\color{red}#1}}
 
 \author{}
 \date{}

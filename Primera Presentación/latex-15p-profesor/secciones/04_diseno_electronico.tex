@@ -1,7 +1,9 @@
-\section{Sistema de adquisición}
+\section{\revision{Diseño del sistema de adquisición}}
 \label{sec:diseno}
 
-El receptor elegido es un geófono vertical: responde sólo a la componente vertical del movimiento del terreno, que es la que concentra la onda Rayleigh observable desde la superficie. La aplicación del método exige convertir ese movimiento en una señal eléctrica sin perder la relación temporal entre posiciones. Esa tarea comienza en el geófono y continúa en una cadena de acondicionamiento, conversión y almacenamiento. El sistema separa los nodos GEO, conectados cada uno a un geófono; el nodo HAMMER, conectado al martillo instrumentado, y un maestro que coordina la sesión (figura~\ref{fig:arquitectura-nodos}). Cada nodo conserva localmente la captura y sus parámetros; la comunicación transporta órdenes y resultados, pero no forma parte del lazo temporal de muestreo.
+\revision{El diseño parte de los requerimientos establecidos por la medición MASW. La componente vertical del movimiento del terreno debe convertirse en una señal eléctrica y registrarse preservando la información necesaria para analizar posteriormente su propagación. Esto requiere una cadena que integre el transductor, el acondicionamiento analógico, la conversión analógico--digital y el almacenamiento, manteniendo además la referencia temporal y la información geométrica asociada con cada registro.}
+
+\revision{La arquitectura propuesta es distribuida y multicanal. Cada canal de medida está asociado con un nodo GEO conectado a un geófono, mientras que un nodo HAMMER registra la excitación producida por el martillo instrumentado. Un nodo maestro coordina la adquisición y la comunicación. Cada nodo realiza localmente la adquisición y conserva los datos y parámetros de la captura; de esta manera, la comunicación se utiliza para coordinación y transferencia, pero no interviene directamente en el proceso temporal de muestreo.}
 
 \begin{figure*}[!tb]
 \centering
@@ -10,7 +12,7 @@ El receptor elegido es un geófono vertical: responde sólo a la componente vert
 \label{fig:cadena-medida}
 \end{figure*}
 
-\subsection*{Requerimientos derivados de la medida}
+\subsection*{\revision{Requerimientos derivados de la medición}}
 
 \textbf{Banda y fase.} Las longitudes de onda mayores corresponden a frecuencias menores; por ello la banda baja condiciona el alcance. La cadena debe evitar introducir variaciones de fase no conocidas dentro de la banda analizada y debe registrar a una frecuencia suficiente para impedir aliasing temporal.
 
@@ -23,7 +25,7 @@ El receptor elegido es un geófono vertical: responde sólo a la componente vert
 \subsection{Geófono utilizado}
 \label{sec:geofono}
 
-El SM-24, seleccionado por disponibilidad según se indicó en la sección~\ref{sec:metodologia}, es un geófono vertical pasivo de frecuencia natural nominal \SI{10}{Hz}, sensibilidad \SI{28.8}{V.s/m} y amortiguamiento dependiente de la carga \citep{SM24}. Esta restricción material define el problema electrónico: por debajo de su resonancia, la tensión entregada disminuye rápidamente respecto del movimiento del terreno, justamente en la región asociada con longitudes de onda mayores.
+\revision{El SM-24, seleccionado por disponibilidad, es un geófono vertical pasivo de frecuencia natural nominal \SI{10}{Hz}, sensibilidad \SI{28.8}{V.s/m} y amortiguamiento dependiente de la carga \citep{SM24}.} Esta restricción material define el problema electrónico: por debajo de su resonancia, la tensión entregada disminuye rápidamente respecto del movimiento del terreno, justamente en la región asociada con longitudes de onda mayores.
 
 Geófonos de menor frecuencia natural o sismómetros de banda ancha reducirían esa dificultad, pero su costo es considerablemente mayor y cada posición simultánea exigiría un transductor adicional. Como referencia de orden, los precios públicos consultados sitúan el SM-24 alrededor de 70 USD y un geófono vertical de 4,5 Hz entre 92 y 154 USD por elemento, antes de incorporar el resto del canal \citep{SparkFunSM24,RTClark45}. Para 24 posiciones, sólo los elementos sensores suman cerca de 1.680 USD con el SM-24 y entre 2.200 y 3.700 USD con geófonos de 4,5 Hz; un sismómetro de banda ancha supera ampliamente esas cifras. El proyecto ensaya otra vía: caracterizar el SM-24 disponible y extender de manera controlada su banda útil mediante acondicionamiento.
 
@@ -55,7 +57,7 @@ H_a(s)=\frac{V_o(s)}{A_g(s)}=
 \end{equation}
 Esta forma pasabanda es la base de la compensación elegida. El amortiguamiento $\zeta_0$ es el de la ecuación~\eqref{eq:amortiguamiento} con la carga conectada; por ello la impedancia de entrada del frente también carga la bobina y modifica la respuesta. La entrada se diseñó con impedancia alta y simétrica para no introducir una carga diferente entre unidades \citep{SM24,Ma2023}.
 
-\subsection{Frente analógico}
+\subsection{\revision{Acondicionamiento analógico (Analog Front End, AFE)}}
 \label{sec:afe}
 
 El frente se implementó dentro de un PSoC y organiza cinco funciones: entrada diferencial, ganancia programable, rama pasabanda de compensación, suma con el camino directo y filtrado antialias. La entrada diferencial rechaza perturbaciones comunes en el cable del geófono. La etapa PGA adapta el nivel a la captura sin fijar una única ganancia para todas las distancias.
@@ -100,7 +102,7 @@ La ganancia no se fija globalmente para toda una campaña. Después de observar 
 
 Los valores de todas las etapas se eligieron entre los componentes comerciales disponibles en el laboratorio, con asistencia de simulación por computadora que incorpora el modelo no ideal de los amplificadores.
 
-\subsection{Calibración de la continua}
+\subsection{\revision{Ajuste de offset}}
 \label{sec:calibracion}
 
 La ganancia necesaria para recuperar la rama compensada también amplifica las derivas de continua. Los amplificadores operacionales integrados en el PSoC 5LP no son dispositivos de deriva nula: presentan tensión de offset y variación con temperatura, y cada etapa suma su contribución a la siguiente \citep{InfineonPSoC,InfineonAN68403}. Sin corrección, una salida puede acercarse a un riel aun con el geófono en reposo, consumir el margen reservado para la señal o directamente saturar la etapa e inutilizar el nodo.
@@ -147,7 +149,7 @@ La figura~\ref{fig:calibracion-flujo} resume la secuencia. El orden PGA, pasaban
 \label{fig:calibracion-etapas}
 \end{figure*}
 
-\subsection{Caracterización del frente}
+\subsection{\revision{Caracterización del acondicionamiento analógico}}
 
 Para verificar el comportamiento eléctrico se realizaron diferentes mediciones con barridos senoidales de frecuencias solapadas y se observaron simultáneamente las salidas internas. Los cocientes espectrales entre entrada y salida permiten estimar magnitud y fase sin depender de la amplitud absoluta del generador; la coherencia delimita la región útil de cada barrido. Se caracterizaron la rama pasabanda, el compensador, el pasa-bajos y la ruta completa hasta el ADC.
 
@@ -165,7 +167,7 @@ Los barridos cubrieron bandas superpuestas desde \SI{10}{mHz} hasta \SI{200}{kHz
 
 La figura~\ref{fig:caracterizacion-electrica}b combina esa transferencia medida con el modelo nominal del SM-24 y la compara en una misma escala con el geófono solo, referido a velocidad y a aceleración, con la respuesta teórica ideal y con la envolvente que cubre el ajuste del potenciómetro. Es una predicción, no una medición mecánica: no fue posible realizar una calibración extremo a extremo por falta del equipamiento especializado capaz de imponer al geófono un movimiento conocido.
 
-\subsection{Asistencia digital y captura de un punto}
+\subsection{\revision{Adquisición y almacenamiento digital}}
 \label{sec:digital}
 
 La calibración automática ya requiere multiplexores, ADC, DAC y una secuencia de control; los mismos recursos digitales se aprovechan después para obtener una traza con referencia temporal y metadatos completos. El convertidor delta--sigma digitaliza la salida del filtro analógico. Un canal DMA lleva la salida del ADC a memoria, otro la conduce al filtro digital implementado en hardware y un tercero almacena la salida filtrada. El DMA resuelve estos traslados entre periféricos y memoria; el procesador configura la captura y copia las muestras aceptadas para formar los lotes que se conservarán \citep{InfineonPSoC}.
@@ -188,42 +190,40 @@ t_i[n]=t_{0,i}+\frac{n}{f_s(1+\epsilon_i)},
 \end{equation}
 donde $t_{0,i}$ representa el instante de arranque y $\epsilon_i$ el error relativo del reloj local. La preparación previa de la captura y el disparo por lógica dedicada reducen el trabajo que debe ejecutar el procesador al iniciar la ventana.
 
-\subsection{Fuente instrumentada}
+\subsection{\revision{Excitador instrumentado}}
 \label{sec:fuente}
 
-La excitación manual se realiza con un martillo que incorpora un sensor de impacto PCB~086D20. Este transductor ICP registra la forma y el instante del contacto; su banda resulta suficiente para reconocer un golpe único, rebotes o contactos múltiples \citep{PCB086D20,PCBSignalConditioning}. El PSoC del nodo HAMMER lo alimenta con corriente constante, desacopla y protege la señal, y la lleva por un PGA y un pasa-bajos hasta el ADC (figura~\ref{fig:fuente-interfaz}a). Así, la fuente constituye un nodo con la misma estructura de control y almacenamiento que los receptores GEO, y el elemento de excitación pasa a formar parte de la red de adquisición.
+La excitación manual se realiza con un martillo que incorpora un sensor de impacto PCB~086D20. Este transductor ICP registra la forma y el instante del contacto; su banda resulta suficiente para reconocer un golpe único, rebotes o contactos múltiples \citep{PCB086D20,PCBSignalConditioning}. El PSoC del nodo HAMMER lo alimenta con corriente constante, desacopla y protege la señal, y la lleva por un PGA y un pasa-bajos hasta el ADC (figura~\ref{fig:fuente-interfaz}). Así, la fuente constituye un nodo con la misma estructura de control y almacenamiento que los receptores GEO, y el elemento de excitación pasa a formar parte de la red de adquisición.
 
 \begin{figure*}[!tb]
 \centering
-\begin{minipage}[c]{0.55\textwidth}
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{fig14_acondicionamiento_martillo_psoc.png}\par
-  \small (a) Acondicionamiento del martillo en el PSoC.
-\end{minipage}\hfill
-\begin{minipage}[c]{0.42\textwidth}
-  \centering
-  \includegraphics[width=\linewidth,keepaspectratio]{fig15_i_web_maestro_claro.png}\par
-  \small (b) Interfaz de operación.
-\end{minipage}
-\caption{(a) Nodo HAMMER: alimentación ICP por corriente constante, desacople y protección de la entrada, PGA, pasa-bajos y ADC con referencias VDAC. Fuente: elaboración propia en PSoC Creator. (b) Interfaz para configurar, revisar, conservar, descartar o enviar cada captura.}
+\includegraphics[width=0.62\textwidth,keepaspectratio]{fig14_acondicionamiento_martillo_psoc.png}
+\caption{\revision{Nodo HAMMER: alimentación ICP por corriente constante, desacople y protección de la entrada, PGA, pasa-bajos y ADC con referencias VDAC. Fuente: elaboración propia en PSoC Creator.}}
 \label{fig:fuente-interfaz}
 \end{figure*}
 
-\subsection{Interfaz de operación e ingesta}
+\subsection{\revision{Interfaz de operación y procesamiento de datos}}
 \label{sec:interfaz}
 
 La interfaz web del maestro permite configurar ganancia, rango, duración y ruta de señal; armar los nodos; iniciar la captura y revisar inmediatamente las señales de martillo y geófono. Esta revisión permite repetir una posición si se observa falta de acoplamiento, un golpe múltiple o ruido excesivo. Después, el operador puede descartar la captura o descargarla y enviarla al servidor mediante la ingesta automática, según el flujo de la figura~\ref{fig:flujo-operativo}.
 
+\begin{figure}[!tb]
+\centering
+\includegraphics[width=\columnwidth,keepaspectratio]{fig15_i_web_maestro_claro.png}
+\caption{\revision{Interfaz web para configurar, revisar, conservar, descartar o enviar cada captura.}}
+\label{fig:interfaz-web}
+\end{figure}
+
 \begin{figure*}[!tb]
 \centering
 \includegraphics[width=0.64\textwidth,keepaspectratio]{fig16_d_flujo_operativo.png}
-\caption{Flujo operativo de una sesión: configuración del maestro, calibración, captura sincronizada, revisión, conservación o descarte y envío al servidor de análisis.}
+\caption{\revision{Flujo operativo de una sesión: configuración del maestro, calibración, captura coordinada, revisión, conservación o descarte y envío al servidor de análisis.}}
 \label{fig:flujo-operativo}
 \end{figure*}
 
 Cada registro conserva nodo, posición, tasa de muestreo, rango del ADC, ganancia, ruta cruda o filtrada, número de muestras y estado de calibración. El servidor valida el paquete, preserva el original y ejecuta el procesamiento sobre copias derivadas. La geometría se incorpora antes de utilizar las trazas, por lo que el registro queda preparado para alineación, selección y análisis sin depender del nombre del archivo.
 
-La revisión posterior se realiza en una interfaz de procesamiento de escritorio (figura~\ref{fig:interfaz-procesamiento}). Cada captura se alinea con el disparo detectado en el martillo, se le asigna la distancia y se marca como válida o rechazada; las trazas de una misma posición se superponen con su promedio para reconocer golpes defectuosos antes de agruparlas, filtrarlas y formar el registro espacial.
+\revision{La revisión posterior se realiza en una interfaz de procesamiento de escritorio (figura~\ref{fig:interfaz-procesamiento}). Cada captura se alinea con el disparo detectado en el martillo, se le asigna la distancia y se marca como válida o rechazada; las trazas de una misma posición se superponen con su promedio para reconocer golpes defectuosos antes de organizarlas según la geometría y formar el registro espacio--tiempo.}
 
 \begin{figure}[!tb]
 \centering
@@ -232,10 +232,10 @@ La revisión posterior se realiza en una interfaz de procesamiento de escritorio
 \label{fig:interfaz-procesamiento}
 \end{figure}
 
-\subsection{Arquitectura de múltiples nodos}
+\subsection{\revision{Arquitectura multicanal}}
 \label{sec:multicanal}
 
-La arquitectura admite un maestro, varios nodos GEO y un nodo HAMMER. El maestro envía primero una orden de armado y comprueba que los esclavos estén preparados; después transmite una única orden de inicio por difusión. Cada esclavo genera localmente el flanco que dispara su PSoC. El arranque depende de la recepción y ejecución de esa orden; la cadencia posterior de muestreo queda gobernada por el reloj local. La captura termina y se almacena dentro de cada nodo antes de transferirse.
+\revision{La plataforma fue concebida como una arquitectura multicanal distribuida, en la que cada canal dispone de recursos propios para el acondicionamiento, la digitalización y el almacenamiento. Admite un nodo maestro, múltiples nodos GEO asociados con los geófonos y un nodo HAMMER correspondiente al excitador instrumentado. Esta organización permite ampliar el número de canales incorporando nuevos nodos GEO sin modificar la estructura general del sistema.}
 
 \begin{figure*}[!tb]
 \centering
@@ -247,7 +247,7 @@ La arquitectura admite un maestro, varios nodos GEO y un nodo HAMMER. El maestro
 \begin{figure*}[!tb]
 \centering
 \includegraphics[width=0.99\textwidth,keepaspectratio]{fig17_diagramas_publicacion.png}
-\caption{Secuencia multinodo implementada. ARM reserva y prepara recursos; PRESTART configura el número de lotes y deja al PSoC en espera; una única orden START por difusión produce localmente el flanco hacia cada PSoC. La captura se almacena antes del retorno por lotes.}
+\caption{\revision{Secuencia de adquisición multicanal. ARM reserva y prepara recursos; PRESTART configura el número de lotes y deja al PSoC en espera; una única orden START por difusión produce localmente el flanco hacia cada PSoC. La captura se almacena antes del retorno por lotes.}}
 \label{fig:arquitectura-multicanal}
 \end{figure*}
 
@@ -256,3 +256,7 @@ El enlace inalámbrico utiliza ESP-NOW, que permite intercambio directo entre di
 La transferencia se realiza después de cerrar la ventana. Cada captura queda almacenada en el nodo y se divide en lotes numerados que pueden solicitarse otra vez si el enlace falla. Versiones, CRC e indicadores de cantidad de muestras, desbordamiento y cierre incompleto permiten distinguir una traza íntegra de un archivo parcial. Esta política prioriza la conservación del original sobre la velocidad de descarga.
 
 El armado se divide en fases para reducir el trabajo pendiente en el instante crítico. ARM comprueba disponibilidad y reserva memoria. PRESTART comunica al PSoC la longitud de la captura, reinicia contadores y mantiene preparada la ruta DMA. Sólo cuando todos los esclavos confirman ese estado, el maestro transmite START una sola vez por difusión. Cada ESP32 genera entonces, desde su propia rutina de recepción, el flanco que inicia la lógica del PSoC. Esta secuencia evita enviar órdenes sucesivas a cada receptor y busca reducir la dispersión de arranque.
+
+\revision{Aunque la arquitectura fue diseñada para operar con múltiples canales GEO, la configuración utilizada para la evaluación experimental dispuso de dos canales operativos. Uno de los geófonos se mantuvo en una posición fija como referencia común entre adquisiciones sucesivas, mientras que el segundo se desplazó a lo largo de las posiciones de medida. De esta manera fue posible construir secuencialmente el registro espacio--tiempo y verificar la coherencia entre impactos. El nodo HAMMER registró cada excitación y proporcionó la referencia temporal asociada con el instante del impacto.}
+
+\revision{Esta configuración debe distinguirse de una adquisición MASW convencional en la que todos los receptores se distribuyen espacialmente y registran simultáneamente un mismo evento. La arquitectura electrónica permite la adquisición multicanal simultánea, mientras que la evaluación experimental utilizó el desplazamiento secuencial de uno de los dos receptores disponibles. Esta modalidad constituye una estrategia para evaluar el prototipo y no una limitación de la arquitectura propuesta.}
