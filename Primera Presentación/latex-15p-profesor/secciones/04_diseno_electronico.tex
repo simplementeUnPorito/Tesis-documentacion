@@ -3,24 +3,18 @@
 
 El diseño del sistema de adquisición parte de los requerimientos establecidos por la medición MASW. La componente vertical del movimiento del terreno debe convertirse en una señal eléctrica y registrarse preservando la información necesaria para analizar posteriormente su propagación. Esto requiere una cadena de adquisición que integre el transductor, el acondicionamiento analógico, la conversión analógico--digital y el almacenamiento, manteniendo además la referencia temporal y la información geométrica asociada con cada registro.
 
-La arquitectura propuesta es distribuida y multicanal. Cada canal de medida está asociado con un nodo GEO conectado a un geófono, mientras que un nodo HAMMER registra la excitación producida por el martillo instrumentado. Un nodo maestro coordina la adquisición y la comunicación entre los diferentes elementos del sistema, como se muestra en la Figura~\ref{fig:cadena-medida}. Cada nodo realiza localmente la adquisición y conserva los datos y parámetros correspondientes a la captura; de esta manera, la comunicación entre nodos se utiliza para coordinación y transferencia de información, pero no interviene directamente en el proceso temporal de muestreo.
-
-\begin{figure*}[!tb]
-	\centering
-	\includegraphics[width=0.94\textwidth,keepaspectratio]{fig04_d_cadena_fuente_geofono.png}
-	\caption{Cadena funcional de medida: el impacto excita el terreno, el geófono transforma el movimiento vertical y la electrónica acondiciona, digitaliza y conserva la traza.}
-	\label{fig:cadena-medida}
-\end{figure*}
+La arquitectura propuesta es distribuida: cada geófono se conecta a un nodo GEO, un nodo HAMMER registra la excitación del martillo instrumentado y un nodo maestro coordina el conjunto (figura~\ref{fig:arquitectura-nodos}). Cada nodo adquiere y almacena localmente sus muestras; la comunicación se utiliza para coordinación y transferencia, no para el muestreo.
 
 \subsection{Requerimientos derivados de la medición}
 
-\textbf{Banda y respuesta de fase.} La banda de adquisición debe incluir las componentes frecuenciales de interés para el análisis de ondas superficiales. En particular, las componentes de menor frecuencia están asociadas, en general, con mayores longitudes de onda y presentan sensibilidad a regiones más profundas del terreno. La cadena de adquisición debe, por tanto, proporcionar una respuesta adecuada en la banda de interés y evitar alteraciones no caracterizadas de amplitud y fase. Asimismo, la frecuencia de muestreo debe ser suficiente para representar correctamente las señales adquiridas y evitar aliasing temporal.
+\textbf{Banda y respuesta de fase.} La cadena debe incluir las frecuencias de interés sin alteraciones no caracterizadas de amplitud y fase. Las componentes de menor frecuencia corresponden, en general, a mayores longitudes de onda y son sensibles a regiones más profundas del terreno. La frecuencia de muestreo debe permitir representar la banda adquirida sin aliasing temporal.
 
-\textbf{Margen dinámico.} La amplitud de las señales registradas puede variar considerablemente con la distancia a la fuente y con las características del terreno. El sistema debe disponer de un margen dinámico suficiente para registrar tanto señales de mayor amplitud en posiciones próximas a la excitación como señales atenuadas en posiciones más alejadas. Esto requiere una adecuada selección de la ganancia, protección frente a saturación y resolución suficiente para conservar las componentes de menor amplitud.
+\textbf{Margen dinámico.} La variación de amplitud con la distancia y el terreno exige ganancia ajustable, protección frente a saturación y resolución suficiente para registrar tanto las señales próximas a la fuente como las atenuadas en posiciones lejanas.
 
-\textbf{Referencia temporal y geometría.} La interpretación del registro espacio--tiempo requiere conocer la posición correspondiente a cada traza y mantener una referencia temporal común entre las adquisiciones. Cada registro debe conservar, por tanto, la información necesaria para relacionar las muestras con la excitación y con la geometría de la medición. En una adquisición multicanal, las bases de tiempo de los diferentes nodos deben mantener una coherencia temporal suficiente durante toda la ventana de captura. En el esquema secuencial utilizado para la evaluación experimental, esta condición adquiere especial importancia, ya que las trazas correspondientes a diferentes posiciones se obtienen a partir de excitaciones sucesivas.
+\textbf{Referencia temporal y geometría.} Cada traza debe conservar su posición y su referencia respecto de la excitación. Las bases de tiempo de los nodos deben mantener coherencia durante toda la captura; en el esquema secuencial, también debe conservarse una referencia común entre excitaciones sucesivas.
 
-\textbf{Operación y almacenamiento en campo.} El sistema debe permitir realizar las adquisiciones sin depender de infraestructura externa y conservar localmente los registros obtenidos. Asimismo, resulta conveniente disponer de mecanismos que permitan verificar en campo que tanto la excitación como las señales de respuesta fueron correctamente adquiridas antes de modificar la configuración o avanzar a la siguiente posición de medida. Estos requerimientos trasladan al diseño electrónico las condiciones de adquisición y control de calidad necesarias para los ensayos de ondas superficiales \citep{Foti2018}.
+\textbf{Operación y almacenamiento en campo.} El sistema debe operar sin infraestructura externa, conservar localmente los registros y permitir verificar la excitación y la respuesta antes de cambiar la configuración o avanzar de posición. 
+Estos requisitos trasladan al diseño electrónico las condiciones de adquisición y control de calidad de los ensayos de ondas superficiales \citep{Foti2018}.
 
 
 \subsection{Geófono utilizado}
@@ -28,7 +22,7 @@ La arquitectura propuesta es distribuida y multicanal. Cada canal de medida est�
 
 El SM-24, seleccionado por disponibilidad, es un geófono vertical pasivo de frecuencia natural nominal \SI{10}{Hz}, sensibilidad \SI{28.8}{V.s/m} y amortiguamiento dependiente de la carga \citep{SM24}. Esta restricción material define el problema electrónico: por debajo de su resonancia, la tensión entregada disminuye rápidamente respecto del movimiento del terreno, justamente en la región asociada con longitudes de onda mayores.
 
-Geófonos de menor frecuencia natural o sismómetros de banda ancha reducirían esa dificultad, pero su costo es considerablemente mayor y cada posición simultánea exigiría un transductor adicional. Como referencia de orden, los precios públicos consultados sitúan el SM-24 alrededor de 70 USD y un geófono vertical de 4,5 Hz entre 92 y 154 USD por elemento, antes de incorporar el resto del canal \citep{SparkFunSM24,RTClark45}. Para 24 posiciones, sólo los elementos sensores suman cerca de 1.680 USD con el SM-24 y entre 2.200 y 3.700 USD con geófonos de 4,5 Hz; un sismómetro de banda ancha supera ampliamente esas cifras. El proyecto ensaya otra vía: caracterizar el SM-24 disponible y extender de manera controlada su banda útil mediante acondicionamiento.
+Un sensor de menor frecuencia natural reduciría esa dificultad, con mayor costo por canal: el SM-24 ronda los 70 USD y un geófono de 4,5 Hz, entre 92 y 154 USD \citep{SparkFunSM24,RTClark45}. El proyecto busca aprovechar el SM-24 disponible y extender de forma controlada su banda útil mediante acondicionamiento.
 
 \begin{figure*}[!tb]
 \centering
@@ -60,7 +54,9 @@ Esta forma pasabanda es la base de la compensación elegida. El amortiguamiento 
 \subsection{Acondicionamiento analógico (Analog Front End, AFE)}
 \label{sec:afe}
 
-El acondicionamiento analógico, denominado habitualmente Analog Front End (AFE), adapta la señal entregada por el geófono a las condiciones requeridas para su conversión analógico--digital. En el sistema desarrollado, esta etapa integra cinco funciones principales: entrada diferencial, ganancia programable, compensación de la respuesta del geófono, combinación con el camino directo y filtrado antialias. La entrada diferencial permite reducir la contribución de perturbaciones de modo común inducidas en el cable del geófono, mientras que la ganancia programable permite adaptar el nivel de la señal a las condiciones de cada adquisición.
+El acondicionamiento analógico, o Analog Front End (AFE), adapta la señal del geófono al ADC cumpliendo cuatro funciones: entrada diferencial para reducir perturbaciones de modo común, ganancia programable para proporcionar flexibilidad ante diferentes terrenos y distancias, compensación del sensor en bajas frecuencias y filtrado antialias.
+
+
 
 \begin{figure*}[!tb]
 	\centering
@@ -69,30 +65,34 @@ El acondicionamiento analógico, denominado habitualmente Analog Front End (AFE)
 	\label{fig:frente-analogico}
 \end{figure*}
 
-La compensación se basa en el principio propuesto por \citet{Ma2023}. Debido a la disminución de sensibilidad del SM-24 en la región próxima y por debajo de su frecuencia natural, una compensación basada en la inversión directa de su función de transferencia produciría también una amplificación significativa del ruido de baja frecuencia. Por esta razón, no se plantea una deconvolución exacta de la respuesta del geófono, sino una compensación limitada a una banda de frecuencias de interés.
+Siguiendo el principio propuesto por \citet{Ma2023}, se compensa la limitada banda del geófono SM-24 sin invertir directamente su respuesta, lo que evita amplificar el ruido de baja frecuencia. Para ello, una rama pasabanda se resta del camino directo para desintonizar el pico de resonancia en $\omega_n$; la respuesta resultante es más plana, a costa de una pérdida de amplitud. Cada etapa aporta una ganancia calculada para recuperar el nivel de la señal a la vez que se extiende la banda útil.
 
-El esquema implementado utiliza una rama de compensación con respuesta pasabanda, cuya salida se combina con el camino directo de la señal. De esta manera se modifica la respuesta global del conjunto geófono--acondicionamiento, aumentando la contribución de las componentes próximas a la frecuencia natural sin aplicar una ganancia creciente de forma indiscriminada hacia bajas frecuencias. El objetivo es extender de manera controlada la banda útil del sistema manteniendo un compromiso entre compensación, ruido y margen dinámico.
+El filtro antialias limita el contenido espectral antes del ADC y evita que componentes situadas por encima de la banda de adquisición produzcan aliasing.
 
-La señal resultante se somete finalmente a un filtrado antialias antes de la conversión analógico--digital. Este filtro limita el contenido espectral aplicado al convertidor y evita que componentes situadas por encima de la banda de adquisición produzcan aliasing. La respuesta en amplitud y fase de toda la cadena de acondicionamiento debe ser conocida, ya que ambas magnitudes forman parte de la información que posteriormente se utiliza para analizar la propagación de las ondas superficiales.
+La figura~\ref{fig:cadena-medida} resume la cadena desde la excitación del terreno hasta el almacenamiento de la traza.
 
-\subsection{Ajuste de Offset}
+\begin{figure*}[!tb]
+	\centering
+	\includegraphics[width=0.94\textwidth,keepaspectratio]{fig04_d_cadena_fuente_geofono.png}
+	\caption{Cadena funcional de medida: el impacto excita el terreno, el geófono transforma el movimiento vertical y la electrónica acondiciona, digitaliza y conserva la traza.}
+	\label{fig:cadena-medida}
+\end{figure*}
+
+\subsection{Ajuste de offset}
 \label{sec:calibracion}
 
-La ganancia necesaria en el acondicionamiento analógico amplifica no solamente la señal de interés, sino también los offsets introducidos por las distintas etapas. Estos desplazamientos se acumulan a lo largo de la cadena y reducen el margen dinámico disponible; para ganancias elevadas pueden incluso provocar la saturación de una etapa antes de que la señal alcance el convertidor analógico--digital.
+Las ganancias seleccionadas amplifican también los offsets de cada etapa, que se acumulan a lo largo de la cadena, reducen el margen dinámico y pueden saturar una etapa antes de que la señal alcance el ADC. Se consideró primero un servo de continua activo, pero este impondría durante la captura un compromiso entre establecimiento y ancho de banda, inconveniente para preservar la respuesta de baja frecuencia que este trabajo busca extender.
 
-Una posible solución consiste en utilizar un servo de continua que mantenga un lazo de realimentación activo durante la adquisición. Sin embargo, este tipo de solución introduce un compromiso entre tiempo de establecimiento y ancho de banda debido a la presencia permanente del lazo de realimentación. Esta característica resulta inconveniente en el presente sistema, donde se busca preservar la respuesta de baja frecuencia de la cadena de adquisición.
+Se implementó, por ello, un ajuste automático previo (\emph{foreground DC-offset calibration}): se mide la continua de cada etapa y se corrige mediante referencias de convertidores digital--analógico (VDAC). Durante la adquisición, el controlador queda desactivado y los códigos VDAC permanecen constantes, por lo que no se introduce dinámica no deseada en la trayectoria de la señal durante la captura.
 
-Por esta razón, se implementó un procedimiento automático de ajuste de offset previo a la adquisición (\emph{foreground DC-offset calibration}). Durante este procedimiento, los recursos digitales disponibles se utilizan para medir el nivel de continua de cada etapa y ajustar su punto de operación mediante referencias generadas por convertidores digital--analógico (VDAC). Una vez finalizado el ajuste, el controlador queda desactivado y los códigos de los VDAC permanecen constantes durante la adquisición. De esta manera, la asistencia digital permite establecer el punto de operación de las etapas sin modificar posteriormente la trayectoria analógica de la señal.
-
-El ajuste se realiza secuencialmente sobre el amplificador de ganancia programable (PGA), el filtro pasabanda (BP), el sumador (SUM) y el filtro pasa-bajos (LP). Un multiplexor conecta sucesivamente la salida de cada etapa al ADC, mientras que un filtro digital programable, configurado durante el ajuste como un FIR de 128 coeficientes y frecuencia de corte muy baja, proporciona una estimación de su componente de continua. El orden de ajuste sigue el recorrido de la señal, ya que cada etapa recibe el offset residual propagado por las anteriores.
+El ajuste sigue el recorrido PGA--BP--SUM--LP (amplificador de ganancia programable, pasabanda, sumador y pasa-bajos), pues cada etapa recibe el offset residual anterior. Un multiplexor conecta sus salidas al ADC y un FIR de 128 coeficientes, con corte muy bajo, estima la continua.
 
 Para una etapa \(i\), el residuo respecto del nivel de referencia se define como
 \begin{equation}
-	e_i[n] = \hat{y}_i[n] - r_i.
+	e_i[n] = \hat{y}_i[n] - r_i,
 	\label{eq:residuo-offset}
 \end{equation}
-
-donde \(\hat{y}_i[n]\) es la salida filtrada expresada en cuentas del ADC y \(r_i\) es el nivel de referencia deseado. En la implementación utilizada, \(r_i=0\), por lo que el residuo corresponde directamente a la estimación filtrada de la salida. Para expresar este error en términos de códigos equivalentes del VDAC se utiliza
+donde \(\hat{y}_i[n]\) es la salida filtrada en cuentas del ADC y \(r_i=0\) el nivel de referencia. El error se expresa en códigos equivalentes del VDAC mediante
 \begin{equation}
 	\varepsilon_i[n]
 	=
@@ -106,10 +106,9 @@ donde \(\hat{y}_i[n]\) es la salida filtrada expresada en cuentas del ADC y \(r_
 	\frac{V_{x,\mathrm{span}}}{N_x}.
 	\label{eq:escala}
 \end{equation}
-
 donde \(q_x\) representa el paso de cuantización, \(V_{x,\mathrm{span}}\) la excursión del rango correspondiente y \(N_x\) el número de niveles del convertidor. Para \(N_{\mathrm{ADC}}=2^{18}\), \(V_{\mathrm{ADC,\mathrm{span}}}=5\,\mathrm{V}\), \(N_{\mathrm{DAC}}=2^8\) y \(V_{\mathrm{DAC,\mathrm{span}}}=4{,}096\,\mathrm{V}\), se obtienen \(q_{\mathrm{ADC}}\simeq19{,}1\,\mu\mathrm{V}\) y \(q_{\mathrm{DAC}}=16\,\mathrm{mV}\).
 
-Debido a la resolución finita del VDAC, el punto de operación ideal no siempre puede alcanzarse exactamente. Para evitar oscilaciones entre códigos adyacentes se establece una banda muerta:
+La resolución finita del VDAC puede impedir alcanzar exactamente la referencia. Para evitar oscilaciones entre códigos adyacentes se aplica una banda muerta:
 \begin{equation}
 	\bar{\varepsilon}_i[n]
 	=
@@ -119,7 +118,6 @@ Debido a la resolución finita del VDAC, el punto de operación ideal no siempre
 	\end{cases}
 	\label{eq:banda-muerta}
 \end{equation}
-
 con
 \begin{equation}
 	\Delta_i
@@ -131,7 +129,6 @@ con
 	\right).
 	\label{eq:delta-offset}
 \end{equation}
-
 donde \(K_i\) representa la ganancia de continua entre el VDAC utilizado para el ajuste y la salida observada de la etapa.
 
 El código aplicado al VDAC se actualiza mediante una acción proporcional--integral (PI):
@@ -151,10 +148,9 @@ El código aplicado al VDAC se actualiza mediante una acción proporcional--inte
 	\right].
 	\label{eq:pi-calibracion}
 \end{equation}
-
 donde \(c_{i,\mathrm{base}}\) es el código inicial, \(s_i=\operatorname{sgn}(K_i)\), y \(k_{P,i}\) y \(k_{I,i}\) son las constantes proporcional e integral, respectivamente. Los valores de \(K_i\) se obtuvieron mediante el análisis de continua de cada etapa a partir de sus valores nominales. La orden resultante se limita al intervalo de 0 a 255 códigos y se incorpora una estrategia \emph{anti-windup}: cuando el VDAC alcanza uno de sus límites, la integración se suspende si el error tiende a llevar la corrección aún más hacia la saturación.
 
-El procedimiento se ejecuta al inicio, después de un cambio de ganancia o por solicitud del operador. En primer lugar se cargan los códigos previamente almacenados y se verifica si el punto de operación continúa siendo válido. Si es necesario realizar un nuevo ajuste, las etapas PGA, BP, SUM y LP se procesan secuencialmente, reiniciando el filtro digital y permitiendo su establecimiento entre una etapa y la siguiente. Los códigos obtenidos se almacenan en EEPROM junto con la información necesaria para verificar su validez mediante CRC; un ajuste fallido no reemplaza un registro previamente válido.
+Al inicio, tras cambiar la ganancia o por solicitud del operador, se cargan y verifican los códigos guardados. Si requieren ajuste, se procesa cada etapa reiniciando el FIR y esperando su establecimiento. Los códigos se conservan en EEPROM con verificación CRC; un ajuste fallido no reemplaza uno válido.
 
 \begin{figure*}[!tb]
 	\centering
@@ -163,23 +159,19 @@ El procedimiento se ejecuta al inicio, después de un cambio de ganancia o por s
 	\label{fig:calibracion-flujo}
 \end{figure*}
 
-\begin{figure*}[!tb]
+\begin{figure}[!tb]
 	\centering
-	\includegraphics[width=0.46\textwidth,keepaspectratio]{fig10_f_senales_por_etapa.png}
+	\includegraphics[width=0.96\columnwidth,keepaspectratio]{fig10_f_senales_por_etapa.png}
 	\caption{Salidas por etapa medidas con osciloscopio durante la calibración. Las curvas filtradas se reconstruyen a partir de esas capturas para visualizar el asentamiento de continua.}
 	\label{fig:calibracion-etapas}
-\end{figure*}
+\end{figure}
 
 \subsection{Caracterización del acondicionamiento analógico}
 \label{sec:caracterizacion-afe}
 
-Una vez implementado el acondicionamiento analógico, se caracterizó experimentalmente su respuesta en frecuencia con el objeto de verificar el comportamiento de las diferentes etapas y contrastarlo con el previsto por los modelos utilizados en el diseño. Para ello se aplicaron barridos senoidales en bandas de frecuencia parcialmente superpuestas y se registraron simultáneamente las señales correspondientes a distintos puntos de la cadena.
+La respuesta en frecuencia se evaluó mediante barridos senoidales en bandas superpuestas entre \SI{10}{mHz} y \SI{200}{kHz}, registrando simultáneamente la entrada y la salida de cada etapa. La transferencia se estimó, en magnitud y fase, como el cociente espectral entre salida y entrada, sin depender de la amplitud absoluta del generador. La coherencia entre ambas señales delimitó las regiones interpretables, excluyendo aquellas condicionadas por ruido o por las limitaciones del sistema de medida. Las mediciones se realizaron en la rama pasabanda, su combinación con el camino directo, el filtro pasa--bajos y la trayectoria completa PGA--ADC, con el fin de verificar por separado el comportamiento de las etapas del circuito analógico.
 
-La función de transferencia de cada etapa se estimó a partir del cociente espectral entre las señales de salida y entrada. Este procedimiento permite obtener tanto la magnitud como la fase de la respuesta sin depender de la amplitud absoluta de la señal proporcionada por el generador. La coherencia entre ambas señales se utilizó como indicador de la validez de la estimación y para delimitar la región de frecuencia en la que los resultados podían considerarse representativos de la respuesta del circuito.
-
-Los barridos realizados cubrieron bandas superpuestas desde \SI{10}{mHz} hasta \SI{200}{kHz}. El análisis se restringió a las regiones en las que se obtuvo una coherencia suficiente, evitando extender las curvas hacia frecuencias en las que la estimación estuviera condicionada por el nivel de ruido o por las limitaciones del sistema de medida. Se caracterizaron individualmente la rama pasabanda utilizada para la compensación, el compensador resultante de su combinación con el camino directo, el filtro pasa-bajos y la trayectoria completa desde la PGA hasta el ADC.
-
-La figura~\ref{fig:caracterizacion-electrica} resume la caracterización de la cadena de acondicionamiento. La figura~\ref{fig:caracterizacion-electrica}a presenta la respuesta en magnitud y fase medida para la trayectoria PGA--ADC y su comparación con el modelo del circuito, incluyendo la dispersión esperada por las tolerancias de los componentes y el intervalo de ajuste del potenciómetro. Para analizar el efecto esperado del acondicionamiento sobre la respuesta del sensor, esta transferencia eléctrica medida se combinó con el modelo nominal del SM-24 desarrollado previamente. La figura~\ref{fig:caracterizacion-electrica}b compara la respuesta resultante con la correspondiente al geófono sin compensación, referida tanto a la velocidad como a la aceleración del terreno. Se muestran asimismo la respuesta teórica y el intervalo correspondiente al ajuste de la compensación.
+La figura~\ref{fig:caracterizacion-electrica}a compara la respuesta PGA--ADC medida con el modelo, sus tolerancias y el intervalo de ajuste del potenciómetro. En la figura~\ref{fig:caracterizacion-electrica}b, esta transferencia se combina con el modelo nominal del SM-24 y se compara con el geófono sin compensación, en términos de velocidad y aceleración, incluyendo la respuesta teórica y la envolvente de ajuste, dada por los extremos del potenciómetro utilizado.
 
 \begin{figure*}[!tb]
 	\centering
@@ -191,17 +183,17 @@ La figura~\ref{fig:caracterizacion-electrica} resume la caracterización de la c
 	\label{fig:caracterizacion-electrica}
 \end{figure*}
 
-Debe señalarse que la figura~\ref{fig:caracterizacion-electrica}b constituye una predicción de la respuesta conjunta geófono--acondicionamiento y no una calibración experimental extremo a extremo. La caracterización realizada corresponde al comportamiento eléctrico del acondicionamiento analógico; no se dispuso del equipamiento necesario para imponer al geófono un movimiento mecánico conocido y realizar una calibración completa del conjunto sensor--electrónica.
+La figura~\ref{fig:caracterizacion-electrica}b constituye, por tanto, una predicción de la respuesta del conjunto sensor--electrónica y no una medición experimental extremo a extremo, ya que no se dispuso del equipamiento necesario para imponer al geófono un movimiento mecánico conocido.
 
 
 \subsection{Adquisición y almacenamiento digital}
 \label{sec:digital}
 
-Una vez acondicionada, la señal del geófono es digitalizada y almacenada junto con la información necesaria para reconstruir posteriormente la traza temporal y las condiciones de adquisición. La etapa digital comprende la conversión analógico--digital, la transferencia de muestras, el filtrado y diezmado, el control de la ventana de captura y el almacenamiento de los datos y metadatos asociados.
+Una vez acondicionada, la señal del geófono es digitalizada por una etapa que también realiza el filtrado y el diezmado, controla la ventana de captura y organiza el almacenamiento de las muestras y sus metadatos asociados. Estos datos permiten reconstruir posteriormente la traza temporal y las condiciones en que fue adquirida.
 
 La salida del filtro pasa-bajos del acondicionamiento analógico es digitalizada mediante el convertidor delta--sigma. La transferencia de datos se realiza mediante acceso directo a memoria (DMA), reduciendo la intervención del procesador durante la adquisición. Un canal DMA transfiere las muestras del ADC a memoria, un segundo canal las conduce al filtro digital implementado en hardware y un tercero almacena la salida de dicho filtro. El procesador se encarga de configurar la adquisición y organizar las muestras obtenidas para su posterior almacenamiento \citep{InfineonPSoC}.
 
-En el prototipo, el ADC delta--sigma se configuró con una frecuencia de muestreo de 2604 muestras/s y una resolución nominal de 18 bits. Se utilizaron rangos bipolares de $\pm0{,}512$, $\pm0{,}625$, $\pm1{,}024$ y $\pm2{,}5$ V. La selección del rango se realiza conjuntamente con la ganancia de la etapa analógica, de manera que la amplitud de la señal ocupe una fracción adecuada del intervalo disponible del convertidor sin producir saturación. De este modo, el rango del ADC y la ganancia programable constituyen parámetros complementarios para adaptar el margen dinámico del sistema a las condiciones de cada adquisición.
+El ADC delta--sigma se configuró a 2604 muestras/s, con resolución nominal de 18 bits y rangos bipolares de $\pm0{,}512$, $\pm0{,}625$, $\pm1{,}024$ y $\pm2{,}5$ V. El rango y la ganancia analógica se seleccionan conjuntamente para aprovechar el intervalo del convertidor sin saturación.
 
 La señal digital puede someterse además a un proceso de promedio y diezmado por un factor entero \(D\), reduciendo la frecuencia efectiva de muestreo a
 \begin{equation}
@@ -209,18 +201,16 @@ La señal digital puede someterse además a un proceso de promedio y diezmado po
 	\label{eq:fs-diezmado}
 \end{equation}
 
-Esta posibilidad permite seleccionar la tasa de datos de acuerdo con la banda de interés y la duración requerida para el registro. El factor de diezmado, la frecuencia efectiva de muestreo y los restantes parámetros de adquisición se almacenan junto con las muestras, de modo que el eje temporal pueda reconstruirse posteriormente sin depender de la interfaz utilizada para la descarga.
+El diezmado adapta la tasa de datos a la banda y duración del registro. Su factor, la frecuencia efectiva y los restantes parámetros se almacenan con las muestras para reconstruir el eje temporal independientemente de la interfaz de descarga.
 
 \begin{figure*}[!tb]
 	\centering
-	\includegraphics[width=0.82\textwidth,keepaspectratio]{fig13_f_hardware_digital_sample.png}
+	\includegraphics[width=0.78\textwidth,keepaspectratio]{fig13_f_hardware_digital_sample.png}
 	\caption{Hardware digital de adquisición implementado en el PSoC~5LP: máquina de estados \texttt{SignalController}, registros de control y estado, filtro digital, tres canales DMA (ADC a RAM, filtro a RAM y ADC al filtro), temporizador de vigilancia y EEPROM. Las flechas indican la entrada de muestras y las salidas hacia las referencias VDAC y la selección del multiplexor. Fuente: elaboración propia en PSoC Creator.}
 	\label{fig:hardware-digital}
 \end{figure*}
 
-El control temporal de la adquisición se realiza mediante la máquina de estados \texttt{SignalController}, implementada en lógica programable y representada en la figura~\ref{fig:hardware-digital}. Este bloque coordina el disparo, la habilitación del convertidor, el conteo de muestras y la finalización de la ventana de captura. Una vez recibido el disparo, la secuencia de adquisición es gobernada por la lógica dedicada, sin depender de la ejecución de instrucciones por parte del procesador. Al finalizar la ventana, el controlador informa el estado de la captura al procesador, que incorpora los metadatos correspondientes y almacena localmente el registro.
-
-El almacenamiento local permite además desacoplar la adquisición de la comunicación inalámbrica. Una pérdida o demora en la transmisión no afecta las muestras ya adquiridas, ya que la traza completa permanece almacenada en el nodo y puede ser transferida posteriormente. De esta manera, la comunicación se utiliza para configurar, coordinar y recuperar los registros, pero no interviene en el flujo temporal de adquisición de las muestras.
+La máquina de estados \texttt{SignalController}, implementada en lógica programable (figura~\ref{fig:hardware-digital}), coordina disparo, habilitación del ADC, conteo de muestras y cierre de captura sin depender de instrucciones del procesador. Al finalizar, informa su estado al procesador, que incorpora metadatos y almacena el registro en el nodo; una pérdida o demora posterior en el enlace no modifica las muestras adquiridas.
 
 Una vez iniciada la captura, la posición temporal de las muestras queda determinada por el reloj local de cada nodo. Para un nodo \(i\), cuya frecuencia efectiva de muestreo puede expresarse como
 \begin{equation}
@@ -232,16 +222,43 @@ el instante correspondiente a la muestra \(n\) es
 	t_i[n]=t_{0,i}+\frac{n}{f_s(1+\epsilon_i)}.
 	\label{eq:tiempo-muestra}
 \end{equation}
+donde \(t_{0,i}\) es el instante de inicio y \(\epsilon_i\) el error relativo del reloj local. La preparación previa y la lógica dedicada reducen la intervención del procesador en \(t_{0,i}\); la relación temporal entre nodos se analiza en la sección~\ref{sec:multicanal}.
 
-donde \(t_{0,i}\) representa el instante de inicio de la adquisición y \(\epsilon_i\) el error relativo de la base de tiempo local. La preparación previa de la captura y la utilización de lógica dedicada para el disparo reducen la intervención del procesador en el establecimiento de \(t_{0,i}\). La relación temporal entre diferentes nodos y el efecto de sus bases de tiempo locales se analizan posteriormente al presentar la arquitectura multicanal.
+
+\subsection{Arquitectura multicanal}
+\label{sec:multicanal}
+
+La figura~\ref{fig:arquitectura-nodos} muestra la organización de la plataforma. Como cada nodo GEO dispone de recursos propios de acondicionamiento, digitalización y almacenamiento, el número de canales puede ampliarse incorporando nuevos nodos sin modificar la estructura general.
+
+\begin{figure*}[!tb]
+	\centering
+	\includegraphics[width=0.82\textwidth,keepaspectratio]{fig05_d_arquitectura_nodos.png}
+	\caption{Arquitectura de la plataforma multicanal: maestro y nodos GEO y HAMMER.}
+	\label{fig:arquitectura-nodos}
+\end{figure*}
+
+El maestro aloja la interfaz de usuario e intercambia órdenes, confirmaciones y registros con los nodos GEO y HAMMER mediante ESP-NOW, sin requerir un punto de acceso inalámbrico convencional \citep{EspressifESPNow}.
+
+Las operaciones preparatorias anteceden al inicio (figura~\ref{fig:arquitectura-multicanal}): ARM verifica disponibilidad y reserva recursos; PRESTART configura la longitud de la captura, reinicia contadores y prepara DMA. Tras recibir todas las confirmaciones, el maestro difunde una única orden START y cada nodo genera el flanco local de inicio.
+
+\begin{figure*}[!tb]
+	\centering
+	\includegraphics[width=0.94\textwidth,keepaspectratio]{fig17_diagramas_publicacion.png}
+	\caption{Secuencia de adquisición multicanal: preparación mediante ARM y PRESTART e inicio mediante START por difusión.}
+	\label{fig:arquitectura-multicanal}
+\end{figure*}
+
+La orden única busca reducir la dispersión de inicio respecto de órdenes independientes por canal. Después del disparo, la lógica y el reloj local determinan la ventana y el muestreo, como se describió en la sección~\ref{sec:digital}.
+
+Los registros almacenados se transmiten después de la captura en lotes numerados que pueden solicitarse nuevamente ante pérdidas. Versión, CRC, número de muestras e indicadores de desbordamiento o cierre incompleto permiten verificar su integridad; el original permanece en el nodo.
+
+La evaluación empleó un único receptor: un nodo GEO desplazado a diferentes puntos de la línea de medición, mientras el nodo HAMMER, en una posición fija, registró cada excitación. Esta configuración aplica la adquisición secuencial descrita en la sección~\ref{sec:metodologia}. El registro resultante se construye a partir de eventos distintos y debe distinguirse del MASW convencional, en el cual todos los receptores registran simultáneamente un mismo evento. En este trabajo constituye una estrategia de evaluación del prototipo; la arquitectura admite ampliar el arreglo para la adquisición simultánea mediante varios nodos GEO.
 
 
 \subsection{Excitador instrumentado}
 \label{sec:fuente}
 
-En una adquisición basada en excitaciones sucesivas, no es suficiente registrar únicamente la respuesta del terreno. Las variaciones entre impactos y la incertidumbre en el instante de aplicación de la excitación pueden afectar la comparación entre trazas obtenidas en diferentes posiciones. Por esta razón, el sistema incorpora un excitador instrumentado, que permite registrar cada impacto junto con las señales adquiridas por los nodos GEO.
-
-La excitación mecánica se genera manualmente mediante un martillo instrumentado con un sensor de impacto PCB~086D20. Este transductor permite registrar el instante y la forma temporal del contacto, proporcionando una referencia asociada con cada golpe. El registro obtenido permite además identificar situaciones como rebotes o contactos múltiples, que pueden utilizarse posteriormente como criterios para aceptar o rechazar una adquisición \citep{PCB086D20}.
+Las variaciones entre impactos y la incertidumbre en su instante de aplicación afectan la comparación entre trazas de posiciones sucesivas. Por ello, la excitación se genera manualmente con un martillo que incorpora un sensor de impacto PCB~086D20; el nodo HAMMER registra el instante y la forma de cada contacto junto con las señales de los nodos GEO. Esta referencia permite alinear las trazas, evaluar la repetibilidad y detectar rebotes o contactos múltiples para aceptar o rechazar capturas \citep{PCB086D20}.
 
 La señal proporcionada por el sensor de impacto requiere un acondicionamiento diferente al utilizado para los geófonos. El transductor es alimentado mediante una fuente de corriente constante y su señal es desacoplada y protegida antes de ingresar a la cadena de adquisición. A continuación, atraviesa una etapa de ganancia programable y un filtro pasa-bajos antes de ser digitalizada por el ADC, como se muestra en la figura~\ref{fig:fuente-interfaz}.
 
@@ -252,24 +269,8 @@ La señal proporcionada por el sensor de impacto requiere un acondicionamiento d
 	\label{fig:fuente-interfaz}
 \end{figure*}
 
-El martillo instrumentado se integra al sistema mediante un nodo HAMMER, que utiliza la misma estructura básica de control, adquisición y almacenamiento local que los nodos GEO. De este modo, la excitación pasa a formar parte del sistema de adquisición y su registro queda asociado a las señales obtenidas durante cada ensayo.
+El nodo HAMMER emplea la misma estructura de control, adquisición y almacenamiento local que los nodos GEO, asociando el registro de la excitación con las respuestas de cada ensayo.
 
-El registro del nodo HAMMER proporciona una referencia temporal de la excitación, que puede utilizarse posteriormente para alinear las trazas adquiridas por los nodos GEO. Al conservar además la forma temporal de cada impacto, permite verificar la repetibilidad de las excitaciones y detectar golpes anómalos antes de incorporar las trazas al registro espacio--tiempo utilizado para el análisis de ondas superficiales.
-
-
-\subsection{Interfaz de operación y procesamiento de datos}
-\label{sec:interfaz}
-
-La operación del sistema se realiza mediante una interfaz web asociada al nodo maestro, mostrada en la figura~\ref{fig:interfaz-web}. Desde esta interfaz se configuran los principales parámetros de adquisición, entre ellos la ganancia, el rango del ADC, la duración de la captura y la ruta de señal utilizada. Asimismo, permite preparar los nodos, iniciar la adquisición y visualizar inmediatamente las señales registradas por el excitador instrumentado y los geófonos. Esta visualización proporciona una primera verificación de la calidad de la medición antes de continuar con la siguiente posición.
-
-La revisión inmediata permite detectar condiciones que pueden invalidar una captura, como un acoplamiento deficiente del geófono, impactos múltiples o un nivel excesivo de ruido. En estos casos, el operador puede descartar el registro y repetir la adquisición antes de modificar la geometría del ensayo. Una vez aceptada la captura, los datos pueden descargarse y transferirse al servidor para su almacenamiento y posterior procesamiento. La secuencia completa, desde la configuración y preparación de los nodos hasta la revisión y transferencia de los registros, se representa en la figura~\ref{fig:flujo-operativo}.
-
-\begin{figure}[!tb]
-	\centering
-	\includegraphics[width=\columnwidth,keepaspectratio]{fig15_i_web_maestro_claro.png}
-	\caption{Interfaz web para configurar, revisar, conservar, descartar o enviar cada captura.}
-	\label{fig:interfaz-web}
-\end{figure}
 
 \begin{figure*}[!tb]
 	\centering
@@ -278,11 +279,23 @@ La revisión inmediata permite detectar condiciones que pueden invalidar una cap
 	\label{fig:flujo-operativo}
 \end{figure*}
 
-Cada registro conserva, además de las muestras adquiridas, los metadatos necesarios para interpretar posteriormente la medición. Entre ellos se incluyen la identificación del nodo, la posición de adquisición, la frecuencia de muestreo, el rango del ADC, la ganancia utilizada, la ruta de señal seleccionada, el número de muestras y el estado del ajuste de offset. El servidor valida los datos recibidos y preserva el registro original, mientras que las operaciones posteriores se realizan sobre copias derivadas. La incorporación explícita de la geometría permite asociar cada traza con su posición de medida sin depender del nombre o de la organización externa de los archivos.
+\subsection{Interfaz de operación y procesamiento de datos}
+\label{sec:interfaz}
+
+La interfaz web del maestro (figura~\ref{fig:interfaz-web}) permite configurar ganancia, rango del ADC, duración y ruta de señal, preparar los nodos, iniciar la captura y visualizar las señales HAMMER y GEO. La revisión inmediata permite detectar acoplamiento deficiente, impactos múltiples o ruido excesivo y repetir la captura antes de cambiar la geometría. Una captura aceptada puede descargarse localmente o enviarse al servidor de análisis. El envío utiliza la conexión a Internet del dispositivo desde el que se accede a la interfaz, por datos móviles o Wi-Fi, y alcanza el servidor a través de la red privada de Tailscale \citep{Tailscale2026}. La figura~\ref{fig:flujo-operativo} resume esta secuencia.
+
+\begin{figure}[!tb]
+	\centering
+	\includegraphics[width=\columnwidth,keepaspectratio]{fig15_i_web_maestro_claro.png}
+	\caption{Interfaz web para configurar, revisar, conservar, descartar o enviar cada captura.}
+	\label{fig:interfaz-web}
+\end{figure}
+
+Cada registro conserva la identificación del nodo, posición, frecuencia de muestreo, rango del ADC, ganancia, ruta de señal, número de muestras y estado del ajuste de offset. Estos metadatos aseguran la trazabilidad de las mediciones y permiten reutilizar la base de datos formada durante las campañas de campo. Por la misma razón, el servidor valida y preserva los archivos originales sin modificarlos; el procesamiento se realiza sobre copias derivadas.
 
 El procesamiento posterior se realiza mediante una interfaz de escritorio, mostrada en la figura~\ref{fig:interfaz-procesamiento}. En esta etapa, cada captura se alinea temporalmente utilizando como referencia el impacto registrado por el nodo HAMMER y se le asigna la distancia correspondiente entre el excitador y el punto de medida. Las trazas pueden clasificarse como válidas o rechazadas y, cuando se dispone de varias adquisiciones para una misma posición, pueden superponerse y promediarse para facilitar la identificación de registros anómalos.
 
-Una vez seleccionadas las trazas válidas, estas se organizan de acuerdo con sus posiciones de adquisición para construir el registro espacio--tiempo requerido para el análisis de ondas superficiales. De esta manera, la información temporal de cada adquisición se integra con la geometría del ensayo y queda preparada para las etapas posteriores de procesamiento y análisis mediante MASW.
+Las trazas válidas se ordenan por posición para construir el registro espacio--tiempo destinado al análisis MASW.
 
 \begin{figure}[!tb]
 	\centering
@@ -290,33 +303,3 @@ Una vez seleccionadas las trazas válidas, estas se organizan de acuerdo con sus
 	\caption{Interfaz de procesamiento: lista de capturas con distancia, disparo y estado; señal del martillo con el disparo detectado y respuesta del geófono alineada, superpuesta a las demás capturas de la misma posición.}
 	\label{fig:interfaz-procesamiento}
 \end{figure}
-\subsection{Arquitectura multicanal}
-\label{sec:multicanal}
-
-La plataforma fue concebida como una arquitectura multicanal distribuida, en la que cada canal de adquisición dispone de recursos propios para el acondicionamiento, digitalización y almacenamiento de la señal. La arquitectura admite un nodo maestro, múltiples nodos GEO asociados con los geófonos y un nodo HAMMER correspondiente al excitador instrumentado. Esta organización permite ampliar el número de canales incorporando nuevos nodos GEO sin modificar la estructura general del sistema. La organización funcional de la plataforma se muestra en la figura~\ref{fig:arquitectura-nodos}.
-
-\begin{figure*}[!tb]
-	\centering
-	\includegraphics[width=0.88\textwidth,keepaspectratio]{fig05_d_arquitectura_nodos.png}
-	\caption{Arquitectura de la plataforma multicanal. El nodo maestro coordina la comunicación con los nodos GEO y HAMMER, que realizan localmente la adquisición y el almacenamiento de los registros.}
-	\label{fig:arquitectura-nodos}
-\end{figure*}
-
-El nodo maestro coordina la operación del conjunto y constituye el punto de acceso para la interfaz de usuario. La comunicación con los nodos GEO y HAMMER se realiza mediante ESP-NOW, que permite el intercambio directo de mensajes entre dispositivos sin requerir un punto de acceso inalámbrico convencional \citep{EspressifESPNow}. La comunicación se utiliza para transmitir órdenes, recibir confirmaciones y transferir posteriormente los registros adquiridos; el muestreo de las señales se realiza localmente en cada nodo.
-
-La secuencia de adquisición se organiza de manera que las operaciones que no requieren simultaneidad se ejecuten antes del instante de inicio. Mediante la orden ARM, cada nodo comprueba su disponibilidad y reserva los recursos necesarios. Posteriormente, PRESTART configura la longitud de la captura, reinicia los contadores y deja preparada la ruta DMA. Una vez que todos los nodos confirman este estado, el maestro transmite una única orden START por difusión. Al recibirla, cada nodo genera localmente el flanco que inicia la lógica de adquisición. La secuencia se representa en la figura~\ref{fig:arquitectura-multicanal}.
-
-\begin{figure*}[!tb]
-	\centering
-	\includegraphics[width=0.99\textwidth,keepaspectratio]{fig17_diagramas_publicacion.png}
-	\caption{Secuencia de adquisición multicanal. ARM comprueba la disponibilidad y reserva los recursos necesarios; PRESTART configura la captura y deja preparada la ruta DMA; una única orden START por difusión inicia localmente la lógica de adquisición de cada nodo.}
-	\label{fig:arquitectura-multicanal}
-\end{figure*}
-
-Esta estrategia evita iniciar secuencialmente cada canal mediante órdenes independientes y busca reducir la dispersión temporal entre los comienzos de las adquisiciones. A partir del disparo, el control de la ventana y la cadencia de muestreo quedan determinados localmente por la lógica y la base de tiempo de cada nodo, como se describió en la sección~\ref{sec:digital}. Por tanto, la comunicación inalámbrica interviene en la coordinación del inicio, pero no en la temporización de las muestras durante la captura.
-
-Cada captura se almacena localmente antes de su transmisión. Una vez finalizada la ventana de adquisición, los datos se dividen en lotes numerados que pueden solicitarse nuevamente si se produce una pérdida durante la comunicación. La integridad de los registros se verifica mediante información de versión, CRC, número de muestras e indicadores de desbordamiento o cierre incompleto. De este modo, una falla o demora en el enlace inalámbrico no modifica el registro original adquirido por el nodo.
-
-Aunque la arquitectura fue diseñada para operar con múltiples canales GEO, la configuración utilizada para la evaluación experimental dispuso de dos canales operativos. Uno de los geófonos se mantuvo en una posición fija y se utilizó como referencia común entre adquisiciones sucesivas, mientras que el segundo se desplazó a lo largo de las posiciones de medida. De esta manera fue posible construir secuencialmente el registro espacio--tiempo manteniendo una señal de referencia para verificar la coherencia entre los diferentes impactos. El nodo HAMMER, por su parte, registró cada excitación y proporcionó la referencia temporal asociada con el instante del impacto.
-
-Esta configuración debe distinguirse de una adquisición MASW convencional en la que todos los receptores se encuentran distribuidos espacialmente y registran simultáneamente un mismo evento. En el sistema desarrollado, la arquitectura electrónica permite la adquisición multicanal simultánea, mientras que la evaluación experimental utilizó el desplazamiento secuencial de uno de los dos receptores disponibles. Por tanto, esta modalidad de ensayo constituye una estrategia utilizada para evaluar el prototipo y no una limitación de la arquitectura propuesta.

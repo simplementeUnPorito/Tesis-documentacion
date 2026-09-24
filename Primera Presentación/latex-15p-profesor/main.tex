@@ -16,7 +16,7 @@
 \usetikzlibrary{babel,arrows.meta,positioning,calc,fit,decorations.pathmorphing}
 \usepackage{float}
 \usepackage{dblfloatfix}
-\usepackage[section]{placeins}
+\usepackage{placeins}
 \usepackage{balance}
 \usepackage{multicol}
 \usepackage{xurl}
@@ -61,13 +61,16 @@
 ]
 
 \input{secciones/01_introduccion_seleccion}
+\FloatBarrier
 \input{secciones/02_fundamentos}
+\FloatBarrier
 \input{secciones/03_metodologia_medicion}
+\FloatBarrier
 \input{secciones/04_diseno_electronico}
 \input{secciones/05_evidencia_futuro}
 
 \FloatBarrier
 \bibliographystyle{apalike}
-{\footnotesize\setlength{\bibsep}{1.5pt plus 0.5pt}\bibliography{referencias}}
+{\fontsize{7.2}{7.5}\selectfont\setlength{\bibsep}{0pt plus 0.2pt}\bibliography{referencias}}
 
 \end{document}
