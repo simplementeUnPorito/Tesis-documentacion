@@ -122,7 +122,8 @@ W.~J. Conover, \emph{Practical Nonparametric Statistics}, 3rd~ed.\hskip 1em
 \bibitem{Antoniadis2025}
 D.~Antoniadis and T.~G. Constandinou, ``A mixed-signal analogue front-end for
   brain-implantable neural interfaces using a digital fixed-point {IIR} filter
-  and bulk offset cancellation,'' arXiv preprint arXiv:2511.12540, 2025, doi:
-  10.48550/arXiv.2511.12540.
+  and bulk offset cancellation,'' in \emph{2026 IEEE 69th International Midwest
+  Symposium on Circuits and Systems ({MWSCAS})}, 2026, pp. 100--104, doi:
+  10.1109/MWSCAS67364.2026.11680655.
 
 \end{thebibliography}

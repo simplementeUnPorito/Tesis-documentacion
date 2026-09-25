@@ -41,7 +41,7 @@ The same control framework is independently applied to each analog stage. For st
 
 where $q_x=V_{x,\mathrm{span}}/N_x$ is the quantization step and $N_x$ the number of quantization levels. Nominal datasheet values are used throughout: $N_{\mathrm{ADC}}=2^{18}$, $N_{\mathrm{DAC}}=2^8$, $V_{\mathrm{ADC,span}}=5000$~mV, and $V_{\mathrm{DAC,span}}=4096$~mV, giving $q_{\mathrm{ADC}}=5000/2^{18}$~mV/count and $q_{\mathrm{DAC}}=16$~mV/code \cite{InfineonPSoC,InfineonAN60305}.
 
-Equation~\ref{eq:scale} produces an integer error in equivalent DAC codes. To avoid oscillation between adjacent codes when the ideal operating point is not realizable, the implementation adopts the conservative one-step floor
+Equation~\ref{eq:scale} produces an integer error in equivalent DAC codes. To avoid oscillation between adjacent codes when the ideal operating point is not realizable, the implementation adopts the conservative one-step ceiling
 
 \par\noindent
 \begin{minipage}[c]{0.45\columnwidth}
