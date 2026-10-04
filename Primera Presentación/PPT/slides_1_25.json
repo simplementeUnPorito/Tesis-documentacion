@@ -1,0 +1,472 @@
+{
+  "metadata": {
+    "deck": "Presentacion_1ra_Borrador_v04.pptx",
+    "slides_range": "1-25",
+    "slides_count": 25,
+    "total_timing_s": 870,
+    "budget_s_for_these_slides": 900,
+    "palette": {
+      "azul_oscuro": "#1B2A41",
+      "teal": "#1F8A8A",
+      "naranja": "#E07A2F",
+      "verde": "#4C9A5B",
+      "tierra": "#8B6B4A"
+    },
+    "restrictions": [
+      "sin barras decorativas ni accent stripes",
+      "una idea por slide",
+      "referencias discretas en pie"
+    ],
+    "notes_word_range": [
+      45,
+      54
+    ],
+    "figure_number_corrections": "Los numeros de la peticion no coinciden con main.pdf: Fig.13=cronologia autocal-campo (p48), Fig.14=barrido crudo (p52), Fig.15=captura cruda x=24 m (p56), Fig.16=preprocesamiento espectral (p57), Fig.17=trayectorias de autocalibracion (p59), Tabla 5=offset residual DA-AFE (p58). El waterfall es la Fig.21 (p63), el mapa tiempo-distancia Fig.19 (p62), el gather Fig.22 (p64).",
+    "snr_discrepancy": "El handoff da medianas 0,5/2,1/16,7/24,4 dB (1-5/5-10/10-20/20-50 Hz). La tesis (verificada contra CSV crudos, 257 golpes) da 0,4 dB (1-2,5 Hz), 15,2 dB (10-20 Hz), 25,6 dB (20-50 Hz). Bandas y valores distintos: usar los de la tesis salvo que el usuario confirme otra corrida.",
+    "downstream_figure_map_slides_26_plus": {
+      "DA-AFE resultado": {
+        "fig": "Tabla 5",
+        "pdf_page": 58,
+        "use": "Mostrar solo la fila SUM, no la tabla completa; mensaje: el offset residual cae al calibrar (p.ej. SUM A x1: 21,8 %FS a 0,8 %FS)"
+      },
+      "DA-AFE dinamica": {
+        "fig": "Fig. 17",
+        "pdf_page": 59,
+        "use": "Cuatro salidas convergen secuencialmente PGA, BP, SUM, LP"
+      },
+      "Barrido AFE": {
+        "fig": "Fig. 14 y Fig. 16",
+        "pdf_page": "52, 57",
+        "use": "Barrido crudo y estimacion armonica; caption advierte que la superposicion con el modelo anterior debe recalcularse"
+      },
+      "Captura de campo": {
+        "fig": "Fig. 15",
+        "pdf_page": 56,
+        "use": "Registro crudo martillo+geofono+FIR a x=24 m"
+      },
+      "Banco a campo": {
+        "fig": "Fig. 13",
+        "pdf_page": 48,
+        "use": "Montaje de etapas distintas; avisar que no es una sola medicion"
+      },
+      "SNR por banda": {
+        "fig": "grafico a generar",
+        "pdf_page": null,
+        "use": "Barras por banda con valores de la tesis (seccion Resultados, evidencia 12/08/2026)"
+      },
+      "Sincronizacion": {
+        "fig": "Fig. 11",
+        "pdf_page": 41,
+        "use": "Error de fase vs desfasaje; 400 us es observacion preliminar"
+      }
+    },
+    "flags": [
+      "Slides 1, 2, 7, 9, 10, 13, 20, 21, 24, 25 dependen de figuras que no existen en la tesis ni en generated_slide_art; marcadas como pendiente",
+      "Slide 15 cita 87-96 % de cR/Vs: valor estandar de la literatura (Poisson 0 a 0,5), no esta en el handoff; verificar contra Foti",
+      "Slide 10: reparto 67/26/7 viene del handoff (Miller & Pursey); no verificado contra el paper",
+      "Fig. 5 de la tesis cita zeta1=937,396 y la memoria del proyecto advierte contradiccion con 83,661; no se usa en slides 1-25"
+    ]
+  },
+  "slides": [
+    {
+      "n": 1,
+      "section": "Portada",
+      "title": "Un sistema electrónico para observar el suelo con ondas superficiales",
+      "notes": "Presento la primera etapa del proyecto final: un sistema electrónico distribuido que mide cómo viajan las ondas superficiales en el terreno. Recorremos el camino completo: por qué importa el suelo, por qué MASW, qué electrónica exige, qué ya funciona y qué falta cerrar para diciembre.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Foto propia de campaña (geófono + martillo) a pantalla completa"
+      },
+      "timing_s": 25,
+      "footer_ref": "Y24127 · Tutor: E. A. Vargas Cabral",
+      "layout_hint": "Portada con foto grande; título y autor en pie"
+    },
+    {
+      "n": 2,
+      "section": "A. Necesidad geotécnica",
+      "title": "Toda obra empieza por saber cómo responde el suelo",
+      "notes": "Empiezo por el para qué, no por el instrumento. Fundaciones, grietas y asentamientos, rutas, taludes: en todos los casos el terreno condiciona el diseño y el seguimiento de la obra. Conocer su rigidez antes, durante y después de construir es una necesidad ingenieril concreta, no un lujo académico.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Cuatro fotos propias: fundación, grieta/asentamiento, ruta/pavimento, talud. La tesis no contiene fotos de estos casos"
+      },
+      "timing_s": 30,
+      "footer_ref": "",
+      "layout_hint": "Cuadrícula 2x2 de fotos, una línea de texto"
+    },
+    {
+      "n": 3,
+      "section": "A. Necesidad geotécnica",
+      "title": "La medición directa es valiosa pero intrusiva",
+      "notes": "SPT y CPT son los métodos más usados. El SPT recupera muestra; el CPT da un perfil continuo. Pero exigen intervenir físicamente el terreno, tienen costo y logística, y cubren puntos localizados. No son malos: son la referencia con la que se contrasta cualquier método nuevo.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/methods_direct.png",
+        "description": "Esquema SPT/CPT"
+      },
+      "timing_s": 30,
+      "footer_ref": "Tesis, Tabla 1 y Fig. 4",
+      "layout_hint": "Diagrama a la izquierda, ventajas/limitaciones en dos frases"
+    },
+    {
+      "n": 4,
+      "section": "A. Necesidad geotécnica",
+      "title": "Medir ondas dentro del terreno da Vs pero requiere pozos",
+      "notes": "Downhole y crosshole miden tiempos de viaje de ondas dentro del terreno, así que entregan velocidades dinámicas, incluida Vs, de forma bastante directa. El precio es perforar uno o varios pozos con geometría conocida. Siguen siendo muy buenos datos para restringir otros métodos más adelante.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/methods_inhole.png",
+        "description": "Esquema downhole/crosshole"
+      },
+      "timing_s": 30,
+      "footer_ref": "Tesis, Fig. 4",
+      "layout_hint": "Diagrama central"
+    },
+    {
+      "n": 5,
+      "section": "A. Necesidad geotécnica",
+      "title": "Desde superficie, refracción y reflexión usan ondas de cuerpo",
+      "notes": "Sin perforar, podemos excitar desde la superficie y observar ondas P o S por refracción y reflexión. Aclaro un error común: la refracción somera clásica no usa ondas superficiales, usa ondas de cuerpo, principalmente P. Es no invasiva, pero no es el camino que sigue esta tesis.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/methods_surface_body.png",
+        "description": "Rayos de refracción y reflexión con geófonos en línea"
+      },
+      "timing_s": 30,
+      "footer_ref": "Tesis, Fig. 4",
+      "layout_hint": "Diagrama central"
+    },
+    {
+      "n": 6,
+      "section": "A. Necesidad geotécnica",
+      "title": "Las ondas superficiales permiten medir sin perforar",
+      "notes": "El cuarto grupo mira Love y Rayleigh. Al medir cómo cambia su velocidad con la frecuencia, inferimos cómo cambian las propiedades con la profundidad. Los cuatro grupos no compiten: SPT, downhole o refracción pueden restringir la inversión posterior. Nuestro foco son SASW y MASW, dentro de este cuarto grupo.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/methods_surface_waves.png",
+        "description": "Ondas superficiales y arreglo de receptores"
+      },
+      "timing_s": 35,
+      "footer_ref": "Foti et al. (2014, 2018); Tesis, Fig. 4",
+      "layout_hint": "Diagrama + mapa comparativo de la Fig. 4 reducido en pie"
+    },
+    {
+      "n": 7,
+      "section": "B. Física mínima",
+      "title": "Un medio elástico propaga dos ondas: P y S",
+      "notes": "Modelo mínimo. En un sólido elástico viajan ondas P, de compresión, con Vp igual a raíz de lambda más dos mu sobre rho, y ondas S, de corte, con Vs igual a raíz de mu sobre rho. Son las dos piezas de física que necesito para llegar a Rayleigh.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Animación o diagrama P y S con movimiento de partículas (hoy hay placeholder en v04)"
+      },
+      "timing_s": 30,
+      "footer_ref": "Foti et al. (2014)",
+      "layout_hint": "Dos paneles P / S y las dos ecuaciones"
+    },
+    {
+      "n": 8,
+      "section": "B. Física mínima",
+      "title": "Vs mide directamente la rigidez inicial del terreno",
+      "notes": "Aquí está la razón de fondo. El módulo de corte inicial es Gmax igual a rho por Vs al cuadrado. Si conocemos la densidad y medimos Vs, tenemos la rigidez a pequeñas deformaciones, que es lo que alimenta el diseño. Por eso Vs es la variable más atractiva de todo el problema.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Ecuación Gmax = rho·Vs² grande y centrada; sin figura adicional"
+      },
+      "timing_s": 60,
+      "footer_ref": "Foti et al. (2014)",
+      "layout_hint": "Ecuación grande, una frase"
+    },
+    {
+      "n": 9,
+      "section": "B. Física mínima",
+      "title": "Las interfaces desvían, reflejan y convierten las ondas",
+      "notes": "En una interfaz entre capas, Snell fija las direcciones y parte de la energía se refleja y parte se transmite. Además hay conversión entre P y SV, y la superficie libre es un caso especial. Esto basta para seguir: el detalle matemático queda en el backup, fuera del flujo principal.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Diagrama P-SV en interfaz: incidente, reflejada, transmitida (placeholder en v04)"
+      },
+      "timing_s": 25,
+      "footer_ref": "Backup A3",
+      "layout_hint": "Diagrama único"
+    },
+    {
+      "n": 10,
+      "section": "C. Love y Rayleigh",
+      "title": "Una fuente vertical entrega casi todo a Rayleigh",
+      "notes": "Para una carga vertical sobre un semiespacio homogéneo, isótropo y elástico, el reparto clásico es aproximadamente 67 por ciento Rayleigh, 26 S y 7 P. Es un resultado ideal, no una regla universal: no digo 90 por ciento. Aun así, justifica mirar ondas superficiales con un golpe vertical.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Barra apilada 67 / 26 / 7 % con etiqueta 'caso ideal'"
+      },
+      "timing_s": 45,
+      "footer_ref": "Miller & Pursey (1955)",
+      "layout_hint": "Gráfico simple, referencia visible en pie"
+    },
+    {
+      "n": 11,
+      "section": "C. Love y Rayleigh",
+      "title": "Love vibra en horizontal: poco natural con fuente vertical",
+      "notes": "Primero Love. Es movimiento de corte horizontal, SH, transversal a la propagación. Es una onda útil y se usa mucho. Pero para medición activa con una fuente vertical y geófonos verticales no es la configuración más natural. No la descarto por débil: la dejo por conveniencia de medición.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/love_diagram.png",
+        "description": "Love: movimiento horizontal transversal"
+      },
+      "timing_s": 25,
+      "footer_ref": "Foti et al. (2014)",
+      "layout_hint": "Diagrama Love"
+    },
+    {
+      "n": 12,
+      "section": "C. Love y Rayleigh",
+      "title": "Rayleigh mueve las partículas en elipses verticales",
+      "notes": "Ahora Rayleigh. Acopla P y SV y las partículas describen una trayectoria aproximadamente elíptica en el plano vertical. Su velocidad está relacionada con Vs. Y al propagarse por la superficie, su decaimiento geométrico ideal es menor que el de las ondas de cuerpo, lo que ayuda a medirla lejos de la fuente.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/rayleigh_diagram.png",
+        "description": "Rayleigh: elipse en plano vertical"
+      },
+      "timing_s": 35,
+      "footer_ref": "Foti et al. (2014)",
+      "layout_hint": "Diagrama Rayleigh"
+    },
+    {
+      "n": 13,
+      "section": "C. Love y Rayleigh",
+      "title": "Un golpe vertical y un geófono vertical bastan para Rayleigh",
+      "notes": "Con las dos familias presentadas, la elección es práctica. Rayleigh se genera con un impacto normal a la superficie y se mide con un geófono vertical de bajo costo. Generar, medir, relacionar con Vs: las tres condiciones coinciden. Por eso el proyecto va por Rayleigh.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/rayleigh_diagram.png",
+        "description": "Tres pasos: generar, medir, relacionar con Vs (esquema de tres iconos)"
+      },
+      "timing_s": 25,
+      "footer_ref": "",
+      "layout_hint": "Tres columnas: Generar / Medir / Relacionar"
+    },
+    {
+      "n": 14,
+      "section": "D. Dispersión e inversión",
+      "title": "En un suelo homogéneo, Rayleigh no es dispersiva",
+      "notes": "Imaginemos primero un semiespacio homogéneo: misma densidad, mismo Vs, mismo coeficiente de Poisson en todo el volumen. Para ese medio, la velocidad de Rayleigh no depende de la frecuencia. Todas las componentes viajan juntas. Es el punto de partida limpio antes de complicar el modelo.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/homogeneous_semispace.png",
+        "description": "Semiespacio homogéneo"
+      },
+      "timing_s": 25,
+      "footer_ref": "Foti et al. (2014, 2018)",
+      "layout_hint": "Diagrama + c_R constante"
+    },
+    {
+      "n": 15,
+      "section": "D. Dispersión e inversión",
+      "title": "cR es algo menor que Vs y depende del Poisson",
+      "notes": "En ese caso la velocidad de Rayleigh queda estrechamente ligada a Vs: es ligeramente menor, entre aproximadamente 87 y 96 por ciento según el coeficiente de Poisson. Medir cR es, entonces, medir Vs con una pequeña corrección conocida. El detalle numérico está en el backup A4.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/homogeneous_semispace.png",
+        "description": "Gráfico cR/Vs vs Poisson (reutilizar backup A4)"
+      },
+      "timing_s": 30,
+      "footer_ref": "Backup A4",
+      "layout_hint": "Una ecuación, un gráfico pequeño"
+    },
+    {
+      "n": 16,
+      "section": "D. Dispersión e inversión",
+      "title": "Las capas hacen que la velocidad dependa de la frecuencia",
+      "notes": "Ahora agrego capas con distinto Vs, Vp o Poisson, densidad y espesor. El suelo deja de ser uniforme y aparece algo nuevo: las distintas componentes ya no ven el mismo material. Ese es el origen de todo lo que sigue, y también de la dificultad del problema inverso.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/depth_sensitivity.png",
+        "description": "Perfil de capas con parámetros por capa"
+      },
+      "timing_s": 30,
+      "footer_ref": "Foti et al. (2014)",
+      "layout_hint": "Perfil estratificado con tierra para subsuelo"
+    },
+    {
+      "n": 17,
+      "section": "D. Dispersión e inversión",
+      "title": "Cada frecuencia es sensible a una franja de profundidad distinta",
+      "notes": "La longitud de onda es lambda igual a cR sobre f. Frecuencias altas tienen lambda corta y sensibilidad más superficial; bajas frecuencias tienen lambda larga y suelen sentir más profundo. Cuidado: no es una regla rígida de frecuencia igual a profundidad. Hablamos de sensibilidad distribuida, no de un corte exacto.",
+      "figure": {
+        "source": "tesis",
+        "ref": "Fig. 2",
+        "pdf_page": 6,
+        "file": "generated_slide_art/depth_sensitivity.png (alternativa)",
+        "description": "Esquema propio del principio de dispersión: componentes de alta frecuencia cerca de la superficie, las bajas penetran más; λ=c/f"
+      },
+      "timing_s": 40,
+      "footer_ref": "Foti et al. (2014, 2018); Tesis, Fig. 2",
+      "layout_hint": "Figura de sensibilidad grande"
+    },
+    {
+      "n": 18,
+      "section": "D. Dispersión e inversión",
+      "title": "La estratificación vuelve a cR función de la frecuencia",
+      "notes": "Como cada frecuencia muestrea una franja distinta, la velocidad medida cambia con la frecuencia: cR igual a cR de f. Esa dependencia se llama dispersión. La curva de dispersión es la huella de la estructura vertical del suelo, y es lo que vamos a intentar medir.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/dispersion_curve.png",
+        "description": "Curva de dispersión c_R(f)"
+      },
+      "timing_s": 30,
+      "footer_ref": "Foti et al. (2014, 2018)",
+      "layout_hint": "Curva de dispersión grande"
+    },
+    {
+      "n": 19,
+      "section": "D. Dispersión e inversión",
+      "title": "Invertir la curva da un modelo compatible, no único",
+      "notes": "El modelo directo va de capas a curva de dispersión. El problema inverso va al revés: de la curva medida, a un modelo compatible con ella. Los parámetros posibles son espesores, Vs, Vp o Poisson y densidad. Importante: la solución no es única, y datos independientes la restringen.",
+      "figure": {
+        "source": "generated_slide_art",
+        "ref": null,
+        "pdf_page": null,
+        "file": "generated_slide_art/dispersion_curve.png",
+        "description": "Flecha doble: modelo de capas y curva de dispersión (esquema directo/inverso)"
+      },
+      "timing_s": 60,
+      "footer_ref": "Foti et al. (2014, 2018); Backup A6",
+      "layout_hint": "Esquema directo / inverso, sin texto extra"
+    },
+    {
+      "n": 20,
+      "section": "E. SASW y MASW",
+      "title": "SASW con dos receptores deja ambigüedad de fase",
+      "notes": "SASW usa dos receptores y la diferencia de fase entre ellos para calcular la velocidad. Es simple, pero el ángulo de fase queda ambiguo en ciclos completos, hay que repetir con distintas separaciones y la redundancia espacial es baja. Con solo dos puntos, cuesta saber si lo medido es realmente Rayleigh o ruido coherente.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Esquema fuente-R1-R2 con diferencia de fase (existe versión en v04 slide 20)"
+      },
+      "timing_s": 30,
+      "footer_ref": "Foti et al. (2014); Backup A7",
+      "layout_hint": "Esquema de dos receptores"
+    },
+    {
+      "n": 21,
+      "section": "E. SASW y MASW",
+      "title": "MASW registra muchas posiciones y gana redundancia espacial",
+      "notes": "MASW usa múltiples posiciones y registra un campo espacio-tiempo. Los patrones coherentes que se propagan se reconocen mejor y se pueden separar modos. Esa redundancia es la ventaja sobre SASW, y es lo que motiva construir un arreglo de varios receptores, o sintetizarlo con adquisiciones sucesivas, como veremos enseguida.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Esquema de arreglo lineal con registro espacio-tiempo (existe en v04 slide 21)"
+      },
+      "timing_s": 35,
+      "footer_ref": "Park et al. (1999); Foti et al. (2014)",
+      "layout_hint": "Arreglo + registro"
+    },
+    {
+      "n": 22,
+      "section": "E. SASW y MASW",
+      "title": "Se puede sintetizar la dimensión espacial con impactos sucesivos",
+      "notes": "Para evaluar el prototipo no hace falta un arreglo simultáneo. Lin y Ashlock, 2016, muestran que la dimensión espacial puede sintetizarse con adquisiciones sucesivas, moviendo fuente y receptor de forma recíproca. A cambio, hay que controlar muy bien la geometría, la excitación de cada golpe y la referencia temporal.",
+      "figure": {
+        "source": "tesis",
+        "ref": "Fig. 1 (Lin & Ashlock 2016)",
+        "pdf_page": null,
+        "file": null,
+        "description": "Figura original del paper, ya recortada en v04 slide 22"
+      },
+      "timing_s": 40,
+      "footer_ref": "Lin & Ashlock (2016)",
+      "layout_hint": "Figura del paper grande"
+    },
+    {
+      "n": 23,
+      "section": "E. SASW y MASW",
+      "title": "El objetivo de todo el sistema es la matriz U(x,t)",
+      "notes": "Todo lo que presento fue construido para obtener esta matriz: el desplazamiento vertical medido en cada posición y cada instante. En campo hay 21 posiciones, de 10 a 50 metros, cada 2 metros. Esta es la vista waterfall real; la muestro como destino, y volveré a ella al final.",
+      "figure": {
+        "source": "tesis",
+        "ref": "Fig. 21",
+        "pdf_page": 63,
+        "file": "extraer de main.pdf p.63",
+        "description": "Vista waterfall del conjunto procesado de la campaña Canchita (21 posiciones, Δx=2 m); alternativa: Fig. 19 mapa tiempo-distancia, p.62"
+      },
+      "timing_s": 60,
+      "footer_ref": "Tesis, Fig. 21",
+      "layout_hint": "Waterfall a pantalla casi completa"
+    },
+    {
+      "n": 24,
+      "section": "F. Requisitos y arquitectura",
+      "title": "MASW exige banda, fase, rango dinámico y referencia temporal",
+      "notes": "De MASW salen requisitos electrónicos: banda útil, fase conocida entre canales, rango dinámico, antialias y frecuencia de muestreo adecuados, geometría y referencia temporal controladas, excitación medida, almacenamiento y operación de campo. Cada bloque que sigue en la presentación responde a uno de estos requisitos, y lo muestro con evidencia.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Lista de 6 a 8 requisitos en iconos; sin figura de tesis"
+      },
+      "timing_s": 35,
+      "footer_ref": "Tesis, Cap. 1",
+      "layout_hint": "Lista corta de requisitos"
+    },
+    {
+      "n": 25,
+      "section": "F. Requisitos y arquitectura",
+      "title": "Tres nodos: GEO mide, MASTER coordina, HAMMER excita",
+      "notes": "La arquitectura tiene tres roles. GEO mide la respuesta del suelo. MASTER coordina los nodos y sirve de interfaz. HAMMER mide la excitación. Por ahora solo los tres roles; primero desarrollo GEO completo, después MASTER y por último HAMMER, y ahí explico cómo se coordinan.",
+      "figure": {
+        "source": "pendiente",
+        "ref": null,
+        "pdf_page": null,
+        "file": null,
+        "description": "Diagrama de tres cajas GEO / MASTER / HAMMER (v04 slide 25). Fig. 7 de la tesis, p.32, solo para backup: tiene demasiado detalle"
+      },
+      "timing_s": 30,
+      "footer_ref": "Tesis, Fig. 7",
+      "layout_hint": "Tres cajas, sin explicar la red todavía"
+    }
+  ]
+}

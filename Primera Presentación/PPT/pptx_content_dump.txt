@@ -1,0 +1,1660 @@
+<!-- Slide number: 1 -->
+
+Diseño e implementación de un sistema electrónico
+multicanal del tipo IoT para caracterización geotécnica
+del suelo mediante ondas sísmicas
+Proyecto Final de Carrera · Primera presentación
+
+Elías David Álvarez Martínez  ·  Ingeniería Electrónica  ·  Y24127
+[ FOTO DE CAMPO ]
+Tutor: Enrique A. Vargas Cabral, Ph.D.
+reemplazar con imagen propia
+Septiembre 2026
+
+### Notes:
+Abrir muy breve. Presentar el título, el carácter de primera presentación y el objetivo general: construir una plataforma electrónica para adquirir señales sísmicas orientadas a caracterización geotécnica mediante MASW. No explicar todavía el sistema.
+
+<!-- Slide number: 2 -->
+
+¿Para qué necesitamos caracterizar el suelo?
+El terreno condiciona el diseño, la ejecución y el seguimiento de una obra.
+
+[ FUNDACIÓN ]
+[ PATOLOGÍA ]
+[ RUTA ]
+[ TALUD / OBRA ]
+capas + zapata / pilotes
+grietas / asentamientos
+pavimento / rellenos
+estabilidad / mantenimiento
+
+Antes de construir
+Durante la ejecución
+Después
+Reconocer materiales y estimar parámetros para dimensionar correctamente.
+Controlar uniformidad de rellenos, capas compactadas y cambios de condición.
+Investigar daños, cambios o sectores que requieren mantenimiento.
+Samtani & Nowatzki (2006); Park et al. (2018).
+
+2
+Motivación
+
+### Notes:
+Empezar por la utilidad, no por MASW. Dar ejemplos: fundaciones, rutas, control de rellenos, asentamientos, daños. La idea es que conocer el subsuelo sirve en varias etapas de la vida de una obra.
+
+<!-- Slide number: 3 -->
+
+Métodos invasivos: medición directa del terreno
+SPT, CPT y CPTu entregan información muy valiosa, pero requieren intervención física y cobertura localizada.
+
+![methods_direct.png](Picture7.jpg)
+Qué miden
+Resistencia a la penetración, estratigrafía local y, en SPT, recuperación de muestra.
+
+Ventaja
+Son referencia clásica y muy útiles para diseño geotécnico y correlaciones.
+
+Limitación
+Costo, tiempo y cobertura puntual dificultan repetirlos sobre grandes longitudes.
+
+3
+Motivación
+
+### Notes:
+Usar esta slide como mapa del estado del arte. Aclaración importante: “refracción superficial” no significa onda superficial; la sísmica de refracción clásica trabaja principalmente con ondas de cuerpo y la palabra superficial describe la geometría near-surface. Downhole/crosshole sí requieren pozos.
+
+<!-- Slide number: 4 -->
+
+Métodos invasivos: medición de ondas dentro del terreno
+Downhole y crosshole permiten estimar velocidades dinámicas de forma más directa, incluida V?.
+
+![methods_inhole.png](Picture7.jpg)
+Ventaja
+Estimación directa de tiempos de viaje y buena base para V?.
+
+Costo
+Requieren uno o varios pozos y una geometría bien conocida.
+
+Conclusión
+Son excelentes, pero su logística los vuelve menos prácticos para levantamientos extensos.
+
+4
+Motivación
+
+### Notes:
+Explicar muy simple qué mide cada método. No presentarlos como “malos”: son referencia y contraste. La limitación que nos interesa es logística, costo por cobertura, intervención física y dificultad para repetir extensivamente.
+
+<!-- Slide number: 5 -->
+
+Métodos no invasivos: ondas de cuerpo desde superficie
+Desde superficie también podemos excitar el medio y observar P/S mediante refracción o reflexión.
+
+![methods_surface_body.png](Picture7.jpg)
+A favor
+No requieren penetrar el terreno y permiten perfiles a lo largo de una traza.
+
+Pero…
+Para estimar V? directamente suelen exigir configuraciones más específicas o información complementaria.
+
+Siguiente paso
+Entonces miramos ondas superficiales: están en superficie, son energéticas y sensibles al subsuelo.
+
+5
+Motivación
+
+### Notes:
+Conectar con V_s: estos métodos permiten medirla directamente y son excelentes para validar. Pero exigen perforaciones. Dejar abierta la pregunta: ¿podemos obtener información de V_s sin perforar?
+
+<!-- Slide number: 6 -->
+
+Métodos no invasivos: ondas superficiales
+Love / Rayleigh / MASW. Si medimos su dispersión, inferimos cómo cambian las propiedades mecánicas con la profundidad.
+
+![methods_surface_waves.png](Picture7.jpg)
+Love
+Muy útiles, pero para medición activa con fuente vertical no son la opción más natural.
+
+Rayleigh
+Dominan la respuesta superficial, tienen componente vertical y se relacionan estrechamente con V?.
+
+Por eso llegamos a MASW
+MASW explota la dispersión de Rayleigh de forma práctica, no invasiva y multicanal.
+
+6
+Motivación
+
+### Notes:
+No limitar la excitación a martillo. Mencionar que pueden emplearse impactos, vibradores o ruido ambiental según el método. La idea común es observar cómo reacciona el medio.
+
+<!-- Slide number: 7 -->
+
+Modelo mínimo: un medio elástico admite ondas P y S
+
+[ ANIMACIÓN ONDA P ]
+[ ANIMACIÓN ONDA S ]
+movimiento paralelo a propagación
+movimiento transversal
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+?: inercia del medio    ·    ?, ?: constantes elásticas
+Kramer (1996); Foti et al. (2014).
+
+7
+Ondas
+
+### Notes:
+No derivar toda la elastodinámica. Explicar P = compresión/dilatación; S = corte. Presentar velocidades y parámetros. Esto prepara la relación entre V_s y rigidez.
+
+<!-- Slide number: 8 -->
+
+V? nos interesa porque está directamente ligada a la rigidez
+
+![preencoded.png](Image0.jpg)
+
+Qué obtenemos
+Qué NO significa
+Una estimación de la rigidez elástica inicial del terreno a pequeñas deformaciones.
+No describe directamente la respuesta del suelo a grandes deformaciones.
+Entonces: medir V? es una vía directa hacia una propiedad geotécnica de interés.
+Kramer (1996); Foti et al. (2014).
+
+8
+Ondas
+
+### Notes:
+Esta es una slide clave. Hacer la deducción explícita: de V_s a Gmax. Aclarar small-strain. Esta relación es la razón física de interés en ondas S y en métodos que permiten inferir V_s.
+
+<!-- Slide number: 9 -->
+
+Las interfaces cambian la propagación
+
+Ley de Snell
+Las direcciones de propagación dependen de las velocidades en ambos medios.
+
+Conversión de modos
+[ DIAGRAMA P–SV EN INTERFAZ ]
+incidente · reflejada · transmitida · conversión modal
+P ? SV en incidencia oblicua; SH permanece desacoplada en el caso plano isótropo.
+
+Superficie libre
+La condición de tensión nula da origen a modos ligados a la superficie.
+Foti et al. (2014); Sun (2003).
+
+9
+Ondas
+
+### Notes:
+Sí, mencionar Snell. No detenerse en algebra. La intención es que la superficie libre aparezca como una frontera especial que conduce a ondas superficiales.
+
+<!-- Slide number: 10 -->
+
+¿Por qué mirar ondas superficiales? Porque dominan una fuente vertical de superficie
+Resultado clásico para una carga vertical sobre un semiespacio homogéneo, isótropo y elástico.
+? 67%
+
+Consecuencia
+• alta energía observable en superficie
+• menor decaimiento geométrico ideal que ondas de cuerpo
+• buena relación señal–ruido potencial
+Rayleigh
+
+26%  S
+
+7%  P
+Miller & Pursey (1955), citado por Foti (2014) y literatura MASW. Nota: ~67%, no 90%, para esta fuente/modelo ideal.
+
+10
+Ondas
+
+### Notes:
+Corregir el número: usar ~67%, no 90%. Es un resultado clásico para fuente vertical superficial y semiespacio homogéneo ideal. Esto no es una ley universal de cualquier fuente/suelo, pero sí justifica por qué Rayleigh suele dominar registros superficiales activos.
+
+<!-- Slide number: 11 -->
+
+Ondas Love: movimiento de corte horizontal
+
+![love_diagram.png](Picture21.jpg)
+
+Qué las caracteriza
+Movimiento puramente horizontal y transversal a la dirección de propagación.
+
+Para medición activa
+Requieren generar y medir adecuadamente energía SH; una fuente vertical no es la configuración más natural.
+
+No las descartamos
+Son muy útiles en otros diseños y pueden aportar información complementaria.
+
+11
+Ondas
+
+### Notes:
+No decir que Love “se atenúa rápido” como regla general. El argumento para nuestro proyecto es de polarización/fuente/sensor: la cadena prevista es vertical y favorece Rayleigh.
+
+<!-- Slide number: 12 -->
+
+Ondas Rayleigh: acoplamiento P–SV con movimiento vertical
+
+![rayleigh_diagram.png](Picture22.jpg)
+
+Componente vertical
+Puede excitarse con una perturbación normal a la superficie y medirse con un geófono vertical.
+
+Relación con V?
+En un semiespacio homogéneo, la velocidad Rayleigh es ligeramente inferior a V?.
+
+Persistencia espacial
+Su decaimiento geométrico ideal es menor que el de ondas de cuerpo.
+Foti et al. (2014, 2018).
+
+12
+Ondas
+
+### Notes:
+Presentar por qué esta familia encaja con nuestro hardware: movimiento vertical, fuente vertical sencilla y relación con V_s.
+
+<!-- Slide number: 13 -->
+
+Rayleigh encaja con el problema que queremos resolver
+
+1
+2
+3
+4
+Generar
+Medir
+Interpretar
+Escalar
+impacto o fuente vertical superficial
+geófono vertical de bajo costo
+c_R está ligada a V? y a la estratificación
+múltiples posiciones desde la superficie
+El siguiente paso es entender qué nos dice la velocidad Rayleigh sobre un suelo estratificado.
+
+13
+Rayleigh/MASW
+
+### Notes:
+Slide puente. Aquí cerrar la elección de Rayleigh sin entrar todavía en MASW.
+
+<!-- Slide number: 14 -->
+
+Primero: imaginemos un suelo homogéneo
+
+![homogeneous_semispace.png](Picture13.jpg)
+En un semiespacio homogéneo: c? no depende de la frecuencia.
+Foti et al. (2014, 2018).
+
+14
+Rayleigh/MASW
+
+### Notes:
+Este modelo sirve como control mental: si el material no cambia con profundidad, no hay dispersión por estratificación.
+
+<!-- Slide number: 15 -->
+
+En ese caso, c? está estrechamente relacionada con V?
+
+![preencoded.png](Image0.jpg)
+Interpretación
+Para valores habituales de ?, c? es algo menor que V?; por eso Rayleigh conserva una conexión directa con la rigidez.
+aproximación habitual para un semiespacio elástico homogéneo
+Pero el suelo real no es homogéneo.
+
+15
+Rayleigh/MASW
+
+### Notes:
+No derivar la ecuación. Usarla para reforzar que c_R y V_s están vinculadas. Luego cambiar el modelo: agregar capas.
+
+<!-- Slide number: 16 -->
+
+Ahora agregamos estratificación
+
+Cada capa
+Capa 1 · V??, ??, ??
+puede tener propiedades elásticas y espesor diferentes.
+
+Capa 2 · V??, ??, ??
+
+La onda
+
+ya no interactúa con un único material.
+Capa 3 · V??, ??, ??
+
+Resultado
+Semiespacio
+la velocidad de fase puede variar con la frecuencia.
+
+16
+Rayleigh/MASW
+
+### Notes:
+Mostrar visualmente que ahora cada longitud de onda “combina” distintas capas. Esto prepara la sensibilidad con profundidad.
+
+<!-- Slide number: 17 -->
+
+Longitud de onda y sensibilidad con profundidad
+?_R(f) = c_R(f) / f
+
+![depth_sensitivity.png](Picture19.jpg)
+No existe una correspondencia rígida “frecuencia = profundidad”: hablamos de sensibilidad distribuida.
+Foti et al. (2014, 2018).
+
+17
+Rayleigh/MASW
+
+### Notes:
+Explicar que frecuencias bajas suelen involucrar volúmenes más profundos por su mayor longitud de onda, pero evitar la simplificación frecuencia=profundidad.
+
+<!-- Slide number: 18 -->
+
+La estratificación produce dispersión
+
+![dispersion_curve.png](Picture40.jpg)
+
+Definición
+La dependencia de la velocidad de fase con la frecuencia se denomina dispersión.
+
+Qué contiene
+Información sobre cómo cambian las propiedades mecánicas con la profundidad.
+
+Objetivo
+Medir c?(f) con suficiente calidad.
+
+18
+Rayleigh/MASW
+
+### Notes:
+Esta es la definición central que nos lleva a SASW/MASW.
+
+<!-- Slide number: 19 -->
+
+De una curva de dispersión a un modelo del subsuelo
+
+Dato medido
+Inversión
+Resultado
+Curva de dispersión
+c?(f)
+Buscar h?, V??, V??/??, ?? compatibles con la curva.
+Perfil V?(z) + modelo estratificado.
+
+La inversión puede ser no única.
+Por eso conviene enriquecerla con información independiente:
+
+H/V
+Refracción V?
+Downhole / crosshole
+SPT / CPT
+Geología previa
+Los métodos se complementan: no necesitamos elegir “uno contra otro”.
+
+19
+Rayleigh/MASW
+
+### Notes:
+Aclarar diferencia entre joint inversion directa y uso como priors/contraste. H/V y refracción pueden entrar de manera conjunta; SPT/CPT suelen enriquecer como información previa/correlación/validación.
+
+<!-- Slide number: 20 -->
+
+SASW: medir dispersión con dos receptores
+
+Principio
+FUENTE
+Diferencia de fase según frecuencia.
+
+R?
+R?
+
+Ventaja
+Instrumentación sencilla.
+
+Limitaciones
+Ambigüedad de ciclos completos y baja redundancia espacial; se repite con separaciones distintas.
+Foti et al. (2014).
+
+20
+Rayleigh/MASW
+
+### Notes:
+No entrar todavía en todas las fórmulas de fase; esas van a backup.
+
+<!-- Slide number: 21 -->
+
+MASW: observar la propagación en múltiples posiciones
+
+Redundancia espacial
+
+Permite reconocer patrones coherentes.
+
+Separación
+
+Ayuda a distinguir contribuciones superpuestas.
+
+Park et al. (1998, 1999); Foti et al. (2018).
+
+21
+Rayleigh/MASW
+
+### Notes:
+Aquí justificar MASW frente a SASW: múltiples posiciones conservan la geometría del campo de ondas y dan redundancia espacial.
+
+<!-- Slide number: 22 -->
+
+Para evaluar el prototipo podemos sintetizar la dimensión espacial
+Lin & Ashlock (2016): un receptor / múltiples posiciones sucesivas de fuente; por reciprocidad puede desplazarse el receptor.
+
+![lin2016-p2.png](Picture24.jpg)
+
+mover receptor / repetir impacto
+
+Condición crítica
+Cada traza debe conservar posición y una referencia temporal común; la fuente debe caracterizarse para no confundir variación de impacto con variación del terreno.
+Lin & Ashlock (2016).
+
+22
+Rayleigh/MASW
+
+### Notes:
+Importante: esto NO sustituye completamente MASW convencional simultáneo. Es estrategia de evaluación del prototipo y reduce el costo inicial.
+
+<!-- Slide number: 23 -->
+
+El objetivo de adquisición queda definido: construir U(x,t)
+
+![preencoded.png](Image0.jpg)
+
+Tiempo
+
+Cuándo ocurrió cada muestra respecto a la excitación.
+
+posición x
+
+Espacio
+
+En qué posición fue adquirida cada traza.
+
+Señal
+Preservar amplitud y fase en la banda de interés.
+tiempo t ?
+
+23
+Rayleigh/MASW
+
+### Notes:
+Este es el payoff conceptual del bloque geofísico. Desde acá la pregunta se transforma en instrumentación.
+
+<!-- Slide number: 24 -->
+
+MASW se convierte en requisitos electrónicos
+
+Banda
+Fase
+Rango dinámico
+frecuencias de interés sin alteraciones no caracterizadas
+preservar coherencia relativa entre canales
+señales próximas y lejanas sin saturación
+
+Tiempo
+Geometría
+Campo
+referencia común entre trazas y eventos
+posición asociada a cada registro
+autonomía, almacenamiento y control de calidad
+La electrónica ya no es “un grabador”: debe preservar las condiciones físicas de la medición.
+Foti et al. (2018); Resumen de tesis, Sec. 4.1.
+
+24
+Sistema
+
+### Notes:
+No hablar todavía de detalles de red; solo convertir necesidades físicas en requisitos.
+
+<!-- Slide number: 25 -->
+
+Arquitectura propuesta: tres tipos de nodo
+
+GEO
+MASTER
+HAMMER
+Mide la respuesta del terreno.
+
+SM-24 ? AFE ? ADC ? procesamiento / almacenamiento local
+Coordina el ensayo y aloja la interfaz de operación.
+
+Prepara ? inicia ? recibe estados ? descarga registros
+Mide la excitación.
+
+Sensor de impacto ? AFE específico ? ADC ? misma lógica de adquisición
+
+Primero hacemos zoom en GEO; después veremos cómo MASTER coordina y cómo HAMMER referencia cada impacto.
+
+25
+Sistema
+
+### Notes:
+Seguir el orden acordado: arquitectura general ? GEO completo ? MASTER ? HAMMER. No hablar aún de store-and-forward.
+
+<!-- Slide number: 26 -->
+
+Nodo GEO: el sensor disponible es un SM-24 de 10 Hz
+
+Sensor
+Geófono vertical pasivo de bobina móvil.
+
+![/mnt/data/slides_assets/fig4_geophone.png](Image0.jpg)
+
+Parámetros clave
+f? ? 10 Hz · sensibilidad 28,8 V·s/m.
+
+Problema
+Justamente por debajo de f? la respuesta cae con rapidez, en la región asociada a ? largas.
+Figura adaptada del documento de tesis.
+Elegido por disponibilidad y costo; el desafío pasa al acondicionamiento.
+Sensor Nederland B.V. (2006); Resumen de tesis, Sec. 4.2.
+
+26
+GEO / AFE
+
+### Notes:
+Presentar el sensor como restricción de diseño, no como decisión ideal. El proyecto busca explotar hardware disponible y extender su banda de forma controlada.
+
+<!-- Slide number: 27 -->
+
+El modelo físico explica su respuesta
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+[ MASA–RESORTE–AMORTIGUADOR ]
+chasis solidario al suelo + masa móvil
+
+![preencoded.png](Image2.jpg)
+Por encima de la resonancia ? salida ? proporcional a velocidad.
+Por debajo ? fuerte atenuación.
+
+27
+GEO / AFE
+
+### Notes:
+Mostrar el origen mecánico y eléctrico de la transferencia. Las derivaciones detalladas quedan en backup.
+
+<!-- Slide number: 28 -->
+
+¿Por qué no medir “pelado” y simplemente amplificar?
+
+![preencoded.png](Image0.jpg)
+
+A 1 Hz
+Consecuencia
+Pero…
+Con f? = 10 Hz ? r = 0,1
+
+|H| ? 0,01
+
+? ?40 dB
+Para hacer visible 1 Hz necesitamos ~100× más ganancia que en la banda plana.
+Las componentes cercanas y superiores a 10 Hz también reciben esa ganancia y pueden consumir el margen del AFE/ADC antes de aprovechar 1 Hz.
+Necesitamos modificar la forma de la respuesta, no solo multiplicarla.
+
+28
+GEO / AFE
+
+### Notes:
+No decir que “el geófono satura”: el elemento que puede saturar es la cadena AFE/ADC. El cálculo de -40 dB es aproximado para r=0,1, lejos de resonancia.
+
+<!-- Slide number: 29 -->
+
+Estado del arte: varias formas de extender la respuesta de un geófono
+| Enfoque | Principio | Ventaja | Compromiso |
+| --- | --- | --- | --- |
+| Medición directa | SM-24 + ganancia | Muy simple | LF atenuada; banda alta consume rango |
+| Carga / impedancia | Modificar amortiguamiento por carga | Poca electrónica | Extensión limitada |
+| Zero-pole / inversa | Compensar la transferencia | Puede aplanar ampliamente | Ruido / offset LF; depende del modelo |
+| Force balance | Corriente ? fuerza de Lorentz | Extensión electromecánica real | Lazo activo, estabilidad y complejidad |
+| Ma et al. | Atenuar región dominante + recuperar ganancia | Evita inversión LF agresiva | Pérdida de amplitud ? alta ganancia / offset |
+Hakimitoroghi et al. (2017); Zhang et al. (2020, 2025); Ma et al. (2023); Pazos et al. (2005).
+
+29
+GEO / AFE
+
+### Notes:
+No presentar como ranking. Mostrar que cada enfoque resuelve el mismo problema con compromisos distintos. Las siguientes tres slides profundizan inversión, force balance y Ma.
+
+<!-- Slide number: 30 -->
+
+Alternativa 1: inversión / zero–pole matching
+
+![preencoded.png](Image0.jpg)
+
+Idea
+Cascadar filtros que cancelen ceros/polos del sensor y reconstruyan una respuesta plana en la banda de interés.
+
+![preencoded.png](Image1.jpg)
+
+El compromiso
+Un integrador ideal tiene ganancia creciente hacia DC: offset, bias y ruido de muy baja frecuencia pueden amplificarse y llevar etapas a saturación. La integración numérica también amplifica ruido LF.
+[ CIRCUITO INVERSOR ]
+integrador + integrador con pérdidas
+Hakimitoroghi et al. (2017); Zhang et al. (2025).
+
+30
+GEO / AFE
+
+### Notes:
+Aclarar: no decimos que no funcione; sí funciona y puede extender la banda. El problema es el costo en ruido, offset, saturación y sensibilidad al modelo.
+
+<!-- Slide number: 31 -->
+
+Alternativa 2: force balance — usar la bobina también como actuador
+
+![preencoded.png](Image0.jpg)
+
+Qué hace
+Qué logra
+[ ESQUEMA FORCE BALANCE ]
+La corriente de bobina produce una fuerza electromagnética que modifica el amortiguamiento efectivo.
+Puede extender la dinámica mecánica y mejorar banda/linealidad.
+sensor ? controlador ? corriente ? fuerza de Lorentz
+
+Costo de ingeniería
+Lazo activo acoplado al transductor: estabilidad, ruido, tolerancias, consumo y consistencia entre unidades.
+Zhang et al., Sensors and Actuators A (2020): 4.5 Hz ? 0.16 Hz; Zhang et al. (2025).
+
+31
+GEO / AFE
+
+### Notes:
+Mencionar el paper 2020 como ejemplo fuerte. La realimentación de fuerza puede ser excelente, pero para una red de nodos baratos/replicables la complejidad del lazo y su validación es mayor.
+
+<!-- Slide number: 32 -->
+
+Alternativa elegida: Ma et al. — “bajar el pico” antes de recuperar ganancia
+
+![preencoded.png](Image0.jpg)
+
+Paso 1
+
+Restar una rama pasabanda para reducir la región dominante alrededor de la resonancia.
+original
+
+compensada
+
+Paso 2
+
+Recuperar el nivel global con ganancia. Evitamos una inversión ideal con ganancia divergente hacia DC.
+
+Trade-off: la pérdida intencional de amplitud obliga a usar ganancia alta ? el offset pasa a ser crítico.
+Ma et al., Sensors 23(6):3082 (2023).
+
+32
+GEO / AFE
+
+### Notes:
+Esta slide conecta el estado del arte con nuestra implementación. Aclarar que Ma no elimina el problema de DC: al recuperar amplitud con ganancia, los offsets del AFE se amplifican. Eso motiva la calibración DA-AFE.
+
+<!-- Slide number: 33 -->
+
+Implementación del AFE en el nodo GEO
+
+![/mnt/data/slides_assets/fig5_afe.png](Image0.jpg)
+Entrada diferencial
+rechazo de modo común
+
+PGA
+ganancia ajustable
+
+BP + SUM
+rama a sustraer / compensación
+
+LP
+antialias antes del ADC
+Esquemático implementado en PSoC 5LP.
+Los VDAC fijan el punto de operación de cada etapa y luego se mantienen constantes durante la captura.
+
+33
+GEO / AFE
+
+### Notes:
+Recorrer la señal de izquierda a derecha. No explicar aún el algoritmo de VDAC; solo señalar que están disponibles para recentrar las etapas.
+
+<!-- Slide number: 34 -->
+
+Caracterización del AFE: modelo, tolerancias y medición
+
+![/mnt/data/slides_assets/fig9_response.png](Image0.jpg)
+
+Qué se midió
+Magnitud y fase de etapas y trayectoria PGA–ADC.
+
+Cómo
+Barridos en bandas superpuestas; cociente espectral salida/entrada.
+
+Control de calidad
+La coherencia delimita las regiones interpretables.
+Barridos senoidales y comparación con el modelo.
+
+34
+GEO / AFE
+
+### Notes:
+Mostrar que no nos quedamos en simulación: caracterizamos magnitud y fase. La figura del documento es densa; en versión final conviene redibujarla para proyección.
+
+<!-- Slide number: 35 -->
+
+Qué sabemos — y qué todavía no — de la extensión en baja frecuencia
+
+Verificado experimentalmente
+Predicho por modelo
+La trayectoria electrónica PGA–ADC y sus etapas fueron medidas en magnitud y fase.
+La respuesta SM-24 + electrónica se obtiene cascando la medición del AFE con el modelo nominal del geófono.
+Pendiente para la presentación final
+calibración mecánica extremo a extremo con movimiento conocido del geófono
+Resumen de tesis, Sec. 4.5: la extensión LF geófono–ADC es una predicción, no una calibración mecánica.
+
+35
+GEO / AFE
+
+### Notes:
+Esta slide es importante en una primera presentación: marcar claramente el límite de evidencia.
+
+<!-- Slide number: 36 -->
+
+La ganancia necesaria trae un segundo problema: offset
+
+PGA
+BP
+SUM
+LP
+ADC
+
++ offset
++ offset
++ offset
++ offset
+
+Efecto
+Dato real
+Los offsets se acumulan y reducen margen dinámico; una etapa puede saturar antes de que la señal llegue al ADC.
+En una condición del paper DA-AFE se midió 21,8 %FS de offset en SUM antes de aplicar señal sísmica.
+
+36
+GEO / AFE
+
+### Notes:
+Conectar directamente con la slide de Ma: ganancia alta mejora la banda útil pero hace intolerable el offset de etapas configurables.
+
+<!-- Slide number: 37 -->
+
+DA-AFE: usar recursos digitales para mejorar el punto de operación analógico
+
+1 · Medir
+2 · Corregir
+3 · Congelar
+MUX + ADC observan la continua de cada etapa.
+FIR estima DC; controlador ajusta el VDAC correspondiente.
+Durante adquisición el controlador se desactiva y los VDAC quedan constantes.
+
+CALIBRAR  ?  CONGELAR  ?  MEDIR
+La asistencia digital no modifica la trayectoria de señal durante la captura.
+Álvarez, González & Vargas Cabral, “Digitally Assisted Analog Front-End for Geophone Instrumentation”, 2026.
+
+37
+GEO / AFE
+
+### Notes:
+Presentar esto como filosofía de diseño, no solo como “un PI”. La señal durante la medida sigue una cadena analógica convencional; el digital ayuda antes.
+
+<!-- Slide number: 38 -->
+
+Calibración secuencial: PGA ? BP ? SUM ? LP
+
+PGA
+BP
+SUM
+LP
+
+medir ? ajustar VDAC
+medir ? ajustar VDAC
+medir ? ajustar VDAC
+medir ? ajustar VDAC
+
+![preencoded.png](Image2.jpg)
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+
+Banda muerta
+Saturación
+Anti-windup
+Evita oscilar entre códigos adyacentes del VDAC.
+Comando limitado a 0…255.
+Suspende integración si el límite impediría corregir en la dirección requerida.
+
+38
+GEO / AFE
+
+### Notes:
+Solo explicar la lógica, no cada constante. La secuencialidad importa porque cada etapa hereda el residual de las anteriores. Parámetros completos en backup.
+
+<!-- Slide number: 39 -->
+
+Resultado del DA-AFE: reducción consistente del offset residual
+
+![/mnt/data/slides_assets/urucon_traj.png](Image0.jpg)
+2,9–45,8 %FS
+0,4–3,9 %FS
+
+offset LP residual
+
+Evaluación
+2 placas independientes · 8 configuraciones placa/ganancia · mismo controlador.
+
+Interpretación
+Prueba de factibilidad: aún no es optimización definitiva del AFE.
+Trayectorias representativas de calibración.
+Álvarez et al. (2026), paper DA-AFE.
+
+39
+GEO / AFE
+
+### Notes:
+Este es un resultado fuerte y concreto. Evitar llenar con la tabla completa; dejarla en backup.
+
+<!-- Slide number: 40 -->
+
+Captura digital dentro del GEO
+
+ADC ??
+
+![/mnt/data/slides_assets/fig10_digital.png](Image0.jpg)
+2604 muestras/s · 18 bits nominales · rangos bipolares configurables.
+
+DMA
+Mueve muestras entre ADC, filtro y RAM reduciendo intervención del procesador.
+
+SignalController
+Disparo, conteo, ventana y cierre de captura implementados en lógica dedicada.
+PSoC 5LP: SignalController, DMA, DFB, registros y EEPROM.
+Una vez iniciada la captura, el muestreo no depende de la red ni de tareas de software de alto nivel.
+
+40
+GEO / AFE
+
+### Notes:
+Aquí sí explicar que la adquisición es local y determinista. Esto prepara la coordinación por MASTER.
+
+<!-- Slide number: 41 -->
+
+MASTER coordina varios nodos sin transportar muestras durante la captura
+
+ARM
+
+![/mnt/data/slides_assets/fig12_sequence.png](Image0.jpg)
+Verifica disponibilidad y reserva recursos.
+
+PRESTART
+Configura captura, reinicia contadores y prepara DMA.
+
+START broadcast
+Una única orden busca reducir la dispersión respecto a comandos independientes.
+Secuencia ARM ? PRESTART ? START y almacenamiento local.
+Después del disparo, cada nodo conserva el registro localmente y la red se usa para coordinación y descarga.
+
+41
+MASTER / HAMMER
+
+### Notes:
+Esta es la sección correcta para hablar de store-and-forward. Distinguir coordinación de adquisición.
+
+<!-- Slide number: 42 -->
+
+Sincronización: tenemos una primera estimación, todavía no la medida definitiva
+
+Ensayo actual
+
+![preencoded.png](Image0.jpg)
+3 nodos · 128 órdenes START broadcast · flancos GPIO observados con osciloscopio.
+
+20 Hz
+50 Hz
+200–400 µs
+? 3° para 400 µs
+? 7° para 400 µs
+dispersión de flancos ESP32
+
+Pendiente
+Medir inicio efectivo ADC?ADC y deriva relativa de reloj durante la captura.
+
+42
+MASTER / HAMMER
+
+### Notes:
+No vender 200–400 µs como sincronización final: solo dispersión de flancos GPIO/ESP32. El ADC y la deriva aún deben medirse directamente.
+
+<!-- Slide number: 43 -->
+
+HAMMER: si los eventos son sucesivos, también debemos medir la fuente
+
+![martillo_086d20.png](Picture25.jpg)
+
+Entrada
+sensor de impacto alimentado por corriente constante
+
+![/mnt/data/slides_assets/fig13_hammer.png](Image0.jpg)
+
+AFE
+desacople + protección + PGA + LP + ADC
+
+Lógica
+misma estructura de adquisición y almacenamiento local que GEO
+AFE del nodo HAMMER.
+HAMMER permite alinear trazas, evaluar repetibilidad y detectar rebotes / contactos múltiples.
+
+43
+MASTER / HAMMER
+
+### Notes:
+Esta slide justifica HAMMER desde la adquisición secuencial: si cada traza proviene de otro golpe, no podemos asumir que la fuente fue idéntica.
+
+<!-- Slide number: 44 -->
+
+Flujo de campo: configurar, medir, revisar y recién entonces mover la geometría
+
+Configurar
+Calibrar
+ARM
+Impacto
+Revisar
+Aceptar / repetir
+Guardar / enviar
+
+![geophone_scope_captura_real_claro.png](Picture32.jpg)
+
+Control de calidad inmediato
+Detectar acoplamiento deficiente, impacto múltiple o ruido excesivo antes de cambiar de posición.
+
+Trazabilidad
+Cada captura conserva nodo, posición, f?, rango ADC, ganancia, muestras y estado de calibración.
+
+44
+MASTER / HAMMER
+
+### Notes:
+Mostrar la operación real del sistema, no solo bloques electrónicos. La UI permite decidir en campo si repetir.
+
+<!-- Slide number: 45 -->
+
+Después de campo: alinear, revisar y construir el registro espacial
+
+![captura_cruda_campo.png](Picture22.jpg)
+Alinear
+impacto HAMMER como referencia temporal
+
+Clasificar
+válida / rechazada; detectar registros anómalos
+
+Combinar
+superponer o promediar repeticiones y ordenar por posición
+Salida: conjunto de trazas listas para formar U(x,t).
+
+45
+MASTER / HAMMER
+
+### Notes:
+La interfaz de análisis estaba faltando en borradores previos. Esta slide termina el pipeline de adquisición antes de resultados.
+
+<!-- Slide number: 46 -->
+
+Resultado preliminar de campo: la banda útil actual está principalmente por encima de 10 Hz
+
+![/mnt/data/slides_assets/fig17a_snr.png](Image0.jpg)
+
+1–5 Hz
+0,5 dB
+
+5–10 Hz
+2,1 dB
+
+10–20 Hz
+16,7 dB
+
+20–50 Hz
+24,4 dB
+265 impactos · 15 distancias con ?3 registros utilizables.
+La baja SNR <10 Hz integra fuente + acoplamiento + propagación + geófono + electrónica; no puede atribuirse a un único bloque.
+
+46
+Resultados
+
+### Notes:
+Este resultado es deliberadamente incómodo y útil: muestra dónde está el cuello de botella actual, pero no permite culpar al AFE ni al geófono por separado.
+
+<!-- Slide number: 47 -->
+
+Resultado central: ya podemos construir el registro espacio–tiempo
+
+![/mnt/data/slides_assets/fig17b_xt.png](Image0.jpg)
+
+21
+posiciones
+
+10–50 m
+rango espacial
+
+2 m
+paso
+“Todo lo anterior existe para poder obtener esta matriz.”
+21 posiciones secuenciales entre 10 y 50 m; ?x = 2 m.
+
+47
+Resultados
+
+### Notes:
+Hacer una pausa acá. Explicar: capturas aceptadas ? alineadas con HAMMER ? frecuencia común ? promediadas ? ordenadas por distancia. La normalización de cada traza es solo para visualización; no comparar amplitudes absolutas en esta figura.
+
+<!-- Slide number: 48 -->
+
+¿Qué está demostrado y qué falta validar?
+YA IMPLEMENTADO / EVALUADO
+PENDIENTE PARA CERRAR MASW
+AFE caracterizado en magnitud y fase
+Calibración automática de offset
+Captura digital local / DMA / lógica
+Coordinación MASTER + almacenamiento
+HAMMER instrumentado
+Registro U(x,t) secuencial
+Sincronización efectiva ADC?ADC y deriva
+Respuesta LF extremo a extremo
+Excitador más energético / repetible en LF
+Múltiples GEO simultáneos
+Extracción de curvas de dispersión
+Inversión para V?(z)
+La plataforma ya permite evaluar la cadena de adquisición; la validación MASW completa es el objetivo de la segunda presentación.
+
+48
+Cierre
+
+### Notes:
+Como primera presentación, este cierre es importante: mostrar que hay avance sustancial y un plan claro para diciembre.
+
+<!-- Slide number: 49 -->
+
+Camino hacia la presentación final de diciembre
+
+1
+2
+3
+4
+5
+
+Fuente LF
+Sync real
+Array
+Dispersión
+Inversión
+más energía y repetibilidad
+ADC?ADC + deriva de reloj
+más nodos GEO simultáneos
+estimación c?(f) + modos
+perfil V?(z) + validación cruzada
+Adquisición  ?  dispersión  ?  inversión  ?  caracterización geotécnica
+
+49
+Cierre
+
+### Notes:
+Cerrar con un roadmap concreto. La tesis final no termina en “medimos vibraciones”; debe cerrar el ciclo hasta V_s(z).
+
+<!-- Slide number: 50 -->
+
+![masw_campo.png](Picture11.jpg)
+Preguntas
+Gracias
+Elías David Álvarez Martínez
+Proyecto Final de Carrera · Ingeniería Electrónica
+
+50
+Cierre
+
+### Notes:
+Final. Después de esta slide vienen las auxiliares para preguntas.
+
+<!-- Slide number: 51 -->
+
+SLIDES AUXILIARES
+
+A1 · Ecuación elastodinámica y descomposición de Helmholtz
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+
+Potencial escalar ?
+Potencial vector ?
+Componente irrotacional ? compresión / onda P.
+Componente solenoidal ? corte / onda S.
+
+51
+Auxiliar
+
+### Notes:
+Usar solo si preguntan de dónde salen P y S o por qué aparecen dos velocidades.
+
+<!-- Slide number: 52 -->
+
+SLIDES AUXILIARES
+
+A2 · Relaciones elásticas útiles
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+
+![preencoded.png](Image2.jpg)
+
+![preencoded.png](Image3.jpg)
+
+52
+Auxiliar
+
+### Notes:
+Respuesta rápida a preguntas sobre ?, ?, ? o la relación entre V_p y V_s.
+
+<!-- Slide number: 53 -->
+
+SLIDES AUXILIARES
+
+A3 · Interfaces, Snell y conversión P–SV
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+SH
+[ DIAGRAMA COMPLETO SNELL ]
+permanece desacoplada de P/SV para interfaz plana e isótropa.
+P incidente ? P/SV reflejadas y transmitidas
+
+Superficie libre
+tensión nula ? modos superficiales.
+
+53
+Auxiliar
+
+<!-- Slide number: 54 -->
+
+SLIDES AUXILIARES
+
+A4 · Relación aproximada entre c? y V?
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+?=0.20
+?=0.30
+?=0.40
+?=0.49
+c?/V??0.91
+?0.93
+?0.94
+?0.95
+La aproximación es para un semiespacio elástico homogéneo; en medios estratificados la relación modal es más compleja.
+
+54
+Auxiliar
+
+<!-- Slide number: 55 -->
+
+SLIDES AUXILIARES
+
+A5 · Modos Rayleigh y sensibilidad con profundidad
+BACKUP
+
+Modo fundamental
+Suele dominar, pero no siempre es la única cresta de energía en la imagen de dispersión.
+
+Modos superiores
+[ KERNELS / MODOS ]
+Pueden aportar información adicional o confundirse si el picking modal no es correcto.
+fundamental + modos superiores
+
+Implicación
+La inversión depende también de identificar correctamente las ramas modales.
+
+55
+Auxiliar
+
+<!-- Slide number: 56 -->
+
+SLIDES AUXILIARES
+
+A6 · No unicidad e integración de información complementaria
+BACKUP
+
+Misma curva
+Regularización / prior
+Contraste
+distintos modelos pueden reproducir aproximadamente c?(f).
+limita el espacio de soluciones plausibles.
+SPT/CPT, H/V, refracción, downhole/crosshole, geología.
+
+[ ESQUEMA JOINT / CONSTRAINED INVERSION ]
+varios datasets ? modelo más restringido
+
+56
+Auxiliar
+
+<!-- Slide number: 57 -->
+
+SLIDES AUXILIARES
+
+A7 · SASW: fase y velocidad de fase
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image2.jpg)
+
+![preencoded.png](Image1.jpg)
+
+Problema de ambigüedad
+Por eso MASW
+El entero n representa ciclos completos no observables directamente; distintas separaciones ayudan a resolverlo.
+añade redundancia espacial y permite analizar el patrón global.
+
+57
+Auxiliar
+
+<!-- Slide number: 58 -->
+
+SLIDES AUXILIARES
+
+A8 · MASW: del registro U(x,t) a la imagen de dispersión
+BACKUP
+
+1 · U(x,t)
+2 · Transformar
+3 · Imagen
+4 · Pick
+trazas ordenadas por posición
+f–k / phase-shift / ?–p / HLRT
+energía vs f y c
+c?(f)
+
+[ EJEMPLO IMAGEN DE DISPERSIÓN ]
+reservado para resultado futuro
+
+58
+Auxiliar
+
+<!-- Slide number: 59 -->
+
+SLIDES AUXILIARES
+
+A9 · Muestreo temporal y espacial
+BACKUP
+
+![preencoded.png](Image1.jpg)
+
+![preencoded.png](Image0.jpg)
+
+Aliasing temporal
+Aliasing espacial
+componentes por encima de Nyquist se pliegan al espectro medido.
+espaciado excesivo produce velocidades de fase aparentes / crestas falsas.
+
+Diseño de campo
+Longitud del arreglo ? resolución en k / profundidad; ?x ? límite de frecuencia alta.
+
+59
+Auxiliar
+
+<!-- Slide number: 60 -->
+
+SLIDES AUXILIARES
+
+A10 · MASW sintetizado con un receptor
+BACKUP
+
+Reciprocidad permite intercambiar fuente y receptor bajo hipótesis apropiadas.
+Cada traza corresponde a un evento distinto.
+La repetibilidad / medición de la fuente es crucial.
+No reemplaza por completo la adquisición simultánea en presencia de cambios temporales.
+[ LIN & ASHLOCK 2016 ]
+figura / referencia
+
+60
+Auxiliar
+
+<!-- Slide number: 61 -->
+
+SLIDES AUXILIARES
+
+A11 · Derivación del modelo SM-24
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+
+![preencoded.png](Image2.jpg)
+
+![preencoded.png](Image3.jpg)
+
+Lectura física
+Referida a aceleración es pasabanda; referida a velocidad aparece como segundo orden pasa-altos.
+
+61
+Auxiliar
+
+<!-- Slide number: 62 -->
+
+SLIDES AUXILIARES
+
+A12 · La carga eléctrica modifica el amortiguamiento del geófono
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+R? grande
+R? pequeña
+Diseño elegido
+menor amortiguamiento eléctrico; mayor pico resonante.
+más amortiguamiento; menor pico pero mayor carga del sensor.
+entrada alta y simétrica para no introducir diferencias de carga entre unidades.
+
+62
+Auxiliar
+
+<!-- Slide number: 63 -->
+
+SLIDES AUXILIARES
+
+A13 · ¿Cuánta ganancia exige la región sub-resonante?
+BACKUP
+| f / f? | |H|/G? (aprox.) | Atenuación | Ganancia para compensar |
+| --- | --- | --- | --- |
+| 1.0 | ?1 (banda) | 0 dB | 1× |
+| 0.5 | ?0.25 | ?12 dB | ?4× |
+| 0.2 | ?0.04 | ?28 dB | ?25× |
+| 0.1 | ?0.01 | ?40 dB | ?100× |
+Aproximación lejos de resonancia para un segundo orden de velocidad: |H| ? (f/f?)².
+
+63
+Auxiliar
+
+<!-- Slide number: 64 -->
+
+SLIDES AUXILIARES
+
+A14 · Comparación ampliada de técnicas de extensión LF
+BACKUP
+| Método | Actúa sobre sensor | Ruido LF | Complejidad | Observación |
+| --- | --- | --- | --- | --- |
+| Amplificación | No | No corrige | Baja | consume rango dinámico |
+| Carga pasiva | Sí, vía carga | baja | Baja | extensión limitada |
+| Zero-pole | No | puede aumentar | Media | sensible a offsets/modelo |
+| Force balance | Sí, fuerza | controlable | Alta | estabilidad y consumo |
+| Ma et al. | No | evita inversor ideal | Media | requiere ganancia posterior |
+
+64
+Auxiliar
+
+<!-- Slide number: 65 -->
+
+SLIDES AUXILIARES
+
+A15 · Compensación tipo Ma et al.: formulación conceptual
+BACKUP
+
+![preencoded.png](Image1.jpg)
+
+![preencoded.png](Image0.jpg)
+
+[ RESPUESTAS DE RAMAS ]
+[ RESPUESTA RESULTANTE ]
+directa · BP · resta
+aplanamiento + ganancia
+
+65
+Auxiliar
+
+<!-- Slide number: 66 -->
+
+SLIDES AUXILIARES
+
+A16 · Esquemático completo del AFE
+BACKUP
+
+![/mnt/data/slides_assets/fig5_afe.png](Image0.jpg)
+Entrada diferencial · PGA · BP · SUM · LP · VDACs · ADC/MUX.
+
+66
+Auxiliar
+
+<!-- Slide number: 67 -->
+
+SLIDES AUXILIARES
+
+A17 · Barridos completos del AFE
+BACKUP
+
+![/mnt/data/slides_assets/fig9_response.png](Image0.jpg)
+Magnitud, fase, tolerancias, potenciómetro y coherencia.
+
+67
+Auxiliar
+
+<!-- Slide number: 68 -->
+
+SLIDES AUXILIARES
+
+A18 · Cuantización ADC / VDAC
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+ADC
+VDAC
+N = 2¹?, span = 5 V
+q_ADC ? 19,1 µV/count
+N = 2?, span = 4,096 V
+q_DAC = 16 mV/code
+La resolución finita del VDAC justifica la banda muerta y el refinamiento del código final.
+
+68
+Auxiliar
+
+<!-- Slide number: 69 -->
+
+SLIDES AUXILIARES
+
+A19 · PI, deadband y anti-windup
+BACKUP
+
+![preencoded.png](Image0.jpg)
+
+![preencoded.png](Image1.jpg)
+Código limitado a 0…255.
+Integración suspendida si saturación y error empujan más hacia el límite.
+Convergencia exige muestras consecutivas dentro de banda muerta.
+Prueba de código adyacente solo se conserva si reduce el residual.
+
+69
+Auxiliar
+
+<!-- Slide number: 70 -->
+
+SLIDES AUXILIARES
+
+A20 · Parámetros y resultados completos del DA-AFE
+BACKUP
+
+[ TABLA I PAPER ]
+[ TABLA II PAPER ]
+Ki, ?i, kP, kI, settle/lock/refine, timeout
+offset %FS por etapa / placa / ganancia
+Útil para responder preguntas de tuning, dispersión entre placas y estadística.
+
+70
+Auxiliar
+
+<!-- Slide number: 71 -->
+
+SLIDES AUXILIARES
+
+A21 · SignalController, DMA y almacenamiento
+BACKUP
+
+DMA ADC?RAM
+DMA ADC?DFB
+DMA DFB?RAM
+watchdog / estados
+EEPROM + CRC
+control de VDAC / MUX
+
+![/mnt/data/slides_assets/urucon_digital.png](Image0.jpg)
+Hardware digital del PSoC 5LP.
+
+71
+Auxiliar
+
+<!-- Slide number: 72 -->
+
+SLIDES AUXILIARES
+
+A22 · Modelo de error de reloj local
+BACKUP
+
+![preencoded.png](Image1.jpg)
+
+![preencoded.png](Image0.jpg)
+
+Error de inicio t?,?
+Error de tasa ??
+afecta principalmente un desplazamiento temporal / fase inicial.
+acumula deriva relativa a lo largo de la captura.
+
+72
+Auxiliar
+
+<!-- Slide number: 73 -->
+
+SLIDES AUXILIARES
+
+A23 · Error de fase asociado a ?t
+BACKUP
+
+![preencoded.png](Image0.jpg)
+| ?t | 10 Hz | 20 Hz | 50 Hz | 100 Hz |
+| --- | --- | --- | --- | --- |
+| 100 µs | 0,36° | 0,72° | 1,8° | 3,6° |
+| 200 µs | 0,72° | 1,44° | 3,6° | 7,2° |
+| 400 µs | 1,44° | 2,88° | 7,2° | 14,4° |
+
+73
+Auxiliar
+
+<!-- Slide number: 74 -->
+
+SLIDES AUXILIARES
+
+A24 · Nodo HAMMER: cadena analógica
+BACKUP
+
+Transductor
+PCB 086D20 ICP; requiere alimentación por corriente constante.
+
+![/mnt/data/slides_assets/fig13_hammer.png](Image0.jpg)
+
+Propósito
+medir instante y forma del contacto; detectar rebote / impacto múltiple.
+
+Software
+misma estructura de control/adquisición que GEO.
+Sensor ICP ? desacople/protección ? PGA ? LP ? ADC.
+
+74
+Auxiliar
+
+<!-- Slide number: 75 -->
+
+SLIDES AUXILIARES
+
+A25 · Cálculo de SNR aparente en campo
+BACKUP
+
+![preencoded.png](Image0.jpg)
+Ventanas de 1 s antes y después del impacto.
+Se elimina la media y se aplica ventana Hann.
+PSD normalizada por energía de ventana y f_s.
+Medianas por distancia y por banda.
+Resolución efectiva ?1 Hz; zero-padding solo interpola la visualización.
+“Aparente” porque la ventana post-impacto contiene señal + ruido, no una medida de ruido aislado.
+
+75
+Auxiliar
+
+<!-- Slide number: 76 -->
+
+SLIDES AUXILIARES
+
+A26 · BOM / costo por nodo — placeholder
+BACKUP
+
+[ TABLA BOM ]
+SM-24 · PSoC 5LP · ESP32 · SD · PCB · alimentación · conectores
+Completar cuando se cierre el costo real de fabricación y comparar con instrumentación comercial.
+
+76
+Auxiliar
+
+<!-- Slide number: 77 -->
+
+SLIDES AUXILIARES
+
+A27 · Metadatos y trazabilidad
+BACKUP
+
+ID de nodo
+posición
+f? efectiva
+rango ADC
+
+ganancia
+ruta de señal
+N muestras
+estado calibración
+
+versión
+CRC
+overflow / cierre incompleto
+Los archivos originales se preservan; el procesamiento se realiza sobre copias derivadas.
+
+77
+Auxiliar
+
+<!-- Slide number: 78 -->
+
+SLIDES AUXILIARES
+
+A28 · Referencias principales
+BACKUP
+Foti et al. (2014). Surface Wave Methods for Near-Surface Site Characterization.
+Foti et al. (2018). Guidelines for the good practice of surface wave analysis.
+Park, Miller & Xia (1998, 1999). MASW / dispersion imaging.
+Lin & Ashlock (2016). Surface-wave testing using multichannel simulation with one receiver.
+Ma et al. (2023). An effective method for improving low-frequency response of geophone.
+Hakimitoroghi et al. (2017). Compensation Techniques for Geophone Response.
+Zhang et al. (2020). Digital low-frequency geophone based on velocity feedback.
+Zhang et al. (2025). Force balance and approximate integrator.
+Álvarez, González & Vargas Cabral (2026). Digitally Assisted Analog Front-End for Geophone Instrumentation.
+Sensor Nederland B.V. (2006). SM-24 Geophone Element.
+
+78
+Auxiliar
