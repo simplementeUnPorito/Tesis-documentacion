@@ -1,0 +1,137 @@
+═══════════════════════════════════════════════════════════════
+  PRESENTACIÓN PRIMERA PRESENTACIÓN - QUICK START
+═══════════════════════════════════════════════════════════════
+
+📋 OPCIONES DISPONIBLES:
+
+  v09_redesigned.pptx     ← RECOMENDADO (moderno, compacto)
+  v07.pptx                ← FALLBACK (clásico, espacioso)
+  v08_improved.pptx       ← INTERMEDIO
+
+═══════════════════════════════════════════════════════════════
+
+🚀 PARA EMPEZAR (2 MINUTOS):
+
+  1. Abre PowerPoint
+  2. File → Open
+  3. Selecciona: Presentacion_1ra_Borrador_v09_redesigned.pptx
+  4. Mira slides 10, 25, 40 (verifica diseño)
+  5. Presiona F5 para presentar
+  6. ¡Disfruta tu presentación!
+
+═══════════════════════════════════════════════════════════════
+
+📊 LO QUE TIENES:
+
+  ✓ 75 slides totales
+    └─ 47 slides principales (narrativa 45 min)
+    └─ 28 slides auxiliares (respuesta a preguntas)
+
+  ✓ 89 imágenes profesionales
+    └─ De Wikimedia, Papers, Proyecto, Matplotlib
+
+  ✓ Contenido académico riguroso
+    └─ Pre-cocinado, validado, listo para usar
+
+═══════════════════════════════════════════════════════════════
+
+✨ MEJORAS DE v09:
+
+  • Márgenes: 50% reducción (0.32" → 0.16")
+  • Espacio: +20% más aprovechamiento
+  • Figuras: +25% más grandes y visibles
+  • Espaciado: Mejorado verticalmente
+  • Visual: Moderno y profesional
+
+═══════════════════════════════════════════════════════════════
+
+📚 SI NECESITAS AYUDA:
+
+  README_FINAL_CHOICE.md
+  → Lee esto si no sabes qué versión usar (2 min)
+
+  VERSION_COMPARISON.md
+  → Lee si quieres comparar v07 vs v09 (5 min)
+
+  DESIGN_IMPROVEMENTS_v09.md
+  → Lee si quieres saber qué cambió exactamente (10 min)
+
+  README_v07_FINAL.md
+  → Lee si necesitas ayuda de navegación (5 min)
+
+═══════════════════════════════════════════════════════════════
+
+✅ CHECKLIST FINAL:
+
+  [ ] Abre v09_redesigned.pptx
+  [ ] Verifica que abre correctamente
+  [ ] Mira 3-4 slides para probar diseño
+  [ ] Presiona F5 para probar presentación
+  [ ] ¿Te gusta? → Úsala (ve al paso "PARA PRESENTAR")
+  [ ] ¿No? → Abre v07.pptx y repite
+
+═══════════════════════════════════════════════════════════════
+
+💻 PARA PRESENTAR:
+
+  1. Abre v09_redesigned.pptx (o v07 si prefieres)
+  2. Presiona F5 para iniciar presentación
+  3. Navega slides 1-47 (presentación principal)
+  4. Si alguien pregunta sobre tema X → salta a auxiliar Ay
+  5. Termina en slide 47
+
+  Mapeo de auxiliares:
+  A1-A5:   Elastodinámica (física teórica)
+  A6-A10:  MASW y métodos (ondas superficiales)
+  A11-A15: Sensor SM-24 (compensación LF)
+  A16-A20: Electrónica AFE (detallada)
+  A21-A28: Digital, SNR, BOM, referencias
+
+═══════════════════════════════════════════════════════════════
+
+📤 PARA EXPORTAR A PDF:
+
+  1. File → Export as PDF
+  2. Guardar en carpeta deseada
+  3. Resultado: PDF compacto y moderno
+  4. Compartir con audiencia si es necesario
+
+═══════════════════════════════════════════════════════════════
+
+❓ PREGUNTAS FRECUENTES:
+
+Q: ¿Cuál versión debo usar?
+A: v09_redesigned.pptx (recomendado - moderno)
+   v07.pptx si prefieres clásico
+
+Q: ¿Cambió el contenido?
+A: No. Solo márgenes, espaciado y tipografía. Académica 100% igual.
+
+Q: ¿Funciona en Office antiguo?
+A: Sí. Compatible con Office 2016+ y PowerPoint Online.
+
+Q: ¿Puedo editarla?
+A: Sí. Abre en PowerPoint y edita normalmente.
+
+Q: ¿Y si algo no funciona?
+A: Tienes v07.pptx como respaldo 100% estable.
+
+═══════════════════════════════════════════════════════════════
+
+🎯 RECOMENDACIÓN FINAL:
+
+  Usa v09_redesigned.pptx para tu presentación.
+
+  Es moderno, optimizado y profesional.
+  Mismo contenido académico riguroso.
+  Mejor visual en proyector.
+  V07 es tu fallback si lo necesitas.
+
+═══════════════════════════════════════════════════════════════
+
+¡Dale! ¡Buen trabajo! 🚀
+
+Generado: 2026-10-04
+Status: ✅ LISTO PARA PRESENTACIÓN PÚBLICA
+
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,688 @@
+<!-- Slide number: 1 -->
+Diseño e implementación de un sistema electrónico multicanal del tipo IoT para caracterización geotécnica del suelo mediante ondas sísmicas
+Elías David Álvarez Martínez | Ingeniera Electrónica | Y24127
+Tutor: Enrique A. Vargas Cabral, Ph.D.
+
+![s06_46c357.png](Picture4.jpg)
+Placeholder · Esquema Love/Rayleigh (generado)
+
+### Notes:
+Presentación de apertura. Título, carrera, año. Introducir brevemente: plataforma electrónica para adquirir señales sísmicas orientadas a caracterización geotécnica mediante MASW (MultiChannel Analysis of Surface Waves). Mención a tutor y contexto de Proyecto Final de Carrera. Duración: 1 min.
+
+<!-- Slide number: 2 -->
+
+¿Para qué necesitamos caracterizar el suelo?
+
+![foundation.jpg](Picture5.jpg)
+Terreno condiciona diseño, ejecución y seguimiento. Ejemplos: fundaciones, asentamientos, pavimentos, taludes, estabilidad.
+Placeholder · Wikimedia Commons, CC BY-SA 4.0
+
+![landslide.jpg](Picture7.jpg)
+Placeholder · Wikimedia Commons, CC BY 4.0
+Slide 2 | Motivación
+
+### Notes:
+Partir de la utilidad geotécnica, no de MASW. El suelo es un parámetro crítico antes, durante y después de toda obra civil. Mostrar ejemplos concretos: fundaciones profundas vs superficiales, investigación de grietas y asentamientos, control de compactación en rellenos, análisis de estabilidad de taludes. Objetivo: convencer que conocer el subsuelo es un problema real y frecuente. Duración: 1 min.
+
+<!-- Slide number: 3 -->
+
+Métodos para caracterizar el suelo: invasivos vs no invasivos
+
+![s03_4093d7.png](Picture5.jpg)
+SPT/CPT invasivos, downhole, refracción/reflexión, ondas superficiales (Love, Rayleigh, MASW).
+Placeholder · SPT / CPT (generado)
+
+![s05_2f069b.png](Picture7.jpg)
+Placeholder · Ondas de cuerpo (generado)
+
+![s06_46c357.png](Picture9.jpg)
+Placeholder · Ondas superficiales (generado)
+Slide 3 | Motivación
+
+### Notes:
+Mapa rápido del estado del arte por invasividad. Destacar: SPT/CPT dan información valiosa pero requieren intervención física y cobertura puntual. Downhole/crosshole ofrecen Vs directo pero exigen pozos. Ondas superficiales (MASW) no invasivas, multicanal, cobertura extensa. Transición a por qué miramos Rayleigh específicamente. Duración: 1 min.
+
+<!-- Slide number: 4 -->
+
+Métodos invasivos: medición directa del terreno (SPT, CPT)
+
+![cpt_truck.jpg](Picture5.jpg)
+Resistencia a penetración, estratigrafía, recuperación de muestra. Referencia clásica; cobertura puntual y alto costo logístico.
+Placeholder · Camión CPT, Wikimedia Commons (geograph)
+
+![s03_4093d7.png](Picture7.jpg)
+Placeholder · SPT / CPT (generado)
+Slide 4 | Estado del arte
+
+### Notes:
+SPT y CPT son trabajaballos de la geotecnia. Entregan Nspt, qc, u2 y correlaciones directas con parámetros elásticos. Limitación crítica: invasivos, costosos, logística compleja, cobertura localizada. No son 'malos', son referencia. La cuestión es repetibilidad sobre grandes áreas. Duración: 45 s.
+
+<!-- Slide number: 5 -->
+
+Métodos invasivos: medición de ondas dentro del terreno (downhole, crosshole)
+
+![s04_7b0b76.png](Picture5.jpg)
+Velocidades dinámicas Vs directas con geometría conocida. Logística, costo.
+Placeholder · Downhole / crosshole (generado)
+
+![ch1_crosshole_testing.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, cap. 1
+Slide 5 | Estado del arte
+
+### Notes:
+Downhole y crosshole ofrecen Vs y Vp casi directamente midiendo tiempos en un pozo o entre pozos. Ventaja: excelente para validar. Limitación: uno o varios pozos, geometría rígida, logística prohibitiva para levantamientos extensos. Conclusión: excelente donde aplicable, insuficiente para cobertura. Duración: 45 s.
+
+<!-- Slide number: 6 -->
+
+Métodos no invasivos: ondas de cuerpo desde superficie (refracción, reflexión, P/S)
+
+![s05_2f069b.png](Picture5.jpg)
+Sin penetración, perfiles continuos. Exigen configuraciones específicas para Vs directo.
+Placeholder · Refracción/reflexión (generado)
+
+![refraction.png](Picture7.jpg)
+Placeholder · Wikimedia Commons, dominio público
+Slide 6 | Estado del arte
+
+### Notes:
+Refracción, reflexión y ondas P/S desde superficie abren posibilidades sin perforación. Permiten perfiles largos. Limitación: Vs requiere información complementaria o configuraciones especiales. Transición: si miramos ondas superficiales, ganamos sensibilidad a Vs y observamos el medio entero en el sitio. Duración: 45 s.
+
+<!-- Slide number: 7 -->
+
+Métodos no invasivos: ondas superficiales (Love, Rayleigh, MASW)
+
+![s06_46c357.png](Picture5.jpg)
+Dispersión geométrica ? cambio de propiedades con profundidad. Multicanal, no invasivo, relación directa a Vs.
+Placeholder · Love/Rayleigh en superficie (generado)
+
+![ch1_2D_radiation_pattern_Rayleigh_surface.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 1.1
+Slide 7 | Estado del arte
+
+### Notes:
+Ondas superficiales dominan la respuesta de una fuente vertical en superficie. Love (SH, horizontal) y Rayleigh (elíptica vertical-radial) son los modos interesantes. MASW explota la dispersión (variación de velocidad con frecuencia) de Rayleigh para inferir Vs(z). Ventajas: no invasivo, multicanal, cobertura extensa, relación directa a parámetro geotécnico. Por eso llegamos a MASW. Duración: 90 s.
+
+<!-- Slide number: 8 -->
+
+Orden de la narrativa: Love primero, luego Rayleigh, luego ¿por qué?
+
+![s11_607714.png](Picture5.jpg)
+Love: SH, horizontal, transversal. Rayleigh: elíptica, componente vertical. Rayleigh se mide mejor con fuente vertical.
+Placeholder · Love (generado)
+
+![s12_15a820.png](Picture7.jpg)
+Placeholder · Rayleigh (generado)
+Slide 8 | Estado del arte
+
+### Notes:
+Explicar ambas familias sin prejuicios. Love es útil pero fuente vertical no es natural para SH. Rayleigh es natural: fuente vertical genera componente vertical; trayectoria elíptica, sensible a Vs, decaimiento geométrico menor que P/S. Conclusión emerge sola: Rayleigh encaja mejor con nuestro problema. Duración: 60 s.
+
+<!-- Slide number: 9 -->
+
+Un medio elástico admite ondas P (compresionales) y S (de corte)
+
+![fig01_ondas_p_s_es.png](Picture5.jpg)
+Vp = ?((?+2?)/?), Vs = ?(?/?). Velocidades relacionadas a módulos elásticos.
+Placeholder · Ondas P y S (propio)
+
+![Pasted image 20260316135658.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 2.7
+Slide 9 | Física
+
+### Notes:
+Punto de partida: elasticidad lineal pequeñas deformaciones (? < 10??). P es compresional, S es de corte. Las velocidades Vp y Vs dependen de densidad ? y constantes de Lamé (?, ?) o módulos. Esta es la razón por la que estamos interesados en ondas sísmicas: entran en juego parámetros que nos interesan. Duración: 60 s.
+
+<!-- Slide number: 10 -->
+
+Vs nos interesa porque está directamente ligada a la rigidez del terreno
+Gmax = ? Vs². Rigidez a pequeñas deformaciones; pequeño amortiguamiento.
+
+![gen_gmax_degradacion.png](Picture5.jpg)
+Placeholder · Generado (esquema)
+Slide 10 | Física
+
+### Notes:
+Deducción clave: Gmax es el módulo de corte máximo a deformaciones muy pequeñas (? ~ 10??). Directamente proporcional a ?Vs². En geotecnia, Gmax es parámetro de diseño para cimentaciones dinámicas, evaluación de licuefacción, respuesta de suelo. Medir Vs es medir una propiedad geotécnica relevante. No es una variable abstracta. Duración: 60 s.
+
+<!-- Slide number: 11 -->
+
+Las interfaces cambian la propagación: Snell, conversión P?SV, superficie libre
+
+![fig02_conversion_interfaz_es.png](Picture5.jpg)
+Ley de Snell: cambio de dirección. Conversión modal en incidencia oblicua. Condición de tensión nula en superficie ? modos ligados.
+Placeholder · Conversión en interfaz (propio)
+
+![Pasted image 20260316141217.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 2.10
+Slide 11 | Física
+
+### Notes:
+Fundamentos de elastodinámica en estratificación. Ley de Snell controla las direcciones de propagación según velocidades. Conversión P?SV ocurre en incidencia oblicua. Superficie libre (?=0) es una condición especial que genera soluciones ligadas a la superficie: ondas Rayleigh y Love. Sin esto, no hay propagación superficial. Duración: 60 s.
+
+<!-- Slide number: 12 -->
+
+¿Por qué mirar ondas superficiales? Porque dominan una fuente vertical de superficie
+
+![gen_energia_miller_pursey.png](Picture5.jpg)
+~67% Rayleigh, ~26% S, ~7% P en semiespacio homogéneo (Miller & Pursey).
+Placeholder · Generado, datos Miller & Pursey
+
+![Pasted image 20260316143212.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 2.12
+Slide 12 | Física
+
+### Notes:
+Resultado clásico: una fuente puntual vertical en superficie genera ondas cuya energía se distribuye así. Rayleigh es mayoritaria, decae más lentamente en distancia (r?¹ vs r?² de cuerpo). Esto explica por qué observable en superficie con buena SNR. Consecuencia: relación señal-ruido potencial excelente. Referencia discreta: Miller & Pursey. No universalizar al 90%. Duración: 60 s.
+
+<!-- Slide number: 13 -->
+
+Ondas Love: movimiento SH horizontal, transversal a la propagación
+
+![s11_607714.png](Picture5.jpg)
+Útiles para información Vs en multicapas. Fuente vertical no genera Love naturalmente.
+Placeholder · Love (generado)
+
+![Pasted image 20260316140712.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 2.9
+Slide 13 | Física
+
+### Notes:
+Ondas Love son corte horizontal puro (SH). Existen en multicapas con condiciones adecuadas. Utilidad: sensibles a Vs como Rayleigh. Limitación para nuestro problema: excitarlas con martillo vertical (fuente impulsiva vertical) es ineficiente. Rayleigh es más natural con fuente vertical. Sin descalificar Love, reconocer que Rayleigh es mejor para nuestra geometría. Duración: 60 s.
+
+<!-- Slide number: 14 -->
+
+Ondas Rayleigh: movimiento elíptico en plano vertical, relación directa a Vs
+
+![s12_15a820.png](Picture5.jpg)
+Acoplamiento P-SV. Componente vertical dominante y fácil de medir. cR ? 0.9 Vs (aproximadamente).
+Placeholder · Rayleigh (generado)
+
+![Pasted image 20260316144208.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 2.13
+Slide 14 | Física
+
+### Notes:
+Rayleigh es combinación acoplada de P y SV en un movimiento elíptico retrogrado. Componente vertical es observable directamente (geófono vertical). Velocidad de fase cR depende de Vs y otras propiedades, pero Vs es dominante. En multicapas, cR varía con frecuencia (dispersión). Esta es la base del método MASW. Duración: 60 s.
+
+<!-- Slide number: 15 -->
+
+Rayleigh encaja con el problema
+
+![ch1_2D_radiation_pattern_Rayleigh_surface.png](Picture5.jpg)
+Fácil de generar (fuente vertical), fácil de medir (componente vertical), sensible a Vs(z) vía dispersión.
+Placeholder · Foti et al. 2014, Fig. 1.1
+
+![Pasted image 20260408094144.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 3.3
+Slide 15 | Física
+
+### Notes:
+Síntesis de la lógica: fuente vertical ? Rayleigh dominante. Geófono vertical ? observa Rayleigh. Multicapas ? Rayleigh dispersivo. Inversión ? Vs(z). Es el camino natural del problema geotécnico. Duración: 60 s.
+
+<!-- Slide number: 16 -->
+
+En un semiespacio homogéneo, cR es independiente de la frecuencia
+
+![s14_b93a34.png](Picture5.jpg)
+Mismo Vs, Vp, ? ? una única cR para todo f.
+Placeholder · Semiespacio homogéneo (generado)
+
+![gen_cR_homogeneo.png](Picture7.jpg)
+Placeholder · Generado
+Slide 16 | Dispersión
+
+### Notes:
+Caso base: un único medio sin capas. Rayleigh viaja a velocidad constante independientemente de f. No hay dispersión. Si el semiespacio es homogéneo, un pulso se propaga sin cambio de forma. Concepto de no-dispersión: base para entender qué pasa cuando agregamos capas. Duración: 45 s.
+
+<!-- Slide number: 17 -->
+
+Relación cR-Vs: Rayleigh es ligeramente menor y estrechamente relacionada
+cR ? 0.92 Vs (aproximadamente); dependencia de ? (Poisson). Vínculo directo para inversión.
+
+![gen_cR_vs_poisson.png](Picture5.jpg)
+Placeholder · Generado (aprox. de Viktorov)
+Slide 17 | Dispersión
+
+### Notes:
+Rayleigh se propaga más lentamente que S puro: cR/Vs ? 0.92 típicamente (varía con ?). Para inversión, aproximación: si conozco cR, puedo estimar Vs. Este es el eslabón clave: de velocidad medida a propiedad geotécnica. Duración: 45 s.
+
+<!-- Slide number: 18 -->
+
+Al agregar capas con distintos Vs, Vp, ?, espesores, emerge la dispersión
+
+![s18_6ae378.png](Picture5.jpg)
+Capas ? interacción y conversión modal ? cR depende de f.
+Placeholder · Medio estratificado (generado)
+
+![ch1 Geometric Dispersion of rayleigh waves.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 1.2
+Slide 18 | Dispersión
+
+### Notes:
+Cambio crucial: estratificación introduce dispersión. Componentes de frecuencia alta sensibles a capas superficiales (? corta), bajas penetran profundo. Resultado: Rayleigh se dispersa (cR = cR(f)). Este efecto es observable y contiene información sobre estructura. Duración: 45 s.
+
+<!-- Slide number: 19 -->
+
+Longitud de onda y sensibilidad: ?R(f) = cR(f)/f, alta f ? superficial, baja f ? profunda
+
+![s17_e60734.png](Picture5.jpg)
+Relación directa entre f y profundidad de sensibilidad vía ?R. Sensibilidad distribuida (no rígida).
+Placeholder · Profundidad vs ? (generado)
+
+![dispersion_profundidad.png](Picture7.jpg)
+Placeholder · Propio
+Slide 19 | Dispersión
+
+### Notes:
+Heurística útil: ?R es la longitud de onda correspondiente a cada f. Penetración típica ? ?/2 o profundidad comparable a ?. Alta f ? ? corta ? información de capas superficiales. Baja f ? ? larga ? información más profunda. Aclaración importante: no es una equivalencia f?z rígida, la sensibilidad es distribuida (kernels de sensibilidad). Pero la intuición es válida. Duración: 60 s.
+
+<!-- Slide number: 20 -->
+
+Dispersión: cR(f) es la curva de dispersión, contiene información de estructura vertical
+
+![ch1_Example of processing of experimental data using wavenumber analysis.png](Picture5.jpg)
+La curva define cómo cambia la velocidad con f. Cada estructura Vs(z) genera una curva única (o casi).
+Placeholder · Foti et al. 2014, Fig. 1.6
+
+![figuras_informe__fig_curvas.png](Picture7.jpg)
+Placeholder · Propio (MASW)
+Slide 20 | Dispersión
+
+### Notes:
+Curva de dispersión experimental es el resultado de medir fase (o velocidad de grupo) en múltiples frecuencias. Es el dato que obtenemos. Contiene información de Vs(z). Problema: la inversión es no-única (muchos Vs(z) posibles pueden reproducir la misma curva). Pero información complementaria (geología, correlaciones, SPT) ayuda a restringir. Duración: 60 s.
+
+<!-- Slide number: 21 -->
+
+Curva de dispersión medida ? modelo compatible mediante inversión
+
+![ch1 Example of inversion procecss.png](Picture5.jpg)
+Problema inverso: encontrar Vs(z) que reproduce cR(f). Algoritmos: Monte Carlo, búsqueda global, gradiente.
+Placeholder · Foti et al. 2014, Fig. 1.7
+
+![figuras_informe__fig_vs.png](Picture7.jpg)
+Placeholder · Propio (inversión)
+Slide 21 | Dispersión
+
+### Notes:
+Invertir cR(f) para obtener Vs(z) es un problema inverso. Típicamente no-lineal, no-único. Estrategias: búsqueda global (Monte Carlo) explora mucho pero lento; gradiente es rápido pero local. Parámetros auxil: espesor, ?, ? se fijan o acotan. Información independiente (geología, SPT) restringe. Resultado: perfil Vs(z) candidato. Validación contra otras fuentes. Duración: 60 s.
+
+<!-- Slide number: 22 -->
+
+SASW (Spectral Analysis of Surface Waves): 2 receptores, diferencia de fase
+
+![Pasted image 20260414154041.png](Picture5.jpg)
+Medir tiempo de viaje entre dos geófonos ? velocidad por banda. Ambigüedad de ciclos.
+Placeholder · Foti et al. 2014, Fig. 3.43
+
+![Pasted image 20260415161954.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 4.5
+Slide 22 | MASW
+
+### Notes:
+Método clásico (años 80-90): dos receptores, medir fase relativa entre bandas. De fase y distancia ? cR(f). Ventaja: simple. Limitación: ambigüedad (cambios de ciclo), menor redundancia espacial, difícil separar modos. Antecedente para MASW. Duración: 45 s.
+
+<!-- Slide number: 23 -->
+
+MASW (MultiChannel Analysis of Surface Waves): múltiples receptores, patrones coherentes
+
+![Pasted image 20260414154541.png](Picture5.jpg)
+Matriz espacio-tiempo U(x,t) ? imaging dispersión (f-k), separación modal, redundancia.
+Placeholder · Foti et al. 2014, Fig. 3.45
+
+![Pasted image 20260408105916.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 3.5
+Slide 23 | MASW
+
+### Notes:
+Evolución natural: múltiples geófonos (12-48 típico) permiten observar patrones de frente de onda directamente. Transformada f-k separa modos. Redundancia espacial mejora SNR. Estándar moderno para caracterización. El nuestro es una versión experimental con síntesis de apertura. Duración: 60 s.
+
+<!-- Slide number: 24 -->
+
+MASW sintetizado (Lin & Ashlock 2016): desplazamiento recíproco fuente-receptor
+Un geófono móvil, fuente fija y desplazada alternativamente ? equivalente a arreglo simultáneo.
+
+![lin2016_fig1_recorte.png](Picture5.jpg)
+Placeholder · Lin & Ashlock 2016, Fig. 1
+
+![figuras__fig1_qc_alineacion_stack.png](Picture7.jpg)
+Placeholder · Propio (alineación y stack)
+Slide 24 | MASW
+
+### Notes:
+Nuestro enfoque: geometría física limitada (un geófono), síntesis de apertura. Fuente y receptor se desplazan de forma recíproca y coordinada. Requiere: repetibilidad de excitación, referencia temporal precisa, geometría controlada. Justificación: Lin & Ashlock demostraron que bajo estas condiciones el resultado es comparable a MASW multicanal simultáneo. Requisito electrónico: hardware para coordinar, sincronizar, validar. Duración: 60 s.
+
+<!-- Slide number: 25 -->
+
+Objetivo: matriz U(x,t) = uz(xm, tn), registro espacio-tiempo con fase preservada
+
+![figuras_informe__fig_gather.png](Picture5.jpg)
+21 posiciones, 10-50 m, ?x=2m, alineadas con HAMMER. Flujo de procesamiento ? dispersión ? inversión.
+Placeholder · Propio (gather)
+
+![figuras_informe__fig_imagenes.png](Picture7.jpg)
+Placeholder · Propio (imaging)
+Slide 25 | MASW
+
+### Notes:
+Matriz final que usamos: uz(x,t) en 21 posiciones espaciales y muestreo temporal. Esta es la entrada al flujo MASW: preprocesar, FFT 2D, picking de dispersión, inversión. Todo el sistema electrónico está construido para obtener esta matriz con fase preservada, bajo control del operador, documentada y reproducible. Frase clave: 'Todo el sistema presentado hasta acá fue construido para poder obtener esta matriz.' Duración: 60 s.
+
+<!-- Slide number: 26 -->
+
+Requisitos electrónicos impuestos por MASW
+
+![geometria_campanas.png](Picture5.jpg)
+Banda útil, fase, rango dinámico, antialias, fs, geometría, referencia temporal, excitación, almacenamiento, operación de campo.
+Placeholder · Propio (histórico, revisar)
+
+![Pasted image 20260408110343.png](Picture7.jpg)
+Placeholder · Foti et al. 2014, Fig. 3.7
+Slide 26 | Requisitos
+
+### Notes:
+De la teoría a la práctica: MASW impone requisitos concretos. Banda 10-50 Hz (real de campo). Preservar fase ? antialias, muestreo > 2×fmax. Rango dinámico: piso de ruido vs pico de excitación. Referencia temporal precisa entre nodos (error < 400 µs para error de fase < 5°). Almacenamiento en campo (SD). Operación: configuración flexible, validación en vivo, descarga post-misión. Estos requisitos definen la arquitectura de hardware. Duración: 60 s.
+
+<!-- Slide number: 27 -->
+
+Arquitectura: tres roles especializados (GEO, MASTER, HAMMER)
+
+![d_arquitectura_nodos.png](Picture5.jpg)
+GEO mide respuesta del suelo. MASTER coordina y sincroniza. HAMMER mide excitación.
+Placeholder · Propio
+
+![D04.png](Picture7.jpg)
+Placeholder · Propio (drawio D04)
+Slide 27 | Arquitectura
+
+### Notes:
+Visión de alto nivel antes de detalles. GEO: nodo sensor geófono. MASTER: orquestador, interfaz, almacenamiento coordinado. HAMMER: sensor de fuerza/tiempo de impacto. Nótese: la red NO transporta muestras en tiempo real. Coordina capturas locales, store-and-forward post-adquisición. Esta es una decisión arquitectónica clave. Detalles vienen después. Duración: 60 s.
+
+<!-- Slide number: 28 -->
+
+Sensor SM-24: geófono vertical, fn?10Hz, G0?28.8 V·s/m
+Masa suspendida en resorte-amortiguador. Transducer inercial: bobina en campo magnético.
+
+![s26_0c5aa1.png](Picture5.jpg)
+Placeholder · SM-24 (propio/brochure)
+
+![sm24_fotografia_cableado.png](Picture7.jpg)
+Placeholder · SM-24 cableado (fotografía comercial)
+Slide 28 | GEO
+
+### Notes:
+Especificación del transductor. Resonancia mecánica ~10 Hz. Sensibilidad nominal 28.8 V·s/m (depende de damping). Modelo mecánico: masa, resorte, amortiguador acoplado a bobina móvil. Modelo de transferencia: Hv(s) = G0·s²/(s² + 2??n·s + ?n²). Este modelo es base para toda la electrónica que sigue. Duración: 60 s.
+
+<!-- Slide number: 29 -->
+
+Problema: el SM-24 pierde sensibilidad por debajo de resonancia
+A 1 Hz (f<<fn): |H| ~ (f/fn)² ~ 0.01 ? -40 dB respecto a banda alta.
+
+![fig07_respuesta_sm24_modelo.png](Picture5.jpg)
+Placeholder · Propio (modelo SM-24)
+Slide 29 | GEO
+
+### Notes:
+Cálculo sencillo muestra problema: sensibilidad cae como (f/fn)² en banda baja. A 1 Hz con fn=10 Hz, pérdida de 40 dB. Amplificación naïf no ayuda: componentes de f >> fn consumen rango dinámico primero, dejando poco margen para LF. Esto motiva el diseño: necesitamos compensación de forma (modificar los polos) o al menos aténuación selectiva. Duración: 60 s.
+
+<!-- Slide number: 30 -->
+
+Estado del arte LF: alternativas de compensación evaluadas y rechazadas
+
+![gen_compensacion_LF.png](Picture5.jpg)
+1. Medición directa + ganancia: insuficiente. 2. Carga/impedancia pasiva: extensión limitada. 3. Inversión/zero-pole: offset DC, ruido LF amplificado. 4. Force balance: complejidad, estabilidad.
+Placeholder · Generado (concepto)
+
+![sm24_funcion_transferencia_previa.png](Picture7.jpg)
+Placeholder · Propio
+Slide 30 | GEO
+
+### Notes:
+Revisión de alternativas sin prejuicios. Cada una tiene trade-off. (1) Simple pero rango dinámico insuficiente. (2) Pazos-style: funciona pero extensión ~1 octava, insuficiente para 10-50 Hz desde 10 Hz resonante. (3) Hakimitoroghi-style: compensa polos pero diverge a DC, amplifica offset y ruido. (4) Negative impedance / force balance: activo, excelente pero requiere lazo estable, consumo. Duración: 120 s.
+
+<!-- Slide number: 31 -->
+
+Método elegido: Ma et al. - no levantar agresivamente el fondo, aténuar la región dominante
+Cadena: entrada ? PGA ? [directo + BP inversor] ? SUM ? LP ? ADC. Compensación LF via BP restador.
+
+![D08.png](Picture5.jpg)
+Placeholder · Propio (drawio D08)
+
+![gen_compensacion_LF.png](Picture7.jpg)
+Placeholder · Generado (concepto)
+Slide 31 | GEO
+
+### Notes:
+Filosofía Ma et al.: no invertir los polos (evita divergencia DC). En cambio: construir un bandpass inversor alrededor de resonancia, restar del camino directo ? efecto global de aténuación en banda dominante, recuperar nivel global con ganancia posterior. Implementación: PGA programable, rama directa, rama BP (restadora), sumador, LP antialias, ADC. Ventaja: linealidad, tolerancia a componentes, control simple por software. Limitación: todavía requiere ganancia (offset acumulado). De ahí DA-AFE. Duración: 120 s.
+
+<!-- Slide number: 32 -->
+
+AFE implementado: PGA ? directo + BP ? SUM ? LP ? ADC
+
+![s33_dae964.png](Picture5.jpg)
+Rechazo modo común, ganancia programable, compensación LF, antialias, adaptación ADC.
+Placeholder · Propio (AFE PSoC)
+
+![fig08_f_frente_analogico_crop.png](Picture7.jpg)
+Placeholder · Propio (frente analógico)
+Slide 32 | GEO
+
+### Notes:
+Arquitectura analógica detallada. PGA (OPA2333) entrada diferencial × 1-100 programable. Rama directa para altas frecuencias. Rama BP (inversor, f0~10 Hz) para atenuar resonancia. Sumador (OPA2333 configurado sumador). LP (Sallen-Key, fc~100 Hz típico para Nyquist-safe con ~2600 Sa/s). ADC ?? PSoC 18-bit. Modelo vs medición: comparar magnitud, fase, tolerancias. Duración: 90 s.
+
+<!-- Slide number: 33 -->
+
+Magnitud y fase: modelo nominal vs medición real, incluyendo tolerancias
+
+![s34_dc6945.png](Picture5.jpg)
+Gráficos de Bode: modelo ideal, medido, variaciones por tolerancia de componentes.
+Placeholder · Propio (Bode medido)
+
+![fig12_f_cadena_geo_adc_magcoh.png](Picture7.jpg)
+Placeholder · Propio (cadena GEO-ADC)
+Slide 33 | GEO
+
+### Notes:
+Validación experimental: medir respuesta en frecuencia (barridos senoidales, ruido blanco, impulso). Comparar contra modelo. Variaciones por resistencias, capacitores (1-5% tolerancia típica) ? banda de error. Importante: la extensión SM-24 + AFE en LF es por ahora predicción en cascada con modelo nominal, no calibración mecánica extremo a extremo. Se mencionará limitación cuando se presenten resultados. Duración: 60 s.
+
+<!-- Slide number: 34 -->
+
+DA-AFE: filosofía CALIBRAR ? CONGELAR ? MEDIR, orden secuencial PGA ? BP ? SUM ? LP
+
+![fig09_d_calibracion_offset.png](Picture5.jpg)
+Problema: alta ganancia + offsets pequeños ? margen dinámico consumido. Solución: auto-calibración digital de offset por etapa.
+Placeholder · Propio (calibración offset)
+
+![D09.png](Picture7.jpg)
+Placeholder · Propio (drawio D09)
+Slide 34 | GEO
+
+### Notes:
+Realidad electrónica: ganancia × 50-100 amplifica offset de mV a voltios, satura el ADC en banda intermedia. Solución DA-AFE: antes de medir, forzar entrada a cero (desconectar geófono, conectar referencia), leer ADC de salida de cada etapa, usar VDAC para restar offset. Orden: PGA primero (hereda entrada cero), BP (hereda residual PGA), SUM (suma errores previos), LP (último). Cada etapa se calibra secuencialmente. Congelación: escribir offsets VDAC a NV, mantener durante medición. Duración: 90 s.
+
+<!-- Slide number: 35 -->
+
+Ecuaciones DA-AFE: error ADC, conversión a códigos VDAC, PI, anti-windup, saturación
+
+![D10.png](Picture5.jpg)
+Error ADC ? codes VDAC (conversión de escala). PI controlador. Deadband y anti-windup. Límites.
+Placeholder · Propio (FSM captura)
+
+![fig10_f_senales_por_etapa.png](Picture7.jpg)
+Placeholder · Propio (señales por etapa)
+Slide 35 | GEO
+
+### Notes:
+Matemática: ADC mide Vout de etapa en N bits (16 típico post-procesamiento). Error = Vout_actual - cero_deseado. Convertir a código VDAC (0-255 típico). PI: código_nuevo = código_prev + Kp·error + Ki·?error. Deadband para evitar oscilación alrededor de cero. Anti-windup: saturar integrador si VDAC está en riel. Convergencia: típicamente <2s por etapa, total <10s para 4 etapas. Duración: 60 s.
+
+<!-- Slide number: 36 -->
+
+Resultado: offset residual se reduce significativamente (papel URUCON 2026)
+
+![s39_865328.png](Picture5.jpg)
+LP residual: 2.9–45.8% FS ? 0.4–3.9% FS en 8 configuraciones con UN único controlador.
+Placeholder · Propio (señales por etapa)
+
+![fig11_f_ruta_pga_adc.png](Picture7.jpg)
+Placeholder · Propio (ruta PGA-ADC)
+Slide 36 | GEO
+
+### Notes:
+Validación real: barridos de calibración en laboratorio sobre 8 configuraciones (PGA x1-5, ganancias downstream x16-50). Offset inicial por etapa varía mucho (ej. PGA residual 35 mV), final < 2 mV en la mayoría. LP residual cae hasta <1% FS en mejores casos. Robustez: UN ÚNICO controller ganancia Kp, Ki funciona para todas porque escalas son proporcionales. Paper URUCON: comunicación científica enviada a congreso. Duración: 60 s.
+
+<!-- Slide number: 37 -->
+
+Captura digital GEO: PSoC 5LP, ADC ?? 18-bit, ~2604 Sa/s, DMA, DFB, almacenamiento
+
+![s40_a0c4b0.png](Picture5.jpg)
+Once disparada, timing crítico en hardware/local. DMA mueve muestras sin CPU. DFB para filtrado embebido si necesario.
+Placeholder · Propio (hardware digital PSoC)
+
+![D13.png](Picture7.jpg)
+Placeholder · Propio (drawio D13)
+Slide 37 | GEO
+
+### Notes:
+Implementación PSoC: ADC ?? (delta-sigma, alta resolución). Frecuencia de muestreo ~2604 Sa/s (típico para ?? con decimación). DMA transfiere muestras a RAM RAM sin sobrecarga CPU, timing determinista. DFB (Digital Filter Block) si se desea FIR en hardware (opcional, puede hacerse en software). SignalController: componente PSoC para timestamp, contador para determinismo local. SD: almacenamiento local en tarjeta SD vía FatFs. Store-and-forward: después de captura, transferir a MASTER por SPI. Duración: 90 s.
+
+<!-- Slide number: 38 -->
+
+MASTER: coordinación ESP32 con sincronización preliminar y control de flujo
+
+![s41_f569d7.png](Picture5.jpg)
+ESP-NOW broadcast para ARM y START. PRESTART para validación previa. Reloj local, captura asíncrona.
+Placeholder · Propio (secuencia START)
+
+![D05.png](Picture7.jpg)
+Placeholder · Propio (drawio D05)
+Slide 38 | MASTER
+
+### Notes:
+MASTER no tiene geófono ni HAMMER, solo rol de orquestación. Protocolos: PRESTART chequea disponibilidad nodos, START disparador broadcast, reloj local RTC para timestamps de metadatos. Nodos GEO/HAMMER corren independently después de START, guardan en SD local. Sincronización preliminar observada via GPIO: desembarco entre esclavos ~200-400 µs. Limitación: esto mide tiempo de propagación de comando, no sincronización ADC-ADC. Requiere caracterización de deriva de reloj y latencia interna. Duración: 60 s.
+
+<!-- Slide number: 39 -->
+
+Sincronización y error de fase: ?t=400µs ? ??~3° @ 20Hz, ~7° @ 50Hz
+
+![sincronizacion_fase.png](Picture5.jpg)
+Desembarco observado, no garantizado. Impacto en velocidad de fase y picking de dispersión.
+Placeholder · Propio (histórico, rehacer)
+
+![secuencia_start_multinodo.png](Picture7.jpg)
+Placeholder · Propio
+Slide 39 | MASTER
+
+### Notes:
+Si dos nodos disparan con retraso ?t, las muestras en tiempo relativo van desfasadas. Error de fase: ?? = 360° × f × ?t. Para ?t=400 µs: @20 Hz ? 2.88° ? 3°. @ 50 Hz ? 7.2° ? 7°. Impacto en MASW: dispersión picking basado en fase. 3-7° es tolerable en picking de máximos pero no despreciable. Error de velocidad: ?Vg/Vg ? ??/360° × (Vg/Vp), pequeño pero contribuye a incertidumbre. Conclusión: sincronización es limitación preliminar, requiere mejora (relojes de referencia, mejor estimación de latencia). Duración: 60 s.
+
+<!-- Slide number: 40 -->
+
+HAMMER: PCB 086D20 sensor de fuerza piezoeléctrico, instante y forma de impacto
+
+![s43_68a402.png](Picture5.jpg)
+Transductor ICP, amplificación local, cadena similar a GEO. Detecta rebote, aceptación/rechazo de captura.
+Placeholder · Martillo PCB 086D20 (propio)
+
+![fig14_acondicionamiento_martillo_psoc.png](Picture7.jpg)
+Placeholder · Propio
+Slide 40 | HAMMER
+
+### Notes:
+HAMMER nodo con sensor de fuerza (piezoeléctrico, ICP Piezotronic 086D20). Mide la fuerza del impacto vs tiempo. Objetivos: instante de disparo (trigger para alineación con GEO), forma de pulso (validar que es un impacto aceptable, no rebote múltiple). Cadena: ICP ? desacople/protección ? PGA ? LP ? ADC. Mismo framework que GEO, pero sin compensación LF (banda es más ancha, no necesita extensión). Lógica de aceptación: operador revisa en tiempo real, manualmente o por criterio automático, acepta/rechaza para incluir/excluir del análisis. Duración: 60 s.
+
+<!-- Slide number: 41 -->
+
+Flujo de campo: configurar ? calibrar ? ARM ? impacto ? revisar ? aceptar/repetir ? mover
+
+![fig15_i_web_maestro_claro.png](Picture5.jpg)
+Interfaz web: configuración, adquisición, revisión en vivo. Metadatos: posición, ganancia, estado calibración.
+Placeholder · Propio (web maestro)
+
+![s44_be8902.jpg](Picture7.jpg)
+Placeholder · Propio (Geophone Scope)
+Slide 41 | Campo
+
+### Notes:
+Operación paso a paso. (1) Configuración: PGA, VDAC, IDAC, rango ADC, nombre de campaña. (2) Calibración: botón 'calibrar offset', el sistema ejecuta DA-AFE automático. (3) ARM: habilitar espera de trigger (START). (4) Impacto: golpe del martillo, system adquiere. (5) Revisión: interfaz muestra HAMMER (instante) y GEO (ventana post-impacto), operador valida. (6) Aceptar/repetir: si OK guarda metadatos y alinea con posición; si no OK, repite impacto. (7) Mover: usuario desplaza geófono ?x=2m, regresa a (3). Duración: 60 s.
+
+<!-- Slide number: 42 -->
+
+Sincronización entre MASTER y esclavos: observación preliminar ~200–400 µs
+
+![s43_8a29b0.png](Picture5.jpg)
+GPIO timestamp, no equivalente a sincronización ADC-ADC. Limitación declarada, requiere mejora.
+Placeholder · Propio (secuencia)
+
+![esp32.jpg](Picture7.jpg)
+Placeholder · ESP32, Wikimedia Commons, CC BY-SA 4.0
+Slide 42 | Resultados
+
+### Notes:
+Resultado actual: medida de desembarco GPIO ~200-400 µs. Nótese: preliminar, no definitiva. Mide tiempo de propagación de comando, no ciclo cerrado de ADC. Error de fase en MASW asumiendo ?t=400 µs es pequeño (3-7°) pero contribuye. Plan futuro: caracterizar drift de reloj local (RTC vs cristal), implementar hardware timer más preciso, o usar referencia temporal externa. Por ahora, limitación conocida. Duración: 45 s.
+
+<!-- Slide number: 43 -->
+
+SNR aparente por banda: 1–5Hz:0.5dB, 5–10Hz:2.1dB, 10–20Hz:16.7dB, 20–50Hz:24.4dB
+
+![s46_047827.png](Picture5.jpg)
+Medianas sobre campañas de campo. Incluye fuente, acoplamiento, terreno, sensor, electrónica.
+Placeholder · Propio (SNR por banda)
+Slide 43 | Resultados
+
+### Notes:
+Datos de campo real. SNR calculada como potencia señal / potencia ruido en ventanas pre y post-impacto. Banda baja (1-5 Hz) es desafiante, SNR bajo pero no nulo. Bandas medias/altas mejoran. Nótese: SNR aparente no separa contribuciones (es global). Baja SNR LF puede deberse a: (1) sensor débil LF, (2) AFE offset/ruido, (3) terreno bajo movimiento LF (Rayleigh de larga onda penetra profundo, menor amplitud), (4) fuente débil en LF. Conclusión: no atribuir mala SNR <10 Hz solo al dispositivo; validación multifonte necesaria. Duración: 60 s.
+
+<!-- Slide number: 44 -->
+
+Registro espacio-tiempo U(x,t): 21 posiciones, 10–50m, ?x=2m, alineadas, matriz construida
+
+![s47_25cc1c.png](Picture5.jpg)
+Matriz fundamental: uz(x,t) con fase preservada. Entrada a análisis MASW (dispersión, inversión).
+Placeholder · Propio (registro U(x,t))
+
+![fig19_waterfall_4s_v2.png](Picture7.jpg)
+Placeholder · Propio (waterfall)
+Slide 44 | Resultados
+
+### Notes:
+Culminación de todo el sistema: matriz U(x,t) real de campo. 21 posiciones de 10 a 50 m (apertura 40 m, pasos 2 m). Cada posición: 10-20 impactos promediados, alineados con HAMMER, metadatos registrados. Frase clave de narrativa: 'Todo el sistema presentado hasta acá fue construido para poder obtener esta matriz.' Está funcional. Próximo: picking de dispersión en f-k, inversión con disba/evodcinv, obtener Vs(z) candidato. Validación pendiente contra SPT/geología. Duración: 60 s.
+
+<!-- Slide number: 45 -->
+
+Qué está demostrado en la Primera Presentación
+
+![s50_154727.png](Picture5.jpg)
+AFE funcional, DA-AFE, captura digital, arquitectura distribuida, HAMMER, flujo campo, U(x,t).
+Placeholder · Propio (MASW)
+
+![s45_29830d.png](Picture7.jpg)
+Placeholder · Propio (adquisición real)
+Slide 45 | Roadmap
+
+### Notes:
+Resumen de logros: (1) AFE electrónico completamente caracterizado (magnitud, fase, compensación). (2) Auto-calibración DA-AFE en 4 etapas, convergencia ~10s. (3) Captura digital determinista en PSoC, muestreo ~2604 Sa/s, almacenamiento SD. (4) Red multi-nodo coordinada (GEO, MASTER, HAMMER). (5) HAMMER funcional con detección de impacto. (6) Flujo operativo de campo validado. (7) Matriz U(x,t) de 21 posiciones reales, alineada, documentada. Sistema está armado, demuestra capacidad. Duración: 60 s.
+
+<!-- Slide number: 46 -->
+
+Qué falta para la presentación final (diciembre 2026)
+
+![fuente_excitacion_actual.jpg](Picture5.jpg)
+Calibración mecánica extremo a extremo, mejorar excitación LF, ADC-ADC sync, drift relojes, modos múltiples, inversión, Vs(z).
+Placeholder · Propio (excitación actual)
+
+![01_senal_geo1_60s_impactos_aprox_1Hz.png](Picture7.jpg)
+Placeholder · Propio (impactos 1 Hz)
+Slide 46 | Roadmap
+
+### Notes:
+Agenda pendiente: (1) Calibración mecánica end-to-end contra sismógrafo de referencia (hoy es predicción en cascada). (2) Excitación LF mejorada (martinete más pesado, optimizar acoplamiento). (3) Sincronización ADC-ADC caracterizada (hoy ~400 µs preliminar). (4) Drift de reloj local quantificado. (5) Validación multi-GEO simultáneo (hoy es síntesis de apertura). (6) Picking de dispersión (f-k, región-polígono). (7) Inversión multimodo con evodcinv/disba. (8) Perfil Vs(z) final. (9) Validación contra SPT. Horizonte: diciembre 2026, presentación final. Duración: 60 s.
+
+<!-- Slide number: 47 -->
+
+Preguntas
+Espacio para comentarios, preguntas, discusión.
+
+![D01.png](Picture5.jpg)
+Placeholder · Propio (sistema completo, drawio D01)
+Slide 47 | Cierre
+
+### Notes:
+Slide de cierre. No es una conclusión numerada. Es una invitación a preguntar y dialogar. El sistema es complejo, hay muchas facetas, esperamos y buscamos retroalimentación.

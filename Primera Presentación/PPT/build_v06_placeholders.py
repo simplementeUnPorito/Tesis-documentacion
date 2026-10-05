@@ -109,8 +109,7 @@ M = {
     2: [(WEB / "foundation.jpg", f"{W}, CC BY-SA 4.0"), (WEB / "landslide.jpg", f"{W}, CC BY 4.0")],
     3: [(V04 / "s03_4093d7.png", "SPT / CPT (generado)"), (V04 / "s05_2f069b.png", "Ondas de cuerpo (generado)"),
         (V04 / "s06_46c357.png", "Ondas superficiales (generado)")],
-    4: [(WEB / "spt.jpg", f"SPT, {W}, CC BY 4.0"), (WEB / "cpt_truck.jpg", f"CPT, {W} (geograph)"),
-        (V04 / "s03_4093d7.png", "Esquema (generado)")],
+    4: [(WEB / "cpt_truck.jpg", f"Camión CPT, {W} (geograph)"), (V04 / "s03_4093d7.png", "SPT / CPT (generado)")],
     5: [(V04 / "s04_7b0b76.png", "Downhole / crosshole (generado)"), (A / "ch1_crosshole_testing.png", "Foti et al. 2014, cap. 1")],
     6: [(V04 / "s05_2f069b.png", "Refracción/reflexión (generado)"), (WEB / "refraction.png", f"{W}, dominio público")],
     7: [(V04 / "s06_46c357.png", "Love/Rayleigh en superficie (generado)"), (A / "ch1_2D_radiation_pattern_Rayleigh_surface.png", "Foti et al. 2014, Fig. 1.1")],
@@ -134,7 +133,7 @@ M = {
     25: [(MASW / "figuras_informe__fig_gather.png", "Propio (gather)"), (MASW / "figuras_informe__fig_imagenes.png", "Propio (imaging)")],
     26: [(HIST / "geometria_campanas.png", "Propio (histórico, revisar)"), (A / "Pasted image 20260408110343.png", "Foti et al. 2014, Fig. 3.7")],
     27: [(PRES / "d_arquitectura_nodos.png", "Propio"), (VIS / "D04.png", "Propio (drawio D04)")],
-    28: [(V04 / "s26_0c5aa1.png", "SM-24 (propio/brochure)"), (WEB / "geophone.jpg", f"Geófono, {W}")],
+    28: [(V04 / "s26_0c5aa1.png", "SM-24 (propio/brochure)"), (REV / "transductores" / "sm24_fotografia_cableado.png", "SM-24 cableado (fotografía comercial)")],
     29: [(FIG / "fig07_respuesta_sm24_modelo.png", "Propio (modelo SM-24)")],
     30: [(G["comp"], "Generado (concepto)"), (REV / "transductores" / "sm24_funcion_transferencia_previa.png", "Propio")],
     31: [(VIS / "D08.png", "Propio (drawio D08)"), (G["comp"], "Generado (concepto)")],
@@ -196,7 +195,7 @@ for i, slide in enumerate(prs.slides, 1):
     items = M[i]
     body = slide.shapes[2]
     if i == 1:  # portada: texto intacto, imagen decorativa abajo-derecha
-        boxes = [(Inches(6.0), Inches(0.4), Inches(3.6), Inches(2.4))]
+        boxes = [(Inches(3.4), Inches(4.15), Inches(3.2), Inches(1.4))]
     else:
         body.left, body.top, body.width, body.height = Inches(0.5), Inches(1.0), Inches(3.9), Inches(3.8)
         for r in body.text_frame.paragraphs[0].runs:
