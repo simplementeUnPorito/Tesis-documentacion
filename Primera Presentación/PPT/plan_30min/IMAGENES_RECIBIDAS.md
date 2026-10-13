@@ -1,0 +1,12 @@
+# Imágenes recibidas para G4–G6 (guardadas, aún sin usar en el deck)
+Archivos en `fuentes_deck_*/src/img/` (zip adjunto `imagenes_G4-G6.zip`).
+
+| Archivo | Qué es | Origen / licencia | Uso previsto | Avisos |
+|---|---|---|---|---|
+| `disp_modos_es.png` | Curva de dispersión Rayleigh, modos 1–4 (15–70 Hz) | Imagen aportada; adaptación en español por ChatGPT. Autor/fuente original **sin identificar** | G4 (dispersión, modos) | Falta citar la fuente. Los valores a 50 Hz (189,45; 312,50; 385,10; 491,32 m/s) son del original, pero hay que verificar contra él. Usa punto decimal, el deck usa coma |
+| `masw_sr_es.png` / `masw_sr_en_original.png` | Configuración fuente-receptor de MASW (offset, dx, D, shot gather) | Original en inglés aportado; **fuente sin identificar** (parece de Park et al., a confirmar) | G5 (MASW) | **La versión en español cambió datos respecto al original**: el inset dice «Registro #1053», estaciones 1003/1023/1043…, offsets 4/84/164/244/324; el original dice «Record #1015», estaciones 1015/1020/1025/1030 y offsets 14/19/24/29. Además repite «1016» en las estaciones (debería ser 1017). No usar tal cual: recortar el inset o rehacer |
+| `sasw_masw_es.png` | Arreglo SASW (2 receptores) vs MASW (24 geófonos) | Aportada; **fuente sin identificar**; traducción por ChatGPT | G5 (SASW→MASW) | Fondo negro con títulos amarillos: conviene recortar los dos paneles blancos. Verificar la traducción |
+| `campo_usgs_mejorada.png` | Golpe con martillo sobre dique con línea de geófonos | Base: USGS, «Seismic Survey» (2006), dominio público explícito | G5/G10 (campo) | La página de USGS advierte que **no es una foto de MASW específicamente**. La versión «mejorada» parece regenerada con IA: usá la original de USGS |
+| `campo_ia_mejorada.png`, `campo_ia_original.png` | Campo con camión, dos operarios y geófonos | **Generada por IA** (la original tiene la marca de Gemini en la esquina) | — | **No presentarla como foto real de campo.** Los sensores no son SM-24 y la pantalla es inventada. Si se usa, rotularla «Ilustración» |
+| `campo_iit_pavimento.png`, `campo_iit_suelo.png` | Ensayo MASW en pavimento y en suelo, IIT Gandhinagar | © IIT Gandhinagar, todos los derechos reservados; **sin permiso de redistribución confirmado** | G5/G10 (campo) | Citar y pedir permiso, o evitar |
+| `sm24_foto.png`, `sm24_corte_es.png` | SM-24 (foto con carcasa amarilla) y corte interno en español | Origen/licencia no especificados | G6 (sensor) | Pedir fuente del corte |
