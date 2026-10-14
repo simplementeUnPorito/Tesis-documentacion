@@ -246,11 +246,12 @@ mecanismos independientes para colocar la se\~nal dentro del conversor, uno anal
 saltos). La combinaci\'on correcta depende del sitio, del acoplamiento y del rol del nodo,
 y por eso ambos son configurables en campo y no fijados en compilaci\'on.
 
-Un detalle de implementaci\'on que conviene registrar: el cambio de rango
-\textbf{invalida la calibraci\'on de \emph{offset} vigente}, porque el punto de operaci\'on
-\'optimo depende del fondo de escala. Por eso la persistencia en EEPROM del DA-AFE se
-indexa por c\'odigo de ganancia y de rango, y no como un \'unico valor global
-(\S\ref{sec:arq-daafe}). La verificaci\'on de que la conmutaci\'on entre rangos preserva
+Un detalle de implementaci\'on que conviene registrar: durante la calibraci\'on el
+firmware fuerza la configuraci\'on de $\pm$\SI{2.5}{\volt} del ADC, de modo que el punto de
+operaci\'on de cada etapa se ajusta siempre con el mismo fondo de escala, cualquiera sea el
+rango elegido para la captura. Por eso el cambio de rango no invalida la calibraci\'on de
+\emph{offset} vigente, y la persistencia en EEPROM del DA-AFE se indexa s\'olo por c\'odigo
+de ganancia del PGA (\S\ref{sec:arq-daafe}). La verificaci\'on de que la conmutaci\'on entre rangos preserva
 la coherencia del sistema fue parte de la auditor\'ia pre-campo, con
 \textbf{49 de 49 transiciones correctas} (\S\ref{sec:resultados}).
 
@@ -293,7 +294,7 @@ Re-armado encadenado & Al superar los 512 lotes, la m\'aquina se re-arma sola si
 \midrule
 Lazo PI de calibraci\'on & Ley de control de \emph{offset}, antiwindup direccional, banda muerta y criterio de convergencia \\
 Secuenciamiento de calibraci\'on & Orden PGA$\to$BP$\to$SUM$\to$LP, reinicio de filtro y establecimiento entre etapas \\
-Persistencia & Registro en EEPROM con CRC, indexado por c\'odigo de ganancia y rango \\
+Persistencia & Registro en EEPROM con CRC, indexado por c\'odigo de ganancia \\
 M\'aquina de estados de alto nivel & Recepci\'on de comandos, transiciones de sesi\'on, reporte de estado \\
 Jerarqu\'ia de memoria & Pol\'itica RAM $\to$ encadenado $\to$ SD, y el sistema de archivos FatFs \\
 \emph{Polling} de \texttt{STATUS\_TC} & Consumo de los eventos de temporizador retenidos por el hardware \\

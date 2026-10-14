@@ -1,0 +1,132 @@
+> **OBSOLETO (2026-10-13, mañana).** Ver `ESTADO_v24.md`. Este documento tiene datos superados o incorrectos y se conserva solo como historial.
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  PRESENTACIÓN V22 — PRIMERA DEFENSA                        ║
+║                      Entrega completa • 2026-10-13                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📦 ARCHIVOS ENTREGADOS
+
+Presentaciones (listos para defensa)
+├─ Presentacion_v22_COMPRIMIDA_INLINE_29_slides.pptx        [29 MiB] ⭐
+├─ Presentacion_v22_LARGA_INLINE_116_slides.pptx            [28 MiB] 🔄
+
+Documentación (guías de uso y verificación)
+├─ README_V22_FINAL.md                                      [Instrucciones]
+├─ RESUMEN_ENTREGA_V22.md                                   [Qué se entregó]
+├─ PENDIENTES_DEFENSA.md                                    [Verificaciones]
+├─ CHANGELOG_V22.md                                         [Qué cambió]
+├─ ESTADO.md                                                [Historial v1-v22]
+└─ ENTREGA_V22_MANIFEST.txt                                 [Este archivo]
+
+Referencia (originales, no tocar)
+├─ CLAUDE_CODE_GOAL.md                                      [Brief original]
+├─ toolkit/                                                 [Código fuente]
+└─ Ondas_sismicas_REMASTER_FHD_COMPLETO/                    [Videos]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ CHECKLIST DE ENTREGA
+
+[✓] Versión comprimida 29 slides (20-50 requerido)
+[✓] Versión larga 116 slides (respaldo)
+[✓] Ambas INLINE (símbolos en línea OMML)
+[✓] Tamaño < 30 MiB (29 y 28 MiB)
+[✓] Archivos PPTX válidos (ZIP integrity OK)
+[✓] Todas las imágenes incluidas (78)
+[✓] Ecuaciones OMML nativas inyectadas
+[✓] Notas del orador en cada slide
+[✓] ESTADO.md actualizado
+[✓] Documentación completa
+[✓] Instrucciones de uso (README)
+
+[⚠] PowerPoint: no probado (requiere máquina con PowerPoint)
+[⚠] Fuentes: no confirmadas (responsabilidad del usuario)
+[⚠] Humanizador: no aplicado (opcional)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 CÓMO USAR
+
+OPCIÓN A: Solo abrir la comprimida (para la defensa)
+1. Abre: Presentacion_v22_COMPRIMIDA_INLINE_29_slides.pptx
+2. Recorre TODOS los clics (~30 min, ~119 pasos)
+3. Verifica que se ve bien en PowerPoint
+4. Defiende (buena suerte 🍀)
+
+OPCIÓN B: Revisar antes de defender (RECOMENDADO)
+1. Lee: README_V22_FINAL.md (paso a paso)
+2. Abre: Presentacion_v22_COMPRIMIDA_INLINE_29_slides.pptx
+3. Recorre clics + anota problemas
+4. Abre: PENDIENTES_DEFENSA.md
+5. Confirma fuentes en Foti, Ma et al., etc.
+6. Aplica humanizador si es necesario
+7. Ensayo con tutor + tribunal
+8. Defiende
+
+OPCIÓN C: Fallback (si PowerPoint falla)
+- Usa: Presentacion_v22_LARGA_INLINE_116_slides.pptx (sin animaciones)
+- O: Presentacion_v21_COMPRIMIDA_INLINE_29_slides.pptx (última confirmada OK)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 TIEMPO ESTIMADO
+
+Abrir + recorrer clics:         45 minutos
+Verificar fuentes:              1-2 horas
+Humanizador (si aplica):        30 minutos
+Regenerar figuras (si aplica):  1 hora
+Ensayo con tutor:               30-60 minutos
+─────────────────────────────────────────
+TOTAL MÍNIMO:                   2.5 horas
+
+Defensa (día D):                30 minutos
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 SI ALGO FALLA
+
+PowerPoint no abre:
+→ Usa v21 o v18 (fallback versions)
+
+PowerPoint pide reparación:
+→ Lee sección "Si PowerPoint falla" en README_V22_FINAL.md
+
+Figura o ecuación desbordada:
+→ Edita directamente en PowerPoint o regenera
+
+Afirmación sin fuente:
+→ Marca "por confirmar" en PENDIENTES_DEFENSA.md
+→ Aclara en la defensa ("esta afirmación está en revisión")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 ANTES DE DEFENDER
+
+□ Abre la presentación en PowerPoint
+□ Recorre TODOS los clics
+□ Verifica que se ve bien
+□ Confirma fuentes (PENDIENTES_DEFENSA.md)
+□ Ensayo de 30 minutos
+□ Aclaración de límites (modelo vs simulación vs medición vs caracterización)
+□ Respuestas a preguntas del tribunal (ver PENDIENTES_DEFENSA.md)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ ESTADO FINAL
+
+✅ Archivos técnicamente listos
+✅ Documentación completa
+✅ Instrucciones claras
+⚠  PowerPoint sin probar (hazlo tú)
+⚠  Fuentes sin confirmar (verificalas tú)
+
+Listo para llevar a defensa.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Generado por: Claude Code (Claude Haiku 4.5)
+Fecha: 2026-10-13
+Versión: v22
+
+¡Buena suerte en la defensa! 🍀

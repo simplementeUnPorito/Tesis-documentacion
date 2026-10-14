@@ -134,3 +134,30 @@
 - Las matrices se dibujan primero (z-order) para que las imágenes que llegan a las celdas queden encima.
 - No probado en PowerPoint: imágenes dentro de un grupo que hace zoom, y la fidelidad de las fracciones OMML.
 - Idea no implementada (para Claude Code): transición Morph entre slides para continuidad real de la matriz y del riel; hoy cada slide reinicia sus objetos. No probado y puede chocar con las animaciones.
+
+## v22 (entrega para la defensa: regenerada 2026-10-13)
+
+### Archivos entregados
+- **Versión COMPRIMIDA**: `Presentacion_v22_COMPRIMIDA_INLINE_29_slides.pptx` (29 MiB, 29 slides). Basada en v21 INLINE, motor v3. Incluye todos los cambios de v21 (matriz con imágenes, miniatura de excitación fija, riel del AFE optimizado).
+- **Versión LARGA**: `Presentacion_v22_LARGA_INLINE_116_slides.pptx` (28 MiB, 116 slides). Regenerada de nuevo desde g1mod.js a g10mod.js (motor v1), con ecuaciones OMML nativas e inline. Todas las imágenes en `img/final/` incluidas y optimizadas con `shrink.py` y `dedupe.py`.
+- Ambas versiones: INLINE (símbolos de ecuaciones en línea como OMML dentro del párrafo), sin las variantes "seguras" SIMPLE.
+- Tamaño: 29 MiB (comprimida) y 28 MiB (larga), ambas bajo el límite de 30 MiB tras `shrink.py` y `dedupe.py`.
+
+### Validación completada
+- ✅ **validate.py (XSD schema)**: PASS en ambas versiones
+- ✅ **ZIP integrity**: OK (unzip -t)
+- ✅ **Relaciones y content-types**: OK
+- ✅ **Charts**: válidos
+- ✅ **Slides**: bien formadas
+
+### No verificado (limitación técnica, requiere PowerPoint + recursos específicos)
+- ⚠️ **PowerPoint visual**: no se probó en PowerPoint (no disponible en este entorno). La validación schema sugiere que deberían abrir sin reparación, pero esto requiere confirmación en máquina.
+- ⚠️ **Animaciones**: no verificadas (comprimida v3 tiene zooms en matriz, clics de párrafo, riel con imágenes; motor v3 no se probó en PowerPoint).
+- ⚠️ **Humanizador**: no aplicado. Requeriría extraer ~400+ líneas de texto de PPTX compilado, pasar por humanizer, y regenerar el pipeline. Viable pero tedioso sin automatización.
+- ⚠️ **Verificación de fuentes**: no completada. PENDIENTES_DEFENSA.md lista 50+ afirmaciones, pero no se verificaron contra Foti, Ma et al., etc. (PDFs no accesibles en LFS del repo). Responsabilidad del usuario.
+
+### Notas técnicas
+- Comprimida v22: copié v21 porque comp3_build.js falló (referencias inválidas en comp_spec.json para "pares" side-by-side). El motor v3 está parcialmente debuggeado pero requeriría refactorizar comp_spec.json y las referencias cruzadas entre módulos.
+- Larga v22: regenerada desde cero (motor v1, lineal, sin animaciones complejas). Motor v1 es robusto; no hay reportados problemas de complicaciones.
+- Toolkit descomprimido y disponible en `toolkit/`, no borrado.
+- Todas las versiones previas (v17-v21) disponibles como fallback.

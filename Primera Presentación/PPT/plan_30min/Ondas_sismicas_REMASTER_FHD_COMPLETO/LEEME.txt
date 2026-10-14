@@ -1,0 +1,39 @@
+ONDAS SÍSMICAS — REMASTERIZACIÓN Y REDIBUJO (OCTUBRE 2026)
+============================================================
+Contiene P, S, Rayleigh y Love.
+
+1. REDIBUJADOS_FULL_HD/*.mp4
+   Nuevas recreaciones animadas, diseñadas a 1920×1080, 24 fps.
+   Mallas y textos generados directamente a Full HD, sin ampliación
+   de píxeles. Textos en español y movimiento de partículas.
+   Son representaciones esquemáticas basadas en el tipo de onda:
+   NO son reproducciones fotograma a fotograma idénticas al vídeo.
+   Las deformaciones están amplificadas para mayor legibilidad.
+   RECOMENDADAS para incluir en presentaciones.
+
+2. REDIBUJADOS_GIF/*.gif
+   Versiones GIF de los redibujos, 960×540 a 12 fps en bucle.
+   GIF tiene solo 256 colores. Mejor usar MP4 para diapositivas.
+
+3. ORIGINALES_RESTAURADOS/*.mp4
+   Mantienen la animación original y su temporización; reducen
+   artefactos y limpian fondo, remuestreados a 1280×960.
+   La fuente 320×240 NO aporta detalles reales de alta definición.
+   Por eso esta versión será menos nítida que el redibujo.
+
+4. PREVISUALIZACIONES/*
+   Imagen representativa de cada redibujo y comparaciones con el original.
+
+5. SCRIPTS/*.py
+   Código fuente para recrear animaciones y restaurar MP4.
+   Requiere Python, OpenCV, NumPy, Pillow y ffmpeg instalado.
+
+6. 07_REDIBUJADOS_SIN_TEXTO/*.mp4
+   Las cuatro animaciones Full HD sin títulos, leyendas ni etiquetas.
+   Los scripts están organizados en 05_SCRIPTS/01_CON_TEXTO y
+   05_SCRIPTS/02_SIN_TEXTO. Los scripts originales también permanecen
+   en 05_SCRIPTS.
+
+ACLARACIÓN: Las representaciones de Rayleigh y Love muestran
+atenuación con profundidad mediante esquemas simplificados y no
+constituyen simulaciones numéricas físicas de un semiespacio real.
