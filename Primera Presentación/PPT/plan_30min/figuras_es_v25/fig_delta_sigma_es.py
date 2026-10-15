@@ -33,7 +33,9 @@ ax.set_xlabel("Frecuencia / frecuencia de muestreo", fontsize=11)
 ax.set_ylabel("Nivel relativo (dB)", fontsize=11)
 ax.tick_params(labelsize=9.5)
 ax.grid(True, which="major", color="#E0E0E0", lw=0.6)
-ax.annotate("el ruido sube fuera de la banda\ny el filtro lo descarta", xy=(0.12, -12), xytext=(1.3e-4, -62),
+f_flecha = 0.03  # la punta de la flecha cae sobre la curva naranja (antes quedaba 7 dB por debajo)
+ax.annotate("el ruido sube fuera de la banda\ny el filtro lo descarta", xy=(f_flecha, db((2 * np.sin(np.pi * f_flecha)) ** 2)),
+            xytext=(1.3e-4, -62),
             fontsize=10, color=ALERT, arrowprops=dict(arrowstyle="->", color=ALERT, lw=1.2))
 fig.legend(*ax.get_legend_handles_labels(), loc="upper center", ncol=3, fontsize=9, frameon=False, bbox_to_anchor=(0.53, 1.0))
 fig.savefig(sys.argv[1] if len(sys.argv) > 1 else "g7_delta_sigma_propia.png", facecolor="white")
