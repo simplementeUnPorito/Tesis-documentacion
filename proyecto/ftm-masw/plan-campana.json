@@ -1,0 +1,101 @@
+{
+  "document_type": "planning_only_not_firmware_configuration",
+  "status": "proposed_pending_discussion",
+  "date_local": "2026-10-16",
+  "purpose": "Independent control of manually measured MASW slave geometry",
+  "operator_procedure": {
+    "confirmed": "Measure each new slave from the immediately previous slave, with possible heading and placement error",
+    "candidate_segment_lengths_m": [
+      1,
+      2
+    ],
+    "final_segment_length_confirmed": false,
+    "global_alignment_reference": "Visual sight toward initial slave and prior nodes; strongest reference is nearby slaves and their visually estimated line",
+    "installation_sequence_known": true,
+    "common_target_spacing_intended": true,
+    "actual_identifier_sequence_to_record_per_deployment": true,
+    "angular_model_candidate": "Correlated visual alignment with dominant local reference and weaker earlier-node reference; weights uncalibrated",
+    "turn_distribution": null,
+    "segment_length_error_distribution": null,
+    "shared_length_bias_m": null,
+    "shared_turn_bias_rad": null,
+    "heading_measured_by_instrument": false,
+    "node_15_is_illustrative_not_confirmed_count": true,
+    "indoor_wall_crossing_test_possible": true,
+    "indoor_test_does_not_validate_outdoor_accuracy": true
+  },
+  "computation": {
+    "initial_host": "PC",
+    "initial_mode": "offline_batch_replay_of_saved_captures",
+    "optional_later_mode": "live_updates_on_PC_using_the_same_estimator",
+    "final_execution_platform": "deferred_by_user",
+    "estimator_separate_from_transport_and_presentation": true
+  },
+  "source_commit": "4c841a8d4305bc70c8660cc84980dd7cd358e5db",
+  "historical_physical_ids": {
+    "master": 1,
+    "slaves": [
+      2,
+      3,
+      4
+    ],
+    "must_reidentify_hardware": true
+  },
+  "deployment": {
+    "slave_count": 3,
+    "master_count": 1,
+    "physical_order": null,
+    "nominal_spacing_m": null,
+    "array_length_m": null,
+    "allowed_half_width_m": null,
+    "max_height_difference_m": null,
+    "master_coordinates_in_slave_frame_m": null,
+    "seismic_source_coordinates_m": null,
+    "antenna_to_geophone_offsets_m": null,
+    "antenna_orientation": null,
+    "antenna_height_m": null,
+    "enclosure": null,
+    "power_supply": null
+  },
+  "acceptance": {
+    "minimum_longitudinal_displacement_to_detect_m": null,
+    "minimum_transverse_displacement_to_detect_m": null,
+    "maximum_false_alarm_probability_per_array_check": null,
+    "required_detection_probability": null,
+    "maximum_alarm_delay_s": null,
+    "maximum_observation_age_s": null,
+    "coverage_target": null,
+    "confidence_target": null,
+    "validation_unit": null,
+    "calibration_and_validation_separate": true
+  },
+  "ota_gates": {
+    "flash_identified_each_board": false,
+    "installed_partitions_read": false,
+    "idf_environment_available": true,
+    "image_sizes_measured": true,
+    "identity_backed_up": false,
+    "usb_bootstrap_verified_each_board": false,
+    "one_slave_wireless_update_verified": false,
+    "interrupted_update_verified": false,
+    "rollback_verified": false,
+    "all_boards_verified": false
+  },
+  "prototype_progress": {
+    "roles_compiled": [
+      "master",
+      "slave1",
+      "slave2",
+      "slave3"
+    ],
+    "ota_host_tests_passed": 43,
+    "existing_mesh_tests_passed": 45,
+    "usb_master_verified": true,
+    "master_port": "COM3",
+    "master_base_mac": "e0:72:a1:f4:99:90",
+    "master_flash_mib": 16,
+    "slaves_bootstrapped": [],
+    "hardware_batch_size": 2,
+    "wireless_update_verified": false
+  }
+}

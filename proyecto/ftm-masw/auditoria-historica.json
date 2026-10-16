@@ -1,0 +1,251 @@
+{
+  "method": "Read-only SQLite; all successful sessions with >=8 frames. Median by direction, mean of 2 directional medians per pair. LOO common additive offset on other 4 taped pairs. Historical placement references, not current ground truth.",
+  "captures": [
+    {
+      "capture": "20261009T215950_117032Z",
+      "files": {
+        "history.sqlite": {
+          "sha256": "e944341fa6e77efcbbef0912559a0571d1bccb3cbade66772159037ef19d6ee2",
+          "bytes": 17715200
+        },
+        "csi_derived.sqlite": {
+          "sha256": "ab6e314e5551a6c0ef2ca212706707945b5360bcedf41890c532747bc36c46b0",
+          "bytes": 1613824
+        }
+      },
+      "estimates": {
+        "raw": {
+          "pairs": [
+            {
+              "pair": "1-3",
+              "reference_m": 1.82,
+              "median_range_m": 0.8105638583175001,
+              "error_before_common_offset_m": -1.0094361416825,
+              "asymmetry_m": 0.9167653365640002,
+              "loo_offset_m": -2.9983725030923747,
+              "loo_residual_m": -4.007808644774874
+            },
+            {
+              "pair": "1-2",
+              "reference_m": 2.82,
+              "median_range_m": 5.2076198398035,
+              "error_before_common_offset_m": 2.3876198398035,
+              "asymmetry_m": 0.27925667462699977,
+              "loo_offset_m": -2.838762050608625,
+              "loo_residual_m": -0.45114221080512484
+            },
+            {
+              "pair": "2-4",
+              "reference_m": 4.0,
+              "median_range_m": 6.068398934836,
+              "error_before_common_offset_m": 2.068398934836,
+              "asymmetry_m": 0.17328004072400027,
+              "loo_offset_m": -2.9983725030923747,
+              "loo_residual_m": -0.9299735682563748
+            },
+            {
+              "pair": "3-4",
+              "reference_m": 2.62,
+              "median_range_m": 6.22912516638125,
+              "error_before_common_offset_m": 3.60912516638125,
+              "asymmetry_m": 0.011167269060500473,
+              "loo_offset_m": -2.2280093873197497,
+              "loo_residual_m": 1.3811157790615
+            },
+            {
+              "pair": "2-3",
+              "reference_m": 4.5,
+              "median_range_m": 10.26493123597725,
+              "error_before_common_offset_m": 5.764931235977251,
+              "asymmetry_m": 0.259095631826499,
+              "loo_offset_m": -2.2280093873197497,
+              "loo_residual_m": 3.536921848657501
+            }
+          ],
+          "loo_mae_m": 2.061392410311075,
+          "loo_max_abs_m": 4.007808644774874,
+          "uncalibrated_pair_median_mae_m": 2.9679022637361
+        },
+        "wipro_first_path": {
+          "pairs": [
+            {
+              "pair": "1-3",
+              "reference_m": 1.82,
+              "median_range_m": 0.83642095782,
+              "error_before_common_offset_m": -0.98357904218,
+              "asymmetry_m": 1.076105027991,
+              "loo_offset_m": 0.22489250403624994,
+              "loo_residual_m": -0.7586865381437501
+            },
+            {
+              "pair": "1-2",
+              "reference_m": 2.82,
+              "median_range_m": 2.88688894836825,
+              "error_before_common_offset_m": 0.06688894836825021,
+              "asymmetry_m": 0.6441790441275002,
+              "loo_offset_m": 0.590713772682375,
+              "loo_residual_m": 0.6576027210506252
+            },
+            {
+              "pair": "2-4",
+              "reference_m": 4.0,
+              "median_range_m": 3.48332604355925,
+              "error_before_common_offset_m": -0.5166739564407501,
+              "asymmetry_m": 1.1766104495354996,
+              "loo_offset_m": 0.29893232027787486,
+              "loo_residual_m": -0.21774163616287523
+            },
+            {
+              "pair": "3-4",
+              "reference_m": 2.62,
+              "median_range_m": 1.9552464110760002,
+              "error_before_common_offset_m": -0.6647535889239999,
+              "asymmetry_m": 0.573203179696,
+              "loo_offset_m": 0.22489250403624994,
+              "loo_residual_m": -0.43986108488775
+            },
+            {
+              "pair": "2-3",
+              "reference_m": 4.5,
+              "median_range_m": 5.68335299659225,
+              "error_before_common_offset_m": 1.1833529965922498,
+              "asymmetry_m": 1.0136732486125002,
+              "loo_offset_m": 0.590713772682375,
+              "loo_residual_m": 1.7740667692746248
+            }
+          ],
+          "loo_mae_m": 0.7695917499039251,
+          "loo_max_abs_m": 1.7740667692746248,
+          "uncalibrated_pair_median_mae_m": 0.68304970650105
+        },
+        "ftm_minus_excess": {
+          "pairs": [
+            {
+              "pair": "1-3",
+              "reference_m": 1.82,
+              "median_range_m": -0.5726785428945,
+              "error_before_common_offset_m": -2.3926785428945,
+              "asymmetry_m": 0.6405065865170001,
+              "loo_offset_m": -0.5377982461443749,
+              "loo_residual_m": -2.9304767890388748
+            },
+            {
+              "pair": "1-2",
+              "reference_m": 2.82,
+              "median_range_m": 3.60002025783575,
+              "error_before_common_offset_m": 0.78002025783575,
+              "asymmetry_m": 0.1486221110535002,
+              "loo_offset_m": -0.026352791024749855,
+              "loo_residual_m": 0.7536674668110002
+            },
+            {
+              "pair": "2-4",
+              "reference_m": 4.0,
+              "median_range_m": 4.295576234453,
+              "error_before_common_offset_m": 0.29557623445299974,
+              "asymmetry_m": 0.2898993068860003,
+              "loo_offset_m": -0.268574802716125,
+              "loo_residual_m": 0.027001431736874748
+            },
+            {
+              "pair": "3-4",
+              "reference_m": 2.62,
+              "median_range_m": 2.3771293475965,
+              "error_before_common_offset_m": -0.24287065240350003,
+              "asymmetry_m": 0.4951072443870004,
+              "loo_offset_m": -0.5377982461443749,
+              "loo_residual_m": -0.7806688985478749
+            },
+            {
+              "pair": "2-3",
+              "reference_m": 4.5,
+              "median_range_m": 7.09305208222275,
+              "error_before_common_offset_m": 2.5930520822227496,
+              "asymmetry_m": 0.12328964835250034,
+              "loo_offset_m": -0.026352791024749855,
+              "loo_residual_m": 2.5666992911979998
+            }
+          ],
+          "loo_mae_m": 1.4117027754665248,
+          "loo_max_abs_m": 2.9304767890388748,
+          "uncalibrated_pair_median_mae_m": 1.2608395539619
+        }
+      },
+      "integrity": "ok",
+      "statuses": {
+        "0": 946,
+        "5": 2
+      },
+      "utc_window": [
+        "2026-10-09T21:59:51.634063+00:00",
+        "2026-10-09T22:44:18.068408+00:00"
+      ],
+      "rows": {
+        "sessions": 948,
+        "frames": 22647,
+        "csi": 22647
+      },
+      "same_direction_revisit_median_s": 32.44887399673462,
+      "full_frame_sessions": 945,
+      "node_reboot_records": {
+        "1": 0,
+        "2": 0,
+        "3": 6,
+        "4": 5
+      },
+      "reference_applicability": "Five historical taped pairs documented for this capture; pair 2-3 has low confidence, pair 1-4 absent. LOO is same placement, not independent field validation.",
+      "frame_csi_association": {
+        "csi_without_matching_frame": 1,
+        "frames_without_matching_csi": 1,
+        "csi_duplicate_keys": 0
+      }
+    },
+    {
+      "capture": "20261009T224933_307482Z",
+      "files": {
+        "history.sqlite": {
+          "sha256": "d3ade959d222d8a424b22122b1cbfd991c7b0a173cc8926e2f618be645153386",
+          "bytes": 6352896
+        },
+        "csi_derived.sqlite": {
+          "sha256": "ce566a01239072b628226ef4b4cf659dbc2a883c5b717282ba38150b39c488a0",
+          "bytes": 180224
+        }
+      },
+      "integrity": "ok",
+      "statuses": {
+        "0": 268,
+        "3": 1
+      },
+      "utc_window": [
+        "2026-10-09T22:49:33.707817+00:00",
+        "2026-10-09T23:04:21.165059+00:00"
+      ],
+      "rows": {
+        "sessions": 269,
+        "frames": 8130,
+        "csi": 8131
+      },
+      "same_direction_revisit_median_s": 34.91063845157623,
+      "full_frame_sessions": 267,
+      "node_reboot_records": {
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 5
+      },
+      "reference_applicability": "No confirmed independent reference for this later capture; no distance accuracy score published.",
+      "frame_csi_association": {
+        "csi_without_matching_frame": 1,
+        "frames_without_matching_csi": 0,
+        "csi_duplicate_keys": 0
+      }
+    }
+  ],
+  "source_checkout": "C:/Github/FTM-test",
+  "source_commit": "4c841a8d4305bc70c8660cc84980dd7cd358e5db",
+  "audited_on_local_date": "2026-10-16",
+  "reference_file": "experiments/survey/sala_20261009.json",
+  "reference_sha256": "e05b8d7b4a0b94d8c9854fd3b8efdbb6b8c7d08bb4214c219a0b91045325bcfb",
+  "same_direction_revisit_definition": "Median over successive successful sessions of the same directed link; not full-cycle duration, not simultaneous observations."
+}
